@@ -1,0 +1,6 @@
+.env
+.jshintrc
+.prettierignore
+node_modules
+package-lock.json
+temp_*
