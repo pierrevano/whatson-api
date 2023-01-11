@@ -5,7 +5,6 @@ dotenv.config();
 const axios = require("axios");
 const cheerio = require("cheerio");
 const csv = require("csvtojson");
-const fs = require("fs");
 const shell = require("shelljs");
 
 /* Connecting to the MongoDB database. */
@@ -14,8 +13,8 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-/* Deleting the lines that contain the string "noImdbId,noBetaseriesId" in the file "films_ids.txt" */
-shell.exec(`sed -i '' "/noImdbId,noBetaseriesId/d" ./src/assets/films_ids.txt`);
+/* Deleting the lines that contain the string "noTheMovieDBId" in the file "films_ids.txt" */
+shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
 
 /* A constant that contains the URLs of the different websites that are used in the script. */
 const config = {
@@ -115,12 +114,12 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
     const $ = cheerio.load(response.data);
 
     const title = $('meta[property="og:title"]').attr("content");
+
     const picture = $('meta[property="og:image"]').attr("content");
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = null;
-    if (isNaN(allocineUsersRating)) console.log(title + " / " + allocineUsersRating);
 
     let allocineFirstInfo = {
       allocineTitle: title,
@@ -198,7 +197,7 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
 const getBetaseriesUsersRating = async (betaseriesHomepage) => {
   try {
     let criticsRating;
-    if (!betaseriesHomepage.includes("noBetaseriesId")) {
+    if (!betaseriesHomepage.includes("null")) {
       const userAgent = config.userAgent;
       const options = {
         headers: {
@@ -227,8 +226,8 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
  * @returns The critics rating of the movie.
  */
 const getImdbUsersRating = async (imdbHomepage) => {
-  let criticsRating;
   try {
+    let criticsRating;
     if (!imdbHomepage.includes("noImdbId")) {
       const options = {
         headers: {
@@ -238,11 +237,9 @@ const getImdbUsersRating = async (imdbHomepage) => {
       const response = await axios.get(imdbHomepage, options);
       const $ = cheerio.load(response.data);
 
-      const title = $('meta[property="og:title"]').attr("content");
-
-      criticsRating = parseFloat($(".rating-bar__base-button a.ipc-button").first().text().split("/")[0]);
+      criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
+      if (isNaN(criticsRating)) console.log($(".rating-bar__base-button").first().text());
       if (isNaN(criticsRating)) criticsRating = null;
-      if (isNaN(criticsRating)) console.log(title + " / " + criticsRating);
     } else {
       criticsRating = null;
     }
@@ -264,7 +261,7 @@ const getImdbUsersRating = async (imdbHomepage) => {
  * @param imdbId - the id of the movie on IMDB
  * @param imdbHomepage - the IMDB homepage of the movie
  */
-const createJSON = async (isActive, allocineId, allocineHomepage, allocineCriticsDetails, betaseriesId, betaseriesHomepage, imdbId, imdbHomepage) => {
+const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId) => {
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
@@ -277,27 +274,25 @@ const createJSON = async (isActive, allocineId, allocineHomepage, allocineCritic
   const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
   const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
 
-  if (betaseriesId === "noBetaseriesId" || betaseriesId === "null") {
+  if (betaseriesId === "null") {
     betaseriesObj = null;
   } else {
     betaseriesObj = {
       id: betaseriesId,
       url: betaseriesHomepage,
-      usersRating: betaseriesUsersRating,
-    };
-  }
-  if (imdbId === "noImdbId") {
-    imdbObj = null;
-  } else {
-    imdbObj = {
-      id: imdbId,
-      url: imdbHomepage,
-      usersRating: imdbUsersRating,
+      users_rating: betaseriesUsersRating,
     };
   }
 
+  imdbObj = {
+    id: imdbId,
+    url: imdbHomepage,
+    users_rating: imdbUsersRating,
+  };
+
   upsertToDatabase({
     results: {
+      id: theMoviedbId,
       is_active: isActive,
       title: allocineTitle,
       picture: allocinePicture,
@@ -324,38 +319,41 @@ const createJSON = async (isActive, allocineId, allocineHomepage, allocineCritic
   let lineNumber = 1;
   for await (const json of jsonArray) {
     try {
-      fs.readFile(filmsIdsFilePath, "utf8", (_err, data) => {
-        const length = data.split("\n").length - 1;
-        console.timeLog("Duration", `- ${lineNumber} / ${length} (${((lineNumber * 100) / length).toFixed(1)}%)`);
-      });
+      console.timeLog("Duration", `- ${lineNumber} / ${jsonArray.length} (${((lineNumber * 100) / jsonArray.length).toFixed(1)}%)`);
 
-      const isActive = json.IS_ACTIVE;
-
-      const allocineURL = json.URL;
-      const allocineId = parseInt(allocineURL.match(/=(.*)\./).pop());
-
+      // AlloCiné info
       const baseURLAllocine = config.baseURLAllocine;
       const baseURLType = config.baseURLType;
       const baseURLCriticDetails = config.baseURLCriticDetails;
       const endURLCriticDetails = config.endURLCriticDetails;
+      const allocineURL = json.URL;
+      const allocineId = parseInt(allocineURL.match(/=(.*)\./).pop());
       const allocineHomepage = `${baseURLAllocine}${baseURLType}${allocineId}.html`;
       const allocineCriticsDetails = `${baseURLAllocine}${baseURLCriticDetails}${allocineId}${endURLCriticDetails}`;
 
-      const imdbId = json.IMDB_ID;
+      // IMDb info
       const baseURLIMDB = config.baseURLIMDB;
+      const imdbId = json.IMDB_ID;
       const imdbHomepage = `${baseURLIMDB}${imdbId}/`;
 
+      // BetaSeries info
       const baseURLBetaseriesFilm = config.baseURLBetaseriesFilm;
       const baseURLBetaseriesSerie = config.baseURLBetaseriesSerie;
       let betaseriesId = json.BETASERIES_ID;
       let betaseriesHomepage = `${baseURLBetaseriesFilm}${betaseriesId}`;
+
+      // If the BetaSeries movie was categorized as a serie
       if (betaseriesId.startsWith("serie/")) {
         const betaseriesIdNew = betaseriesId.split("/");
         betaseriesId = betaseriesIdNew[1];
         betaseriesHomepage = `${baseURLBetaseriesSerie}${betaseriesId}`;
       }
 
-      await createJSON(isActive, allocineId, allocineHomepage, allocineCriticsDetails, betaseriesId, betaseriesHomepage, imdbId, imdbHomepage);
+      const isActive = json.IS_ACTIVE === "TRUE";
+
+      const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
+
+      await createJSON(allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId);
 
       lineNumber++;
     } catch (error) {
@@ -363,5 +361,5 @@ const createJSON = async (isActive, allocineId, allocineHomepage, allocineCritic
     }
   }
 
-  console.timeEnd("Duration");
+  console.timeEnd("Duration", `- ${jsonArray.length} elements imported.`);
 })();

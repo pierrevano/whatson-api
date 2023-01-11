@@ -5,11 +5,15 @@ FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
 IS_ACTIVE=TRUE
+IS_NOT_ACTIVE=FALSE
 PAGES_MAX_NUMBER=15
 PAGES_MIN_NUMBER=1
 SECONDS=0
 TEMP_URLS_FILE_PATH=./temp_urls
 URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
+
+# Loading the env variables
+source .env
 
 # A function that removes temporary files.
 remove_files () {
@@ -27,7 +31,12 @@ remove_files () {
 data_not_found () {
   IMDB_ID="noImdbId"
   BETASERIES_ID="noBetaseriesId"
+  THEMOVIEDB_ID="noTheMovieDBId"
 
+  echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
+}
+
+betaseries_to_null () {
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
@@ -39,6 +48,10 @@ data_found () {
 remove_files
 
 sed -i '' "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
+sed -i '' "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
+
+# Don't add to the header (first line) of the CSV file
+sed -i '' "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
 
 # Download top films AlloCiné page
 curl -s $BASE_URL > temp_baseurl
@@ -91,7 +104,7 @@ do
     # Check if missing shows
     ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
     if [[ $URL == $ALLOCINE_URL ]]; then
-      sed -i '' "/.*$FILM_ID\.html.*[a-z0-9]$/ s/$/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
+      sed -i '' "/.*$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
       
       FOUND=1
     else
@@ -136,21 +149,37 @@ do
         # Get title encoded characters URL
         TITLE_URL_ENCODED=$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -f $URL_ESCAPE_FILE_PATH)
 
-        # Get creation date
-        CREATION_YEAR=$(cat temp_allocine_url | grep -A6 "date blue-link" | grep "[0-9][0-9][0-9][0-9]" | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | cut -d' ' -f3)
-
         WIKI_DATA=0
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP1265%20%22$FILM_ID%22.%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
           echo "No wiki URL!"
 
-          IMDB_YEAR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED | grep -Eo "([0-9][0-9][0-9][0-9])</span>" | cut -d"<" -f1)
-          echo "Downloading from: https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED"
+          # Get release date
+          CREATION_YEAR=$(cat temp_allocine_url | grep -A6 "date blue-link" | grep "[0-9][0-9][0-9][0-9]" | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | cut -d' ' -f3)
+
+          # Get IMDb release date
+          IMDB_YEAR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=feature,tv_movie,tv_special,documentary,short | grep -m1 "([0-9][0-9][0-9][0-9])</span>" | cut -d'<' -f2 | grep -Eo "([0-9]+)")
+          IMDB_YEAR_P1=$((IMDB_YEAR + 1))
 
           echo "Creation year: $CREATION_YEAR - IMDb year: $IMDB_YEAR"
+          echo "Creation year: $CREATION_YEAR - IMDb year +1: $IMDB_YEAR_P1"
           if [[ $CREATION_YEAR == $IMDB_YEAR ]]; then
-            IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
+            IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=feature,tv_movie,tv_special,documentary,short | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
+          elif [[ $CREATION_YEAR == $IMDB_YEAR_P1 ]]; then
+            ALLOCINE_DIRECTOR=$(cat temp_allocine_url | grep -A1 "light\">De</span>" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1)
+            IMDB_DIRECTOR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=feature,tv_movie,tv_special,documentary,short | grep -m1 -A2 "Director" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1)
+
+            echo "Allocine director: $ALLOCINE_DIRECTOR - IMDb director: $IMDB_DIRECTOR"
+            if [[ $ALLOCINE_DIRECTOR == $IMDB_DIRECTOR ]]; then
+              IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=feature,tv_movie,tv_special,documentary,short | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
+            else
+              echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=feature,tv_movie,tv_special,documentary,short"
+
+              IMDB_ID="noImdbId"
+            fi
           else
+            echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=feature,tv_movie,tv_special,documentary,short"
+
             IMDB_ID="noImdbId"
           fi
         else
@@ -162,24 +191,29 @@ do
           WIKI_DATA=1
         fi
 
-        if [[ $IMDB_ID == "noImdbId" ]]; then
-            data_not_found
-        fi
+        if [[ $IMDB_ID == "noImdbId" ]] || [[ -z $IMDB_ID ]]; then
+          echo "IMDb ID not found: $IMDB_ID"
 
-        if [[ -z $IMDB_ID ]]; then
-            data_not_found
-        fi
-
-        if [[ $IMDB_ID != "noImdbId" ]] && [[ $IMDB_ID ]]; then
+          data_not_found
+        else
           echo "imdbId URL: https://www.imdb.com/title/$IMDB_ID/"
 
-          BETASERIES_ID=$(curl -s https://api.betaseries.com/movies/movie\?key\=7f7fef35706f\&imdb_id\=$IMDB_ID | jq '.movie.resource_url' | cut -d'/' -f5 | sed 's/"//g')
-          echo "Downloading from: https://api.betaseries.com/movies/movie\?key\=7f7fef35706f\&imdb_id\=$IMDB_ID"
-          
-          data_found
+          BETASERIES_ID=$(curl -s https://api.betaseries.com/movies/movie\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq '.movie.resource_url' | cut -d'/' -f5 | sed 's/"//g')
+          echo "Downloading from: https://api.betaseries.com/movies/movie?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
+
+          THEMOVIEDB_ID=$(curl -s https://api.themoviedb.org/3/find/$IMDB_ID\?api_key=$THEMOVIEDB_API_KEY\&external_source=imdb_id | jq '.movie_results[] .id')
+          echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
+
+          if [[ -z $THEMOVIEDB_ID ]]; then
+            data_not_found
+          elif [[ $BETASERIES_ID == "null" ]]; then
+            betaseries_to_null
+          else
+            data_found
+          fi
         fi
 
-        echo "$URL,$IMDB_ID,$BETASERIES_ID,$IS_ACTIVE" >> $FILMS_IDS_FILE_PATH
+        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$IS_ACTIVE" >> $FILMS_IDS_FILE_PATH
 
         echo "----------------------------------------------------------------------------------------------------"
       fi
