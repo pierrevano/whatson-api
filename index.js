@@ -32,9 +32,9 @@ app.get("/", async (req, res) => {
       try {
         // is_active query info
         let is_active = is_active_query === "true";
-        let is_active_match = { "results.is_active": is_active };
+        let is_active_match = { "is_active": is_active };
         if (is_active_query !== "true" && is_active_query !== "false") {
-          is_active_match = { $or: [{ "results.is_active": true }, { "results.is_active": false }] };
+          is_active_match = { $or: [{ "is_active": true }, { "is_active": false }] };
         }
 
         // ratings_filters query info
@@ -42,26 +42,26 @@ app.get("/", async (req, res) => {
         let ratings_filters = [];
         if (ratings_filters_array.includes("all")) {
           ratings_filters = [
-            { $divide: ["$results.allocine.critics_rating", 1] },
-            { $divide: ["$results.allocine.users_rating", 1] },
-            { $divide: ["$results.betaseries.users_rating", 1] },
-            { $divide: ["$results.imdb.users_rating", 2] },
+            { $divide: ["$allocine.critics_rating", 1] },
+            { $divide: ["$allocine.users_rating", 1] },
+            { $divide: ["$betaseries.users_rating", 1] },
+            { $divide: ["$imdb.users_rating", 2] },
           ];
         } else {
           if (ratings_filters_array.includes("allocine_critics")) {
-            ratings_filters.push({ $divide: ["$results.allocine.critics_rating", 1] });
+            ratings_filters.push({ $divide: ["$allocine.critics_rating", 1] });
           }
 
           if (ratings_filters_array.includes("allocine_users")) {
-            ratings_filters.push({ $divide: ["$results.allocine.users_rating", 1] });
+            ratings_filters.push({ $divide: ["$allocine.users_rating", 1] });
           }
 
           if (ratings_filters_array.includes("betaseries_users")) {
-            ratings_filters.push({ $divide: ["$results.betaseries.users_rating", 1] });
+            ratings_filters.push({ $divide: ["$betaseries.users_rating", 1] });
           }
 
           if (ratings_filters_array.includes("imdb_users")) {
-            ratings_filters.push({ $divide: ["$results.imdb.users_rating", 2] });
+            ratings_filters.push({ $divide: ["$imdb.users_rating", 2] });
           }
         }
 
@@ -71,12 +71,12 @@ app.get("/", async (req, res) => {
           },
           {
             $addFields: {
-              "results.avg_rating": { $avg: ratings_filters },
+              "avg_rating": { $avg: ratings_filters },
             },
           },
           {
             $sort: {
-              "results.avg_rating": -1,
+              "avg_rating": -1,
             },
           },
         ];
@@ -94,9 +94,9 @@ app.get("/", async (req, res) => {
       try {
         // is_active query info
         let is_active = is_active_query === "true";
-        let is_active_querydb = { "results.is_active": is_active };
+        let is_active_querydb = { "is_active": is_active };
         if (is_active_query !== "true" && is_active_query !== "false") {
-          is_active_querydb = { $or: [{ "results.is_active": true }, { "results.is_active": false }] };
+          is_active_querydb = { $or: [{ "is_active": true }, { "is_active": false }] };
         }
 
         const data = await collectionData.find(is_active_querydb).toArray();

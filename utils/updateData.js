@@ -82,7 +82,7 @@ function upsertToDatabase(data) {
       await client.connect();
 
       const collectionData = await database.collection(collectionName);
-      const filter = { "results.allocine.id": data.results.allocine.id };
+      const filter = { "id": data.id };
       const options = { upsert: true };
       const updateDoc = { $set: data };
       await collectionData.updateOne(filter, updateDoc, options);
@@ -290,8 +290,8 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     users_rating: imdbUsersRating,
   };
 
-  upsertToDatabase({
-    results: {
+  upsertToDatabase(
+    {
       id: theMoviedbId,
       is_active: isActive,
       title: allocineTitle,
@@ -307,7 +307,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       betaseries: betaseriesObj,
       imdb: imdbObj,
     },
-  });
+  );
 };
 
 (async () => {
