@@ -4,6 +4,7 @@ dotenv.config();
 
 const express = require("express");
 const app = express();
+const fetch = require("node-fetch");
 const PORT = process.env.PORT || 8081;
 
 /* This is importing the MongoClient and ServerApiVersion from the mongodb module. */
@@ -26,16 +27,13 @@ const collectionData = database.collection(collectionName);
 
 app.get("/", async (req, res) => {
   try {
+    const cinema_id = req.query.cinema_id;
     const is_active_query = req.query.is_active;
     const ratings_filters_query = req.query.ratings_filters;
-    if (is_active_query && ratings_filters_query) {
+    if (cinema_id && ratings_filters_query) {
       try {
-        // is_active query info
-        let is_active = is_active_query === "true";
-        let is_active_match = { "is_active": is_active };
-        if (is_active_query !== "true" && is_active_query !== "false") {
-          is_active_match = { $or: [{ "is_active": true }, { "is_active": false }] };
-        }
+        // cinema_id query info
+        const movies_ids = await getMoviesIds(cinema_id);
 
         // ratings_filters query info
         const ratings_filters_array = ratings_filters_query.split(",");
@@ -67,16 +65,20 @@ app.get("/", async (req, res) => {
 
         const pipeline = [
           {
-            $match: is_active_match,
+            $match: {
+              "allocine.id": {
+                $in: movies_ids,
+              },
+            },
           },
           {
             $addFields: {
-              "avg_rating": { $avg: ratings_filters },
+              avg_rating: { $avg: ratings_filters },
             },
           },
           {
             $sort: {
-              "avg_rating": -1,
+              avg_rating: -1,
             },
           },
         ];
@@ -94,9 +96,9 @@ app.get("/", async (req, res) => {
       try {
         // is_active query info
         let is_active = is_active_query === "true";
-        let is_active_querydb = { "is_active": is_active };
+        let is_active_querydb = { is_active: is_active };
         if (is_active_query !== "true" && is_active_query !== "false") {
-          is_active_querydb = { $or: [{ "is_active": true }, { "is_active": false }] };
+          is_active_querydb = { $or: [{ is_active: true }, { is_active: false }] };
         }
 
         const data = await collectionData.find(is_active_querydb).toArray();
@@ -123,6 +125,38 @@ app.get("/", async (req, res) => {
   }
 });
 
+/**
+ * It fetches the movie IDs from the Allocine website, and returns them in an array
+ * @param cinemaIdParam - the cinema ID you want to get the movies from
+ * @returns An array of movie ids
+ */
+const getMoviesIds = async (cinemaIdParam) => {
+  const cors_url = "https://cors-sites-aafe82ad9d0c.fly.dev/";
+  const base_url = `${cors_url}https://www.allocine.fr/_/showtimes/theater-`;
+
+  const allMoviesIds = [];
+  let resultsLength = 0;
+  let pageNumber = 1;
+  do {
+    const complete_url = `${base_url}${cinemaIdParam}/d-0/p-${pageNumber}/`;
+    const response = await fetch(complete_url);
+    const data = await response.json();
+
+    const results = data.results;
+    resultsLength = results.length;
+    if (resultsLength === 15) {
+      pageNumber++;
+    }
+
+    results.forEach((element) => {
+      allMoviesIds.push(element.movie.internalId);
+    });
+  } while (resultsLength === 15);
+
+  return allMoviesIds;
+};
+
+/* Starting the server on the port defined in the PORT variable. */
 app.listen(PORT, () => {
   console.log(`server started on http://localhost:${PORT}`);
 });
