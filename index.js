@@ -27,13 +27,13 @@ const collectionData = database.collection(collectionName);
 
 app.get("/", async (req, res) => {
   try {
-    const cinema_id = req.query.cinema_id;
+    const cinema_id_query = req.query.cinema_id;
     const is_active_query = req.query.is_active;
     const ratings_filters_query = req.query.ratings_filters;
-    if (cinema_id && ratings_filters_query) {
+    if (cinema_id_query && ratings_filters_query) {
       try {
         // cinema_id query info
-        const movies_ids = await getMoviesIds(cinema_id);
+        const movies_ids = await getMoviesIds(cinema_id_query);
 
         // ratings_filters query info
         const ratings_filters_array = ratings_filters_query.split(",");
@@ -73,12 +73,86 @@ app.get("/", async (req, res) => {
           },
           {
             $addFields: {
-              vote_average: { $avg: ratings_filters },
+              ratings_average: { $avg: ratings_filters },
             },
           },
           {
             $sort: {
-              vote_average: -1,
+              ratings_average: -1,
+            },
+          },
+        ];
+        const data = await collectionData.aggregate(pipeline);
+        const items = [];
+        for await (const item of data) {
+          items.push(item);
+        }
+
+        res.status(200).json(items);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    } else if (cinema_id_query) {
+      try {
+        // cinema_id query info
+        const movies_ids = await getMoviesIds(cinema_id_query);
+
+        // ratings_filters query info
+        const ratings_filters = [
+          { $divide: ["$allocine.critics_rating", 1] },
+          { $divide: ["$allocine.users_rating", 1] },
+          { $divide: ["$betaseries.users_rating", 1] },
+          { $divide: ["$imdb.users_rating", 2] },
+        ];
+
+        const pipeline = [
+          {
+            $match: {
+              "allocine.id": {
+                $in: movies_ids,
+              },
+            },
+          },
+          {
+            $addFields: {
+              ratings_average: { $avg: ratings_filters },
+            },
+          },
+          {
+            $sort: {
+              ratings_average: -1,
+            },
+          },
+        ];
+        const data = await collectionData.aggregate(pipeline);
+        const items = [];
+        for await (const item of data) {
+          items.push(item);
+        }
+
+        res.status(200).json(items);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    } else if (ratings_filters_query) {
+      try {
+        // ratings_filters query info
+        const ratings_filters = [
+          { $divide: ["$allocine.critics_rating", 1] },
+          { $divide: ["$allocine.users_rating", 1] },
+          { $divide: ["$betaseries.users_rating", 1] },
+          { $divide: ["$imdb.users_rating", 2] },
+        ];
+
+        const pipeline = [
+          {
+            $addFields: {
+              ratings_average: { $avg: ratings_filters },
+            },
+          },
+          {
+            $sort: {
+              ratings_average: -1,
             },
           },
         ];
