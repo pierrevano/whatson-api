@@ -98,9 +98,9 @@ function upsertToDatabase(data) {
 
 /**
  * It takes a movie's allocine homepage as an argument, and returns an object containing the movie's
- * title, picture, and users rating
+ * title, image, and users rating
  * @param allocineHomepage - the URL of the movie's page on Allocine.fr
- * @returns An object with the title, picture and user rating of the movie.
+ * @returns An object with the title, image and user rating of the movie.
  */
 const getAllocineFirstInfo = async (allocineHomepage) => {
   try {
@@ -115,7 +115,7 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
 
     const title = $('meta[property="og:title"]').attr("content");
 
-    const picture = $('meta[property="og:image"]').attr("content");
+    const image = $('meta[property="og:image"]').attr("content");
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
@@ -123,7 +123,7 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
 
     let allocineFirstInfo = {
       allocineTitle: title,
-      allocinePicture: picture,
+      allocineImage: image,
       allocineUsersRating: allocineUsersRating,
     };
 
@@ -268,7 +268,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
 
   const allocineTitle = allocineFirstInfo.allocineTitle;
-  const allocinePicture = allocineFirstInfo.allocinePicture;
+  const allocineImage = allocineFirstInfo.allocineImage;
   const criticsRating = allocineCriticInfo.criticsRating;
   const criticsNumber = allocineCriticInfo.criticsNumber;
   const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
@@ -294,7 +294,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     id: theMoviedbId,
     is_active: isActive,
     title: allocineTitle,
-    picture: allocinePicture,
+    image: allocineImage,
     allocine: {
       id: allocineId,
       url: allocineHomepage,

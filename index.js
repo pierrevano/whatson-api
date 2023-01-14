@@ -73,12 +73,12 @@ app.get("/", async (req, res) => {
           },
           {
             $addFields: {
-              avg_rating: { $avg: ratings_filters },
+              vote_average: { $avg: ratings_filters },
             },
           },
           {
             $sort: {
-              avg_rating: -1,
+              vote_average: -1,
             },
           },
         ];
