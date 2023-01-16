@@ -250,12 +250,8 @@ app.get("/movie/:id", async (req, res) => {
           },
         ];
         const data = await collectionData.aggregate(pipeline);
-        const items = [];
-        for await (const item of data) {
-          items.push(item);
-        }
 
-        res.status(200).json(items);
+        res.status(200).json(data);
       } catch (error) {
         res.status(400).send(error);
       }
