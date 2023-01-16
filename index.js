@@ -202,13 +202,75 @@ app.get("/", async (req, res) => {
 /* A route that is used to get a specific movie by its ID. */
 app.get("/movie/:id", async (req, res) => {
   try {
-    await client.connect();
-
+    const ratings_filters_query = req.query.ratings_filters;
     const id = parseInt(req.params.id);
-    const query = { id: id };
-    const data = await collectionData.findOne(query);
+    if (ratings_filters_query) {
+      try {
+        // ratings_filters query info
+        const ratings_filters_array = ratings_filters_query.split(",");
+        let ratings_filters = [];
+        if (ratings_filters_array.includes("all")) {
+          ratings_filters = [
+            { $divide: ["$allocine.critics_rating", 1] },
+            { $divide: ["$allocine.users_rating", 1] },
+            { $divide: ["$betaseries.users_rating", 1] },
+            { $divide: ["$imdb.users_rating", 2] },
+          ];
+        } else {
+          if (ratings_filters_array.includes("allocine_critics")) {
+            ratings_filters.push({ $divide: ["$allocine.critics_rating", 1] });
+          }
 
-    res.status(200).json(data);
+          if (ratings_filters_array.includes("allocine_users")) {
+            ratings_filters.push({ $divide: ["$allocine.users_rating", 1] });
+          }
+
+          if (ratings_filters_array.includes("betaseries_users")) {
+            ratings_filters.push({ $divide: ["$betaseries.users_rating", 1] });
+          }
+
+          if (ratings_filters_array.includes("imdb_users")) {
+            ratings_filters.push({ $divide: ["$imdb.users_rating", 2] });
+          }
+        }
+
+        const pipeline = [
+          {
+            $match: { id: id },
+          },
+          {
+            $addFields: {
+              ratings_average: { $avg: ratings_filters },
+            },
+          },
+          {
+            $sort: {
+              ratings_average: -1,
+            },
+          },
+        ];
+        const data = await collectionData.aggregate(pipeline);
+        const items = [];
+        for await (const item of data) {
+          items.push(item);
+        }
+
+        res.status(200).json(items);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    } else {
+      try {
+        await client.connect();
+
+        const query = { id: id };
+        const data = await collectionData.findOne(query);
+
+        res.status(200).json(data);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    }
   } catch (error) {
     console.log(error);
     throw error;
