@@ -199,6 +199,22 @@ app.get("/", async (req, res) => {
   }
 });
 
+/* A route that is used to get a specific movie by its ID. */
+app.get("/movie/:id", async (req, res) => {
+  try {
+    await client.connect();
+
+    const id = parseInt(req.params.id);
+    const query = { id: id };
+    const data = await collectionData.findOne(query);
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+});
+
 /**
  * It fetches the movie IDs from the Allocine website, and returns them in an array
  * @param cinemaIdParam - the cinema ID you want to get the movies from
