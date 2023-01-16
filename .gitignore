@@ -3,4 +3,5 @@
 .prettierignore
 node_modules
 package-lock.json
+src/assets/films_ids.txt
 temp_*
