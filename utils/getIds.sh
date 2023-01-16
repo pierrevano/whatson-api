@@ -15,8 +15,15 @@ URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
 # Loading the env variables
 source .env
 
+sort_ids () {
+  cat $FILMS_IDS_FILE_PATH | sort -V > ./temp_ids.txt
+  cat ./temp_ids.txt > $FILMS_IDS_FILE_PATH
+}
+
 # A function that removes temporary files.
 remove_files () {
+  sort_ids
+
   rm -f ./temp_*
 
   if [[ $DELETE_NO_DATA == "delete" ]]; then
@@ -223,7 +230,7 @@ do
   done
 done
 
-# remove_files
+remove_files
 
 # Add ending message with duration
 DATA_DURATION=$SECONDS
