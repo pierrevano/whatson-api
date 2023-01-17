@@ -6,14 +6,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: update-npm
-          command: "sudo npm install -g npm@latest"
+          name: update npm
+          command: npm install -g npm@latest
       - run:
-          name: install-npm
+          name: install npm
           command: npm install
       - run:
-          name: run script
-          command: node node_script.js web
+          name: run updateData script
+          command: node utils/updateData.js
 
 workflows:
   version: 2
