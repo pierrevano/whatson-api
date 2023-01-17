@@ -14,8 +14,11 @@ const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWri
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 /* Making the getIds.sh file executable and then running it. */
-shell.exec("chmod +x ./utils/getIds.sh");
-shell.exec("bash ./utils/getIds.sh");
+const circleci = process.argv.slice(2);
+if (circleci[0] === "circleci") {
+  shell.exec("chmod +x ./utils/getIds.sh");
+  shell.exec("bash ./utils/getIds.sh no_delete circleci");
+}
 
 /* Deleting the lines that contain the string "noTheMovieDBId" in the file "films_ids.txt" */
 shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);

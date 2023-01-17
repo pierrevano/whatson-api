@@ -9,6 +9,7 @@ IS_NOT_ACTIVE=FALSE
 PAGES_MAX_NUMBER=15
 PAGES_MIN_NUMBER=1
 SECONDS=0
+SOURCE=$2
 TEMP_URLS_FILE_PATH=./temp_urls
 URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
 
@@ -35,8 +36,13 @@ remove_files () {
   if [[ $DELETE_NO_DATA == "delete" ]]; then
     echo "Deleting no data lines"
     echo "----------------------------------------------------------------------------------------------------"
-    sed -i '' "/noImdbId,noBetaseriesId/d" $FILMS_IDS_FILE_PATH
-    sed -i '' "/,null/d" $FILMS_IDS_FILE_PATH
+    if [[ $SOURCE == "circleci" ]]; then
+      sed -i "/noImdbId,noBetaseriesId/d" $FILMS_IDS_FILE_PATH
+      sed -i "/,null/d" $FILMS_IDS_FILE_PATH
+    else
+      sed -i '' "/noImdbId,noBetaseriesId/d" $FILMS_IDS_FILE_PATH
+      sed -i '' "/,null/d" $FILMS_IDS_FILE_PATH
+    fi
   fi
 }
 
@@ -63,11 +69,19 @@ data_found () {
 
 remove_files
 
-sed -i '' "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
-sed -i '' "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
+if [[ $SOURCE == "circleci" ]]; then
+  sed -i "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
+  sed -i "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
 
-# Don't add to the header (first line) of the CSV file
-sed -i '' "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
+  # Don't add to the header (first line) of the CSV file
+  sed -i "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
+else
+  sed -i '' "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
+  sed -i '' "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
+
+  # Don't add to the header (first line) of the CSV file
+  sed -i '' "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
+fi
 
 # Download top films AlloCiné page
 curl -s $BASE_URL > temp_baseurl
@@ -120,7 +134,11 @@ do
     # Check if missing shows
     ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
     if [[ $URL == $ALLOCINE_URL ]]; then
-      sed -i '' "/.*$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
+      if [[ $SOURCE == "circleci" ]]; then
+        sed -i "/.*$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
+      else
+        sed -i '' "/.*$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
+      fi
       
       FOUND=1
     else

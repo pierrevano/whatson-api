@@ -13,7 +13,7 @@ jobs:
           command: npm install
       - run:
           name: run updateData script
-          command: node utils/updateData.js
+          command: node utils/updateData.js circleci
 
 workflows:
   version: 2
