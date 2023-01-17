@@ -14,6 +14,12 @@ URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
 
 # Loading the env variables
 source .env
+echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
+echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
+echo "----------------------------------------------------------------------------------------------------"
+if [[ -z $BETASERIES_API_KEY ]]; then
+  exit
+fi
 
 sort_ids () {
   cat $FILMS_IDS_FILE_PATH | sort -V > ./temp_ids.txt
@@ -40,15 +46,18 @@ data_not_found () {
   BETASERIES_ID="noBetaseriesId"
   THEMOVIEDB_ID="noTheMovieDBId"
 
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$IS_ACTIVE"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 betaseries_to_null () {
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$IS_ACTIVE"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 # A function that is called when the data is found.
 data_found () {
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$IS_ACTIVE"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
@@ -235,3 +244,4 @@ remove_files
 # Add ending message with duration
 DATA_DURATION=$SECONDS
 echo "Complete in $(($DATA_DURATION / 60)) minutes and $(($DATA_DURATION % 60)) seconds ✅"
+echo "----------------------------------------------------------------------------------------------------"

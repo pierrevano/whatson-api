@@ -13,6 +13,10 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+/* Making the getIds.sh file executable and then running it. */
+shell.exec("chmod +x ./utils/getIds.sh");
+shell.exec("bash ./utils/getIds.sh");
+
 /* Deleting the lines that contain the string "noTheMovieDBId" in the file "films_ids.txt" */
 shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
 
