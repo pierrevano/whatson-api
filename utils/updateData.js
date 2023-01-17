@@ -108,6 +108,61 @@ function upsertToDatabase(data) {
   run();
 }
 
+async function countNullElements() {
+  const dbName = config.dbName;
+  const collectionName = config.collectionName;
+  const database = client.db(dbName);
+
+  async function run() {
+    try {
+      await client.connect();
+
+      const collectionData = await database.collection(collectionName);
+
+      /* Counting the number of documents in the collection. */
+      const documents = await collectionData.estimatedDocumentCount();
+      console.log(`Number of documents in the collection: ${documents}`);
+
+      /* The above code is counting the number of null values for the allocine.users_rating field. */
+      const query_allocine = { "allocine.users_rating": null };
+      const countAllocineNull = await collectionData.countDocuments(query_allocine);
+      console.log(`Number of null for allocine.users_rating: ${countAllocineNull}`);
+
+      if (countAllocineNull > documents / 3) {
+        console.log("Something went wrong, at least 1/3 of Allociné ratings are set to null");
+        process.exit(1);
+      }
+
+      /* The above code is counting the number of null values for the betaseries.users_rating field. */
+      const query_betaseries = { "betaseries.users_rating": null };
+      const countBetaseriesNull = await collectionData.countDocuments(query_betaseries);
+      console.log(`Number of null for betaseries.users_rating: ${countBetaseriesNull}`);
+
+      if (countBetaseriesNull > documents / 3) {
+        console.log("Something went wrong, at least 1/3 of Betaseries ratings are set to null");
+        process.exit(1);
+      }
+
+      /* The above code is counting the number of documents in the collection that have a null value
+      for the imdb.users_rating field. */
+      const query_imdb = { "imdb.users_rating": null };
+      const countIMDbNull = await collectionData.countDocuments(query_imdb);
+      console.log(`Number of null for imdb.users_rating: ${countIMDbNull}`);
+
+      if (countIMDbNull > documents / 3) {
+        console.log("Something went wrong, at least 1/3 of IMDb ratings are set to null");
+        process.exit(1);
+      }
+
+      await client.close();
+    } catch (error) {
+      console.log(`upsertToDatabase: ${error}`);
+    }
+  }
+
+  run();
+}
+
 /**
  * It takes a movie's allocine homepage as an argument, and returns an object containing the movie's
  * title, image, and users rating
@@ -363,6 +418,11 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
       const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
 
+      if (isNaN(theMoviedbId)) {
+        console.log("Something went wrong, The Movie Database id has not been found!");
+        process.exit(1);
+      }
+
       await createJSON(allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId);
 
       lineNumber++;
@@ -370,6 +430,8 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       console.log(`Global: ${error}`);
     }
   }
+
+  await countNullElements();
 
   console.timeEnd("Duration", `- ${jsonArray.length} elements imported.`);
 })();
