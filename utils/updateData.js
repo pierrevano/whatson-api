@@ -18,10 +18,15 @@ const circleci = process.argv.slice(2);
 if (circleci[0] === "circleci") {
   shell.exec("chmod +x ./utils/getIds.sh");
   shell.exec("bash ./utils/getIds.sh no_delete circleci");
-}
 
-/* Deleting the lines that contain the string "noTheMovieDBId" in the file "films_ids.txt" */
-shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+  /* Deleting the lines that contain the string "noTheMovieDBId" in the file "films_ids.txt" */
+  shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+} else {
+  shell.exec("chmod +x ./utils/getIds.sh");
+  shell.exec("bash ./utils/getIds.sh delete");
+
+  shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+}
 
 /* A constant that contains the URLs of the different websites that are used in the script. */
 const config = {

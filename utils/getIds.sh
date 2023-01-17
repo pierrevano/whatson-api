@@ -14,7 +14,9 @@ TEMP_URLS_FILE_PATH=./temp_urls
 URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
 
 # Loading the env variables
-source .env
+if [[ $SOURCE != "circleci" ]]; then
+  source .env
+fi
 echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
 echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
 echo "----------------------------------------------------------------------------------------------------"
