@@ -13,7 +13,9 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-/* Making the getIds.sh file executable and then running it. */
+/* The above code is checking if the script is being run on CircleCI or locally. If it is being run on
+CircleCI, it will run the script "getIds.sh" with the argument "no_delete circleci". If it is being
+run locally, it will run the script "getIds.sh" with the argument "delete". */
 const circleci = process.argv.slice(2);
 if (circleci[0] === "circleci") {
   shell.exec("chmod +x ./utils/getIds.sh");
@@ -28,7 +30,7 @@ if (circleci[0] === "circleci") {
   shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
 }
 
-/* A constant that contains the URLs of the different websites that are used in the script. */
+/* A configuration file for the project. */
 const config = {
   baseURLAllocine: "https://www.allocine.fr",
   baseURLBetaseriesFilm: "https://www.betaseries.com/film/",
@@ -75,92 +77,70 @@ function convertTitleToNumber(title) {
 }
 
 /**
- * It connects to the database, then it updates the document with the given data
- * @param data - the data to be inserted into the database
+ * It takes in a data object and a collectionData object, and then it updates the database with the
+ * data object
+ * @param data - The data to be inserted into the database.
+ * @param collectionData - The collection object that we created earlier.
  */
-function upsertToDatabase(data) {
-  /**
-   * It connects to the database, then it updates the document with the same allocine.id as the one in
-   * the data object, or it creates a new document if it doesn't exist
-   */
-  console.log(data);
+async function upsertToDatabase(data, collectionData) {
+  try {
+    console.log(data);
 
-  const dbName = config.dbName;
-  const collectionName = config.collectionName;
-  const database = client.db(dbName);
+    const filter = { id: data.id };
+    const options = { upsert: true };
+    const updateDoc = { $set: data };
 
-  async function run() {
-    try {
-      await client.connect();
-
-      const collectionData = await database.collection(collectionName);
-      const filter = { id: data.id };
-      const options = { upsert: true };
-      const updateDoc = { $set: data };
-      await collectionData.updateOne(filter, updateDoc, options);
-
-      await client.close();
-    } catch (error) {
-      console.log(`upsertToDatabase: ${error}`);
-    }
+    await collectionData.updateOne(filter, updateDoc, options);
+  } catch (error) {
+    console.log(`upsertToDatabase: ${error}`);
   }
-
-  run();
 }
 
-async function countNullElements() {
-  const dbName = config.dbName;
-  const collectionName = config.collectionName;
-  const database = client.db(dbName);
+/**
+ * It counts the number of documents in the collection, and then counts the number of null values for
+ * each of the three rating fields. If the number of null values is greater than 1/3 of the number of
+ * documents in the collection, the function exits with an error code
+ * @param collectionData - The collection to be queried.
+ */
+async function countNullElements(collectionData) {
+  try {
+    /* Counting the number of documents in the collection. */
+    const documents = await collectionData.estimatedDocumentCount();
+    console.log(`Number of documents in the collection: ${documents}`);
 
-  async function run() {
-    try {
-      await client.connect();
+    /* The above code is counting the number of null values for the allocine.users_rating field. */
+    const query_allocine = { "allocine.users_rating": null };
+    const countAllocineNull = await collectionData.countDocuments(query_allocine);
+    console.log(`Number of null for allocine.users_rating: ${countAllocineNull}`);
 
-      const collectionData = await database.collection(collectionName);
-
-      /* Counting the number of documents in the collection. */
-      const documents = await collectionData.estimatedDocumentCount();
-      console.log(`Number of documents in the collection: ${documents}`);
-
-      /* The above code is counting the number of null values for the allocine.users_rating field. */
-      const query_allocine = { "allocine.users_rating": null };
-      const countAllocineNull = await collectionData.countDocuments(query_allocine);
-      console.log(`Number of null for allocine.users_rating: ${countAllocineNull}`);
-
-      if (countAllocineNull > documents / 3) {
-        console.log("Something went wrong, at least 1/3 of Allociné ratings are set to null");
-        process.exit(1);
-      }
-
-      /* The above code is counting the number of null values for the betaseries.users_rating field. */
-      const query_betaseries = { "betaseries.users_rating": null };
-      const countBetaseriesNull = await collectionData.countDocuments(query_betaseries);
-      console.log(`Number of null for betaseries.users_rating: ${countBetaseriesNull}`);
-
-      if (countBetaseriesNull > documents / 3) {
-        console.log("Something went wrong, at least 1/3 of Betaseries ratings are set to null");
-        process.exit(1);
-      }
-
-      /* The above code is counting the number of documents in the collection that have a null value
-      for the imdb.users_rating field. */
-      const query_imdb = { "imdb.users_rating": null };
-      const countIMDbNull = await collectionData.countDocuments(query_imdb);
-      console.log(`Number of null for imdb.users_rating: ${countIMDbNull}`);
-
-      if (countIMDbNull > documents / 3) {
-        console.log("Something went wrong, at least 1/3 of IMDb ratings are set to null");
-        process.exit(1);
-      }
-
-      await client.close();
-    } catch (error) {
-      console.log(`upsertToDatabase: ${error}`);
+    if (countAllocineNull > documents / 3) {
+      console.log("Something went wrong, at least 1/3 of Allociné ratings are set to null");
+      process.exit(1);
     }
-  }
 
-  run();
+    /* The above code is counting the number of null values for the betaseries.users_rating field. */
+    const query_betaseries = { "betaseries.users_rating": null };
+    const countBetaseriesNull = await collectionData.countDocuments(query_betaseries);
+    console.log(`Number of null for betaseries.users_rating: ${countBetaseriesNull}`);
+
+    if (countBetaseriesNull > documents / 3) {
+      console.log("Something went wrong, at least 1/3 of Betaseries ratings are set to null");
+      process.exit(1);
+    }
+
+    /* The above code is counting the number of documents in the collection that have a null value
+      for the imdb.users_rating field. */
+    const query_imdb = { "imdb.users_rating": null };
+    const countIMDbNull = await collectionData.countDocuments(query_imdb);
+    console.log(`Number of null for imdb.users_rating: ${countIMDbNull}`);
+
+    if (countIMDbNull > documents / 3) {
+      console.log("Something went wrong, at least 1/3 of IMDb ratings are set to null");
+      process.exit(1);
+    }
+  } catch (error) {
+    console.log(`countNullElements: ${error}`);
+  }
 }
 
 /**
@@ -318,17 +298,30 @@ const getImdbUsersRating = async (imdbHomepage) => {
 };
 
 /**
- * It takes in a bunch of parameters, makes a bunch of API calls, and then creates a JSON object that
- * it sends to the database
+ * It takes in a bunch of parameters, and returns a JSON object
+ * @param allocineCriticsDetails - the URL of the page where the critics' rating details are
+ * @param allocineHomepage - the URL of the movie on Allocine
  * @param allocineId - the id of the movie on allocine.fr
- * @param allocineHomepage - the allocine homepage of the movie
- * @param allocineCriticsDetails - the URL of the page where the critics' reviews are listed
- * @param betaseriesId - the id of the movie on betaseries.com
  * @param betaseriesHomepage - the betaseries homepage of the movie
- * @param imdbId - the id of the movie on IMDB
+ * @param betaseriesId - the id of the movie on betaseries.com
  * @param imdbHomepage - the IMDB homepage of the movie
+ * @param imdbId - the IMDB ID of the movie
+ * @param isActive - true or false
+ * @param theMoviedbId - the id of the movie in the database
+ * @returns An object with the following properties:
+ * - id: theMoviedbId
+ * - is_active: isActive
+ * - title: allocineTitle
+ * - image: allocineImage
+ * - allocine: {
+ *   id: allocineId,
+ *   url: allocineHomepage,
+ *   critics_rating: criticsRating,
+ *   critics_number: criticsNumber,
  */
 const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId) => {
+  let data = {};
+
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
@@ -357,7 +350,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     users_rating: imdbUsersRating,
   };
 
-  upsertToDatabase({
+  data = {
     id: theMoviedbId,
     is_active: isActive,
     title: allocineTitle,
@@ -372,18 +365,26 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     },
     betaseries: betaseriesObj,
     imdb: imdbObj,
-  });
+  };
+
+  return data;
 };
 
+/* Importing data from a CSV file into a MongoDB database. */
 (async () => {
+  const dbName = config.dbName;
+  const collectionName = config.collectionName;
+  const database = client.db(dbName);
+  const collectionData = database.collection(collectionName);
+
   const filmsIdsFilePath = config.filmsIdsFilePath;
   const jsonArray = await csv().fromFile(filmsIdsFilePath);
 
   console.time("Duration");
 
-  let lineNumber = 1;
-  for await (const json of jsonArray) {
-    try {
+  try {
+    let lineNumber = 1;
+    for await (const json of jsonArray) {
       console.timeLog("Duration", `- ${lineNumber} / ${jsonArray.length} (${((lineNumber * 100) / jsonArray.length).toFixed(1)}%)`);
 
       // AlloCiné info
@@ -423,15 +424,18 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
         process.exit(1);
       }
 
-      await createJSON(allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId);
+      const data = await createJSON(allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId);
+      await upsertToDatabase(data, collectionData);
 
       lineNumber++;
-    } catch (error) {
-      console.log(`Global: ${error}`);
     }
-  }
+  } catch (error) {
+    console.log(`Global: ${error}`);
+  } finally {
+    await countNullElements(collectionData);
 
-  await countNullElements();
+    await client.close();
+  }
 
   console.timeEnd("Duration", `- ${jsonArray.length} elements imported.`);
 })();
