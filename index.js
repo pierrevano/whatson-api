@@ -32,56 +32,11 @@ app.get("/", async (req, res) => {
     const ratings_filters_query = req.query.ratings_filters;
     if (cinema_id_query && ratings_filters_query) {
       try {
-        // cinema_id query info
         const movies_ids = await getMoviesIds(cinema_id_query);
 
-        // ratings_filters query info
-        const ratings_filters_array = ratings_filters_query.split(",");
-        let ratings_filters = [];
-        if (ratings_filters_array.includes("all")) {
-          ratings_filters = [
-            { $divide: ["$allocine.critics_rating", 1] },
-            { $divide: ["$allocine.users_rating", 1] },
-            { $divide: ["$betaseries.users_rating", 1] },
-            { $divide: ["$imdb.users_rating", 2] },
-          ];
-        } else {
-          if (ratings_filters_array.includes("allocine_critics")) {
-            ratings_filters.push({ $divide: ["$allocine.critics_rating", 1] });
-          }
+        const ratings_filters = await getRatingsFilters(ratings_filters_query);
 
-          if (ratings_filters_array.includes("allocine_users")) {
-            ratings_filters.push({ $divide: ["$allocine.users_rating", 1] });
-          }
-
-          if (ratings_filters_array.includes("betaseries_users")) {
-            ratings_filters.push({ $divide: ["$betaseries.users_rating", 1] });
-          }
-
-          if (ratings_filters_array.includes("imdb_users")) {
-            ratings_filters.push({ $divide: ["$imdb.users_rating", 2] });
-          }
-        }
-
-        const pipeline = [
-          {
-            $match: {
-              "allocine.id": {
-                $in: movies_ids,
-              },
-            },
-          },
-          {
-            $addFields: {
-              ratings_average: { $avg: ratings_filters },
-            },
-          },
-          {
-            $sort: {
-              ratings_average: -1,
-            },
-          },
-        ];
+        const pipeline = await getPipeline("", movies_ids, ratings_filters);
         const data = await collectionData.aggregate(pipeline);
         const items = [];
         for await (const item of data) {
@@ -94,36 +49,12 @@ app.get("/", async (req, res) => {
       }
     } else if (cinema_id_query) {
       try {
-        // cinema_id query info
         const movies_ids = await getMoviesIds(cinema_id_query);
 
-        // ratings_filters query info
-        const ratings_filters = [
-          { $divide: ["$allocine.critics_rating", 1] },
-          { $divide: ["$allocine.users_rating", 1] },
-          { $divide: ["$betaseries.users_rating", 1] },
-          { $divide: ["$imdb.users_rating", 2] },
-        ];
+        const ratings_filters_query = "all";
+        const ratings_filters = await getRatingsFilters(ratings_filters_query);
 
-        const pipeline = [
-          {
-            $match: {
-              "allocine.id": {
-                $in: movies_ids,
-              },
-            },
-          },
-          {
-            $addFields: {
-              ratings_average: { $avg: ratings_filters },
-            },
-          },
-          {
-            $sort: {
-              ratings_average: -1,
-            },
-          },
-        ];
+        const pipeline = await getPipeline("", movies_ids, ratings_filters);
         const data = await collectionData.aggregate(pipeline);
         const items = [];
         for await (const item of data) {
@@ -136,26 +67,9 @@ app.get("/", async (req, res) => {
       }
     } else if (ratings_filters_query) {
       try {
-        // ratings_filters query info
-        const ratings_filters = [
-          { $divide: ["$allocine.critics_rating", 1] },
-          { $divide: ["$allocine.users_rating", 1] },
-          { $divide: ["$betaseries.users_rating", 1] },
-          { $divide: ["$imdb.users_rating", 2] },
-        ];
+        const ratings_filters = await getRatingsFilters(ratings_filters_query);
 
-        const pipeline = [
-          {
-            $addFields: {
-              ratings_average: { $avg: ratings_filters },
-            },
-          },
-          {
-            $sort: {
-              ratings_average: -1,
-            },
-          },
-        ];
+        const pipeline = await getPipeline("", "", ratings_filters);
         const data = await collectionData.aggregate(pipeline);
         const items = [];
         for await (const item of data) {
@@ -206,49 +120,9 @@ app.get("/movie/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     if (ratings_filters_query) {
       try {
-        // ratings_filters query info
-        const ratings_filters_array = ratings_filters_query.split(",");
-        let ratings_filters = [];
-        if (ratings_filters_array.includes("all")) {
-          ratings_filters = [
-            { $divide: ["$allocine.critics_rating", 1] },
-            { $divide: ["$allocine.users_rating", 1] },
-            { $divide: ["$betaseries.users_rating", 1] },
-            { $divide: ["$imdb.users_rating", 2] },
-          ];
-        } else {
-          if (ratings_filters_array.includes("allocine_critics")) {
-            ratings_filters.push({ $divide: ["$allocine.critics_rating", 1] });
-          }
+        const ratings_filters = await getRatingsFilters(ratings_filters_query);
 
-          if (ratings_filters_array.includes("allocine_users")) {
-            ratings_filters.push({ $divide: ["$allocine.users_rating", 1] });
-          }
-
-          if (ratings_filters_array.includes("betaseries_users")) {
-            ratings_filters.push({ $divide: ["$betaseries.users_rating", 1] });
-          }
-
-          if (ratings_filters_array.includes("imdb_users")) {
-            ratings_filters.push({ $divide: ["$imdb.users_rating", 2] });
-          }
-        }
-
-        const pipeline = [
-          {
-            $match: { id: id },
-          },
-          {
-            $addFields: {
-              ratings_average: { $avg: ratings_filters },
-            },
-          },
-          {
-            $sort: {
-              ratings_average: -1,
-            },
-          },
-        ];
+        const pipeline = await getPipeline(id, "", ratings_filters);
         const data = await collectionData.aggregate(pipeline);
         const items = [];
         for await (const item of data) {
@@ -306,6 +180,108 @@ const getMoviesIds = async (cinemaIdParam) => {
   } while (resultsLength === 15);
 
   return allMoviesIds;
+};
+
+/**
+ * It takes a string as an argument and returns an array of objects
+ * @param ratings_filters_query - a string of comma-separated values that will be used to filter the
+ * ratings.
+ * @returns An array of objects
+ */
+const getRatingsFilters = async (ratings_filters_query) => {
+  // ratings_filters query info
+  const ratings_filters_array = ratings_filters_query.split(",");
+  let ratings_filters = [];
+  if (ratings_filters_array.includes("all")) {
+    // prettier-ignore
+    ratings_filters = [
+      { $divide: ["$allocine.critics_rating", 1] },
+      { $divide: ["$allocine.users_rating", 1] },
+      { $divide: ["$betaseries.users_rating", 1] },
+      { $divide: ["$imdb.users_rating", 2] }
+    ];
+  } else {
+    if (ratings_filters_array.includes("allocine_critics")) {
+      ratings_filters.push({ $divide: ["$allocine.critics_rating", 1] });
+    }
+
+    if (ratings_filters_array.includes("allocine_users")) {
+      ratings_filters.push({ $divide: ["$allocine.users_rating", 1] });
+    }
+
+    if (ratings_filters_array.includes("betaseries_users")) {
+      ratings_filters.push({ $divide: ["$betaseries.users_rating", 1] });
+    }
+
+    if (ratings_filters_array.includes("imdb_users")) {
+      ratings_filters.push({ $divide: ["$imdb.users_rating", 2] });
+    }
+  }
+
+  return ratings_filters;
+};
+
+/**
+ * It returns a pipeline that will be used to query the database
+ * @param id - the id of the movie we want to get the recommendations for
+ * @param movies_ids - an array of movies ids
+ * @param ratings_filters - an array of the ratings you want to filter by.
+ * @returns The pipeline is being returned.
+ */
+const getPipeline = async (id, movies_ids, ratings_filters) => {
+  let pipeline;
+  if (id !== "") {
+    pipeline = [
+      {
+        $match: { id: id },
+      },
+      {
+        $addFields: {
+          ratings_average: { $avg: ratings_filters },
+        },
+      },
+      {
+        $sort: {
+          ratings_average: -1,
+        },
+      },
+    ];
+  } else if (movies_ids === "") {
+    pipeline = [
+      {
+        $addFields: {
+          ratings_average: { $avg: ratings_filters },
+        },
+      },
+      {
+        $sort: {
+          ratings_average: -1,
+        },
+      },
+    ];
+  } else {
+    pipeline = [
+      {
+        $match: {
+          "allocine.id": {
+            $in: movies_ids,
+          },
+        },
+      },
+      {
+        $addFields: {
+          ratings_average: { $avg: ratings_filters },
+        },
+      },
+      {
+        $sort: {
+          ratings_average: -1,
+        },
+      },
+    ];
+  }
+
+  return pipeline;
 };
 
 /* Starting the server on the port defined in the PORT variable. */
