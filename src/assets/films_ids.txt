@@ -98,7 +98,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=28981.html,tt0258153,11899-s1m0ne,9296,FALSE
 /film/fichefilm_gen_cfilm=29276.html,tt0241527,376-harry-potter-and-the-philosophers-stone,671,FALSE
 /film/fichefilm_gen_cfilm=29696.html,tt0079820,3263-le-roi-et-loiseau,22504,FALSE
-/film/fichefilm_gen_cfilm=29718.html,tt0083866,329-et-the-extra-terrestrial,601,FALSE
+/film/fichefilm_gen_cfilm=29718.html,tt0083866,329-et-the-extra-terrestrial,601,TRUE
 /film/fichefilm_gen_cfilm=32000.html,tt0088814,7286-the-black-cauldron,10957,TRUE
 /film/fichefilm_gen_cfilm=32941.html,tt4925292,58939-lady-bird,391713,FALSE
 /film/fichefilm_gen_cfilm=33355.html,tt0071577,7360-the-great-gatsby,11034,FALSE
@@ -283,8 +283,8 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=291285.html,tt14335980,117448-maestros,960275,TRUE
 /film/fichefilm_gen_cfilm=291945.html,tt14877816,107961-petaouchnok,442617,FALSE
 /film/fichefilm_gen_cfilm=291948.html,tt14212090,101433-lenvol,840111,TRUE
-/film/fichefilm_gen_cfilm=291970.html,tt14275050,107960-plus-que-jamais,843093,TRUE
-/film/fichefilm_gen_cfilm=292132.html,tt20511498,108112-plancha,926516,TRUE
+/film/fichefilm_gen_cfilm=291970.html,tt14275050,107960-plus-que-jamais,843093,FALSE
+/film/fichefilm_gen_cfilm=292132.html,tt20511498,108112-plancha,926516,FALSE
 /film/fichefilm_gen_cfilm=292286.html,tt15783304,116997-cet-ete-la,958635,TRUE
 /film/fichefilm_gen_cfilm=292290.html,tt14586118,94032-une-belle-course,893372,TRUE
 /film/fichefilm_gen_cfilm=292598.html,tt11937680,90774-la-panthere-des-neiges,842356,FALSE
@@ -292,7 +292,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=292777.html,tt11548822,90766-cow,661348,TRUE
 /film/fichefilm_gen_cfilm=293086.html,tt14776918,105856-in-front-of-your-face,820517,FALSE
 /film/fichefilm_gen_cfilm=293106.html,tt14039582,90726-drive-my-car,758866,FALSE
-/film/fichefilm_gen_cfilm=293141.html,tt10406596,96905-you-are-not-my-mother,771536,TRUE
+/film/fichefilm_gen_cfilm=293141.html,tt10406596,96905-you-are-not-my-mother,771536,FALSE
 /film/fichefilm_gen_cfilm=293243.html,tt11131464,95274-the-novice,821427,TRUE
 /film/fichefilm_gen_cfilm=293540.html,tt21956512,109019-lecole-est-a-nous,944938,FALSE
 /film/fichefilm_gen_cfilm=293756.html,tt22352776,106327-ernest-et-celestine-le-voyage-en-charabie,947219,TRUE
@@ -308,7 +308,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=295062.html,tt15170560,109703-reprise-en-main,960570,FALSE
 /film/fichefilm_gen_cfilm=295635.html,tt16953666,107977-la-nuit-du-12,925102,TRUE
 /film/fichefilm_gen_cfilm=295726.html,tt15427754,114364-lenergie-positive-des-dieux,937109,FALSE
-/film/fichefilm_gen_cfilm=296082.html,tt4264554,108165-les-secrets-de-mon-pere,947549,FALSE
+/film/fichefilm_gen_cfilm=296082.html,tt4264554,108165-les-secrets-de-mon-pere,947549,TRUE
 /film/fichefilm_gen_cfilm=296128.html,tt15471560,104932-fumer-fait-tousser,872709,TRUE
 /film/fichefilm_gen_cfilm=296289.html,tt8493972,98804-lempire-du-silence,891965,FALSE
 /film/fichefilm_gen_cfilm=296393.html,tt19858178,108183-les-vieux-fourneaux-2-bons-pour-lasile,884453,TRUE
@@ -331,7 +331,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=300874.html,tt19841846,106203-riposte-feministe,965824,TRUE
 /film/fichefilm_gen_cfilm=302106.html,tt13925988,108126-metsurin-tarina,716847,TRUE
 /film/fichefilm_gen_cfilm=302475.html,tt11488024,108168-os-demonios-do-meu-avo,588555,TRUE
-/film/fichefilm_gen_cfilm=302630.html,tt18816170,116659-le-monde-dapres,1006232,FALSE
+/film/fichefilm_gen_cfilm=302630.html,tt18816170,116659-le-monde-dapres,1006232,TRUE
 /film/fichefilm_gen_cfilm=302967.html,tt23061470,111821-premieres-urgences,962266,FALSE
 /film/fichefilm_gen_cfilm=303338.html,tt15307126,106331-under-the-fig-trees,958147,TRUE
 /film/fichefilm_gen_cfilm=303339.html,tt14034614,108122-nostalgia,541724,TRUE
