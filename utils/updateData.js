@@ -42,13 +42,16 @@ const config = {
   baseURLAllocine: "https://www.allocine.fr",
   baseURLBetaseriesFilm: "https://www.betaseries.com/film/",
   baseURLBetaseriesSerie: "https://www.betaseries.com/serie/",
-  baseURLCriticDetails: "/film/fichefilm-",
+  baseURLCriticDetailsFilms: "/film/fichefilm-",
+  baseURLCriticDetailsSeries: "/series/ficheserie-",
   baseURLIMDB: "https://www.imdb.com/title/",
-  baseURLType: "/film/fichefilm_gen_cfilm=",
+  baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
+  baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
   collectionName: "data",
   dbName: "whatson",
   endURLCriticDetails: "/critiques/presse/",
   filmsIdsFilePath: "./src/assets/films_ids.txt",
+  seriesIdsFilePath: "./src/assets/series_ids.txt",
 };
 
 /**
@@ -385,8 +388,13 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const database = client.db(dbName);
   const collectionData = database.collection(collectionName);
 
-  const filmsIdsFilePath = config.filmsIdsFilePath;
-  const jsonArray = await csv().fromFile(filmsIdsFilePath);
+  let idsFilePath;
+  if (item_type === "movies") {
+    idsFilePath = config.filmsIdsFilePath;
+  } else {
+    idsFilePath = config.seriesIdsFilePath;
+  }
+  const jsonArray = await csv().fromFile(idsFilePath);
 
   console.time("Duration");
 
@@ -397,8 +405,17 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
       // AlloCiné info
       const baseURLAllocine = config.baseURLAllocine;
-      const baseURLType = config.baseURLType;
-      const baseURLCriticDetails = config.baseURLCriticDetails;
+
+      let baseURLType;
+      let baseURLCriticDetails;
+      if (item_type === "movies") {
+        baseURLType = config.baseURLTypeFilms;
+        baseURLCriticDetails = config.baseURLCriticDetailsFilms;
+      } else {
+        baseURLType = config.baseURLTypeSeries;
+        baseURLCriticDetails = config.baseURLCriticDetailsSeries;
+      }
+
       const endURLCriticDetails = config.endURLCriticDetails;
       const allocineURL = json.URL;
       const allocineId = parseInt(allocineURL.match(/=(.*)\./).pop());
@@ -414,7 +431,13 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       const baseURLBetaseriesFilm = config.baseURLBetaseriesFilm;
       const baseURLBetaseriesSerie = config.baseURLBetaseriesSerie;
       let betaseriesId = json.BETASERIES_ID;
-      let betaseriesHomepage = `${baseURLBetaseriesFilm}${betaseriesId}`;
+
+      let betaseriesHomepage;
+      if (item_type === "movies") {
+        betaseriesHomepage = `${baseURLBetaseriesFilm}${betaseriesId}`;
+      } else {
+        betaseriesHomepage = `${baseURLBetaseriesSerie}${betaseriesId}`;
+      }
 
       // If the BetaSeries movie was categorized as a serie
       if (betaseriesId.startsWith("serie/")) {
