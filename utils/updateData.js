@@ -13,21 +13,28 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-/* The above code is checking if the script is being run on CircleCI or locally. If it is being run on
-CircleCI, it will run the script "getIds.sh" with the argument "no_delete circleci". If it is being
-run locally, it will run the script "getIds.sh" with the argument "delete". */
-const circleci = process.argv.slice(2);
-if (circleci[0] === "circleci") {
-  shell.exec("chmod +x ./utils/getIds.sh");
-  shell.exec("bash ./utils/getIds.sh no_delete circleci");
+/* Getting the ids of the movies and tv shows and saving them in a file. */
+const node_vars = process.argv.slice(2);
+const env = node_vars[0];
+const item_type = node_vars[1];
 
-  /* Deleting the lines that contain the string "noTheMovieDBId" in the file "films_ids.txt" */
-  shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+shell.exec("chmod +x ./utils/getIds.sh");
+if (env === "circleci") {
+  if (item_type === "movies") {
+    shell.exec("bash ./utils/getIds.sh no_delete circleci movies");
+    shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+  } else {
+    shell.exec("bash ./utils/getIds.sh no_delete circleci tvshows");
+    shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
+  }
 } else {
-  shell.exec("chmod +x ./utils/getIds.sh");
-  shell.exec("bash ./utils/getIds.sh delete");
-
-  shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+  if (item_type === "movies") {
+    shell.exec("bash ./utils/getIds.sh delete local movies");
+    shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+  } else {
+    shell.exec("bash ./utils/getIds.sh delete local tvshows");
+    shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
+  }
 }
 
 /* A configuration file for the project. */
@@ -353,6 +360,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   data = {
     id: theMoviedbId,
     is_active: isActive,
+    item_type: item_type,
     title: allocineTitle,
     image: allocineImage,
     allocine: {

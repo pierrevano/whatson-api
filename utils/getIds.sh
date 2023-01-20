@@ -1,7 +1,5 @@
 # Defining the variables used in the script.
-BASE_URL=https://www.allocine.fr/film/aucinema/
 DELETE_NO_DATA=$1
-FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
 IS_ACTIVE=TRUE
@@ -11,7 +9,27 @@ PAGES_MIN_NUMBER=1
 SECONDS=0
 SOURCE=$2
 TEMP_URLS_FILE_PATH=./temp_urls
+TYPE=$3
 URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
+
+# Defining alternative base variables
+if [[ $TYPE == "movies" ]]; then
+  BASE_URL=https://www.allocine.fr/film/aucinema/
+  FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
+  FILMS_NUMBER_HREF=/film/fichefilm_gen_cfilm=
+  TITLE_TYPE=feature,tv_movie,tv_special,documentary,short
+  BETASERIES_TYPE=movies/movie
+  JQ_COMMAND_TYPE=".movie.resource_url"
+  JQ_COMMAND_RESULTS=".movie_results"
+else
+  BASE_URL=https://www.allocine.fr/series/top/
+  FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
+  FILMS_NUMBER_HREF=/series/ficheserie_gen_cserie=
+  TITLE_TYPE=tv_series,tv_episode,tv_special,tv_miniseries,documentary,tv_short
+  BETASERIES_TYPE=shows/display
+  JQ_COMMAND_TYPE=".show.resource_url"
+  JQ_COMMAND_RESULTS=".tv_results"
+fi
 
 # Loading the env variables
 if [[ $SOURCE != "circleci" ]]; then
@@ -85,11 +103,11 @@ else
   sed -i '' "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
 fi
 
-# Download top films AlloCiné page
+# Downloading base URL
 curl -s $BASE_URL > temp_baseurl
 
-# Get AlloCiné baseUrl films number
-FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"/film/fichefilm_gen_cfilm=" | wc -l | awk '{print $1}')
+# Get AlloCiné baseUrl number
+FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
 if [[ $FILMS_NUMBER -gt 15 ]]; then
   FILMS_NUMBER=$FILMS_MAX_NUMBER
 fi
@@ -118,7 +136,7 @@ do
   elif [[ $PAGES_INDEX_NUMBER -eq $PAGES_NUMBER ]]; then
     curl -s $BASE_URL\?page\=$PAGES_INDEX_NUMBER > temp_baseurl
 
-    FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"/film/fichefilm_gen_cfilm=" | wc -l | awk '{print $1}')
+    FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
     if [[ $FILMS_NUMBER -gt 15 ]]; then
       FILMS_NUMBER=$FILMS_MAX_NUMBER
     fi
@@ -128,10 +146,10 @@ do
   while [[ $FILMS_INDEX_NUMBER -le $FILMS_NUMBER ]]
   do
     # Get AlloCiné film url
-    URL=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"/film/fichefilm_gen_cfilm=" | tail -1 | head -1 | cut -d'"' -f4)
+    URL=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4)
 
     # Get id
-    FILM_ID=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"/film/fichefilm_gen_cfilm=" | tail -1 | head -1 | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
+    FILM_ID=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
 
     # Check if missing shows
     ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
@@ -190,31 +208,43 @@ do
         if [[ -z $WIKI_URL ]]; then
           echo "No wiki URL!"
 
-          # Get release date
-          CREATION_YEAR=$(cat temp_allocine_url | grep -A6 "date blue-link" | grep "[0-9][0-9][0-9][0-9]" | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | cut -d' ' -f3)
-
-          # Get IMDb release date
-          IMDB_YEAR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=feature,tv_movie,tv_special,documentary,short | grep -m1 "([0-9][0-9][0-9][0-9])</span>" | cut -d'<' -f2 | grep -Eo "([0-9]+)")
+          if [[ $TYPE == "movies" ]]; then
+            # Get release date
+            CREATION_YEAR=$(cat temp_allocine_url | grep -A6 "date blue-link" | grep "[0-9][0-9][0-9][0-9]" | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | cut -d' ' -f3)
+            # Get IMDb release date
+            IMDB_YEAR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 "([0-9][0-9][0-9][0-9])</span>" | cut -d'<' -f2 | grep -Eo "([0-9]+)")
+          else
+            CREATION_YEAR=$(cat temp_allocine_url | grep -A6 "meta-body-item meta-body-info" | grep -Eo "[0-9][0-9][0-9][0-9]" | head -1 | tail -1)
+            IMDB_YEAR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 "([0-9][0-9][0-9][0-9]" | cut -d'<' -f2 | grep -Eo "[0-9]+" | head -1)
+          fi
           IMDB_YEAR_P1=$((IMDB_YEAR + 1))
 
           echo "Creation year: $CREATION_YEAR - IMDb year: $IMDB_YEAR"
           echo "Creation year: $CREATION_YEAR - IMDb year +1: $IMDB_YEAR_P1"
           if [[ $CREATION_YEAR == $IMDB_YEAR ]]; then
-            IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=feature,tv_movie,tv_special,documentary,short | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
+            if [[ $TYPE == "movies" ]]; then
+              IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
+            else
+              IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -B5 "([0-9][0-9][0-9][0-9]" | grep "/title/tt" | cut -d'/' -f3)
+            fi
           elif [[ $CREATION_YEAR == $IMDB_YEAR_P1 ]]; then
             ALLOCINE_DIRECTOR=$(cat temp_allocine_url | grep -A1 "light\">De</span>" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1)
-            IMDB_DIRECTOR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=feature,tv_movie,tv_special,documentary,short | grep -m1 -A2 "Director" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1)
+            IMDB_DIRECTOR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -A2 "Director" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1)
 
             echo "Allocine director: $ALLOCINE_DIRECTOR - IMDb director: $IMDB_DIRECTOR"
             if [[ $ALLOCINE_DIRECTOR == $IMDB_DIRECTOR ]]; then
-              IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=feature,tv_movie,tv_special,documentary,short | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
+              if [[ $TYPE == "movies" ]]; then
+                IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
+              else
+                IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -B5 "([0-9][0-9][0-9][0-9]" | grep "/title/tt" | cut -d'/' -f3)
+              fi
             else
-              echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=feature,tv_movie,tv_special,documentary,short"
+              echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
 
               IMDB_ID="noImdbId"
             fi
           else
-            echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=feature,tv_movie,tv_special,documentary,short"
+            echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
 
             IMDB_ID="noImdbId"
           fi
@@ -234,10 +264,10 @@ do
         else
           echo "imdbId URL: https://www.imdb.com/title/$IMDB_ID/"
 
-          BETASERIES_ID=$(curl -s https://api.betaseries.com/movies/movie\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq '.movie.resource_url' | cut -d'/' -f5 | sed 's/"//g')
-          echo "Downloading from: https://api.betaseries.com/movies/movie?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
+          BETASERIES_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE" | cut -d'/' -f5 | sed 's/"//g')
+          echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
 
-          THEMOVIEDB_ID=$(curl -s https://api.themoviedb.org/3/find/$IMDB_ID\?api_key=$THEMOVIEDB_API_KEY\&external_source=imdb_id | jq '.movie_results[] .id')
+          THEMOVIEDB_ID=$(curl -s https://api.themoviedb.org/3/find/$IMDB_ID\?api_key=$THEMOVIEDB_API_KEY\&external_source=imdb_id | jq "$JQ_COMMAND_RESULTS" | jq '.[] .id')
           echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
 
           if [[ -z $THEMOVIEDB_ID ]]; then
