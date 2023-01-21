@@ -55,6 +55,15 @@ const config = {
 };
 
 /**
+ * It takes a string, converts it to a Buffer, and then converts that Buffer to a base64 string
+ * @param string - The string to be encoded.
+ * @returns The string is being encoded in base64.
+ */
+function b64EncodeUnicode(string) {
+  return Buffer.from(string, "utf8").toString("base64");
+}
+
+/**
  * It takes a string as an argument and returns a number
  * @param title - The title of the movie
  * @returns The number of the title.
@@ -96,7 +105,7 @@ async function upsertToDatabase(data, collectionData) {
   try {
     console.log(data);
 
-    const filter = { id: data.id };
+    const filter = { _id: b64EncodeUnicode(data.allocine.url) };
     const options = { upsert: true };
     const updateDoc = { $set: data };
 
