@@ -249,6 +249,9 @@ const getPipeline = async (id, movies_ids, ratings_filters) => {
   } else if (movies_ids === "") {
     pipeline = [
       {
+        $match: { item_type: "movies" },
+      },
+      {
         $addFields: {
           ratings_average: { $avg: ratings_filters },
         },
