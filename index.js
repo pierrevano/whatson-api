@@ -1,7 +1,9 @@
-/* This is importing the express module and creating an express app. */
+/* Used to load environment variables from a .env file into process.env. */
 const dotenv = require("dotenv");
 dotenv.config();
 
+/* Importing the express module, creating an express app, importing the fetch module, and setting the
+port to the one defined in the PORT variable. */
 const express = require("express");
 const app = express();
 const fetch = require("node-fetch");
@@ -28,106 +30,54 @@ const collectionData = database.collection(collectionName);
 app.get("/", async (req, res) => {
   try {
     const cinema_id_query = req.query.cinema_id;
-    const is_active_query = req.query.is_active;
+    const item_type = req.query.item_type;
     const ratings_filters_query = req.query.ratings_filters;
-    if (cinema_id_query && ratings_filters_query) {
+    if (cinema_id_query) {
       try {
         const movies_ids = await getMoviesIds(cinema_id_query);
-
-        const ratings_filters = await getRatingsFilters(ratings_filters_query);
-
-        const pipeline = await getPipeline("", movies_ids, ratings_filters);
-        const data = await collectionData.aggregate(pipeline);
-        const items = [];
-        for await (const item of data) {
-          items.push(item);
-        }
+        const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
+        const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
+        const items = await getItems("", "", movies_ids, ratings_filters);
 
         res.status(200).json(items);
       } catch (error) {
         res.status(400).send(error);
       }
-    } else if (cinema_id_query) {
+    } else if (item_type) {
       try {
-        const movies_ids = await getMoviesIds(cinema_id_query);
-
-        const ratings_filters_query = "all";
-        const ratings_filters = await getRatingsFilters(ratings_filters_query);
-
-        const pipeline = await getPipeline("", movies_ids, ratings_filters);
-        const data = await collectionData.aggregate(pipeline);
-        const items = [];
-        for await (const item of data) {
-          items.push(item);
-        }
+        const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
+        const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
+        const items = await getItems("", item_type, "", ratings_filters);
 
         res.status(200).json(items);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    } else if (ratings_filters_query) {
-      try {
-        const ratings_filters = await getRatingsFilters(ratings_filters_query);
-
-        const pipeline = await getPipeline("", "", ratings_filters);
-        const data = await collectionData.aggregate(pipeline);
-        const items = [];
-        for await (const item of data) {
-          items.push(item);
-        }
-
-        res.status(200).json(items);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    } else if (is_active_query) {
-      try {
-        // is_active query info
-        let is_active = is_active_query === "true";
-        let is_active_querydb = { is_active: is_active };
-        if (is_active_query !== "true" && is_active_query !== "false") {
-          is_active_querydb = { $or: [{ is_active: true }, { is_active: false }] };
-        }
-
-        const data = await collectionData.find(is_active_querydb).toArray();
-
-        res.status(200).json(data);
       } catch (error) {
         res.status(400).send(error);
       }
     } else {
       try {
-        await client.connect();
+        const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
+        const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
+        const items = await getItems("", "", "", ratings_filters);
 
-        const query = {};
-        const data = await collectionData.find(query).toArray();
-
-        res.status(200).json(data);
+        res.status(200).json(items);
       } catch (error) {
         res.status(400).send(error);
       }
     }
   } catch (error) {
-    console.log(error);
-    throw error;
+    res.status(400).send(error);
   }
 });
 
-/* A route that is used to get a specific movie by its ID. */
+/* A route that is used to get the data for a specific movie. */
 app.get("/movie/:id", async (req, res) => {
   try {
-    const ratings_filters_query = req.query.ratings_filters;
     const id = parseInt(req.params.id);
-    if (ratings_filters_query) {
+    const ratings_filters_query = req.query.ratings_filters;
+    if (id && ratings_filters_query) {
       try {
         const ratings_filters = await getRatingsFilters(ratings_filters_query);
-
-        const pipeline = await getPipeline(id, "", ratings_filters);
-        const data = await collectionData.aggregate(pipeline);
-        const items = [];
-        for await (const item of data) {
-          items.push(item);
-        }
+        const items = await getItems(id, "", "", ratings_filters);
 
         res.status(200).json(items[0]);
       } catch (error) {
@@ -135,19 +85,45 @@ app.get("/movie/:id", async (req, res) => {
       }
     } else {
       try {
-        await client.connect();
-
         const query = { id: id };
-        const data = await collectionData.findOne(query);
+        const items = await collectionData.findOne(query);
 
-        res.status(200).json(data);
+        res.status(200).json(items);
       } catch (error) {
         res.status(400).send(error);
       }
     }
   } catch (error) {
-    console.log(error);
-    throw error;
+    res.status(400).send(error);
+  }
+});
+
+/* A route that is used to get the data for a specific tv show. */
+app.get("/tv/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const ratings_filters_query = req.query.ratings_filters;
+    if (id && ratings_filters_query) {
+      try {
+        const ratings_filters = await getRatingsFilters(ratings_filters_query);
+        const items = await getItems(id, "", "", ratings_filters);
+
+        res.status(200).json(items[0]);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    } else {
+      try {
+        const query = { id: id };
+        const items = await collectionData.findOne(query);
+
+        res.status(200).json(items);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    }
+  } catch (error) {
+    res.status(400).send(error);
   }
 });
 
@@ -222,69 +198,39 @@ const getRatingsFilters = async (ratings_filters_query) => {
 };
 
 /**
- * It returns a pipeline that will be used to query the database
- * @param id - the id of the movie we want to get the recommendations for
+ * It returns an array of items from the database, filtered by the parameters passed to the function
+ * @param id - the id of the user
+ * @param item_type - "movies" or "tvshows"
  * @param movies_ids - an array of movies ids
- * @param ratings_filters - an array of the ratings you want to filter by.
- * @returns The pipeline is being returned.
+ * @param ratings_filters - an array of the ratings you want to filter on.
+ * @returns An array of items
  */
-const getPipeline = async (id, movies_ids, ratings_filters) => {
-  let pipeline;
-  if (id !== "") {
-    pipeline = [
-      {
-        $match: { id: id },
-      },
-      {
-        $addFields: {
-          ratings_average: { $avg: ratings_filters },
-        },
-      },
-      {
-        $sort: {
-          ratings_average: -1,
-        },
-      },
-    ];
-  } else if (movies_ids === "") {
-    pipeline = [
-      {
-        $match: { item_type: "movies" },
-      },
-      {
-        $addFields: {
-          ratings_average: { $avg: ratings_filters },
-        },
-      },
-      {
-        $sort: {
-          ratings_average: -1,
-        },
-      },
-    ];
+const getItems = async (id, item_type, movies_ids, ratings_filters) => {
+  const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
+  const match_id = { $match: { id: id } };
+  const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
+  const match_item_type_movies = { $match: { item_type: "movies" } };
+  const match_item_type_tvshows = { $match: { item_type: "tvshows" } };
+  const sort_ratings = { $sort: { ratings_average: -1 } };
+
+  const pipeline = [];
+  if (id) {
+    pipeline.push(match_id, addFields_ratings_filters, sort_ratings);
+  } else if (movies_ids) {
+    pipeline.push(match_in_movies_ids, addFields_ratings_filters, sort_ratings);
+  } else if (item_type === "tvshows") {
+    pipeline.push(match_item_type_tvshows, addFields_ratings_filters, sort_ratings);
   } else {
-    pipeline = [
-      {
-        $match: {
-          "allocine.id": {
-            $in: movies_ids,
-          },
-        },
-      },
-      {
-        $addFields: {
-          ratings_average: { $avg: ratings_filters },
-        },
-      },
-      {
-        $sort: {
-          ratings_average: -1,
-        },
-      },
-    ];
+    pipeline.push(match_item_type_movies, addFields_ratings_filters, sort_ratings);
   }
 
-  return pipeline;
+  const data = await collectionData.aggregate(pipeline);
+  const items = [];
+  for await (const item of data) {
+    items.push(item);
+  }
+
+  return items;
 };
 
 /* Starting the server on the port defined in the PORT variable. */
