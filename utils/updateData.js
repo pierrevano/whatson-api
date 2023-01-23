@@ -17,6 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const node_vars = process.argv.slice(2);
 const env = node_vars[0];
 const item_type = node_vars[1];
+const is_active = node_vars[2];
 
 shell.exec("chmod +x ./utils/getIds.sh");
 if (env === "circleci") {
@@ -59,7 +60,7 @@ const config = {
  * @param string - The string to be encoded.
  * @returns The string is being encoded in base64.
  */
-function b64EncodeUnicode(string) {
+function b64Encode(string) {
   return Buffer.from(string, "utf8").toString("base64");
 }
 
@@ -96,6 +97,16 @@ function convertTitleToNumber(title) {
 }
 
 /**
+ * It takes a JSON array as an argument and returns a filtered array of JSON objects where the value of
+ * the key "IS_ACTIVE" is "TRUE"
+ * @param jsonArray - The array of JSON objects that you want to filter.
+ * @returns the filtered array.
+ */
+function jsonArrayFiltered(jsonArray) {
+  return jsonArray.filter((element) => element.IS_ACTIVE === "TRUE");
+}
+
+/**
  * It takes in a data object and a collectionData object, and then it updates the database with the
  * data object
  * @param data - The data to be inserted into the database.
@@ -105,7 +116,7 @@ async function upsertToDatabase(data, collectionData) {
   try {
     console.log(data);
 
-    const filter = { _id: b64EncodeUnicode(data.allocine.url) };
+    const filter = { _id: b64Encode(data.allocine.url) };
     const options = { upsert: true };
     const updateDoc = { $set: data };
 
@@ -403,7 +414,10 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   } else {
     idsFilePath = config.seriesIdsFilePath;
   }
-  const jsonArray = await csv().fromFile(idsFilePath);
+
+  const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
+  let jsonArray = [];
+  jsonArray = is_active === "is_active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
 
   console.time("Duration");
 

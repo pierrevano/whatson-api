@@ -13,10 +13,10 @@ jobs:
           command: npm install
       - run:
           name: run updateData script for movies
-          command: node utils/updateData.js circleci movies
+          command: node utils/updateData.js circleci movies is_active
       - run:
           name: run updateData script for tvshows
-          command: node utils/updateData.js circleci tvshows
+          command: node utils/updateData.js circleci tvshows is_active
 
 workflows:
   version: 2
