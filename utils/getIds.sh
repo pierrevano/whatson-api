@@ -13,7 +13,7 @@ TYPE=$3
 URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
 
 # Defining alternative base variables
-if [[ $TYPE == "movies" ]]; then
+if [[ $TYPE == "movie" ]]; then
   BASE_URL=https://www.allocine.fr/film/aucinema/
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
   FILMS_NUMBER_HREF=/film/fichefilm_gen_cfilm=
@@ -43,7 +43,7 @@ if [[ -z $BETASERIES_API_KEY ]]; then
 fi
 
 sort_ids () {
-  cat $FILMS_IDS_FILE_PATH | sort -V > ./temp_ids.txt
+  cat $FILMS_IDS_FILE_PATH | sort -V | uniq -u > ./temp_ids.txt
   cat ./temp_ids.txt > $FILMS_IDS_FILE_PATH
 }
 
@@ -208,7 +208,7 @@ do
         if [[ -z $WIKI_URL ]]; then
           echo "No wiki URL!"
 
-          if [[ $TYPE == "movies" ]]; then
+          if [[ $TYPE == "movie" ]]; then
             # Get release date
             CREATION_YEAR=$(cat temp_allocine_url | grep -A6 "date blue-link" | grep "[0-9][0-9][0-9][0-9]" | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | cut -d' ' -f3)
             # Get IMDb release date
@@ -222,7 +222,7 @@ do
           echo "Creation year: $CREATION_YEAR - IMDb year: $IMDB_YEAR"
           echo "Creation year: $CREATION_YEAR - IMDb year +1: $IMDB_YEAR_P1"
           if [[ $CREATION_YEAR == $IMDB_YEAR ]]; then
-            if [[ $TYPE == "movies" ]]; then
+            if [[ $TYPE == "movie" ]]; then
               IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
             else
               IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -B5 "([0-9][0-9][0-9][0-9]" | grep "/title/tt" | cut -d'/' -f3)
@@ -233,7 +233,7 @@ do
 
             echo "Allocine director: $ALLOCINE_DIRECTOR - IMDb director: $IMDB_DIRECTOR"
             if [[ $ALLOCINE_DIRECTOR == $IMDB_DIRECTOR ]]; then
-              if [[ $TYPE == "movies" ]]; then
+              if [[ $TYPE == "movie" ]]; then
                 IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -B5 "([0-9][0-9][0-9][0-9])" | grep "/title/tt" | cut -d'/' -f3)
               else
                 IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m1 -B5 "([0-9][0-9][0-9][0-9]" | grep "/title/tt" | cut -d'/' -f3)

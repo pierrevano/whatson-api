@@ -200,7 +200,7 @@ const getRatingsFilters = async (ratings_filters_query) => {
 /**
  * It returns an array of items from the database, filtered by the parameters passed to the function
  * @param id - the id of the user
- * @param item_type - "movies" or "tvshows"
+ * @param item_type - "movie" or "tvshow"
  * @param movies_ids - an array of movies ids
  * @param ratings_filters - an array of the ratings you want to filter on.
  * @returns An array of items
@@ -209,8 +209,8 @@ const getItems = async (id, item_type, movies_ids, ratings_filters) => {
   const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
   const match_id = { $match: { id: id } };
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
-  const match_item_type_movies = { $match: { item_type: "movies" } };
-  const match_item_type_tvshows = { $match: { item_type: "tvshows" } };
+  const match_item_type_movie = { $match: { item_type: "movie" } };
+  const match_item_type_tvshow = { $match: { item_type: "tvshow" } };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 
   const pipeline = [];
@@ -218,10 +218,10 @@ const getItems = async (id, item_type, movies_ids, ratings_filters) => {
     pipeline.push(match_id, addFields_ratings_filters, sort_ratings);
   } else if (movies_ids) {
     pipeline.push(match_in_movies_ids, addFields_ratings_filters, sort_ratings);
-  } else if (item_type === "tvshows") {
-    pipeline.push(match_item_type_tvshows, addFields_ratings_filters, sort_ratings);
+  } else if (item_type === "tvshow") {
+    pipeline.push(match_item_type_tvshow, addFields_ratings_filters, sort_ratings);
   } else {
-    pipeline.push(match_item_type_movies, addFields_ratings_filters, sort_ratings);
+    pipeline.push(match_item_type_movie, addFields_ratings_filters, sort_ratings);
   }
 
   const data = await collectionData.aggregate(pipeline);

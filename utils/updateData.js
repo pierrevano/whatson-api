@@ -13,31 +13,6 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-/* Getting the ids of the movies and tv shows and saving them in a file. */
-const node_vars = process.argv.slice(2);
-const env = node_vars[0];
-const item_type = node_vars[1];
-const is_active = node_vars[2];
-
-shell.exec("chmod +x ./utils/getIds.sh");
-if (env === "circleci") {
-  if (item_type === "movies") {
-    shell.exec("bash ./utils/getIds.sh no_delete circleci movies");
-    shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
-  } else {
-    shell.exec("bash ./utils/getIds.sh no_delete circleci tvshows");
-    shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
-  }
-} else {
-  if (item_type === "movies") {
-    shell.exec("bash ./utils/getIds.sh delete local movies");
-    shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
-  } else {
-    shell.exec("bash ./utils/getIds.sh delete local tvshows");
-    shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
-  }
-}
-
 /* A configuration file for the project. */
 const config = {
   baseURLAllocine: "https://www.allocine.fr",
@@ -54,6 +29,19 @@ const config = {
   filmsIdsFilePath: "./src/assets/films_ids.txt",
   seriesIdsFilePath: "./src/assets/series_ids.txt",
 };
+
+/* Getting the arguments passed to the script. */
+const node_vars = process.argv.slice(2);
+const env = node_vars[0];
+const item_type = node_vars[1];
+const is_active = node_vars[2];
+const get_ids = node_vars[3];
+const get_db = node_vars[4];
+
+/* Checking if the value of the variable get_ids is equal to the string "update_ids". If it is, it
+calls the function updateIds(). */
+if (get_ids === "update_ids") updateIds();
+if (get_db !== "update_db") process.exit(1);
 
 /**
  * It takes a string, converts it to a Buffer, and then converts that Buffer to a base64 string
@@ -104,6 +92,30 @@ function convertTitleToNumber(title) {
  */
 function jsonArrayFiltered(jsonArray) {
   return jsonArray.filter((element) => element.IS_ACTIVE === "TRUE");
+}
+
+/**
+ * It updates the ids of the movies and tv shows in the database
+ */
+function updateIds() {
+  shell.exec("chmod +x ./utils/getIds.sh");
+  if (env === "circleci") {
+    if (item_type === "movie") {
+      shell.exec("bash ./utils/getIds.sh no_delete circleci movie");
+      shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+    } else {
+      shell.exec("bash ./utils/getIds.sh no_delete circleci tvshow");
+      shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
+    }
+  } else {
+    if (item_type === "movie") {
+      shell.exec("bash ./utils/getIds.sh delete local movie");
+      shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
+    } else {
+      shell.exec("bash ./utils/getIds.sh delete local tvshow");
+      shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
+    }
+  }
 }
 
 /**
@@ -228,6 +240,7 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
       headers: {
         "User-Agent": userAgent,
       },
+      validateStatus: (status) => status === 200 || status === 520,
     };
     const response = await axios.get(allocineCriticsDetails, options);
     const $ = cheerio.load(response.data);
@@ -409,7 +422,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const collectionData = database.collection(collectionName);
 
   let idsFilePath;
-  if (item_type === "movies") {
+  if (item_type === "movie") {
     idsFilePath = config.filmsIdsFilePath;
   } else {
     idsFilePath = config.seriesIdsFilePath;
@@ -417,7 +430,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   let jsonArray = [];
-  jsonArray = is_active === "is_active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
+  jsonArray = is_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
 
   console.time("Duration");
 
@@ -431,7 +444,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
       let baseURLType;
       let baseURLCriticDetails;
-      if (item_type === "movies") {
+      if (item_type === "movie") {
         baseURLType = config.baseURLTypeFilms;
         baseURLCriticDetails = config.baseURLCriticDetailsFilms;
       } else {
@@ -456,7 +469,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       let betaseriesId = json.BETASERIES_ID;
 
       let betaseriesHomepage;
-      if (item_type === "movies") {
+      if (item_type === "movie") {
         betaseriesHomepage = `${baseURLBetaseriesFilm}${betaseriesId}`;
       } else {
         betaseriesHomepage = `${baseURLBetaseriesSerie}${betaseriesId}`;
