@@ -57,10 +57,10 @@ remove_files () {
     echo "Deleting no data lines"
     echo "----------------------------------------------------------------------------------------------------"
     if [[ $SOURCE == "circleci" ]]; then
-      sed -i "/noImdbId,noBetaseriesId/d" $FILMS_IDS_FILE_PATH
+      sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
       sed -i "/,null/d" $FILMS_IDS_FILE_PATH
     else
-      sed -i '' "/noImdbId,noBetaseriesId/d" $FILMS_IDS_FILE_PATH
+      sed -i '' "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
       sed -i '' "/,null/d" $FILMS_IDS_FILE_PATH
     fi
   fi
