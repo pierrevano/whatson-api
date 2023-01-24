@@ -6,6 +6,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const csv = require("csvtojson");
 const shell = require("shelljs");
+const { writeFileSync } = require("fs");
 
 /* Connecting to the MongoDB database. */
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -208,7 +209,14 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
-    if (isNaN(allocineUsersRating)) allocineUsersRating = null;
+
+    if (isNaN(allocineUsersRating)) {
+      const allocineUsersRatingEq1 = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
+      const allocineUsersRatingEq0 = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
+      writeFileSync(`logs.txt`, `${allocineHomepage}: Eq1 - ${allocineUsersRatingEq1} / Eq0 - ${allocineUsersRatingEq0}`, null, { flag: "a+" }, 2);
+
+      allocineUsersRating = null;
+    }
 
     let allocineFirstInfo = {
       allocineTitle: title,
@@ -328,8 +336,12 @@ const getImdbUsersRating = async (imdbHomepage) => {
       const $ = cheerio.load(response.data);
 
       criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
-      if (isNaN(criticsRating)) console.log($(".rating-bar__base-button").first().text());
-      if (isNaN(criticsRating)) criticsRating = null;
+      if (isNaN(criticsRating)) {
+        const ratingBarText = $(".rating-bar__base-button").first().text();
+        writeFileSync(`logs.txt`, `${imdbHomepage}: ${ratingBarText}`, null, { flag: "a+" }, 2);
+
+        criticsRating = null;
+      }
     } else {
       criticsRating = null;
     }
@@ -487,7 +499,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
 
       if (isNaN(theMoviedbId)) {
-        console.log("Something went wrong, The Movie Database id has not been found!");
+        console.log(`Something went wrong, The Movie Database id ${theMoviedbId} has not been found!`);
         process.exit(1);
       }
 
