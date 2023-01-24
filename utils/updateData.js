@@ -2,6 +2,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+const axiosRetry = require("axios-retry");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const csv = require("csvtojson");
@@ -38,6 +39,9 @@ const item_type = node_vars[1];
 const is_active = node_vars[2];
 const get_ids = node_vars[3];
 const get_db = node_vars[4];
+
+/* Removing the file logs.txt */
+shell.exec("rm -f ./logs.txt");
 
 /* Checking if the value of the variable get_ids is equal to the string "update_ids". If it is, it
 calls the function updateIds(). */
@@ -194,16 +198,16 @@ async function countNullElements(collectionData) {
  */
 const getAllocineFirstInfo = async (allocineHomepage) => {
   try {
-    const userAgent = config.userAgent;
-    const options = {
-      headers: {
-        "User-Agent": userAgent,
-      },
-    };
-    const response = await axios.get(allocineHomepage, options);
+    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    const response = await axios.get(allocineHomepage);
     const $ = cheerio.load(response.data);
 
     const title = $('meta[property="og:title"]').attr("content");
+    if (typeof title !== "string") {
+      console.log(`title: ${title}`);
+      console.log(allocineHomepage);
+      process.exit(1);
+    }
 
     const image = $('meta[property="og:image"]').attr("content");
 
@@ -249,14 +253,8 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
  */
 const getAllocineCriticInfo = async (allocineCriticsDetails) => {
   try {
-    const userAgent = config.userAgent;
-    const options = {
-      headers: {
-        "User-Agent": userAgent,
-      },
-      validateStatus: (status) => status === 200 || status === 520,
-    };
-    const response = await axios.get(allocineCriticsDetails, options);
+    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    const response = await axios.get(allocineCriticsDetails);
     const $ = cheerio.load(response.data);
 
     let criticsRatingDetails;
@@ -302,13 +300,8 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
   try {
     let criticsRating;
     if (!betaseriesHomepage.includes("null")) {
-      const userAgent = config.userAgent;
-      const options = {
-        headers: {
-          "User-Agent": userAgent,
-        },
-      };
-      const response = await axios.get(betaseriesHomepage, options);
+      axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+      const response = await axios.get(betaseriesHomepage);
       const $ = cheerio.load(response.data);
 
       criticsRating = parseFloat($(".js-render-stars")[0].attribs.title.replace(" / 5", "").replace(",", "."));
@@ -331,24 +324,20 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
  */
 const getImdbUsersRating = async (imdbHomepage) => {
   try {
-    let criticsRating;
-    if (!imdbHomepage.includes("noImdbId")) {
-      const options = {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
-        },
-      };
-      const response = await axios.get(imdbHomepage, options);
-      const $ = cheerio.load(response.data);
+    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    const options = {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+      },
+    };
+    const response = await axios.get(imdbHomepage, options);
+    const $ = cheerio.load(response.data);
 
-      criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
-      if (isNaN(criticsRating)) {
-        const ratingBarText = $(".rating-bar__base-button").first().text();
-        writeFileSync(`logs.txt`, `${imdbHomepage}: ${ratingBarText}`, null, { flag: "a+" }, 2);
+    criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
+    if (isNaN(criticsRating)) {
+      const ratingBarText = $(".rating-bar__base-button").first().text();
+      writeFileSync(`logs.txt`, `${imdbHomepage}: ${ratingBarText}`, null, { flag: "a+" }, 2);
 
-        criticsRating = null;
-      }
-    } else {
       criticsRating = null;
     }
 
