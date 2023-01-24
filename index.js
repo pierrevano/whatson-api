@@ -27,106 +27,6 @@ const collectionName = config.collectionName;
 const database = client.db(dbName);
 const collectionData = database.collection(collectionName);
 
-app.get("/", async (req, res) => {
-  try {
-    const cinema_id_query = req.query.cinema_id;
-    const item_type = req.query.item_type;
-    const ratings_filters_query = req.query.ratings_filters;
-    if (cinema_id_query) {
-      try {
-        const movies_ids = await getMoviesIds(cinema_id_query);
-        const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
-        const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
-        const items = await getItems("", "", movies_ids, ratings_filters);
-
-        res.status(200).json(items);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    } else if (item_type) {
-      try {
-        const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
-        const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
-        const items = await getItems("", item_type, "", ratings_filters);
-
-        res.status(200).json(items);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    } else {
-      try {
-        const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
-        const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
-        const items = await getItems("", "", "", ratings_filters);
-
-        res.status(200).json(items);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    }
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-/* A route that is used to get the data for a specific movie. */
-app.get("/movie/:id", async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    const ratings_filters_query = req.query.ratings_filters;
-    if (id && ratings_filters_query) {
-      try {
-        const ratings_filters = await getRatingsFilters(ratings_filters_query);
-        const items = await getItems(id, "", "", ratings_filters);
-
-        res.status(200).json(items[0]);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    } else {
-      try {
-        const query = { id: id };
-        const items = await collectionData.findOne(query);
-
-        res.status(200).json(items);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    }
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-/* A route that is used to get the data for a specific tv show. */
-app.get("/tv/:id", async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    const ratings_filters_query = req.query.ratings_filters;
-    if (id && ratings_filters_query) {
-      try {
-        const ratings_filters = await getRatingsFilters(ratings_filters_query);
-        const items = await getItems(id, "", "", ratings_filters);
-
-        res.status(200).json(items[0]);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    } else {
-      try {
-        const query = { id: id };
-        const items = await collectionData.findOne(query);
-
-        res.status(200).json(items);
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    }
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
 /**
  * It fetches the movie IDs from the Allocine website, and returns them in an array
  * @param cinemaIdParam - the cinema ID you want to get the movies from
@@ -160,8 +60,7 @@ const getMoviesIds = async (cinemaIdParam) => {
 
 /**
  * It takes a string as an argument and returns an array of objects
- * @param ratings_filters_query - a string of comma-separated values that will be used to filter the
- * ratings.
+ * @param ratings_filters_query - a string of ratings filters separated by commas.
  * @returns An array of objects
  */
 const getRatingsFilters = async (ratings_filters_query) => {
@@ -198,25 +97,25 @@ const getRatingsFilters = async (ratings_filters_query) => {
 };
 
 /**
- * It returns an array of items from the database, filtered by the parameters passed to the function
- * @param id - the id of the user
+ * It returns the data from the database, filtered by the parameters passed to it
+ * @param id - the id of the item you want to get
  * @param item_type - "movie" or "tvshow"
  * @param movies_ids - an array of movies ids
- * @param ratings_filters - an array of the ratings you want to filter on.
- * @returns An array of items
+ * @param ratings_filters - an array of the ratings you want to filter by.
+ * @returns An array of objects
  */
-const getItems = async (id, item_type, movies_ids, ratings_filters) => {
+const getData = async (id, item_type, movies_ids, ratings_filters) => {
   const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
   const match_id = { $match: { id: id } };
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
-  const match_item_type_movie = { $match: { item_type: "movie" } };
-  const match_item_type_tvshow = { $match: { item_type: "tvshow" } };
+  const match_item_type_movie = { $match: { $and: [{ item_type: "movie" }, { is_active: true }] } };
+  const match_item_type_tvshow = { $match: { $and: [{ item_type: "tvshow" }, { is_active: true }] } };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 
   const pipeline = [];
-  if (id) {
+  if (id !== "") {
     pipeline.push(match_id, addFields_ratings_filters, sort_ratings);
-  } else if (movies_ids) {
+  } else if (movies_ids !== "") {
     pipeline.push(match_in_movies_ids, addFields_ratings_filters, sort_ratings);
   } else if (item_type === "tvshow") {
     pipeline.push(match_item_type_tvshow, addFields_ratings_filters, sort_ratings);
@@ -232,6 +131,84 @@ const getItems = async (id, item_type, movies_ids, ratings_filters) => {
 
   return items;
 };
+
+/**
+ * It gets the items from the database
+ * @param id_path - The id of the item we're looking for.
+ * @param item_type_query - the type of item you want to get.
+ * @param cinema_id_query - The cinema ID that the user has selected.
+ * @param ratings_filters_query - This is the query parameter that is passed in the URL. It can be one
+ * of the following:
+ * @returns The function getItems is returning the items.
+ */
+const getItems = async (id_path, item_type_query, cinema_id_query, ratings_filters_query) => {
+  const id = isNaN(id_path) ? "" : id_path;
+  const item_type = typeof item_type_query !== "undefined" ? item_type_query : "";
+  const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
+  const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
+  const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
+  const items = await getData(id, item_type, movies_ids, ratings_filters);
+
+  return items;
+};
+
+/**
+ * It takes in a request and a response, and then it tries to get the id from the request, and then it
+ * tries to get the items from the database, and then it sends the items back in the response
+ * @param req - The request object.
+ * @param res - the response object
+ */
+async function getId(req, res) {
+  try {
+    const cinema_id_query = req.query.cinema_id;
+    const id_path = parseInt(req.params.id);
+    const item_type_query = req.query.item_type;
+    const ratings_filters_query = req.query.ratings_filters;
+    if (id_path && ratings_filters_query) {
+      try {
+        const items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query);
+        res.status(200).json(items[0]);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    } else {
+      try {
+        const query = { id: id_path };
+        const items = await collectionData.findOne(query);
+
+        res.status(200).json(items);
+      } catch (error) {
+        res.status(400).send(error);
+      }
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+}
+
+app.get("/", async (req, res) => {
+  try {
+    const cinema_id_query = req.query.cinema_id;
+    const id_path = parseInt(req.params.id);
+    const item_type_query = req.query.item_type;
+    const ratings_filters_query = req.query.ratings_filters;
+
+    const items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query);
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+/* A route that is used to get the data for a specific movie. */
+app.get("/movie/:id", async (req, res) => {
+  getId(req, res);
+});
+
+/* A route that is used to get the data for a specific tv show. */
+app.get("/tv/:id", async (req, res) => {
+  getId(req, res);
+});
 
 /* Starting the server on the port defined in the PORT variable. */
 app.listen(PORT, () => {

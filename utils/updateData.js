@@ -218,10 +218,16 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
       allocineUsersRating = null;
     }
 
+    let allocineSeasonsNumber = null;
+    if (allocineHomepage.includes("ficheserie_gen_cserie")) {
+      allocineSeasonsNumber = parseInt($(".stats-number").eq(0).text());
+    }
+
     let allocineFirstInfo = {
       allocineTitle: title,
       allocineImage: image,
       allocineUsersRating: allocineUsersRating,
+      allocineSeasonsNumber: allocineSeasonsNumber,
     };
 
     return allocineFirstInfo;
@@ -375,23 +381,39 @@ const getImdbUsersRating = async (imdbHomepage) => {
  *   critics_number: criticsNumber,
  */
 const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId) => {
-  let data = {};
-
+  /* Getting the data from the different websites. */
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
 
+  /* Creating variables that will be used in the next step. */
   const allocineTitle = allocineFirstInfo.allocineTitle;
   const allocineImage = allocineFirstInfo.allocineImage;
   const criticsRating = allocineCriticInfo.criticsRating;
   const criticsNumber = allocineCriticInfo.criticsNumber;
   const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
   const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
+  const allocineSeasonsNumber = allocineFirstInfo.allocineSeasonsNumber;
 
-  if (betaseriesId === "null") {
-    betaseriesObj = null;
-  } else {
+  /* Creating an object called allocineObj that contains the properties of the two objects
+  allocineBaseObj and allocineSecondInfo. */
+  const allocineBaseObj = {
+    id: allocineId,
+    url: allocineHomepage,
+    users_rating: allocineUsersRating,
+  };
+  const allocineSecondInfo = {
+    critics_rating: criticsRating,
+    critics_number: criticsNumber,
+    critics_rating_details: criticsRatingDetails,
+    seasons_number: allocineSeasonsNumber,
+  };
+  const allocineObj = Object.assign(allocineBaseObj, allocineSecondInfo);
+
+  /* Creating an object with the betaseriesId, betaseriesHomepage, and betaseriesUsersRating. */
+  let betaseriesObj = null;
+  if (betaseriesId !== "null") {
     betaseriesObj = {
       id: betaseriesId,
       url: betaseriesHomepage,
@@ -399,26 +421,22 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     };
   }
 
-  imdbObj = {
+  /* Creating an object called imdbObj. */
+  const imdbObj = {
     id: imdbId,
     url: imdbHomepage,
     users_rating: imdbUsersRating,
   };
 
-  data = {
+  /* Creating a new object called data and assigning it the values of the variables that were created
+  in the previous steps. */
+  const data = {
     id: theMoviedbId,
     is_active: isActive,
     item_type: item_type,
     title: allocineTitle,
     image: allocineImage,
-    allocine: {
-      id: allocineId,
-      url: allocineHomepage,
-      critics_rating: criticsRating,
-      critics_number: criticsNumber,
-      critics_rating_details: criticsRatingDetails,
-      users_rating: allocineUsersRating,
-    },
+    allocine: allocineObj,
     betaseries: betaseriesObj,
     imdb: imdbObj,
   };
