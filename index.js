@@ -97,19 +97,27 @@ const getRatingsFilters = async (ratings_filters_query) => {
 };
 
 /**
- * It returns the data from the database, filtered by the parameters passed to it
- * @param id - the id of the item you want to get
- * @param item_type - "movie" or "tvshow"
- * @param movies_ids - an array of movies ids
- * @param ratings_filters - an array of the ratings you want to filter by.
- * @returns An array of objects
+ * It returns the data from the database, based on the parameters passed to it
+ * @param id - the id of the item you want to get the recommendations for
+ * @param item_type - movie or tvshow
+ * @param movies_ids - a list of movies ids
+ * @param ratings_filters - an array of the ratings filters to apply to the query.
+ * @param seasons_number - the number of seasons of a TV show
+ * @returns An array of objects.
  */
-const getData = async (id, item_type, movies_ids, ratings_filters) => {
+const getData = async (id, item_type, movies_ids, ratings_filters, seasons_number) => {
+  console.log(`id: ${id}`);
+  console.log(`item_type: ${item_type}`);
+  console.log(`movies_ids: ${movies_ids}`);
+  console.log(ratings_filters);
+  console.log(`seasons_number: ${seasons_number}`);
+
   const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
   const match_id = { $match: { id: id } };
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
   const match_item_type_movie = { $match: { $and: [{ item_type: "movie" }, { is_active: true }] } };
   const match_item_type_tvshow = { $match: { $and: [{ item_type: "tvshow" }, { is_active: true }] } };
+  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [{ item_type: "tvshow" }, { "allocine.seasons_number": seasons_number }] } };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 
   const pipeline = [];
@@ -117,11 +125,15 @@ const getData = async (id, item_type, movies_ids, ratings_filters) => {
     pipeline.push(match_id, addFields_ratings_filters, sort_ratings);
   } else if (movies_ids !== "") {
     pipeline.push(match_in_movies_ids, addFields_ratings_filters, sort_ratings);
+  } else if (seasons_number !== "") {
+    pipeline.push(match_item_type_tvshow_and_seasons_number, addFields_ratings_filters, sort_ratings);
   } else if (item_type === "tvshow") {
     pipeline.push(match_item_type_tvshow, addFields_ratings_filters, sort_ratings);
   } else {
     pipeline.push(match_item_type_movie, addFields_ratings_filters, sort_ratings);
   }
+
+  console.log(pipeline);
 
   const data = await collectionData.aggregate(pipeline);
   const items = [];
@@ -135,19 +147,26 @@ const getData = async (id, item_type, movies_ids, ratings_filters) => {
 /**
  * It gets the items from the database
  * @param id_path - The id of the item we're looking for.
- * @param item_type_query - the type of item you want to get.
- * @param cinema_id_query - The cinema ID that the user has selected.
- * @param ratings_filters_query - This is the query parameter that is passed in the URL. It can be one
- * of the following:
- * @returns The function getItems is returning the items.
+ * @param item_type_query - the type of item we want to get (movie or tvshow)
+ * @param cinema_id_query - The id of the cinema.
+ * @param ratings_filters_query - The ratings filters to apply (all, allocine_critics, allocine_users, betaseries_users, imdb_users)
+ * @param seasons_number_query - The number of seasons to return.
+ * @returns An array of items.
  */
-const getItems = async (id_path, item_type_query, cinema_id_query, ratings_filters_query) => {
+const getItems = async (id_path, item_type_query, cinema_id_query, ratings_filters_query, seasons_number_query) => {
+  console.log(`id_path: ${id_path}`);
+  console.log(`item_type_query: ${item_type_query}`);
+  console.log(`cinema_id_query: ${cinema_id_query}`);
+  console.log(`ratings_filters_query: ${ratings_filters_query}`);
+  console.log(`seasons_number_query: ${seasons_number_query}`);
+
   const id = isNaN(id_path) ? "" : id_path;
   const item_type = typeof item_type_query !== "undefined" ? item_type_query : "";
   const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
   const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
   const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
-  const items = await getData(id, item_type, movies_ids, ratings_filters);
+  const seasons_number = typeof seasons_number_query !== "undefined" ? parseInt(seasons_number_query) : "";
+  const items = await getData(id, item_type, movies_ids, ratings_filters, seasons_number);
 
   return items;
 };
@@ -192,8 +211,9 @@ app.get("/", async (req, res) => {
     const id_path = parseInt(req.params.id);
     const item_type_query = req.query.item_type;
     const ratings_filters_query = req.query.ratings_filters;
+    const seasons_number_query = req.query.seasons_number;
 
-    const items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query);
+    const items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query, seasons_number_query);
     res.status(200).json(items);
   } catch (error) {
     res.status(400).send(error);
