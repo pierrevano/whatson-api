@@ -42,8 +42,26 @@ if [[ -z $BETASERIES_API_KEY ]]; then
   exit
 fi
 
+# Resetting the active and inactive status of all items and setting all to inactive.
+reset_and_set_all_to_false () {
+  if [[ $SOURCE == "circleci" ]]; then
+    sed -i "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
+    sed -i "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
+
+    # Don't add to the header (first line) of the CSV file
+    sed -i "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
+  else
+    sed -i '' "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
+    sed -i '' "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
+
+    # Don't add to the header (first line) of the CSV file
+    sed -i '' "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
+  fi
+}
+
+# Sorting the ids in the file and removing duplicates.
 sort_ids () {
-  cat $FILMS_IDS_FILE_PATH | sort -V | uniq -u > ./temp_ids.txt
+  cat $FILMS_IDS_FILE_PATH | sort -V | uniq > ./temp_ids.txt
   cat ./temp_ids.txt > $FILMS_IDS_FILE_PATH
 }
 
@@ -87,21 +105,9 @@ data_found () {
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
+reset_and_set_all_to_false
+
 remove_files
-
-if [[ $SOURCE == "circleci" ]]; then
-  sed -i "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
-  sed -i "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
-
-  # Don't add to the header (first line) of the CSV file
-  sed -i "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
-else
-  sed -i '' "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
-  sed -i '' "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
-
-  # Don't add to the header (first line) of the CSV file
-  sed -i '' "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
-fi
 
 # Downloading base URL
 curl -s $BASE_URL > temp_baseurl
@@ -203,7 +209,6 @@ do
         # Get title encoded characters URL
         TITLE_URL_ENCODED=$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -f $URL_ESCAPE_FILE_PATH)
 
-        WIKI_DATA=0
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP1265%20%22$FILM_ID%22.%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
           echo "No wiki URL!"
@@ -264,8 +269,6 @@ do
 
           IMDB_ID=$(curl -s $WIKI_URL | grep "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -Eo "tt[0-9]+" | head -1)
           echo "IMDb ID: $IMDB_ID"
-
-          WIKI_DATA=1
         fi
 
         if [[ $IMDB_ID == "noImdbId" ]] || [[ -z $IMDB_ID ]]; then

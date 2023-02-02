@@ -5,3 +5,5 @@ logs.txt
 node_modules
 package-lock.json
 temp_*
+utils/controlAllTheIds.sh
+utils/getAllIdsFromWikidata.sh
