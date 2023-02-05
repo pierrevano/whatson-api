@@ -37,6 +37,7 @@ const item_type = node_vars[0];
 
 /* Checking if the variable get_ids is true. If it is not true, it will run the function updateIds(). */
 const get_ids = node_vars[2];
+const env = node_vars[3];
 if (!get_ids) updateIds();
 
 /* Checking if the second argument is true. If it is, it exits the process. */
@@ -45,7 +46,7 @@ if (no_update_db) process.exit(1);
 
 /* Setting the index_to_start variable to the value of the node_vars[3] variable. If node_vars[3] is
 not defined, then index_to_start is set to 0. */
-let index_to_start = node_vars[3];
+let index_to_start = node_vars[4];
 if (!index_to_start) index_to_start = 0;
 
 /* Removing the file logs.txt */
@@ -105,7 +106,6 @@ function jsonArrayFiltered(jsonArray) {
 /**
  * It updates the ids of the movies and tv shows in the database
  */
-const env = node_vars[4];
 function updateIds() {
   shell.exec("chmod +x ./utils/getIds.sh");
 
