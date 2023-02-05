@@ -29,25 +29,23 @@ const config = {
   dbName: "whatson",
   endURLCriticDetails: "/critiques/presse/",
   filmsIdsFilePath: "./src/assets/films_ids.txt",
-  indexToStart: 30000,
   seriesIdsFilePath: "./src/assets/series_ids.txt",
 };
 
-/* Getting the arguments passed to the script. */
 const node_vars = process.argv.slice(2);
-const env = node_vars[0];
-const item_type = node_vars[1];
-const is_active = node_vars[2];
-const get_ids = node_vars[3];
-const get_db = node_vars[4];
+const item_type = node_vars[0];
+
+const get_ids = node_vars[2];
+if (!get_ids) updateIds();
+
+const no_update_db = node_vars[1];
+if (no_update_db) process.exit(1);
+
+let index_to_start = node_vars[3];
+if (!index_to_start) index_to_start = 0;
 
 /* Removing the file logs.txt */
 shell.exec("rm -f ./logs.txt");
-
-/* Checking if the value of the variable get_ids is equal to the string "update_ids". If it is, it
-calls the function updateIds(). */
-if (get_ids === "update_ids") updateIds();
-if (get_db !== "update_db") process.exit(1);
 
 /**
  * It takes a string, converts it to a Buffer, and then converts that Buffer to a base64 string
@@ -105,7 +103,9 @@ function jsonArrayFiltered(jsonArray) {
  */
 function updateIds() {
   shell.exec("chmod +x ./utils/getIds.sh");
-  if (env === "circleci") {
+
+  const env = node_vars[4];
+  if (!env) {
     if (item_type === "movie") {
       shell.exec("bash ./utils/getIds.sh no_delete circleci movie");
       shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
@@ -257,7 +257,7 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = {
       validateStatus: (status) => {
-        if (status === 404) writeFileSync(`logs.txt`, `allocineHomepage 404: ${allocineHomepage}`, null, { flag: "a+" }, 2);
+        if (status === 404) writeFileSync(`logs.txt`, `allocineCriticsDetails 404: ${allocineCriticsDetails}`, null, { flag: "a+" }, 2);
         return status === 200 || status === 404;
       },
     };
@@ -457,15 +457,15 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     idsFilePath = config.seriesIdsFilePath;
   }
 
+  const is_not_active = node_vars[5];
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   let jsonArray = [];
-  jsonArray = is_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
+  jsonArray = !is_not_active ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
 
   console.time("Duration");
 
   try {
-    const indexToStart = config.indexToStart;
-    for (let index = indexToStart; index < jsonArray.length; index++) {
+    for (let index = index_to_start; index < jsonArray.length; index++) {
       const json = jsonArray[index];
 
       console.timeLog("Duration", `- ${index + 1} / ${jsonArray.length} (${(((index + 1) * 100) / jsonArray.length).toFixed(1)}%)`);
