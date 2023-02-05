@@ -35,12 +35,16 @@ const config = {
 const node_vars = process.argv.slice(2);
 const item_type = node_vars[0];
 
+/* Checking if the variable get_ids is true. If it is not true, it will run the function updateIds(). */
 const get_ids = node_vars[2];
 if (!get_ids) updateIds();
 
+/* Checking if the second argument is true. If it is, it exits the process. */
 const no_update_db = node_vars[1];
 if (no_update_db) process.exit(1);
 
+/* Setting the index_to_start variable to the value of the node_vars[3] variable. If node_vars[3] is
+not defined, then index_to_start is set to 0. */
 let index_to_start = node_vars[3];
 if (!index_to_start) index_to_start = 0;
 
@@ -101,10 +105,10 @@ function jsonArrayFiltered(jsonArray) {
 /**
  * It updates the ids of the movies and tv shows in the database
  */
+const env = node_vars[4];
 function updateIds() {
   shell.exec("chmod +x ./utils/getIds.sh");
 
-  const env = node_vars[4];
   if (!env) {
     if (item_type === "movie") {
       shell.exec("bash ./utils/getIds.sh no_delete circleci movie");
@@ -449,6 +453,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
   const updateQuery = { $set: { is_active: false } };
   await collectionData.updateMany({}, updateQuery);
+  console.log("All documents have been set to false.");
 
   let idsFilePath;
   if (item_type === "movie") {
@@ -460,11 +465,22 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const is_not_active = node_vars[5];
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   let jsonArray = [];
+  /* Checking if the is_not_active variable is false. If it is false, it will run the jsonArrayFiltered
+  function on the jsonArrayFromCSV variable. If it is true, it will set the jsonArray variable to
+  the jsonArrayFromCSV variable. */
   jsonArray = !is_not_active ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
 
   console.time("Duration");
 
   try {
+    /* Logging the values of the variables to the console. */
+    console.log(`item_type: ${item_type}`);
+    console.log(`no_update_db: ${no_update_db}`);
+    console.log(`get_ids: ${get_ids}`);
+    console.log(`index_to_start: ${index_to_start}`);
+    console.log(`env: ${env}`);
+    console.log(`is_not_active: ${is_not_active}`);
+
     for (let index = index_to_start; index < jsonArray.length; index++) {
       const json = jsonArray[index];
 
