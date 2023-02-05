@@ -29,6 +29,7 @@ const config = {
   dbName: "whatson",
   endURLCriticDetails: "/critiques/presse/",
   filmsIdsFilePath: "./src/assets/films_ids.txt",
+  indexToStart: 30000,
   seriesIdsFilePath: "./src/assets/series_ids.txt",
 };
 
@@ -199,16 +200,16 @@ async function countNullElements(collectionData) {
 const getAllocineFirstInfo = async (allocineHomepage) => {
   try {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-    const response = await axios.get(allocineHomepage);
+    const options = {
+      validateStatus: (status) => {
+        if (status === 404) writeFileSync(`logs.txt`, `allocineHomepage 404: ${allocineHomepage}`, null, { flag: "a+" }, 2);
+        return status === 200 || status === 404;
+      },
+    };
+    const response = await axios.get(allocineHomepage, options);
     const $ = cheerio.load(response.data);
 
     const title = $('meta[property="og:title"]').attr("content");
-    if (typeof title !== "string") {
-      console.log(`title: ${title}`);
-      console.log(allocineHomepage);
-      process.exit(1);
-    }
-
     const image = $('meta[property="og:image"]').attr("content");
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
@@ -254,7 +255,13 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
 const getAllocineCriticInfo = async (allocineCriticsDetails) => {
   try {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-    const response = await axios.get(allocineCriticsDetails);
+    const options = {
+      validateStatus: (status) => {
+        if (status === 404) writeFileSync(`logs.txt`, `allocineHomepage 404: ${allocineHomepage}`, null, { flag: "a+" }, 2);
+        return status === 200 || status === 404;
+      },
+    };
+    const response = await axios.get(allocineCriticsDetails, options);
     const $ = cheerio.load(response.data);
 
     let criticsRatingDetails;
@@ -440,6 +447,9 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const database = client.db(dbName);
   const collectionData = database.collection(collectionName);
 
+  const updateQuery = { $set: { is_active: false } };
+  await collectionData.updateMany({}, updateQuery);
+
   let idsFilePath;
   if (item_type === "movie") {
     idsFilePath = config.filmsIdsFilePath;
@@ -454,9 +464,11 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   console.time("Duration");
 
   try {
-    let lineNumber = 1;
-    for await (const json of jsonArray) {
-      console.timeLog("Duration", `- ${lineNumber} / ${jsonArray.length} (${((lineNumber * 100) / jsonArray.length).toFixed(1)}%)`);
+    const indexToStart = config.indexToStart;
+    for (let index = indexToStart; index < jsonArray.length; index++) {
+      const json = jsonArray[index];
+
+      console.timeLog("Duration", `- ${index + 1} / ${jsonArray.length} (${(((index + 1) * 100) / jsonArray.length).toFixed(1)}%)`);
 
       // AlloCiné info
       const baseURLAllocine = config.baseURLAllocine;
@@ -511,9 +523,11 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       }
 
       const data = await createJSON(allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId);
-      await upsertToDatabase(data, collectionData);
-
-      lineNumber++;
+      if (typeof data.title === "string") {
+        await upsertToDatabase(data, collectionData);
+      } else {
+        writeFileSync(`logs.txt`, `The title of ${allocineHomepage} has not been found!`, null, { flag: "a+" }, 2);
+      }
     }
   } catch (error) {
     console.log(`Global: ${error}`);
