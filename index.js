@@ -205,16 +205,69 @@ async function getId(req, res) {
   }
 }
 
+/**
+ * It takes a JSON object as input, and returns a list of items from the database that match the input
+ * @param json - the JSON object that contains the data to search for
+ * @returns An array of items
+ */
+async function findId(json) {
+  const keys = [];
+  for (const key in json) {
+    if (json.hasOwnProperty(key)) {
+      keys.push(key);
+    }
+  }
+
+  let query;
+  if (keys.includes("title")) {
+    query = { title: { $regex: json.title, $options: "i" } };
+  } else if (keys.includes("allocineId")) {
+    query = { "allocine.id": parseInt(json.allocineId) };
+  } else if (keys.includes("betaseriesId")) {
+    query = { "betaseries.id": json.betaseriesId };
+  } else if (keys.includes("imdbId")) {
+    query = { "imdb.id": json.imdbId };
+  } else if (keys.includes("themoviedbId")) {
+    query = { id: parseInt(json.themoviedbId) };
+  } else {
+    query = {};
+  }
+
+  const data = collectionData.find(query);
+  const items = [];
+  for await (const item of data) {
+    items.push(item);
+  }
+
+  return items;
+}
+
 app.get("/", async (req, res) => {
   try {
+    let items = "";
+
     const cinema_id_query = req.query.cinema_id;
     const id_path = parseInt(req.params.id);
     const item_type_query = req.query.item_type;
     const ratings_filters_query = req.query.ratings_filters;
     const seasons_number_query = req.query.seasons_number;
 
-    const items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query, seasons_number_query);
-    res.status(200).json(items);
+    items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query, seasons_number_query);
+
+    const keysToCheck = ["title", "allocineId", "betaseriesId", "imdbId", "themoviedbId"];
+    for (let index = 0; index < keysToCheck.length; index++) {
+      const key = keysToCheck[index];
+      if (req.query.hasOwnProperty(key)) {
+        items = await findId(req.query);
+        break;
+      }
+    }
+
+    if (items.length === 0) {
+      res.status(204).json({ message: "No items have been found!" });
+    } else {
+      res.status(200).json(items);
+    }
   } catch (error) {
     res.status(400).send(error);
   }
