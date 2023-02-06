@@ -161,11 +161,18 @@ do
     ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
     if [[ $URL == $ALLOCINE_URL ]]; then
       if [[ $SOURCE == "circleci" ]]; then
-        sed -i "/.*$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
+        sed -i "/.*=$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
       else
-        sed -i '' "/.*$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
+        sed -i '' "/.*=$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
       fi
-      
+      cat $FILMS_IDS_FILE_PATH | grep ".*=$FILM_ID\.html"
+      cat $FILMS_IDS_FILE_PATH | grep "TRUE$" | wc -l | awk '{print $1}'
+
+      MATCH_NUMBER=$(cat $FILMS_IDS_FILE_PATH | grep ".*=$FILM_ID\.html" | wc -l | awk '{print $1}')
+      if [[ $MATCH_NUMBER != 1 ]]; then
+        exit
+      fi
+
       FOUND=1
     else
       FOUND=0

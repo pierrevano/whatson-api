@@ -446,6 +446,8 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const database = client.db(dbName);
   const collectionData = database.collection(collectionName);
 
+  /* The above code is updating all documents in the collectionData collection where the item_type is
+  equal to the item_type variable. The updateQuery variable is setting the is_active field to false. */
   const updateQuery = { $set: { is_active: false } };
   await collectionData.updateMany({ item_type: item_type }, updateQuery);
   console.log("All documents have been set to false.");
