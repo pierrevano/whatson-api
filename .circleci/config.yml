@@ -1,4 +1,8 @@
 version: 2.1
+
+# Definition of the build job
+when:
+  - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
 jobs:
   build:
     docker:
@@ -18,8 +22,8 @@ jobs:
           name: run updateData script for tvshows
           command: node utils/updateData.js tvshow update_ids update_db
 
+# Run the build job
 workflows:
-  version: 2
   build:
     jobs:
       - build
