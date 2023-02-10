@@ -2,10 +2,12 @@
 DELETE_NO_DATA=$1
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
+IMDB_NOT_FOUND_PATH=temp_not_found
 IS_ACTIVE=TRUE
 IS_NOT_ACTIVE=FALSE
 PAGES_MAX_NUMBER=15
 PAGES_MIN_NUMBER=1
+PROMPT=$4
 SECONDS=0
 SOURCE=$2
 TEMP_URLS_FILE_PATH=./temp_urls
@@ -278,11 +280,25 @@ do
           echo "IMDb ID: $IMDB_ID"
         fi
 
-        if [[ $IMDB_ID == "noImdbId" ]] || [[ -z $IMDB_ID ]]; then
+        if [[ -z $IMDB_ID ]]; then
+          IMDB_ID="noImdbId"
+        fi
+
+        if [[ $IMDB_ID == "noImdbId" ]] && [[ -z $PROMPT ]]; then
           echo "IMDb ID not found: $IMDB_ID"
+          echo "https://www.allocine.fr$URL" >> $IMDB_NOT_FOUND_PATH
+          echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE" >> $IMDB_NOT_FOUND_PATH
+          echo "----------------------------------------------------------------------------------------------------"
 
           data_not_found
         else
+          if [[ $IMDB_ID == "noImdbId" ]] && [[ $PROMPT == "prompt" ]]; then
+            open -a "/Applications/Brave Browser.app" "https://www.allocine.fr$URL"
+            open -a "/Applications/Brave Browser.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+            echo "Enter the IMDb id:"
+            read IMDB_ID
+          fi
+
           echo "imdbId URL: https://www.imdb.com/title/$IMDB_ID/"
 
           BETASERIES_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE" | cut -d'/' -f5 | sed 's/"//g')
