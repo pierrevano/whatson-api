@@ -10,10 +10,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: update npm
+          name: update npm to the latest version
           command: sudo npm install -g npm@latest
       - run:
-          name: install npm
+          name: install dependencies
           command: npm install
       - run:
           name: run updateData script for movies
