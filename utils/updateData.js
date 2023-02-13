@@ -446,11 +446,15 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const database = client.db(dbName);
   const collectionData = database.collection(collectionName);
 
+  const skipAlreadyAddedDocuments = node_vars[6];
+
   /* The above code is updating all documents in the collectionData collection where the item_type is
   equal to the item_type variable. The updateQuery variable is setting the is_active field to false. */
-  const updateQuery = { $set: { is_active: false } };
-  await collectionData.updateMany({ item_type: item_type }, updateQuery);
-  console.log("All documents have been set to false.");
+  if (!skipAlreadyAddedDocuments) {
+    const updateQuery = { $set: { is_active: false } };
+    await collectionData.updateMany({ item_type: item_type }, updateQuery);
+    console.log("All documents have been set to false.");
+  }
 
   let idsFilePath;
   if (item_type === "movie") {
@@ -488,9 +492,34 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
       console.timeLog("Duration", `- ${index + 1} / ${jsonArray.length} (${(((index + 1) * 100) / jsonArray.length).toFixed(1)}%)`);
 
-      // AlloCiné info
       const baseURLAllocine = config.baseURLAllocine;
+      const allocineURL = json.URL;
+      const completeAllocineURL = `${baseURLAllocine}${allocineURL}`;
 
+      if (skipAlreadyAddedDocuments) {
+        const allocineQuery = { _id: b64Encode(completeAllocineURL) };
+        const isDocumentExisting = await collectionData.find(allocineQuery).toArray();
+        const keysArray = ["allocine", "betaseries", "id", "image", "imdb", "is_active", "item_type", "title"];
+        const isDocumentHasInfo = isDocumentExisting.length > 0;
+        const document = isDocumentExisting[0];
+        keysArray.forEach((key) => {
+          if (isDocumentHasInfo && !document.hasOwnProperty(`${key}`)) {
+            console.log(`Missing ${key} for ${completeAllocineURL}`);
+            process.exit(0);
+          }
+        });
+        if (isDocumentHasInfo && (!document.title || document.title === null)) {
+          console.log(`Missing title for ${completeAllocineURL}`);
+          process.exit(0);
+        }
+        if (isDocumentHasInfo && (!document.image || document.image === null)) {
+          console.log(`Missing image for ${completeAllocineURL}`);
+          process.exit(0);
+        }
+        if (isDocumentHasInfo) continue;
+      }
+
+      // AlloCiné info
       let baseURLType;
       let baseURLCriticDetails;
       if (item_type === "movie") {
@@ -502,7 +531,6 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       }
 
       const endURLCriticDetails = config.endURLCriticDetails;
-      const allocineURL = json.URL;
       const allocineId = parseInt(allocineURL.match(/=(.*)\./).pop());
       const allocineHomepage = `${baseURLAllocine}${baseURLType}${allocineId}.html`;
       const allocineCriticsDetails = `${baseURLAllocine}${baseURLCriticDetails}${allocineId}${endURLCriticDetails}`;
