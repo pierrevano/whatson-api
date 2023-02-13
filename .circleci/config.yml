@@ -26,7 +26,6 @@ jobs:
 # Run the build job
 workflows:
   build:
-    when:
-      equal: << pipeline.parameters.run >>
+    when: << pipeline.parameters.run >>
     jobs:
       - build
