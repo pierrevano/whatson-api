@@ -21,6 +21,6 @@ jobs:
 workflows:
   build:
     when:
-      equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+      equal: [run, << pipeline.parameters.action >>]
     jobs:
       - build

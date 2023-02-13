@@ -564,7 +564,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
 
       if (isNaN(theMoviedbId)) {
-        console.log(`Something went wrong, The Movie Database id ${theMoviedbId} has not been found!`);
+        console.log(`Something went wrong, The Movie Database id has not been found for ${completeAllocineURL}!`);
         process.exit(1);
       }
 
