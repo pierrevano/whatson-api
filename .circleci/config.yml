@@ -1,5 +1,11 @@
 version: 2.1
 
+# Set the job to not run by default
+parameters:
+  run:
+    type: boolean
+    default: false
+
 # Definition of the build job
 jobs:
   build:
@@ -21,6 +27,6 @@ jobs:
 workflows:
   build:
     when:
-      equal: [run, << pipeline.parameters.action >>]
+      equal: << pipeline.parameters.run >>
     jobs:
       - build
