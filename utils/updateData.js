@@ -33,15 +33,26 @@ const config = {
 };
 
 const node_vars = process.argv.slice(2);
-const item_type = node_vars[0];
+
+const node_vars_values = {
+  item_type: node_vars[0],
+  get_ids: node_vars[1],
+  get_db: node_vars[2],
+  environment: node_vars[3],
+  is_not_active: node_vars[4],
+  index_to_start: node_vars[5],
+  skip_already_added_documents: node_vars[6],
+};
+
+const item_type = node_vars_values.item_type;
 
 /* Checking if the variable get_ids is true. If it is not true, it will run the function updateIds(). */
-const environment = node_vars[3];
-const get_ids = node_vars[1];
+const environment = node_vars_values.environment;
+const get_ids = node_vars_values.get_ids;
 if (get_ids === "update_ids") updateIds();
 
 /* Checking if the second argument is true. If it is, it exits the process. */
-const get_db = node_vars[2];
+const get_db = node_vars_values.get_db;
 if (get_db !== "update_db") process.exit(1);
 
 /* Removing the file logs.txt */
@@ -446,11 +457,11 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const database = client.db(dbName);
   const collectionData = database.collection(collectionName);
 
-  const skipAlreadyAddedDocuments = node_vars[6];
+  const skip_already_added_documents = node_vars_values.skip_already_added_documents;
 
   /* The above code is updating all documents in the collectionData collection where the item_type is
   equal to the item_type variable. The updateQuery variable is setting the is_active field to false. */
-  if (!skipAlreadyAddedDocuments) {
+  if (!skip_already_added_documents) {
     const updateQuery = { $set: { is_active: false } };
     await collectionData.updateMany({ item_type: item_type }, updateQuery);
     console.log("All documents have been set to false.");
@@ -463,7 +474,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     idsFilePath = config.seriesIdsFilePath;
   }
 
-  const is_not_active = node_vars[4];
+  const is_not_active = node_vars_values.is_not_active;
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   let jsonArray = [];
   /* Checking if the is_not_active variable is false. If it is false, it will run the jsonArrayFiltered
@@ -473,19 +484,18 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
   /* Setting the index_to_start variable to the value of the node_vars[5] variable. If node_vars[5] is
   not defined, then index_to_start is set to 0. */
-  let index_to_start = node_vars[5];
+  let index_to_start = node_vars_values.index_to_start;
   if (!index_to_start) index_to_start = 0;
 
   console.time("Duration");
 
   try {
-    /* Logging the values of the variables to the console. */
-    console.log(`item_type: ${item_type}`);
-    console.log(`get_db: ${get_db}`);
-    console.log(`get_ids: ${get_ids}`);
-    console.log(`index_to_start: ${index_to_start}`);
-    console.log(`environment: ${environment}`);
-    console.log(`is_not_active: ${is_not_active}`);
+    /* Printing out the value of each variable in the node_vars_values object. */
+    for (let variable in node_vars_values) {
+      let variable_value = node_vars_values[variable];
+      if (!node_vars_values[variable]) variable_value = "not set";
+      console.log(`${variable}: ${variable_value}`);
+    }
 
     for (let index = index_to_start; index < jsonArray.length; index++) {
       const json = jsonArray[index];
@@ -496,7 +506,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       const allocineURL = json.URL;
       const completeAllocineURL = `${baseURLAllocine}${allocineURL}`;
 
-      if (skipAlreadyAddedDocuments) {
+      if (skip_already_added_documents) {
         const allocineQuery = { _id: b64Encode(completeAllocineURL) };
         const isDocumentExisting = await collectionData.find(allocineQuery).toArray();
         const keysArray = ["allocine", "betaseries", "id", "image", "imdb", "is_active", "item_type", "title"];
