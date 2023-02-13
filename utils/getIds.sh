@@ -37,6 +37,7 @@ fi
 if [[ $SOURCE != "circleci" ]]; then
   source .env
 fi
+echo "SOURCE: $SOURCE"
 echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
 echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
 echo "----------------------------------------------------------------------------------------------------"
