@@ -14,11 +14,8 @@ jobs:
           name: install dependencies
           command: npm install
       - run:
-          name: run updateData script for movies
-          command: node utils/updateData.js movie update_ids update_db
-      - run:
-          name: run updateData script for tvshows
-          command: node utils/updateData.js tvshow update_ids update_db
+          name: run updateData script
+          command: chmod +x run.sh && bash run.sh
 
 # Run the build job
 workflows:
