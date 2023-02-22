@@ -123,12 +123,12 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
   const pipeline = [];
   if (id !== "") {
     pipeline.push(match_id, addFields_ratings_filters, sort_ratings);
+  } else if (item_type === "tvshow") {
+    pipeline.push(match_item_type_tvshow, addFields_ratings_filters, sort_ratings);
   } else if (movies_ids !== "") {
     pipeline.push(match_in_movies_ids, addFields_ratings_filters, sort_ratings);
   } else if (seasons_number !== "") {
     pipeline.push(match_item_type_tvshow_and_seasons_number, addFields_ratings_filters, sort_ratings);
-  } else if (item_type === "tvshow") {
-    pipeline.push(match_item_type_tvshow, addFields_ratings_filters, sort_ratings);
   } else {
     pipeline.push(match_item_type_movie, addFields_ratings_filters, sort_ratings);
   }
