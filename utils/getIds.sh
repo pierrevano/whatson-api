@@ -45,6 +45,22 @@ if [[ -z $BETASERIES_API_KEY ]]; then
   exit
 fi
 
+WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v ".*\=[0-9]+.html,tt[0-9]+,[a-zA-Z0-9-]+,[0-9]+,(TRUE|FALSE)$" | wc -l | awk '{print $1}')
+if [[ $WRONG_LINES_NB -gt 1 ]]; then
+  echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH!"
+  echo "details:"
+  cat $FILMS_IDS_FILE_PATH | grep -E -v ".*\=[0-9]+.html,tt[0-9]+,[a-zA-Z0-9-]+,[0-9]+,(TRUE|FALSE)$"
+  exit
+fi
+
+DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f3 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f4 | uniq -cd)
+if [[ $DUPLICATES_LINES_NB ]]; then
+  echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH!"
+  echo "details:"
+  echo $DUPLICATES_LINES_NB
+  exit
+fi
+
 # Resetting the active and inactive status of all items and setting all to inactive.
 reset_and_set_all_to_false () {
   if [[ $SOURCE == "circleci" ]]; then

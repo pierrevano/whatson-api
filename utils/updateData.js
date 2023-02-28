@@ -473,6 +473,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   } else {
     idsFilePath = config.seriesIdsFilePath;
   }
+  console.log(`Ids file path to use: ${idsFilePath}`);
 
   const is_not_active = node_vars_values.is_not_active;
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
