@@ -238,11 +238,30 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
       allocineSeasonsNumber = parseInt($(".stats-number").eq(0).text());
     }
 
+    let allocineTrailer = null;
+    const itemJSON = JSON.parse(
+      $('script[type="application/ld+json"]')
+        .text()
+        .replace(/(\r\n|\n|\r|\t|amp;)/gm, "")
+    );
+    if (itemJSON && itemJSON.trailer) {
+      const url = itemJSON.trailer.url;
+      const response = await axios.get(url, options);
+      const $ = cheerio.load(response.data);
+      const itemDetailsJSON = JSON.parse(
+        $('script[type="application/ld+json"]')
+          .text()
+          .replace(/(\r\n|\n|\r|\t|amp;)/gm, "")
+      );
+      allocineTrailer = itemDetailsJSON.contentUrl;
+    }
+
     let allocineFirstInfo = {
       allocineTitle: title,
       allocineImage: image,
       allocineUsersRating: allocineUsersRating,
       allocineSeasonsNumber: allocineSeasonsNumber,
+      allocineTrailer: allocineTrailer,
     };
 
     return allocineFirstInfo;
@@ -401,12 +420,14 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
   const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
   const allocineSeasonsNumber = allocineFirstInfo.allocineSeasonsNumber;
+  const allocineTrailer = allocineFirstInfo.allocineTrailer;
 
   /* Creating an object called allocineObj that contains the properties of the two objects
   allocineBaseObj and allocineSecondInfo. */
   const allocineBaseObj = {
     id: allocineId,
     url: allocineHomepage,
+    trailer: allocineTrailer,
     users_rating: allocineUsersRating,
   };
   const allocineSecondInfo = {
