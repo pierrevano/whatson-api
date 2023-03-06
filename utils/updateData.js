@@ -202,12 +202,120 @@ async function countNullElements(collectionData) {
 }
 
 /**
- * It takes a movie's allocine homepage as an argument, and returns an object containing the movie's
- * title, image, and users rating
- * @param allocineHomepage - the URL of the movie's page on Allocine.fr
- * @returns An object with the title, image and user rating of the movie.
+ * It takes a string and removes all the extra characters that are not needed
+ * @param string - The string to be modified.
+ * @returns the string with the extra characters removed.
  */
-const getAllocineFirstInfo = async (allocineHomepage) => {
+function removeExtraChar(string) {
+  return string.replace(/(\r\n|\n|\r|\t|amp;)/gm, "");
+}
+
+/**
+ * It takes in a cheerio object and a boolean value, and returns the content url
+ * @param $ - The cheerio object
+ * @param backup - If the first script tag doesn't work, we'll try the last one.
+ * @returns The content of the last script tag with the type application/ld+json
+ */
+function getContentUrl($, backup) {
+  const JSONValue = backup ? $('script[type="application/ld+json"]') : $('script[type="application/ld+json"]').last();
+  const contentParsed = JSON.parse(removeExtraChar(JSONValue.text()));
+
+  return contentParsed;
+}
+
+/**
+ * It takes a URL and an optional options object, makes a request to the URL, and returns a cheerio
+ * object
+ * @param url - The URL of the page you want to scrape.
+ * @param options - This is an object that contains the headers and other options that you want to pass
+ * to the request.
+ * @returns A function that returns a promise that resolves to a cheerio object.
+ */
+const getCheerioContent = async (url, options) => {
+  const response = await axios.get(url, options);
+  const $ = cheerio.load(response.data);
+
+  return $;
+};
+
+/**
+ * It gets the trailer link for a movie or TV show
+ * @param allocineHomepage - The URL of the movie or TV show.
+ * @param betaseriesHomepage - The URL to the TV Show's page on BetaSeries.
+ * @param options - This is the object that contains the headers and the proxy.
+ * @returns The trailer variable is being returned.
+ */
+const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
+  let trailer = null;
+  /* TV Show logic to get trailer link. */
+  if (allocineHomepage.includes(config.baseURLTypeSeries)) {
+    let url = `${betaseriesHomepage}`;
+    let $ = await getCheerioContent(url, options);
+    const content = getContentUrl($, false);
+    if (content && content.video && content.video.embedUrl) trailer = content.video.embedUrl;
+    console.log(`trailer: ${trailer}`);
+
+    /* Checking to see if the trailer variable is null. If it is, it will run the code below as a backup video link. */
+    if (!trailer) {
+      url = `${allocineHomepage}`;
+      console.log(`url: ${url}`);
+
+      $ = await getCheerioContent(url, options);
+      let hasInactive = removeExtraChar($(".third-nav .inactive").first().text());
+      console.log(`hasInactive: ${hasInactive}`);
+
+      if (hasInactive === "News") hasInactive = removeExtraChar($(".third-nav .inactive:eq(1)").text());
+      console.log(`hasInactive: ${hasInactive}`);
+
+      if (!hasInactive.includes("Vidéos")) {
+        const allocineId = parseInt(allocineHomepage.match(/=(.*)\./).pop());
+        url = `${config.baseURLAllocine}${config.baseURLCriticDetailsSeries}${allocineId}/videos/`;
+        console.log(`url: ${url}`);
+
+        $ = await getCheerioContent(url, options);
+        const linkToVideo = $(".meta-title-link").first().attr("href");
+        url = `${config.baseURLAllocine}${linkToVideo}`;
+        console.log(`url: ${url}`);
+
+        if (linkToVideo) {
+          $ = await getCheerioContent(url, options);
+          const content = getContentUrl($, true);
+          trailer = content.contentUrl;
+          console.log(`trailer: ${trailer}`);
+        }
+      }
+    }
+  } else {
+    /* Movie logic to get trailer link */
+    const url = `${allocineHomepage}`;
+    console.log(`url: ${url}`);
+
+    $ = await getCheerioContent(url, options);
+    const itemJSON = getContentUrl($, true);
+    if (itemJSON && itemJSON.trailer) {
+      const url = itemJSON.trailer.url;
+      $ = await getCheerioContent(url, options);
+      const content = getContentUrl($, true);
+      trailer = content.contentUrl;
+      console.log(`trailer: ${trailer}`);
+    }
+  }
+
+  return trailer;
+};
+
+/**
+ * It gets the title, image, users rating, seasons number and trailer of a movie or a series
+ * @param allocineHomepage - the URL of the movie or series on Allocine
+ * @param betaseriesHomepage - the betaseries homepage of the movie/series
+ * @returns An object with the following properties:
+ * - allocineTitle
+ * - allocineImage
+ * - allocineUsersRating
+ * - allocineSeasonsNumber
+ * - trailer
+ */
+const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage) => {
   try {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = {
@@ -216,8 +324,7 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
         return status === 200 || status === 404;
       },
     };
-    const response = await axios.get(allocineHomepage, options);
-    const $ = cheerio.load(response.data);
+    const $ = await getCheerioContent(allocineHomepage, options);
 
     const title = $('meta[property="og:title"]').attr("content");
     const image = $('meta[property="og:image"]').attr("content");
@@ -234,34 +341,16 @@ const getAllocineFirstInfo = async (allocineHomepage) => {
     }
 
     let allocineSeasonsNumber = null;
-    if (allocineHomepage.includes("ficheserie_gen_cserie")) {
-      allocineSeasonsNumber = parseInt($(".stats-number").eq(0).text());
-    }
+    if (allocineHomepage.includes(config.baseURLTypeSeries)) allocineSeasonsNumber = parseInt($(".stats-number").eq(0).text());
 
-    let allocineTrailer = null;
-    const itemJSON = JSON.parse(
-      $('script[type="application/ld+json"]')
-        .text()
-        .replace(/(\r\n|\n|\r|\t|amp;)/gm, "")
-    );
-    if (itemJSON && itemJSON.trailer) {
-      const url = itemJSON.trailer.url;
-      const response = await axios.get(url, options);
-      const $ = cheerio.load(response.data);
-      const itemDetailsJSON = JSON.parse(
-        $('script[type="application/ld+json"]')
-          .text()
-          .replace(/(\r\n|\n|\r|\t|amp;)/gm, "")
-      );
-      allocineTrailer = itemDetailsJSON.contentUrl;
-    }
+    const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
 
     let allocineFirstInfo = {
       allocineTitle: title,
       allocineImage: image,
       allocineUsersRating: allocineUsersRating,
       allocineSeasonsNumber: allocineSeasonsNumber,
-      allocineTrailer: allocineTrailer,
+      trailer: trailer,
     };
 
     return allocineFirstInfo;
@@ -290,8 +379,7 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
         return status === 200 || status === 404;
       },
     };
-    const response = await axios.get(allocineCriticsDetails, options);
-    const $ = cheerio.load(response.data);
+    const $ = await getCheerioContent(allocineCriticsDetails, options);
 
     let criticsRatingDetails;
     criticsRatingDetails = $(".js-anchor-link")
@@ -337,8 +425,13 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
     let criticsRating;
     if (!betaseriesHomepage.includes("null")) {
       axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-      const response = await axios.get(betaseriesHomepage);
-      const $ = cheerio.load(response.data);
+      const options = {
+        validateStatus: (status) => {
+          if (status === 404) writeFileSync(`logs.txt`, `betaseriesHomepage 404: ${betaseriesHomepage}`, null, { flag: "a+" }, 2);
+          return status === 200 || status === 404;
+        },
+      };
+      const $ = await getCheerioContent(betaseriesHomepage, options);
 
       criticsRating = parseFloat($(".js-render-stars")[0].attribs.title.replace(" / 5", "").replace(",", "."));
       if (criticsRating === 0) criticsRating = null;
@@ -366,8 +459,7 @@ const getImdbUsersRating = async (imdbHomepage) => {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
       },
     };
-    const response = await axios.get(imdbHomepage, options);
-    const $ = cheerio.load(response.data);
+    const $ = await getCheerioContent(imdbHomepage, options);
 
     criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
     if (isNaN(criticsRating)) {
@@ -384,30 +476,21 @@ const getImdbUsersRating = async (imdbHomepage) => {
 };
 
 /**
- * It takes in a bunch of parameters, and returns a JSON object
- * @param allocineCriticsDetails - the URL of the page where the critics' rating details are
- * @param allocineHomepage - the URL of the movie on Allocine
- * @param allocineId - the id of the movie on allocine.fr
- * @param betaseriesHomepage - the betaseries homepage of the movie
- * @param betaseriesId - the id of the movie on betaseries.com
- * @param imdbHomepage - the IMDB homepage of the movie
- * @param imdbId - the IMDB ID of the movie
- * @param isActive - true or false
- * @param theMoviedbId - the id of the movie in the database
- * @returns An object with the following properties:
- * - id: theMoviedbId
- * - is_active: isActive
- * - title: allocineTitle
- * - image: allocineImage
- * - allocine: {
- *   id: allocineId,
- *   url: allocineHomepage,
- *   critics_rating: criticsRating,
- *   critics_number: criticsNumber,
+ * It creates an object called data that contains the data that was scraped from the different websites
+ * @param allocineCriticsDetails - the URL of the page that contains the critics' rating details.
+ * @param allocineHomepage - the URL of the show on Allocine.
+ * @param allocineId - the id of the show on Allocine.
+ * @param betaseriesHomepage - The homepage of the show on betaseries.com.
+ * @param betaseriesId - the id of the show on betaseries.com
+ * @param imdbHomepage - The URL of the IMDb page.
+ * @param imdbId - the IMDb ID of the movie or TV show.
+ * @param isActive - a boolean that indicates whether the show is still airing or not.
+ * @param theMoviedbId - the id of the movie/tv show on The Movie Database.
+ * @returns The function createJSON is returning an object called data.
  */
 const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId) => {
   /* Getting the data from the different websites. */
-  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage);
+  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
@@ -420,14 +503,14 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
   const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
   const allocineSeasonsNumber = allocineFirstInfo.allocineSeasonsNumber;
-  const allocineTrailer = allocineFirstInfo.allocineTrailer;
+  const trailer = allocineFirstInfo.trailer;
 
   /* Creating an object called allocineObj that contains the properties of the two objects
   allocineBaseObj and allocineSecondInfo. */
   const allocineBaseObj = {
     id: allocineId,
     url: allocineHomepage,
-    trailer: allocineTrailer,
+    trailer: trailer,
     users_rating: allocineUsersRating,
   };
   const allocineSecondInfo = {
@@ -480,9 +563,8 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
   const skip_already_added_documents = node_vars_values.skip_already_added_documents;
 
-  /* The above code is updating all documents in the collectionData collection where the item_type is
-  equal to the item_type variable. The updateQuery variable is setting the is_active field to false. */
-  if (!skip_already_added_documents) {
+  /* Updating all documents in the collection to is_active: false. */
+  if (!skip_already_added_documents && get_ids === "update_ids") {
     const updateQuery = { $set: { is_active: false } };
     await collectionData.updateMany({ item_type: item_type }, updateQuery);
     console.log("All documents have been set to false.");
@@ -499,10 +581,10 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const is_not_active = node_vars_values.is_not_active;
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   let jsonArray = [];
-  /* Checking if the is_not_active variable is false. If it is false, it will run the jsonArrayFiltered
-  function on the jsonArrayFromCSV variable. If it is true, it will set the jsonArray variable to
-  the jsonArrayFromCSV variable. */
-  jsonArray = !is_not_active ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
+
+  /* Checking if the is_not_active variable is not active or if it is active. If it is not active, it
+  will filter the jsonArrayFromCSV. If it is active, it will not filter the jsonArrayFromCSV. */
+  jsonArray = !is_not_active || is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
 
   /* Setting the index_to_start variable to the value of the node_vars[5] variable. If node_vars[5] is
   not defined, then index_to_start is set to 0. */
