@@ -23,6 +23,8 @@ const config = {
   baseURLCriticDetailsFilms: "/film/fichefilm-",
   baseURLCriticDetailsSeries: "/series/ficheserie-",
   baseURLIMDB: "https://www.imdb.com/title/",
+  baseURLImgTMDB: "https://image.tmdb.org/t/p/w1280",
+  baseURLTMDB: "https://api.themoviedb.org/3",
   baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
   baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
   collectionName: "data",
@@ -279,9 +281,13 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
 
         if (linkToVideo) {
           $ = await getCheerioContent(url, options);
-          const content = getContentUrl($, true);
-          trailer = content.contentUrl;
-          console.log(`trailer: ${trailer}`);
+          const isPageBroken = $.html().length === 0;
+          console.log(`isPageBroken: ${isPageBroken}`);
+          if (!isPageBroken) {
+            const content = getContentUrl($, true);
+            trailer = content.contentUrl;
+            console.log(`trailer: ${trailer}`);
+          }
         }
       }
     }
@@ -305,9 +311,37 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
 };
 
 /**
- * It gets the title, image, users rating, seasons number and trailer of a movie or a series
+ * It takes an allocineHomepage and a theMoviedbId as parameters, and returns an image
  * @param allocineHomepage - the URL of the movie or series on Allocine
+ * @param theMoviedbId - the id of the movie or series on TheMovieDB
+ * @returns The image of the movie or series
+ */
+const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {
+  const baseURLTMDB = config.baseURLTMDB;
+  const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
+  const themoviedb_api_key = process.env.THEMOVIEDB_API_KEY;
+  const url = `${baseURLTMDB}/${type}/${theMoviedbId}?api_key=${themoviedb_api_key}`;
+  axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+  const options = {
+    validateStatus: (status) => {
+      if (status === 404) writeFileSync(`logs.txt`, `getImageFromTMDB 404: ${getImageFromTMDB}`, null, { flag: "a+" }, 2);
+      return status === 200 || status === 404;
+    },
+  };
+  const response = await axios.get(url, options);
+  const image_path = response.data.poster_path || response.data.profile_path;
+  const baseURLImgTMDB = config.baseURLImgTMDB;
+  const image = `${baseURLImgTMDB}${image_path}`;
+
+  return image;
+};
+
+/**
+ * It gets the title, image, users rating, seasons number and trailer of a movie or a series from the
+ * Allocine website
+ * @param allocineHomepage - the allocine homepage of the movie/series
  * @param betaseriesHomepage - the betaseries homepage of the movie/series
+ * @param theMoviedbId - the id of the movie/series on TheMovieDB
  * @returns An object with the following properties:
  * - allocineTitle
  * - allocineImage
@@ -315,7 +349,7 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
  * - allocineSeasonsNumber
  * - trailer
  */
-const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage) => {
+const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
   try {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = {
@@ -327,7 +361,8 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage) => {
     const $ = await getCheerioContent(allocineHomepage, options);
 
     const title = $('meta[property="og:title"]').attr("content");
-    const image = $('meta[property="og:image"]').attr("content");
+    let image = $('meta[property="og:image"]').attr("content");
+    if (image.includes("empty_portrait")) image = await getImageFromTMDB(allocineHomepage, theMoviedbId);
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
@@ -490,7 +525,7 @@ const getImdbUsersRating = async (imdbHomepage) => {
  */
 const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId) => {
   /* Getting the data from the different websites. */
-  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage);
+  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
