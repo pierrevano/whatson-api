@@ -173,8 +173,17 @@ async function countNullElements(collectionData) {
     const countAllocineNull = await collectionData.countDocuments(query_allocine);
     console.log(`Number of null for allocine.users_rating: ${countAllocineNull}`);
 
-    if (countAllocineNull > documents / 3) {
-      console.log("Something went wrong, at least 1/3 of Allociné ratings are set to null");
+    if ((countAllocineNull * 100) / documents > 30) {
+      console.log("Something went wrong, at least 30% of Allociné ratings are set to null");
+      process.exit(1);
+    }
+
+    const query_allocine_critics = { "allocine.critics_rating": null };
+    const countAllocineCriticsNull = await collectionData.countDocuments(query_allocine_critics);
+    console.log(`Number of null for allocine.critics_rating: ${countAllocineCriticsNull}`);
+
+    if ((countAllocineCriticsNull * 100) / documents > 80) {
+      console.log("Something went wrong, at least 80% of Allociné critics ratings are set to null");
       process.exit(1);
     }
 
@@ -183,8 +192,8 @@ async function countNullElements(collectionData) {
     const countBetaseriesNull = await collectionData.countDocuments(query_betaseries);
     console.log(`Number of null for betaseries.users_rating: ${countBetaseriesNull}`);
 
-    if (countBetaseriesNull > documents / 3) {
-      console.log("Something went wrong, at least 1/3 of Betaseries ratings are set to null");
+    if ((countBetaseriesNull * 100) / documents > 30) {
+      console.log("Something went wrong, at least 30% of Betaseries ratings are set to null");
       process.exit(1);
     }
 
@@ -194,8 +203,8 @@ async function countNullElements(collectionData) {
     const countIMDbNull = await collectionData.countDocuments(query_imdb);
     console.log(`Number of null for imdb.users_rating: ${countIMDbNull}`);
 
-    if (countIMDbNull > documents / 3) {
-      console.log("Something went wrong, at least 1/3 of IMDb ratings are set to null");
+    if ((countIMDbNull * 100) / documents > 30) {
+      console.log("Something went wrong, at least 30% of IMDb ratings are set to null");
       process.exit(1);
     }
   } catch (error) {
