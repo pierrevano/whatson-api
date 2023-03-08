@@ -263,13 +263,10 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
       console.log(`url: ${url}`);
 
       $ = await getCheerioContent(url, options);
-      let hasInactive = removeExtraChar($(".third-nav .inactive").first().text());
-      console.log(`hasInactive: ${hasInactive}`);
+      const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text())).includes("Vidéos");
+      console.log(`hasInactiveVideos: ${hasInactiveVideos}`);
 
-      if (hasInactive === "News") hasInactive = removeExtraChar($(".third-nav .inactive:eq(1)").text());
-      console.log(`hasInactive: ${hasInactive}`);
-
-      if (!hasInactive.includes("Vidéos")) {
+      if (!hasInactiveVideos) {
         const allocineId = parseInt(allocineHomepage.match(/=(.*)\./).pop());
         url = `${config.baseURLAllocine}${config.baseURLCriticDetailsSeries}${allocineId}/videos/`;
         console.log(`url: ${url}`);
