@@ -18,6 +18,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 /* A configuration file for the project. */
 const config = {
   baseURLAllocine: "https://www.allocine.fr",
+  baseURLBetaseriesAPI: "https://api.betaseries.com/shows/display",
   baseURLBetaseriesFilm: "https://www.betaseries.com/film/",
   baseURLBetaseriesSerie: "https://www.betaseries.com/serie/",
   baseURLCriticDetailsFilms: "/film/fichefilm-",
@@ -323,23 +324,27 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
  * @returns The image of the movie or series
  */
 const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {
-  const baseURLTMDB = config.baseURLTMDB;
-  const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
-  const themoviedb_api_key = process.env.THEMOVIEDB_API_KEY;
-  const url = `${baseURLTMDB}/${type}/${theMoviedbId}?api_key=${themoviedb_api_key}`;
-  axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-  const options = {
-    validateStatus: (status) => {
-      if (status === 404) writeFileSync(`logs.txt`, `getImageFromTMDB 404: ${getImageFromTMDB}`, null, { flag: "a+" }, 2);
-      return status === 200 || status === 404;
-    },
-  };
-  const response = await axios.get(url, options);
-  const image_path = response.data.poster_path || response.data.profile_path;
-  const baseURLImgTMDB = config.baseURLImgTMDB;
-  const image = `${baseURLImgTMDB}${image_path}`;
+  try {
+    const baseURLTMDB = config.baseURLTMDB;
+    const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
+    const themoviedb_api_key = process.env.THEMOVIEDB_API_KEY;
+    const url = `${baseURLTMDB}/${type}/${theMoviedbId}?api_key=${themoviedb_api_key}`;
+    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    const options = {
+      validateStatus: (status) => {
+        if (status === 404) writeFileSync(`logs.txt`, `getImageFromTMDB 404: ${allocineHomepage}`, null, { flag: "a+" }, 2);
+        return status === 200 || status === 404;
+      },
+    };
+    const response = await axios.get(url, options);
+    const image_path = response.data.poster_path || response.data.profile_path;
+    const baseURLImgTMDB = config.baseURLImgTMDB;
+    const image = `${baseURLImgTMDB}${image_path}`;
 
-  return image;
+    return image;
+  } catch (error) {
+    console.log(`getImageFromTMDB - ${allocineHomepage}: ${error}`);
+  }
 };
 
 /**
@@ -487,6 +492,44 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
 };
 
 /**
+ * It takes an IMDB homepage as an argument and returns an array of objects containing the name and
+ * link_url of the platforms where the movie or TV show is available
+ * @param imdbHomepage - the IMDB homepage of the movie or TV show.
+ * @returns An array of objects with the name and link_url of the platforms.
+ */
+const getBetaseriesPlatformsLinks = async (imdbHomepage) => {
+  try {
+    const betaseries_api_key = process.env.BETASERIES_API_KEY;
+    const baseURLBetaseriesAPI = config.baseURLBetaseriesAPI;
+    const imdbHomepageId = imdbHomepage.split("/")[4];
+    const url = `${baseURLBetaseriesAPI}?key=${betaseries_api_key}&imdb_id=${imdbHomepageId}`;
+    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    const options = {
+      validateStatus: (status) => {
+        if (status === 404) writeFileSync(`logs.txt`, `getBetaseriesPlatformsLinks 404: ${imdbHomepage}`, null, { flag: "a+" }, 2);
+        return status === 200 || status === 404;
+      },
+    };
+    const response = await axios.get(url, options);
+    let platformsLinks = null;
+    if (response.data.show.platforms && response.data.show.platforms.svods) {
+      const svods = response.data.show.platforms.svods;
+      platformsLinks = [];
+      svods.forEach((element) => {
+        platformsLinks.push({
+          name: element.name,
+          link_url: element.link_url,
+        });
+      });
+      if (platformsLinks.length === 0) platformsLinks = null;
+    }
+    return platformsLinks;
+  } catch (error) {
+    console.log(`getBetaseriesPlatformsLinks - ${imdbHomepage}: ${error}`);
+  }
+};
+
+/**
  * It takes the IMDb homepage of a movie as an argument, and returns the IMDb users rating of that
  * movie
  * @param imdbHomepage - The URL of the movie's IMDB page.
@@ -534,6 +577,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
+  const betaseriesPlatformsLinks = await getBetaseriesPlatformsLinks(imdbHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
 
   /* Creating variables that will be used in the next step. */
@@ -562,13 +606,14 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   };
   const allocineObj = Object.assign(allocineBaseObj, allocineSecondInfo);
 
-  /* Creating an object with the betaseriesId, betaseriesHomepage, and betaseriesUsersRating. */
+  /* Creating an object called betaseriesObj. */
   let betaseriesObj = null;
   if (betaseriesId !== "null") {
     betaseriesObj = {
       id: betaseriesId,
       url: betaseriesHomepage,
       users_rating: betaseriesUsersRating,
+      platforms_links: betaseriesPlatformsLinks,
     };
   }
 
