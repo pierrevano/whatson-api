@@ -15,25 +15,8 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-/* A configuration file for the project. */
-const config = {
-  baseURLAllocine: "https://www.allocine.fr",
-  baseURLBetaseriesAPI: "https://api.betaseries.com/shows/display",
-  baseURLBetaseriesFilm: "https://www.betaseries.com/film/",
-  baseURLBetaseriesSerie: "https://www.betaseries.com/serie/",
-  baseURLCriticDetailsFilms: "/film/fichefilm-",
-  baseURLCriticDetailsSeries: "/series/ficheserie-",
-  baseURLIMDB: "https://www.imdb.com/title/",
-  baseURLImgTMDB: "https://image.tmdb.org/t/p/w1280",
-  baseURLTMDB: "https://api.themoviedb.org/3",
-  baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
-  baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
-  collectionName: "data",
-  dbName: "whatson",
-  endURLCriticDetails: "/critiques/presse/",
-  filmsIdsFilePath: "./src/assets/films_ids.txt",
-  seriesIdsFilePath: "./src/assets/series_ids.txt",
-};
+const { config } = require("../src/config");
+const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 
 const node_vars = process.argv.slice(2);
 
@@ -273,7 +256,7 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
       console.log(`url: ${url}`);
 
       $ = await getCheerioContent(url, options);
-      const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text())).includes("Vidéos");
+      const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text()).trim()).includes("Vidéos");
       console.log(`hasInactiveVideos: ${hasInactiveVideos}`);
 
       if (!hasInactiveVideos) {
@@ -492,44 +475,6 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
 };
 
 /**
- * It takes an IMDB homepage as an argument and returns an array of objects containing the name and
- * link_url of the platforms where the movie or TV show is available
- * @param imdbHomepage - the IMDB homepage of the movie or TV show.
- * @returns An array of objects with the name and link_url of the platforms.
- */
-const getBetaseriesPlatformsLinks = async (imdbHomepage) => {
-  try {
-    const betaseries_api_key = process.env.BETASERIES_API_KEY;
-    const baseURLBetaseriesAPI = config.baseURLBetaseriesAPI;
-    const imdbHomepageId = imdbHomepage.split("/")[4];
-    const url = `${baseURLBetaseriesAPI}?key=${betaseries_api_key}&imdb_id=${imdbHomepageId}`;
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-    const options = {
-      validateStatus: (status) => {
-        if (status === 404) writeFileSync(`logs.txt`, `getBetaseriesPlatformsLinks 404: ${imdbHomepage}`, null, { flag: "a+" }, 2);
-        return status === 200 || status === 404;
-      },
-    };
-    const response = await axios.get(url, options);
-    let platformsLinks = null;
-    if (response.data.show.platforms && response.data.show.platforms.svods) {
-      const svods = response.data.show.platforms.svods;
-      platformsLinks = [];
-      svods.forEach((element) => {
-        platformsLinks.push({
-          name: element.name,
-          link_url: element.link_url,
-        });
-      });
-      if (platformsLinks.length === 0) platformsLinks = null;
-    }
-    return platformsLinks;
-  } catch (error) {
-    console.log(`getBetaseriesPlatformsLinks - ${imdbHomepage}: ${error}`);
-  }
-};
-
-/**
  * It takes the IMDb homepage of a movie as an argument, and returns the IMDb users rating of that
  * movie
  * @param imdbHomepage - The URL of the movie's IMDB page.
@@ -577,7 +522,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
-  const betaseriesPlatformsLinks = await getBetaseriesPlatformsLinks(imdbHomepage);
+  const betaseriesPlatformsLinks = await getPlatformsLinks(allocineHomepage, imdbHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
 
   /* Creating variables that will be used in the next step. */
