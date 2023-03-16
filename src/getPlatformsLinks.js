@@ -5,13 +5,13 @@ dotenv.config();
 const axiosRetry = require("axios-retry");
 const axios = require("axios");
 
+/* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("./config");
 
 /**
- * It takes two parameters (the allocineHomepage and the imdbHomepage) and returns an array of objects
- * containing the name and the link_url of the platforms where the series is available
- * @param allocineHomepage - the allocine homepage of the movie or series
- * @param imdbHomepage - the IMDB homepage of the movie or series
+ * It gets the platforms links of a series from the allocine homepage
+ * @param allocineHomepage - the URL of the show's page on Allocine
+ * @param imdbHomepage - the IMDB homepage of the series
  * @returns An array of objects containing the name and link_url of the platforms.
  */
 const getPlatformsLinks = async (allocineHomepage, imdbHomepage) => {

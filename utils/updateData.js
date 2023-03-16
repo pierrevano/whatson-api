@@ -2,9 +2,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const axiosRetry = require("axios-retry");
-const axios = require("axios");
-const cheerio = require("cheerio");
 const csv = require("csvtojson");
 const shell = require("shelljs");
 const { writeFileSync } = require("fs");
@@ -15,7 +12,14 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+/* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("../src/config");
+
+/* Importing the functions from the files in the src folder. */
+const { getAllocineCriticInfo } = require("../src/getAllocineCriticInfo");
+const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
+const { getBetaseriesUsersRating } = require("../src/getBetaseriesUsersRating");
+const { getImdbUsersRating } = require("../src/getImdbUsersRating");
 const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 
 const node_vars = process.argv.slice(2);
@@ -51,38 +55,6 @@ shell.exec("rm -f ./logs.txt");
  */
 function b64Encode(string) {
   return Buffer.from(string, "utf8").toString("base64");
-}
-
-/**
- * It takes a string as an argument and returns a number
- * @param title - The title of the movie
- * @returns The number of the title.
- */
-function convertTitleToNumber(title) {
-  switch (title) {
-    case "Chef-d'oeuvre":
-      return 5;
-    case "Excellent":
-      return 4.5;
-    case "Très bien":
-      return 4;
-    case "Bien":
-      return 3.5;
-    case "Pas mal":
-      return 3;
-    case "Moyen":
-      return 2.5;
-    case "Pas terrible":
-      return 2;
-    case "Mauvais":
-      return 1.5;
-    case "Très mauvais":
-      return 1;
-    case "Nul":
-      return 0.5;
-    default:
-      return;
-  }
 }
 
 /**
@@ -195,314 +167,6 @@ async function countNullElements(collectionData) {
     console.log(`countNullElements: ${error}`);
   }
 }
-
-/**
- * It takes a string and removes all the extra characters that are not needed
- * @param string - The string to be modified.
- * @returns the string with the extra characters removed.
- */
-function removeExtraChar(string) {
-  return string.replace(/(\r\n|\n|\r|\t|amp;)/gm, "");
-}
-
-/**
- * It takes in a cheerio object and a boolean value, and returns the content url
- * @param $ - The cheerio object
- * @param backup - If the first script tag doesn't work, we'll try the last one.
- * @returns The content of the last script tag with the type application/ld+json
- */
-function getContentUrl($, backup) {
-  const JSONValue = backup ? $('script[type="application/ld+json"]') : $('script[type="application/ld+json"]').last();
-  const contentParsed = JSON.parse(removeExtraChar(JSONValue.text()));
-
-  return contentParsed;
-}
-
-/**
- * It takes a URL and an optional options object, makes a request to the URL, and returns a cheerio
- * object
- * @param url - The URL of the page you want to scrape.
- * @param options - This is an object that contains the headers and other options that you want to pass
- * to the request.
- * @returns A function that returns a promise that resolves to a cheerio object.
- */
-const getCheerioContent = async (url, options) => {
-  const response = await axios.get(url, options);
-  const $ = cheerio.load(response.data);
-
-  return $;
-};
-
-/**
- * It gets the trailer link for a movie or TV show
- * @param allocineHomepage - The URL of the movie or TV show.
- * @param betaseriesHomepage - The URL to the TV Show's page on BetaSeries.
- * @param options - This is the object that contains the headers and the proxy.
- * @returns The trailer variable is being returned.
- */
-const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
-  let trailer = null;
-  /* TV Show logic to get trailer link. */
-  if (allocineHomepage.includes(config.baseURLTypeSeries)) {
-    let url = `${betaseriesHomepage}`;
-    let $ = await getCheerioContent(url, options);
-    const content = getContentUrl($, false);
-    if (content && content.video && content.video.embedUrl) trailer = content.video.embedUrl;
-    console.log(`trailer: ${trailer}`);
-
-    /* Checking to see if the trailer variable is null. If it is, it will run the code below as a backup video link. */
-    if (!trailer) {
-      url = `${allocineHomepage}`;
-      console.log(`url: ${url}`);
-
-      $ = await getCheerioContent(url, options);
-      const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text()).trim()).includes("Vidéos");
-      console.log(`hasInactiveVideos: ${hasInactiveVideos}`);
-
-      if (!hasInactiveVideos) {
-        const allocineId = parseInt(allocineHomepage.match(/=(.*)\./).pop());
-        url = `${config.baseURLAllocine}${config.baseURLCriticDetailsSeries}${allocineId}/videos/`;
-        console.log(`url: ${url}`);
-
-        $ = await getCheerioContent(url, options);
-        const linkToVideo = $(".meta-title-link").first().attr("href");
-        url = `${config.baseURLAllocine}${linkToVideo}`;
-        console.log(`url: ${url}`);
-
-        if (linkToVideo) {
-          $ = await getCheerioContent(url, options);
-          const isPageBroken = $.html().length === 0;
-          console.log(`isPageBroken: ${isPageBroken}`);
-          if (!isPageBroken) {
-            const content = getContentUrl($, true);
-            trailer = content.contentUrl;
-            console.log(`trailer: ${trailer}`);
-          }
-        }
-      }
-    }
-  } else {
-    /* Movie logic to get trailer link */
-    const url = `${allocineHomepage}`;
-    console.log(`url: ${url}`);
-
-    $ = await getCheerioContent(url, options);
-    const itemJSON = getContentUrl($, true);
-    if (itemJSON && itemJSON.trailer) {
-      const url = itemJSON.trailer.url;
-      $ = await getCheerioContent(url, options);
-      const content = getContentUrl($, true);
-      trailer = content.contentUrl;
-      console.log(`trailer: ${trailer}`);
-    }
-  }
-
-  return trailer;
-};
-
-/**
- * It takes an allocineHomepage and a theMoviedbId as parameters, and returns an image
- * @param allocineHomepage - the URL of the movie or series on Allocine
- * @param theMoviedbId - the id of the movie or series on TheMovieDB
- * @returns The image of the movie or series
- */
-const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {
-  try {
-    const baseURLTMDB = config.baseURLTMDB;
-    const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
-    const themoviedb_api_key = process.env.THEMOVIEDB_API_KEY;
-    const url = `${baseURLTMDB}/${type}/${theMoviedbId}?api_key=${themoviedb_api_key}`;
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-    const options = {
-      validateStatus: (status) => {
-        if (status === 404) writeFileSync(`logs.txt`, `getImageFromTMDB 404: ${allocineHomepage}`, null, { flag: "a+" }, 2);
-        return status === 200 || status === 404;
-      },
-    };
-    const response = await axios.get(url, options);
-    const image_path = response.data.poster_path || response.data.profile_path;
-    const baseURLImgTMDB = config.baseURLImgTMDB;
-    const image = `${baseURLImgTMDB}${image_path}`;
-
-    return image;
-  } catch (error) {
-    console.log(`getImageFromTMDB - ${allocineHomepage}: ${error}`);
-  }
-};
-
-/**
- * It gets the title, image, users rating, seasons number and trailer of a movie or a series from the
- * Allocine website
- * @param allocineHomepage - the allocine homepage of the movie/series
- * @param betaseriesHomepage - the betaseries homepage of the movie/series
- * @param theMoviedbId - the id of the movie/series on TheMovieDB
- * @returns An object with the following properties:
- * - allocineTitle
- * - allocineImage
- * - allocineUsersRating
- * - allocineSeasonsNumber
- * - trailer
- */
-const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
-  try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-    const options = {
-      validateStatus: (status) => {
-        if (status === 404) writeFileSync(`logs.txt`, `allocineHomepage 404: ${allocineHomepage}`, null, { flag: "a+" }, 2);
-        return status === 200 || status === 404;
-      },
-    };
-    const $ = await getCheerioContent(allocineHomepage, options);
-
-    const title = $('meta[property="og:title"]').attr("content");
-    let image = $('meta[property="og:image"]').attr("content");
-    if (image.includes("empty_portrait")) image = await getImageFromTMDB(allocineHomepage, theMoviedbId);
-
-    let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
-    if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
-
-    if (isNaN(allocineUsersRating)) {
-      const allocineUsersRatingEq1 = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
-      const allocineUsersRatingEq0 = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
-      writeFileSync(`logs.txt`, `${allocineHomepage}: Eq1 - ${allocineUsersRatingEq1} / Eq0 - ${allocineUsersRatingEq0}`, null, { flag: "a+" }, 2);
-
-      allocineUsersRating = null;
-    }
-
-    let allocineSeasonsNumber = null;
-    if (allocineHomepage.includes(config.baseURLTypeSeries)) allocineSeasonsNumber = parseInt($(".stats-number").eq(0).text());
-
-    const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
-
-    let allocineFirstInfo = {
-      allocineTitle: title,
-      allocineImage: image,
-      allocineUsersRating: allocineUsersRating,
-      allocineSeasonsNumber: allocineSeasonsNumber,
-      trailer: trailer,
-    };
-
-    return allocineFirstInfo;
-  } catch (error) {
-    console.log(`getAllocineFirstInfo - ${allocineHomepage}: ${error}`);
-  }
-};
-
-/**
- * It takes the URL of a movie's critics page on Allocine, scrapes the page, and returns an object
- * containing the number of critics, the average rating, and the details of each critic's rating
- * @param allocineCriticsDetails - the URL of the page containing the critics' ratings
- * @returns An object with the following properties:
- * - criticsNumber: the number of critics
- * - criticsRating: the average rating of the critics
- * - criticsRatingDetails: an array of objects with the following properties:
- *   - criticName: the name of the critic
- *   - criticRating: the rating of the critic
- */
-const getAllocineCriticInfo = async (allocineCriticsDetails) => {
-  try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-    const options = {
-      validateStatus: (status) => {
-        if (status === 404) writeFileSync(`logs.txt`, `allocineCriticsDetails 404: ${allocineCriticsDetails}`, null, { flag: "a+" }, 2);
-        return status === 200 || status === 404;
-      },
-    };
-    const $ = await getCheerioContent(allocineCriticsDetails, options);
-
-    let criticsRatingDetails;
-    criticsRatingDetails = $(".js-anchor-link")
-      .map((_i, element) => [
-        {
-          criticName: element.children[0].data,
-          criticRating: convertTitleToNumber(element.parent.children[0].attribs.title),
-        },
-      ])
-      .get();
-    if (criticsRatingDetails.length === 0) criticsRatingDetails = null;
-
-    let sum = 0;
-    $(".js-anchor-link")
-      .map((_i, element) => (sum += convertTitleToNumber(element.parent.children[0].attribs.title)))
-      .get();
-
-    let criticsRating;
-    let criticsRatingLength;
-    criticsRatingLength = $(".js-anchor-link").length;
-    if (criticsRatingLength === 0) criticsRatingLength = null;
-    criticsRating = criticsRatingLength === null ? null : parseFloat((sum / criticsRatingLength).toFixed(1));
-
-    const allocineCriticInfo = {
-      criticsNumber: criticsRatingLength,
-      criticsRating: criticsRating,
-      criticsRatingDetails: criticsRatingDetails,
-    };
-
-    return allocineCriticInfo;
-  } catch (error) {
-    console.log(`getAllocineCriticInfo - ${allocineCriticsDetails}: ${error}`);
-  }
-};
-
-/**
- * It takes a betaseriesHomepage as an argument, and returns the criticsRating of the show
- * @param betaseriesHomepage - the URL of the show's page on betaseries.com
- * @returns The critics rating of the show.
- */
-const getBetaseriesUsersRating = async (betaseriesHomepage) => {
-  try {
-    let criticsRating;
-    if (!betaseriesHomepage.includes("null")) {
-      axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-      const options = {
-        validateStatus: (status) => {
-          if (status === 404) writeFileSync(`logs.txt`, `betaseriesHomepage 404: ${betaseriesHomepage}`, null, { flag: "a+" }, 2);
-          return status === 200 || status === 404;
-        },
-      };
-      const $ = await getCheerioContent(betaseriesHomepage, options);
-
-      criticsRating = parseFloat($(".js-render-stars")[0].attribs.title.replace(" / 5", "").replace(",", "."));
-      if (criticsRating === 0) criticsRating = null;
-    } else {
-      criticsRating = null;
-    }
-
-    return criticsRating;
-  } catch (error) {
-    console.log(`getBetaseriesUsersRating - ${betaseriesHomepage}: ${error}`);
-  }
-};
-
-/**
- * It takes the IMDb homepage of a movie as an argument, and returns the IMDb users rating of that
- * movie
- * @param imdbHomepage - The URL of the movie's IMDB page.
- * @returns The critics rating of the movie.
- */
-const getImdbUsersRating = async (imdbHomepage) => {
-  try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-    const options = {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
-      },
-    };
-    const $ = await getCheerioContent(imdbHomepage, options);
-
-    criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
-    if (isNaN(criticsRating)) {
-      const ratingBarText = $(".rating-bar__base-button").first().text();
-      writeFileSync(`logs.txt`, `${imdbHomepage}: ${ratingBarText}`, null, { flag: "a+" }, 2);
-
-      criticsRating = null;
-    }
-
-    return criticsRating;
-  } catch (error) {
-    console.log(`getImdbUsersRating - ${imdbHomepage}: ${error}`);
-  }
-};
 
 /**
  * It creates an object called data that contains the data that was scraped from the different websites
@@ -635,7 +299,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     for (let index = index_to_start; index < jsonArray.length; index++) {
       const json = jsonArray[index];
 
-      console.timeLog("Duration", `- ${index + 1} / ${jsonArray.length} (${(((index + 1) * 100) / jsonArray.length).toFixed(1)}%)`);
+      console.timeLog("Duration", `- ${parseInt(index) + 1} / ${jsonArray.length} (${(((parseInt(index) + 1) * 100) / jsonArray.length).toFixed(1)}%)`);
 
       const baseURLAllocine = config.baseURLAllocine;
       const allocineURL = json.URL;
