@@ -12,32 +12,23 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-/* Importing the config.js file and assigning it to the config variable. */
+/* Importing the config and node_vars_values from the src folder. */
 const { config } = require("../src/config");
+const { node_vars_values } = require("../src/node_vars_values");
 
 /* Importing the functions from the files in the src folder. */
+const { b64Encode } = require("../src/utils/b64Encode");
+const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { getAllocineCriticInfo } = require("../src/getAllocineCriticInfo");
 const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
 const { getBetaseriesUsersRating } = require("../src/getBetaseriesUsersRating");
 const { getImdbUsersRating } = require("../src/getImdbUsersRating");
 const { getPlatformsLinks } = require("../src/getPlatformsLinks");
-
-const node_vars = process.argv.slice(2);
-
-const node_vars_values = {
-  item_type: node_vars[0],
-  get_ids: node_vars[1],
-  get_db: node_vars[2],
-  environment: node_vars[3],
-  is_not_active: node_vars[4],
-  index_to_start: node_vars[5],
-  skip_already_added_documents: node_vars[6],
-};
+const { updateIds } = require("../src/updateIds");
 
 const item_type = node_vars_values.item_type;
 
 /* Checking if the variable get_ids is true. If it is not true, it will run the function updateIds(). */
-const environment = node_vars_values.environment;
 const get_ids = node_vars_values.get_ids;
 if (get_ids === "update_ids") updateIds();
 
@@ -47,50 +38,6 @@ if (get_db !== "update_db") process.exit(1);
 
 /* Removing the file logs.txt */
 shell.exec("rm -f ./logs.txt");
-
-/**
- * It takes a string, converts it to a Buffer, and then converts that Buffer to a base64 string
- * @param string - The string to be encoded.
- * @returns The string is being encoded in base64.
- */
-function b64Encode(string) {
-  return Buffer.from(string, "utf8").toString("base64");
-}
-
-/**
- * It takes a JSON array as an argument and returns a filtered array of JSON objects where the value of
- * the key "IS_ACTIVE" is "TRUE"
- * @param jsonArray - The array of JSON objects that you want to filter.
- * @returns the filtered array.
- */
-function jsonArrayFiltered(jsonArray) {
-  return jsonArray.filter((element) => element.IS_ACTIVE === "TRUE");
-}
-
-/**
- * It updates the ids of the movies and tv shows in the database
- */
-function updateIds() {
-  shell.exec("chmod +x ./utils/getIds.sh");
-
-  if (!environment) {
-    if (item_type === "movie") {
-      shell.exec("bash ./utils/getIds.sh no_delete circleci movie");
-      shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
-    } else {
-      shell.exec("bash ./utils/getIds.sh no_delete circleci tvshow");
-      shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
-    }
-  } else {
-    if (item_type === "movie") {
-      shell.exec("bash ./utils/getIds.sh delete local movie");
-      shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
-    } else {
-      shell.exec("bash ./utils/getIds.sh delete local tvshow");
-      shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
-    }
-  }
-}
 
 /**
  * It takes in a data object and a collectionData object, and then it updates the database with the
