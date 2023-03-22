@@ -328,7 +328,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       if (typeof data.title === "string") {
         await upsertToDatabase(data, collectionData);
       } else {
-        writeFileSync(`logs.txt`, `The title of ${allocineHomepage} has not been found!`, null, { flag: "a+" }, 2);
+        writeFileSync(`logs.txt`, `The title of ${allocineHomepage} has not been found!`, { flag: "a+" });
       }
     }
   } catch (error) {

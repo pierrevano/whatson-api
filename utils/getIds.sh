@@ -33,18 +33,6 @@ else
   JQ_COMMAND_RESULTS=".tv_results"
 fi
 
-# Loading the env variables
-if [[ $SOURCE != "circleci" ]]; then
-  source .env
-fi
-echo "SOURCE: $SOURCE"
-echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
-echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
-echo "----------------------------------------------------------------------------------------------------"
-if [[ -z $BETASERIES_API_KEY ]]; then
-  exit
-fi
-
 WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v ".*\=[0-9]+.html,tt[0-9]+,[a-zA-Z0-9-]+,[0-9]+,(TRUE|FALSE)$" | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
   echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH!"
@@ -58,6 +46,18 @@ if [[ $DUPLICATES_LINES_NB ]]; then
   echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH!"
   echo "details:"
   echo $DUPLICATES_LINES_NB
+  exit
+fi
+
+# Loading the env variables
+if [[ $SOURCE != "circleci" ]]; then
+  source .env
+fi
+echo "SOURCE: $SOURCE"
+echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
+echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
+echo "----------------------------------------------------------------------------------------------------"
+if [[ -z $BETASERIES_API_KEY ]]; then
   exit
 fi
 

@@ -7,6 +7,7 @@ const axios = require("axios");
 
 /* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("./config");
+const { writeFileSync } = require("fs");
 
 /**
  * It takes the allocineHomepage and theMoviedbId as parameters, and returns the image of the movie or
@@ -27,6 +28,8 @@ const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {
     const response = await axios.get(url, options);
 
     const image_path = response.data.poster_path || response.data.profile_path;
+    writeFileSync(`logs.txt`, image_path, { flag: "a+" });
+
     const baseURLImgTMDB = config.baseURLImgTMDB;
     const image = `${baseURLImgTMDB}${image_path}`;
 
