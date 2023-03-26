@@ -31,8 +31,8 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
 
     const title = $('meta[property="og:title"]').attr("content");
 
-    let image = $('meta[property="og:image"]').attr("content");
-    if (image.includes("empty_portrait")) image = await getImageFromTMDB(allocineHomepage, theMoviedbId);
+    let image = await getImageFromTMDB(allocineHomepage, theMoviedbId);
+    if (!image) image = $('meta[property="og:image"]').attr("content");
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
