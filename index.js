@@ -19,6 +19,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const config = {
   collectionName: "data",
   dbName: "whatson",
+  limit: "200",
 };
 
 /* Connecting to the database and the collection. */
@@ -117,7 +118,7 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
   const match_item_type_movie = { $match: { $and: [{ item_type: "movie" }, { is_active: true }] } };
   const match_item_type_tvshow = { $match: { $and: [{ item_type: "tvshow" }, { is_active: true }] } };
-  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [{ item_type: "tvshow" }, { "allocine.seasons_number": seasons_number }] } };
+  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [{ item_type: "tvshow" }, { "allocine.seasons_number": { $in: seasons_number.split(",").map(Number) } }] } };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 
   const pipeline = [];
@@ -140,8 +141,9 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
   for await (const item of data) {
     items.push(item);
   }
+  const limitedItems = items.slice(0, config.limit);
 
-  return items;
+  return limitedItems;
 };
 
 /**
@@ -165,7 +167,7 @@ const getItems = async (id_path, item_type_query, cinema_id_query, ratings_filte
   const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
   const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
   const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
-  const seasons_number = typeof seasons_number_query !== "undefined" ? parseInt(seasons_number_query) : "";
+  const seasons_number = typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
   const items = await getData(id, item_type, movies_ids, ratings_filters, seasons_number);
 
   return items;
