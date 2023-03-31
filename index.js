@@ -20,6 +20,7 @@ const config = {
   collectionName: "data",
   dbName: "whatson",
   limit: "200",
+  maxSeasonsNumber: 4,
 };
 
 /* Connecting to the database and the collection. */
@@ -119,11 +120,16 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
   const match_item_type_movie = { $match: { $and: [{ item_type: "movie" }, { is_active: true }] } };
   const match_item_type_tvshow = { $match: { $and: [{ item_type: "tvshow" }, { is_active: true }] } };
   const match_item_type_tvshow_and_seasons_number = { $match: { $and: [{ item_type: "tvshow" }, { "allocine.seasons_number": { $in: seasons_number.split(",").map(Number) } }] } };
+  const match_item_type_tvshow_and_seasons_number_more_than_max = {
+    $match: { $and: [{ item_type: "tvshow" }, { "allocine.seasons_number": { $in: seasons_number.split(",").map(Number) }, "allocine.seasons_number": { $gt: config.maxSeasonsNumber } }] },
+  };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 
   const pipeline = [];
   if (id !== "") {
     pipeline.push(match_id, addFields_ratings_filters, sort_ratings);
+  } else if (seasons_number.includes(config.maxSeasonsNumber)) {
+    pipeline.push(match_item_type_tvshow_and_seasons_number_more_than_max, addFields_ratings_filters, sort_ratings);
   } else if (seasons_number !== "") {
     pipeline.push(match_item_type_tvshow_and_seasons_number, addFields_ratings_filters, sort_ratings);
   } else if (item_type === "tvshow") {
