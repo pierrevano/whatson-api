@@ -17,9 +17,13 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 /* Defining the name of the collection and the database. */
 const config = {
-  collectionName: "data",
   dbName: "whatson",
-  limit: "200",
+  collectionName: "data",
+  
+  corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
+  baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
+  
+  limit: 200,
   maxSeasonsNumber: 4,
 };
 
@@ -35,8 +39,7 @@ const collectionData = database.collection(collectionName);
  * @returns An array of movie ids
  */
 const getMoviesIds = async (cinemaIdParam) => {
-  const cors_url = "https://cors-sites-aafe82ad9d0c.fly.dev/";
-  const base_url = `${cors_url}https://www.allocine.fr/_/showtimes/theater-`;
+  const base_url = `${config.corsURL}${config.baseURLTheaters}`;
 
   const allMoviesIds = [];
   let resultsLength = 0;
@@ -128,9 +131,9 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
   const pipeline = [];
   if (id !== "") {
     pipeline.push(match_id, addFields_ratings_filters, sort_ratings);
-  } else if (seasons_number.includes(config.maxSeasonsNumber)) {
+  } else if (item_type === "tvshow" && seasons_number.includes(config.maxSeasonsNumber)) {
     pipeline.push(match_item_type_tvshow_and_seasons_number_more_than_max, addFields_ratings_filters, sort_ratings);
-  } else if (seasons_number !== "") {
+  } else if (item_type === "tvshow" && seasons_number !== "") {
     pipeline.push(match_item_type_tvshow_and_seasons_number, addFields_ratings_filters, sort_ratings);
   } else if (item_type === "tvshow") {
     pipeline.push(match_item_type_tvshow, addFields_ratings_filters, sort_ratings);
