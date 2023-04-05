@@ -19,10 +19,10 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const config = {
   dbName: "whatson",
   collectionName: "data",
-  
+
   corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
   baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
-  
+
   limit: 200,
   maxSeasonsNumber: 4,
 };
