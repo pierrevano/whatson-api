@@ -1,20 +1,19 @@
 const sizeOf = require("request-image-size");
 
 const config = {
-  defaultWidth: "576px",
-  defaultHeight: "768px",
+  defaultWidth: "500px",
+  defaultHeight: "750px",
 
   maxSize: 500,
-  compressionSize: 2,
   tmdbBaseURL: "https://image.tmdb.org",
 };
 
 /**
- * Gets the dimensions of an image and returns an object with the width and height.
- * If the image is larger than the maximum size allowed, it will be scaled down.
+ * Gets the dimensions of an image and returns an object with the width and height
+ * of the image. If the image is too large, it will be resized to fit within the
+ * maximum size specified in the configuration object.
  * @param {string} rawImage - the URL of the image to get the dimensions of
  * @returns {Promise<{width: number, height: number}>} - an object with the width and height of the image
- * or an error message if the dimensions could not be retrieved.
  */
 const getPlaceholder = async (rawImage) => {
   try {

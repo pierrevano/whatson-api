@@ -7,34 +7,42 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 /**
- * Creates a new instance of the ImageKit class with the given configuration options.
- * @param {object} options - An object containing the configuration options for the ImageKit instance.
- * @param {string} options.publicKey - The public key for the ImageKit account.
- * @param {string} options.privateKey - The private key for the ImageKit account.
- * @param {string} options.urlEndpoint - The URL endpoint for the ImageKit account.
- * @returns An instance of the ImageKit class that can be used to interact with the ImageKit API.
+ * Configures the Cloudinary API with the given credentials.
+ * @param {string} cloud_name - The name of the Cloudinary account.
+ * @param {string} api_key - The API key for the Cloudinary account.
+ * @param {string} api_secret - The API secret for the Cloudinary account.
+ * @returns None
  */
-const ImageKit = require("imagekit");
-const imagekit = new ImageKit({
-  publicKey: "public_kWyuooikd/guGh+o5zN9/I8z3Ao=",
-  privateKey: process.env.IMAGEKIT_API_KEY,
-  urlEndpoint: "https://ik.imagekit.io/whatson",
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: "do3n8oace",
+  api_key: "476171173971464",
+  api_secret: process.env.CLOUDINARY_API_KEY,
 });
 
 /* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("./config");
 
-/* Importing the functions from the files getCheerioContent.js, getImageFromTMDB.js and getTrailer.js. */
+/**
+ * This module exports several utility functions for use in other modules.
+ * @module utils
+ * @property {function} getCheerioContent - A function that extracts content from a Cheerio object.
+ * @property {function} getImageFromTMDB - A function that retrieves an image from The Movie Database API.
+ * @property {function} getTrailer - A function that retrieves a trailer from YouTube.
+ * @property {function} getPlaceholder - A function that retrieves a placeholder image.
+ * @property {function} b64Encode - A function that encodes a string to base64.
+ */
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { getImageFromTMDB } = require("./getImageFromTMDB");
 const { getTrailer } = require("./getTrailer");
 const { getPlaceholder } = require("./getPlaceholder");
+const { b64Encode } = require("./utils/b64Encode");
 
 /**
  * Retrieves information about a movie or TV show from Allocine.
  * @param {string} allocineHomepage - The URL of the Allocine page for the movie or TV show.
  * @param {string} betaseriesHomepage - The URL of the Betaseries page for the movie or TV show.
- * @param {number} theMoviedbId - The ID of the movie or TV show on The Movie Database.
+ * @param {string} theMoviedbId - The ID of the movie or TV show on The Movie Database.
  * @returns An object containing information about the movie or TV show, including its title, image, placeholder,
  * users rating, number of seasons (if applicable), and trailer.
  */
@@ -49,34 +57,11 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     let image = $('meta[property="og:image"]').attr("content");
     if (image.includes("empty_portrait")) image = await getImageFromTMDB(allocineHomepage, theMoviedbId);
 
+    const result = await cloudinary.uploader.upload(image, { public_id: b64Encode(image) });
+    image = result.url;
+
     const { width, height } = await getPlaceholder(image);
-
-    const kind = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
-    let placeholder;
-    image = (await axios.get(`${config.baseURLWhatsonAPI}/${kind}/${theMoviedbId}`)).data.image;
-
-    if (image && image.startsWith(config.baseURLImagekit)) {
-      placeholder = (await axios.get(`${config.baseURLWhatsonAPI}/${kind}/${theMoviedbId}`)).data.placeholder;
-    } else {
-      await imagekit
-        .upload({ file: image, fileName: `${image}` })
-        .then((response) => {
-          image = response.url;
-
-          placeholder = imagekit.url({
-            src: image,
-            transformation: [
-              {
-                height: height,
-                width: width,
-              },
-            ],
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    const placeholder = cloudinary.url(b64Encode(image), { width: width, height: height });
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
