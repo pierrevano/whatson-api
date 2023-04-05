@@ -61,7 +61,7 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     image = result.url;
 
     const { width, height } = await getPlaceholder(image);
-    const placeholder = cloudinary.url(b64Encode(image), { width: width, height: height });
+    const placeholder = `${image.split("upload")[0]}upload/w_${width},h_${height}${image.split("upload")[1]}`;
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
