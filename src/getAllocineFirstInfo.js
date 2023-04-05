@@ -63,7 +63,7 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
       image = result.url;
 
       const { width, height } = await getPlaceholder(image);
-      placeholder = `${image.split("upload")[0]}upload/w_${width},h_${height}${image.split("upload")[1]}`;
+      placeholder = `${image.split("upload")[0]}upload/w_${width},h_${height},f_auto${image.split("upload")[1]}`;
     }
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
