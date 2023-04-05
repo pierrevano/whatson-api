@@ -139,6 +139,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   /* Creating variables that will be used in the next step. */
   const allocineTitle = allocineFirstInfo.allocineTitle;
   const allocineImage = allocineFirstInfo.allocineImage;
+  const allocinePlaceholder = allocineFirstInfo.allocinePlaceholder;
   const criticsRating = allocineCriticInfo.criticsRating;
   const criticsNumber = allocineCriticInfo.criticsNumber;
   const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
@@ -188,6 +189,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     item_type: item_type,
     title: allocineTitle,
     image: allocineImage,
+    placeholder: allocinePlaceholder,
     allocine: allocineObj,
     betaseries: betaseriesObj,
     imdb: imdbObj,
