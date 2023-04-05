@@ -7,7 +7,6 @@ const config = {
   baseURLCriticDetailsFilms: "/film/fichefilm-",
   baseURLCriticDetailsSeries: "/series/ficheserie-",
   baseURLIMDB: "https://www.imdb.com/title/",
-  baseURLImgTMDB: "https://image.tmdb.org/t/p/w1280",
   baseURLTMDB: "https://api.themoviedb.org/3",
   baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
   baseURLTypeSeries: "/series/ficheserie_gen_cserie=",

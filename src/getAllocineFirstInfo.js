@@ -57,11 +57,14 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     let image = $('meta[property="og:image"]').attr("content");
     if (image.includes("empty_portrait")) image = await getImageFromTMDB(allocineHomepage, theMoviedbId);
 
-    const result = await cloudinary.uploader.upload(image, { public_id: b64Encode(image) });
-    image = result.url;
+    let placeholder = image;
+    if (image && !image.startsWith("/")) {
+      const result = await cloudinary.uploader.upload(image, { public_id: b64Encode(image) });
+      image = result.url;
 
-    const { width, height } = await getPlaceholder(image);
-    const placeholder = `${image.split("upload")[0]}upload/w_${width},h_${height}${image.split("upload")[1]}`;
+      const { width, height } = await getPlaceholder(image);
+      placeholder = `${image.split("upload")[0]}upload/w_${width},h_${height}${image.split("upload")[1]}`;
+    }
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));

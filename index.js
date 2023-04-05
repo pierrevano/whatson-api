@@ -122,9 +122,9 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
   const match_item_type_movie = { $match: { $and: [{ item_type: "movie" }, { is_active: true }] } };
   const match_item_type_tvshow = { $match: { $and: [{ item_type: "tvshow" }, { is_active: true }] } };
-  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [{ item_type: "tvshow" }, { "allocine.seasons_number": { $in: seasons_number.split(",").map(Number) } }] } };
+  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [{ item_type: "tvshow" }, { is_active: true }, { "allocine.seasons_number": { $in: seasons_number.split(",").map(Number) } }] } };
   const match_item_type_tvshow_and_seasons_number_more_than_max = {
-    $match: { $or: [{ "allocine.seasons_number": { $in: seasons_number.split(",").map(Number) } }, { "allocine.seasons_number": { $gt: config.maxSeasonsNumber } }] },
+    $match: { $and: [{ is_active: true }, { $or: [{ "allocine.seasons_number": { $in: seasons_number.split(",").map(Number) } }, { "allocine.seasons_number": { $gt: config.maxSeasonsNumber } }] }] },
   };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 

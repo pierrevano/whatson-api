@@ -28,12 +28,8 @@ const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {
     const response = await axios.get(url, options);
 
     const image_path = response.data.poster_path || response.data.profile_path;
-    writeFileSync(`logs.txt`, image_path, { flag: "a+" });
 
-    const baseURLImgTMDB = config.baseURLImgTMDB;
-    const image = `${baseURLImgTMDB}${image_path}`;
-
-    return image;
+    return image_path;
   } catch (error) {
     console.log(`getImageFromTMDB - ${allocineHomepage}: ${error}`);
   }
