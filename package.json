@@ -25,7 +25,7 @@
     "mongodb": "^4.13.0",
     "node-fetch": "^2.6.8",
     "prettier": "^2.8.1",
-    "request-image-size": "^2.2.0",
+    "probe-image-size": "^7.2.3",
     "shelljs": "^0.8.5"
   }
 }

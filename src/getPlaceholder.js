@@ -1,4 +1,4 @@
-const sizeOf = require("request-image-size");
+const sizeOf = require("probe-image-size");
 
 const config = {
   defaultWidth: "500px",
