@@ -59,8 +59,8 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
 
     let placeholder = image;
     if (image && !image.startsWith("/")) {
-      const result = await cloudinary.uploader.upload(image, { public_id: b64Encode(image) });
-      image = result.url;
+      const result = await cloudinary.uploader.upload(image, { public_id: b64Encode(image), overwrite: true });
+      image = result.secure_url;
 
       const { width, height } = await getPlaceholder(image);
       placeholder = `${image.split("upload")[0]}upload/w_${width},h_${height},f_auto${image.split("upload")[1]}`;

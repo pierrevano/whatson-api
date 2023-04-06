@@ -222,7 +222,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=309.html,tt0088247,469-the-terminator,218,FALSE
 /film/fichefilm_gen_cfilm=310.html,tt0090171,34540-le-the-au-harem-darchimede,76388,FALSE
 /film/fichefilm_gen_cfilm=311.html,tt0080455,3071-the-blues-brothers,525,FALSE
-/film/fichefilm_gen_cfilm=312.html,tt0063678,2547-teorema,5335,TRUE
+/film/fichefilm_gen_cfilm=312.html,tt0063678,2547-teorema,5335,FALSE
 /film/fichefilm_gen_cfilm=313.html,tt0073629,3298-the-rocky-horror-picture-show,36685,FALSE
 /film/fichefilm_gen_cfilm=314.html,tt0079826,3274-the-rose,16323,FALSE
 /film/fichefilm_gen_cfilm=315.html,tt0069383,17427-tintin-et-le-lac-aux-requins,241004,FALSE
@@ -231,7 +231,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=318.html,tt0071141,3332-angst-essen-seele-auf,216,FALSE
 /film/fichefilm_gen_cfilm=321.html,tt0084354,15815-moonlighting,42134,FALSE
 /film/fichefilm_gen_cfilm=322.html,tt0086503,81123-un-bon-petit-diable,83483,FALSE
-/film/fichefilm_gen_cfilm=323.html,tt0088318,22621-un-dimanche-a-la-campagne,42102,FALSE
+/film/fichefilm_gen_cfilm=323.html,tt0088318,22621-un-dimanche-a-la-campagne,42102,TRUE
 /film/fichefilm_gen_cfilm=324.html,tt0072353,4526-les-valseuses,4031,FALSE
 /film/fichefilm_gen_cfilm=326.html,tt0082259,25008-deprisa-deprisa,47211,FALSE
 /film/fichefilm_gen_cfilm=327.html,tt0031397,20375-gullivers-travels,42518,FALSE
@@ -2522,7 +2522,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=5097.html,tt0017736,27281-casanova,66449,FALSE
 /film/fichefilm_gen_cfilm=5118.html,tt0097995,7116-noce-blanche,37533,FALSE
 /film/fichefilm_gen_cfilm=5119.html,tt0097243,3164-a-dry-white-season,32075,FALSE
-/film/fichefilm_gen_cfilm=5120.html,tt0045152,360-singin-in-the-rain,872,FALSE
+/film/fichefilm_gen_cfilm=5120.html,tt0045152,360-singin-in-the-rain,872,TRUE
 /film/fichefilm_gen_cfilm=5129.html,tt0064609,84022-lucia,88591,FALSE
 /film/fichefilm_gen_cfilm=5130.html,tt0163716,24313-litan,66448,FALSE
 /film/fichefilm_gen_cfilm=5131.html,tt0063291,22638-memorias-del-subdesarrollo,47576,FALSE
@@ -9508,7 +9508,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=41412.html,tt0293509,20019-the-piano-player,4968,FALSE
 /film/fichefilm_gen_cfilm=41413.html,tt0280030,3822-return-to-never-land,16690,FALSE
 /film/fichefilm_gen_cfilm=41415.html,tt0301414,19334-lhomme-du-train,22016,FALSE
-/film/fichefilm_gen_cfilm=41416.html,tt0307538,14683-swing,32616,FALSE
+/film/fichefilm_gen_cfilm=41416.html,tt0307538,14683-swing,32616,TRUE
 /film/fichefilm_gen_cfilm=41418.html,tt0085254,60583-blue-skies-again,88226,FALSE
 /film/fichefilm_gen_cfilm=41419.html,tt0395721,7228-pedale-dure,59705,FALSE
 /film/fichefilm_gen_cfilm=41420.html,tt0076299,23791-the-last-wave,72277,FALSE
@@ -36789,7 +36789,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=298953.html,tt17505492,108534-la-maison,960139,FALSE
 /film/fichefilm_gen_cfilm=298973.html,tt16280138,96276-magic-mikes-last-dance,906221,FALSE
 /film/fichefilm_gen_cfilm=299052.html,tt14500584,94679-beyond-the-infinite-two-minutes,805627,FALSE
-/film/fichefilm_gen_cfilm=299055.html,tt17009328,122666-italia-il-fuoco-la-cenere,942482,TRUE
+/film/fichefilm_gen_cfilm=299055.html,tt17009328,122666-italia-il-fuoco-la-cenere,942482,FALSE
 /film/fichefilm_gen_cfilm=299169.html,tt19512418,108538-brillantes,973604,FALSE
 /film/fichefilm_gen_cfilm=299195.html,tt16360006,94959-bubble,912598,FALSE
 /film/fichefilm_gen_cfilm=299355.html,tt21870834,112521-le-mystere-daval,928023,FALSE
@@ -36987,6 +36987,6 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=311432.html,tt26676672,122518-slava-ukraini,1083310,FALSE
 /film/fichefilm_gen_cfilm=312092.html,tt15309808,122040-michael,866198,FALSE
 /film/fichefilm_gen_cfilm=312435.html,tt9362722,68252-spider-man-across-the-spider-verse,569094,FALSE
-/film/fichefilm_gen_cfilm=313339.html,tt11732164,123252-pathu-thala,882392,TRUE
+/film/fichefilm_gen_cfilm=313339.html,tt11732164,123252-pathu-thala,882392,FALSE
 /film/fichefilm_gen_cfilm=313771.html,tt15415924,108179-agilan,937702,FALSE
 /film/fichefilm_gen_cfilm=314136.html,tt11364772,122724-kabzaa,683876,FALSE
