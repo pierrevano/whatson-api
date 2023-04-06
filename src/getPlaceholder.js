@@ -4,7 +4,7 @@ const config = {
   defaultWidth: "500px",
   defaultHeight: "750px",
 
-  maxSize: 400,
+  maxSize: 500,
   tmdbBaseURL: "https://image.tmdb.org",
 };
 
