@@ -152,14 +152,12 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const allocineBaseObj = {
     id: allocineId,
     url: allocineHomepage,
-    trailer: trailer,
     users_rating: allocineUsersRating,
   };
   const allocineSecondInfo = {
     critics_rating: criticsRating,
     critics_number: criticsNumber,
     critics_rating_details: criticsRatingDetails,
-    seasons_number: allocineSeasonsNumber,
   };
   const allocineObj = Object.assign(allocineBaseObj, allocineSecondInfo);
 
@@ -170,7 +168,6 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       id: betaseriesId,
       url: betaseriesHomepage,
       users_rating: betaseriesUsersRating,
-      platforms_links: betaseriesPlatformsLinks,
     };
   }
 
@@ -190,6 +187,9 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     title: allocineTitle,
     image: allocineImage,
     placeholder: allocinePlaceholder,
+    platforms_links: betaseriesPlatformsLinks,
+    seasons_number: allocineSeasonsNumber,
+    trailer: trailer,
     allocine: allocineObj,
     betaseries: betaseriesObj,
     imdb: imdbObj,
