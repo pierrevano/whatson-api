@@ -129,37 +129,55 @@ async function countNullElements(collectionData) {
  * @returns The function createJSON is returning an object called data.
  */
 const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId) => {
-  /* Getting the data from the different websites. */
+  /**
+   * Asynchronously retrieves various pieces of information from different sources for a movie.
+   * @param {string} allocineHomepage - The URL of the movie's Allocine homepage.
+   * @param {string} betaseriesHomepage - The URL of the movie's Betaseries homepage.
+   * @param {string} theMoviedbId - The ID of the movie on The Movie Database.
+   * @param {string} allocineCriticsDetails - The URL of the movie's Allocine critics details page.
+   * @param {string} imdbHomepage - The URL of the movie's IMDb homepage.
+   * @returns An object containing various pieces of information about the movie.
+   */
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
   const betaseriesPlatformsLinks = await getPlatformsLinks(allocineHomepage, imdbHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
 
-  /* Creating variables that will be used in the next step. */
-  const allocineTitle = allocineFirstInfo.allocineTitle;
+  /**
+   * Destructures the properties of the given object and assigns them to individual variables.
+   * @param {Object} allocineFirstInfo - The object containing the properties to destructure.
+   * @param {Object} allocineCriticInfo - The object containing the critic information.
+   * @returns None
+   */
   const allocineImage = allocineFirstInfo.allocineImage;
   const allocinePlaceholder = allocineFirstInfo.allocinePlaceholder;
-  const criticsRating = allocineCriticInfo.criticsRating;
-  const criticsNumber = allocineCriticInfo.criticsNumber;
-  const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
-  const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
   const allocineSeasonsNumber = allocineFirstInfo.allocineSeasonsNumber;
+  const allocineTitle = allocineFirstInfo.allocineTitle;
+  const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
+  const criticsNumber = allocineCriticInfo.criticsNumber;
+  const criticsRating = allocineCriticInfo.criticsRating;
+  const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
+  const status = allocineFirstInfo.status;
   const trailer = allocineFirstInfo.trailer;
 
-  /* Creating an object called allocineObj that contains the properties of the two objects
-  allocineBaseObj and allocineSecondInfo. */
-  const allocineBaseObj = {
+  /**
+   * An object representing information about a movie from Allocine.
+   * @property {number} id - The ID of the movie on Allocine.
+   * @property {string} url - The URL of the movie's page on Allocine.
+   * @property {number} users_rating - The average rating given by users on Allocine.
+   * @property {number} critics_rating - The average rating given by critics on Allocine.
+   * @property {number} critics_number - The number of critics who have rated the movie on Allocine.
+   * @property {Object} critics_rating_details - Details about the ratings given by critics on Allocine.
+   */
+  const allocineObj = {
     id: allocineId,
     url: allocineHomepage,
     users_rating: allocineUsersRating,
-  };
-  const allocineSecondInfo = {
     critics_rating: criticsRating,
     critics_number: criticsNumber,
     critics_rating_details: criticsRatingDetails,
   };
-  const allocineObj = Object.assign(allocineBaseObj, allocineSecondInfo);
 
   /* Creating an object called betaseriesObj. */
   let betaseriesObj = null;
@@ -189,6 +207,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     placeholder: allocinePlaceholder,
     platforms_links: betaseriesPlatformsLinks,
     seasons_number: allocineSeasonsNumber,
+    status: status,
     trailer: trailer,
     allocine: allocineObj,
     betaseries: betaseriesObj,

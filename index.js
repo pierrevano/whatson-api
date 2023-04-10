@@ -118,14 +118,18 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
   console.log(`seasons_number: ${seasons_number}`);
 
   const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
+  const is_active = { is_active: true };
+  const item_type_movie = { item_type: "movie" };
+  const item_type_tvshow = { item_type: "tvshow" };
   const match_id = { $match: { id: id } };
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
-  const match_item_type_movie = { $match: { $and: [{ item_type: "movie" }, { is_active: true }] } };
-  const match_item_type_tvshow = { $match: { $and: [{ item_type: "tvshow" }, { is_active: true }] } };
-  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [{ item_type: "tvshow" }, { is_active: true }, { seasons_number: { $in: seasons_number.split(",").map(Number) } }] } };
-  const match_item_type_tvshow_and_seasons_number_more_than_max = {
-    $match: { $and: [{ is_active: true }, { $or: [{ seasons_number: { $in: seasons_number.split(",").map(Number) } }, { seasons_number: { $gt: config.maxSeasonsNumber } }] }] },
-  };
+  const seasons_number_first = { seasons_number: { $in: seasons_number.split(",").map(Number) } };
+  const seasons_number_last = { seasons_number: { $gt: config.maxSeasonsNumber } };
+
+  const match_item_type_movie = { $match: { $and: [item_type_movie, is_active] } };
+  const match_item_type_tvshow = { $match: { $and: [item_type_tvshow, is_active] } };
+  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [item_type_tvshow, is_active, seasons_number_first] } };
+  const match_item_type_tvshow_and_seasons_number_more_than_max = { $match: { $and: [item_type_tvshow, is_active, { $or: [seasons_number_first, seasons_number_last] }] } };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 
   const pipeline = [];

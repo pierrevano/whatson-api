@@ -37,6 +37,7 @@ const { getImageFromTMDB } = require("./getImageFromTMDB");
 const { getTrailer } = require("./getTrailer");
 const { getPlaceholder } = require("./getPlaceholder");
 const { b64Encode } = require("./utils/b64Encode");
+const { getStatus } = require("./getStatus");
 
 /**
  * Retrieves information about a movie or TV show from Allocine.
@@ -76,12 +77,15 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
 
     const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
 
+    const status = await getStatus($(".thumbnail .label-status").text());
+
     let allocineFirstInfo = {
       allocineTitle: title,
       allocineImage: image,
       allocinePlaceholder: placeholder,
       allocineUsersRating: allocineUsersRating,
       allocineSeasonsNumber: allocineSeasonsNumber,
+      status: status,
       trailer: trailer,
     };
 
