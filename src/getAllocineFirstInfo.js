@@ -6,46 +6,27 @@ const axios = require("axios");
 const dotenv = require("dotenv");
 dotenv.config();
 
-/**
- * Configures the Cloudinary API with the given credentials.
- * @param {string} cloud_name - The name of the Cloudinary account.
- * @param {string} api_key - The API key for the Cloudinary account.
- * @param {string} api_secret - The API secret for the Cloudinary account.
- * @returns None
- */
-const cloudinary = require("cloudinary").v2;
-cloudinary.config({
-  cloud_name: "do3n8oace",
-  api_key: "476171173971464",
-  api_secret: process.env.CLOUDINARY_API_KEY,
-});
-
 /* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("./config");
 
 /**
- * This module exports several utility functions for use in other modules.
- * @module utils
- * @property {function} getCheerioContent - A function that extracts content from a Cheerio object.
- * @property {function} getImageFromTMDB - A function that retrieves an image from The Movie Database API.
- * @property {function} getTrailer - A function that retrieves a trailer from YouTube.
- * @property {function} getPlaceholder - A function that retrieves a placeholder image.
- * @property {function} b64Encode - A function that encodes a string to base64.
+ * This module exports four functions: getCheerioContent, getImageFromTMDB, getTrailer, and getStatus.
+ * getCheerioContent is used to extract content from a webpage using Cheerio.
+ * getImageFromTMDB is used to retrieve an image from The Movie Database API.
+ * getTrailer is used to retrieve a trailer for a movie.
+ * getStatus is used to retrieve the status of a movie or TV show.
  */
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { getImageFromTMDB } = require("./getImageFromTMDB");
 const { getTrailer } = require("./getTrailer");
-const { getPlaceholder } = require("./getPlaceholder");
-const { b64Encode } = require("./utils/b64Encode");
 const { getStatus } = require("./getStatus");
 
 /**
  * Retrieves information about a movie or TV show from Allocine.
  * @param {string} allocineHomepage - The URL of the Allocine page for the movie or TV show.
  * @param {string} betaseriesHomepage - The URL of the Betaseries page for the movie or TV show.
- * @param {string} theMoviedbId - The ID of the movie or TV show on The Movie Database.
- * @returns An object containing information about the movie or TV show, including its title, image, placeholder,
- * users rating, number of seasons (if applicable), and trailer.
+ * @param {number} theMoviedbId - The ID of the movie or TV show on The Movie Database.
+ * @returns An object containing information about the movie or TV show, including its title, image, user rating, number of seasons (if applicable), status, and trailer.
  */
 const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
   try {
@@ -57,15 +38,6 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
 
     let image = $('meta[property="og:image"]').attr("content");
     if (image.includes("empty_portrait")) image = await getImageFromTMDB(allocineHomepage, theMoviedbId);
-
-    let placeholder = image;
-    if (image && !image.startsWith("/")) {
-      const result = await cloudinary.uploader.upload(image, { public_id: b64Encode(image), overwrite: true });
-      image = result.secure_url;
-
-      const { width, height } = await getPlaceholder(image);
-      placeholder = `${image.split("upload")[0]}upload/w_${width},h_${height},f_auto${image.split("upload")[1]}`;
-    }
 
     let allocineUsersRating = parseFloat($(".stareval-note").eq(1).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
@@ -82,7 +54,6 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     let allocineFirstInfo = {
       allocineTitle: title,
       allocineImage: image,
-      allocinePlaceholder: placeholder,
       allocineUsersRating: allocineUsersRating,
       allocineSeasonsNumber: allocineSeasonsNumber,
       status: status,

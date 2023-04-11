@@ -146,12 +146,11 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
   /**
    * Destructures the properties of the given object and assigns them to individual variables.
-   * @param {Object} allocineFirstInfo - The object containing the properties to destructure.
-   * @param {Object} allocineCriticInfo - The object containing the critic information.
+   * @param {Object} allocineFirstInfo - The object containing the first set of Allocine information.
+   * @param {Object} allocineCriticInfo - The object containing the Allocine critic information.
    * @returns None
    */
   const allocineImage = allocineFirstInfo.allocineImage;
-  const allocinePlaceholder = allocineFirstInfo.allocinePlaceholder;
   const allocineSeasonsNumber = allocineFirstInfo.allocineSeasonsNumber;
   const allocineTitle = allocineFirstInfo.allocineTitle;
   const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
@@ -196,15 +195,22 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     users_rating: imdbUsersRating,
   };
 
-  /* Creating a new object called data and assigning it the values of the variables that were created
-  in the previous steps. */
+  /**
+   * An object containing data related to a movie or TV show.
+   * @property {number} id - The ID of the movie or TV show on The Movie Database.
+   * @property {boolean} is_active - Whether the movie or TV show is currently active.
+   * @property {string} item_type - The type of item (movie or TV show).
+   * @property {string} title - The title of the movie or TV show on Allocine.
+   * @property {string} image - The image of the movie or TV show on Allocine.
+   * @property {object} platforms_links - An object containing links to the movie or TV show on various platforms.
+   * @property {number} seasons_number - The number of seasons of
+   */
   const data = {
     id: theMoviedbId,
     is_active: isActive,
     item_type: item_type,
     title: allocineTitle,
     image: allocineImage,
-    placeholder: allocinePlaceholder,
     platforms_links: betaseriesPlatformsLinks,
     seasons_number: allocineSeasonsNumber,
     status: status,
