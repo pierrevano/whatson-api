@@ -17,6 +17,8 @@ const config = {
   endURLCriticDetails: "/critiques/presse/",
   filmsIdsFilePath: "./src/assets/films_ids.txt",
   seriesIdsFilePath: "./src/assets/series_ids.txt",
+
+  keysToCheck: ["allocine", "betaseries", "id", "image", "imdb", "is_active", "item_type", "platforms_links", "seasons_number", "status", "title", "trailer"],
 };
 
 module.exports = { config };

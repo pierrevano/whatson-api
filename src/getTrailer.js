@@ -61,6 +61,10 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
       console.log(`url: ${url}`);
 
       $ = await getCheerioContent(url, options);
+
+      const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text()).trim()).includes("Bandes-annonces");
+      if (hasInactiveVideos) return trailer;
+
       const itemJSON = getContentUrl($, true);
       if (itemJSON && itemJSON.trailer) {
         const url = itemJSON.trailer.url;

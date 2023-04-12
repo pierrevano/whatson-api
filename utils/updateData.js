@@ -282,23 +282,39 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       if (skip_already_added_documents) {
         const allocineQuery = { _id: b64Encode(completeAllocineURL) };
         const isDocumentExisting = await collectionData.find(allocineQuery).toArray();
-        const keysArray = ["allocine", "betaseries", "id", "image", "imdb", "is_active", "item_type", "title"];
+        const keysArray = config.keysToCheck;
         const isDocumentHasInfo = isDocumentExisting.length > 0;
         const document = isDocumentExisting[0];
+
         keysArray.forEach((key) => {
           if (isDocumentHasInfo && !document.hasOwnProperty(`${key}`)) {
             console.log(`Missing ${key} for ${completeAllocineURL}`);
             process.exit(0);
           }
         });
+
+        keysArray.forEach((key) => {
+          if (isDocumentHasInfo && typeof document[key] === "undefined") {
+            console.log(`Undefined ${key} for ${completeAllocineURL}`);
+            process.exit(0);
+          }
+        });
+
         if (isDocumentHasInfo && (!document.title || document.title === null)) {
           console.log(`Missing title for ${completeAllocineURL}`);
           process.exit(0);
         }
+
         if (isDocumentHasInfo && (!document.image || document.image === null)) {
           console.log(`Missing image for ${completeAllocineURL}`);
           process.exit(0);
         }
+
+        if (isDocumentHasInfo && item_type === "tvshow" && (!document.status || document.status === null)) {
+          console.log(`Missing status for ${completeAllocineURL}`);
+          process.exit(0);
+        }
+
         if (isDocumentHasInfo) continue;
       }
 

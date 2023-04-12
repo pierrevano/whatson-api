@@ -5,9 +5,11 @@
  */
 const getStatus = async (status) => {
   try {
-    if (status === "Terminée") return "Ended";
-    if (status === "En cours") return "Ongoing";
+    if (status === "À venir") return "Soon";
     if (status === "Annulée") return "Canceled";
+    if (status === "En cours") return "Ongoing";
+    if (status === "Pilote") return "Pilot";
+    if (status === "Terminée") return "Ended";
 
     return null;
   } catch (error) {

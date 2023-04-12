@@ -7,7 +7,6 @@ const axios = require("axios");
 
 /* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("./config");
-const { writeFileSync } = require("fs");
 
 /**
  * It takes the allocineHomepage and theMoviedbId as parameters, and returns the image of the movie or
