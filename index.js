@@ -78,7 +78,9 @@ const getRatingsFilters = async (ratings_filters_query) => {
       { $divide: ["$allocine.critics_rating", 1] },
       { $divide: ["$allocine.users_rating", 1] },
       { $divide: ["$betaseries.users_rating", 1] },
-      { $divide: ["$imdb.users_rating", 2] }
+      { $divide: ["$imdb.users_rating", 2] },
+      { $divide: ["$metacritic.critics_rating", 20] },
+      { $divide: ["$metacritic.users_rating", 2] }
     ];
   } else {
     if (ratings_filters_array.includes("allocine_critics")) {
@@ -95,6 +97,14 @@ const getRatingsFilters = async (ratings_filters_query) => {
 
     if (ratings_filters_array.includes("imdb_users")) {
       ratings_filters.push({ $divide: ["$imdb.users_rating", 2] });
+    }
+
+    if (ratings_filters_array.includes("metacritic_critics")) {
+      ratings_filters.push({ $divide: ["$metacritic.critics_rating", 20] });
+    }
+
+    if (ratings_filters_array.includes("metacritic_users")) {
+      ratings_filters.push({ $divide: ["$metacritic.users_rating", 2] });
     }
   }
 
@@ -160,13 +170,13 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
 };
 
 /**
- * It gets the items from the database
- * @param id_path - The id of the item we're looking for.
- * @param item_type_query - the type of item we want to get (movie or tvshow)
- * @param cinema_id_query - The id of the cinema.
- * @param ratings_filters_query - The ratings filters to apply (all, allocine_critics, allocine_users, betaseries_users, imdb_users)
- * @param seasons_number_query - The number of seasons to return.
- * @returns An array of items.
+ * Retrieves items from the server based on the given parameters.
+ * @param {string} id_path - The ID of the item to retrieve.
+ * @param {string} item_type_query - The type of item to retrieve.
+ * @param {string} cinema_id_query - The ID of the cinema to retrieve items for.
+ * @param {string} ratings_filters_query - The rating filters to apply to the items.
+ * @param {string} seasons_number_query - The number of seasons to retrieve for TV shows.
+ * @returns {Promise} A promise that resolves to an array of items.
  */
 const getItems = async (id_path, item_type_query, cinema_id_query, ratings_filters_query, seasons_number_query) => {
   console.log(`id_path: ${id_path}`);

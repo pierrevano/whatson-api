@@ -18,13 +18,15 @@ const { node_vars_values } = require("../src/node_vars_values");
 
 /* Importing the functions from the files in the src folder. */
 const { b64Encode } = require("../src/utils/b64Encode");
-const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { getAllocineCriticInfo } = require("../src/getAllocineCriticInfo");
 const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
 const { getBetaseriesUsersRating } = require("../src/getBetaseriesUsersRating");
 const { getImdbUsersRating } = require("../src/getImdbUsersRating");
+const { getMetacriticRating } = require("../src/getMetacriticRating");
 const { getPlatformsLinks } = require("../src/getPlatformsLinks");
+const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
+const { controlData } = require("./controlData");
 
 const item_type = node_vars_values.item_type;
 
@@ -143,6 +145,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
   const betaseriesPlatformsLinks = await getPlatformsLinks(allocineHomepage, imdbHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
+  const metacriticRating = await getMetacriticRating(imdbHomepage);
 
   /**
    * Destructures the properties of the given object and assigns them to individual variables.
@@ -196,6 +199,23 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   };
 
   /**
+   * Creates a Metacritic object if the metacritic rating is not null.
+   * @param {object} metacriticRating - the Metacritic rating object
+   * @returns {object | null} - the Metacritic object or null if the rating is null
+   */
+  let metacriticObj = null;
+  if (metacriticRating !== null) {
+    metacriticObj = {
+      id: metacriticRating.id,
+      url: metacriticRating.url,
+      users_rating: metacriticRating.usersRating,
+      critics_rating: metacriticRating.criticsRating,
+      critics_number: metacriticRating.criticsNumber,
+      critics_rating_details: metacriticRating.criticsRatingDetails,
+    };
+  }
+
+  /**
    * An object containing data related to a movie or TV show.
    * @property {number} id - The ID of the movie or TV show on The Movie Database.
    * @property {boolean} is_active - Whether the movie or TV show is currently active.
@@ -218,6 +238,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     allocine: allocineObj,
     betaseries: betaseriesObj,
     imdb: imdbObj,
+    metacritic: metacriticObj,
   };
 
   return data;
@@ -286,34 +307,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
         const isDocumentHasInfo = isDocumentExisting.length > 0;
         const document = isDocumentExisting[0];
 
-        keysArray.forEach((key) => {
-          if (isDocumentHasInfo && !document.hasOwnProperty(`${key}`)) {
-            console.log(`Missing ${key} for ${completeAllocineURL}`);
-            process.exit(0);
-          }
-        });
-
-        keysArray.forEach((key) => {
-          if (isDocumentHasInfo && typeof document[key] === "undefined") {
-            console.log(`Undefined ${key} for ${completeAllocineURL}`);
-            process.exit(0);
-          }
-        });
-
-        if (isDocumentHasInfo && (!document.title || document.title === null)) {
-          console.log(`Missing title for ${completeAllocineURL}`);
-          process.exit(0);
-        }
-
-        if (isDocumentHasInfo && (!document.image || document.image === null)) {
-          console.log(`Missing image for ${completeAllocineURL}`);
-          process.exit(0);
-        }
-
-        if (isDocumentHasInfo && item_type === "tvshow" && (!document.status || document.status === null)) {
-          console.log(`Missing status for ${completeAllocineURL}`);
-          process.exit(0);
-        }
+        await controlData(completeAllocineURL, keysArray, isDocumentHasInfo, document);
 
         if (isDocumentHasInfo) continue;
       }
