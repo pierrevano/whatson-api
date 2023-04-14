@@ -215,16 +215,6 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     };
   }
 
-  /**
-   * An object containing data related to a movie or TV show.
-   * @property {number} id - The ID of the movie or TV show on The Movie Database.
-   * @property {boolean} is_active - Whether the movie or TV show is currently active.
-   * @property {string} item_type - The type of item (movie or TV show).
-   * @property {string} title - The title of the movie or TV show on Allocine.
-   * @property {string} image - The image of the movie or TV show on Allocine.
-   * @property {object} platforms_links - An object containing links to the movie or TV show on various platforms.
-   * @property {number} seasons_number - The number of seasons of
-   */
   const data = {
     id: theMoviedbId,
     is_active: isActive,

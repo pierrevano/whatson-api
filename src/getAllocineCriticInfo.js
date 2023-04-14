@@ -27,8 +27,8 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
     criticsRatingDetails = $(".js-anchor-link")
       .map((_i, element) => [
         {
-          criticName: element.children[0].data,
-          criticRating: convertTitleToNumber(element.parent.children[0].attribs.title),
+          critic_name: element.children[0].data,
+          critic_rating: convertTitleToNumber(element.parent.children[0].attribs.title),
         },
       ])
       .get();

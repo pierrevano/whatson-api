@@ -53,7 +53,7 @@ const getMetacriticRating = async (imdbHomepage) => {
         .filter((el) => typeof el === "string");
 
       let criticsRatingDetails = criticName.map((el, i) => {
-        return { criticName: el, criticRating: parseInt(criticRating[i]) };
+        return { critic_name: el, critic_rating: parseInt(criticRating[i]) };
       });
       if (criticsRatingDetails.length === 0) criticsRatingDetails = null;
 
