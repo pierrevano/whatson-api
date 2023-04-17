@@ -10,6 +10,8 @@ const config = {
   baseURLTMDB: "https://api.themoviedb.org/3",
   baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
   baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
+  baseURLMetacriticFilm: "https://www.metacritic.com/movie/",
+  baseURLMetacriticSerie: "https://www.metacritic.com/tv/",
 
   collectionName: "data",
   dbName: "whatson",

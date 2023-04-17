@@ -18,22 +18,29 @@ const { getCheerioContent } = require("./utils/getCheerioContent");
  * - criticsNumber: The number of critics who have rated the movie.
  * - criticsRatingDetails: An array of objects containing the name of the critic and their rating.
  */
-const getMetacriticRating = async (imdbHomepage) => {
+const getMetacriticRating = async (imdbHomepage, metacriticHomepage, metacriticId) => {
   try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    let metacriticObj = null;
+    let metacriticLink;
     const options = {
       headers: {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
       },
     };
-    let $ = await getCheerioContent(`${imdbHomepage}criticreviews`, options);
+    if (!metacriticId || metacriticId === "null") {
+      axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+      let $ = await getCheerioContent(`${imdbHomepage}criticreviews`, options);
+      metacriticLink = $('li[data-testid="metacritic-link"] a').attr("href");
+    } else {
+      metacriticLink = metacriticHomepage;
 
-    let metacriticObj = null;
-    const metacriticLinkFromImdb = $('li[data-testid="metacritic-link"] a').attr("href");
+      console.log(`metacriticId: ${metacriticId}`);
+      console.log(`metacriticLink: ${metacriticLink}`);
+    }
 
-    if (metacriticLinkFromImdb && metacriticLinkFromImdb.startsWith("https://www.metacritic.com")) {
-      const id = metacriticLinkFromImdb.split("?")[0].split("/")[4];
-      const url = metacriticLinkFromImdb.split("?")[0];
+    if (metacriticLink && metacriticLink.startsWith("https://www.metacritic.com")) {
+      const id = metacriticLink.includes("?") ? metacriticLink.split("?")[0].split("/")[4] : metacriticId;
+      const url = metacriticLink.includes("?") ? metacriticLink.split("?")[0] : metacriticHomepage;
 
       $ = await getCheerioContent(`${url}/critic-reviews`, options);
       let criticsRating = parseInt($(".score_wrapper .metascore_w").text());
@@ -55,10 +62,10 @@ const getMetacriticRating = async (imdbHomepage) => {
       let criticsRatingDetails = criticName.map((el, i) => {
         return { critic_name: el, critic_rating: parseInt(criticRating[i]) };
       });
-      if (criticsRatingDetails.length === 0) criticsRatingDetails = null;
 
       let criticsRatingLength = criticsRatingDetails.length;
       if (criticsRatingLength === 0) criticsRatingLength = null;
+      if (criticsRatingDetails.length === 0) criticsRatingDetails = null;
 
       metacriticObj = {
         id: id,

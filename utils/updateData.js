@@ -118,19 +118,15 @@ async function countNullElements(collectionData) {
 }
 
 /**
- * It creates an object called data that contains the data that was scraped from the different websites
- * @param allocineCriticsDetails - the URL of the page that contains the critics' rating details.
- * @param allocineHomepage - the URL of the show on Allocine.
- * @param allocineId - the id of the show on Allocine.
- * @param betaseriesHomepage - The homepage of the show on betaseries.com.
- * @param betaseriesId - the id of the show on betaseries.com
- * @param imdbHomepage - The URL of the IMDb page.
- * @param imdbId - the IMDb ID of the movie or TV show.
- * @param isActive - a boolean that indicates whether the show is still airing or not.
- * @param theMoviedbId - the id of the movie/tv show on The Movie Database.
- * @returns The function createJSON is returning an object called data.
+ * Creates a JSON object with information about a movie or TV show from various sources.
+ * @param {Object} allocineCriticsDetails - Details about the critics' ratings from Allocine.
+ * @param {string} allocineHomepage - The URL of the movie or TV show's Allocine page.
+ * @param {string} allocineId - The ID of the movie or TV show on Allocine.
+ * @param {string} betaseriesHomepage - The URL of the movie or TV show's Betaseries page.
+ * @param {string} betaseriesId - The ID of the movie or TV show on Betaseries.
+ * @param {string} imdbHomepage - The URL of the movie or TV
  */
-const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId) => {
+const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, metacriticHomepage, metacriticId, theMoviedbId) => {
   /**
    * Asynchronously retrieves various pieces of information from different sources for a movie.
    * @param {string} allocineHomepage - The URL of the movie's Allocine homepage.
@@ -145,7 +141,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
   const betaseriesPlatformsLinks = await getPlatformsLinks(allocineHomepage, imdbHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
-  const metacriticRating = await getMetacriticRating(imdbHomepage);
+  const metacriticRating = await getMetacriticRating(imdbHomepage, metacriticHomepage, metacriticId);
 
   /**
    * Destructures the properties of the given object and assigns them to individual variables.
@@ -342,6 +338,18 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
         betaseriesHomepage = `${baseURLBetaseriesSerie}${betaseriesId}`;
       }
 
+      // Metacritic info
+      const baseURLMetacriticFilm = config.baseURLMetacriticFilm;
+      const baseURLMetacriticSerie = config.baseURLMetacriticSerie;
+      let metacriticId = json.METACRITIC_ID;
+
+      let metacriticHomepage;
+      if (item_type === "movie") {
+        metacriticHomepage = `${baseURLMetacriticFilm}${metacriticId}`;
+      } else {
+        metacriticHomepage = `${baseURLMetacriticSerie}${metacriticId}`;
+      }
+
       const isActive = json.IS_ACTIVE === "TRUE";
 
       const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
@@ -351,7 +359,19 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
         process.exit(1);
       }
 
-      const data = await createJSON(allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, theMoviedbId);
+      const data = await createJSON(
+        allocineCriticsDetails,
+        allocineHomepage,
+        allocineId,
+        betaseriesHomepage,
+        betaseriesId,
+        imdbHomepage,
+        imdbId,
+        isActive,
+        metacriticHomepage,
+        metacriticId,
+        theMoviedbId
+      );
       if (typeof data.title === "string") {
         await upsertToDatabase(data, collectionData);
       } else {

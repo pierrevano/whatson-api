@@ -23,6 +23,7 @@ if [[ $TYPE == "movie" ]]; then
   BETASERIES_TYPE=movies/movie
   JQ_COMMAND_TYPE=".movie.resource_url"
   JQ_COMMAND_RESULTS=".movie_results"
+  PROPERTY=P1265
 else
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
@@ -31,13 +32,14 @@ else
   BETASERIES_TYPE=shows/display
   JQ_COMMAND_TYPE=".show.resource_url"
   JQ_COMMAND_RESULTS=".tv_results"
+  PROPERTY=P1267
 fi
 
-WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v ".*\=[0-9]+.html,tt[0-9]+,[a-zA-Z0-9-]+,[0-9]+,(TRUE|FALSE)$" | wc -l | awk '{print $1}')
+WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(TRUE|FALSE)$" | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
   echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH!"
   echo "details:"
-  cat $FILMS_IDS_FILE_PATH | grep -E -v ".*\=[0-9]+.html,tt[0-9]+,[a-zA-Z0-9-]+,[0-9]+,(TRUE|FALSE)$"
+  cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(TRUE|FALSE)$"
   exit
 fi
 
@@ -74,7 +76,7 @@ reset_and_set_all_to_false () {
     sed -i '' "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
 
     # Don't add to the header (first line) of the CSV file
-    sed -i '' "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
+    sed -i '' "/IS_ACTIVE$/! s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
   fi
 }
 
@@ -95,10 +97,8 @@ remove_files () {
     echo "----------------------------------------------------------------------------------------------------"
     if [[ $SOURCE == "circleci" ]]; then
       sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
-      sed -i "/,null/d" $FILMS_IDS_FILE_PATH
     else
       sed -i '' "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
-      sed -i '' "/,null/d" $FILMS_IDS_FILE_PATH
     fi
   fi
 }
@@ -109,18 +109,18 @@ data_not_found () {
   BETASERIES_ID="noBetaseriesId"
   THEMOVIEDB_ID="noTheMovieDBId"
 
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$IS_ACTIVE"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$IS_ACTIVE"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 betaseries_to_null () {
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$IS_ACTIVE"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$IS_ACTIVE"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 # A function that is called when the data is found.
 data_found () {
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$IS_ACTIVE"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$IS_ACTIVE"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
@@ -235,7 +235,10 @@ do
         # Get title encoded characters URL
         TITLE_URL_ENCODED=$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -f $URL_ESCAPE_FILE_PATH)
 
-        WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP1265%20%22$FILM_ID%22.%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
+        METACRITIC_ID=""
+        ROTTEN_TOMATOES_ID=""
+
+        WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22.%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
           echo "No wiki URL!"
 
@@ -295,10 +298,24 @@ do
 
           IMDB_ID=$(curl -s $WIKI_URL | grep "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -Eo "tt[0-9]+" | head -1)
           echo "IMDb ID: $IMDB_ID"
+
+          METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+          echo "Metacritic ID: $METACRITIC_ID"
+
+          ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+          echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
         fi
 
         if [[ -z $IMDB_ID ]]; then
           IMDB_ID="noImdbId"
+        fi
+
+        if [[ -z $METACRITIC_ID ]]; then
+          METACRITIC_ID=null
+        fi
+
+        if [[ -z $ROTTEN_TOMATOES_ID ]]; then
+          ROTTEN_TOMATOES_ID=null
         fi
 
         if [[ $IMDB_ID == "noImdbId" ]] && [[ -z $PROMPT ]]; then
@@ -334,7 +351,7 @@ do
           fi
         fi
 
-        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$IS_ACTIVE" >> $FILMS_IDS_FILE_PATH
+        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$IS_ACTIVE" >> $FILMS_IDS_FILE_PATH
 
         echo "----------------------------------------------------------------------------------------------------"
       fi

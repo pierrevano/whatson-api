@@ -252,6 +252,10 @@ async function findId(json) {
     query = { "betaseries.id": json.betaseriesId };
   } else if (keys.includes("imdbId")) {
     query = { "imdb.id": json.imdbId };
+  } else if (keys.includes("metacriticId")) {
+    query = { "metacritic.id": json.metacriticId };
+  } else if (keys.includes("rottentomatoesId")) {
+    query = { "rottentomatoes.id": json.rottentomatoesId };
   } else if (keys.includes("themoviedbId")) {
     query = { id: parseInt(json.themoviedbId) };
   } else {
@@ -279,7 +283,7 @@ app.get("/", async (req, res) => {
 
     items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query, seasons_number_query);
 
-    const keysToCheck = ["title", "allocineId", "betaseriesId", "imdbId", "themoviedbId"];
+    const keysToCheck = ["allocineId", "betaseriesId", "imdbId", "metacriticId", "rottentomatoesId", "themoviedbId", "title"];
     for (let index = 0; index < keysToCheck.length; index++) {
       const key = keysToCheck[index];
       if (req.query.hasOwnProperty(key)) {

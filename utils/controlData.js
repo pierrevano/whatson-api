@@ -1,4 +1,13 @@
 /**
+ * Checks if the given input is in all lowercase letters.
+ * @param {string} input - the string to check
+ * @returns {boolean} - true if the input is all lowercase, false otherwise.
+ */
+function isLowerCase(input) {
+  return input === String(input).toLowerCase();
+}
+
+/**
  * Controls the data for a given Allocine URL and checks if the necessary keys are present in the document object.
  * @param {string} completeAllocineURL - The complete URL of the Allocine page.
  * @param {Array} keysArray - An array of keys to check for in the document object.
@@ -40,8 +49,34 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
         process.exit(0);
       }
     }
+
+    if (isDocumentHasInfo && Object.keys(document.imdb).length !== 3) {
+      console.log(`IMDb obj length !== 3 for ${completeAllocineURL}`);
+      process.exit(0);
+    }
+
+    if (isDocumentHasInfo && document.allocine.critics_rating_details !== null) {
+      const allocineKeys = Object.keys(document.allocine.critics_rating_details[0]);
+      allocineKeys.forEach((element) => {
+        if (!isLowerCase(element)) {
+          console.log(`Is not lowercase for ${completeAllocineURL}`);
+          process.exit(0);
+        }
+      });
+    }
+
+    if (isDocumentHasInfo && document.metacritic !== null && document.metacritic.critics_rating_details !== null) {
+      const metacriticKeys = Object.keys(document.metacritic.critics_rating_details[0]);
+      metacriticKeys.forEach((element) => {
+        if (!isLowerCase(element)) {
+          console.log(`Is not lowercase for ${completeAllocineURL}`);
+          process.exit(0);
+        }
+      });
+    }
   } catch (error) {
     console.log(`controlData - ${completeAllocineURL}: ${error}`);
+    process.exit(0);
   }
 };
 
