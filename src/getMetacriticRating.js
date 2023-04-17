@@ -42,12 +42,13 @@ const getMetacriticRating = async (imdbHomepage, metacriticHomepage, metacriticI
       const id = metacriticLink.includes("?") ? metacriticLink.split("?")[0].split("/")[4] : metacriticId;
       const url = metacriticLink.includes("?") ? metacriticLink.split("?")[0] : metacriticHomepage;
 
+      $ = await getCheerioContent(`${url}`, options);
+      let usersRating = parseFloat($(".metascore_w.user").text());
+      if (isNaN(usersRating)) usersRating = null;
+
       $ = await getCheerioContent(`${url}/critic-reviews`, options);
       let criticsRating = parseInt($(".score_wrapper .metascore_w").text());
       if (isNaN(criticsRating)) criticsRating = null;
-
-      let usersRating = parseFloat($(".score_user .metascore_w").text());
-      if (isNaN(usersRating)) usersRating = null;
 
       const criticName = $(".critic_reviews .right.fl .title .source")
         .map((_i, element) => (typeof element.children[0].children[0].data !== "undefined" ? element.children[0].children[0].data : element.children[0].children[0].attribs.title))
