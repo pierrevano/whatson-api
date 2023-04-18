@@ -24,6 +24,7 @@ if [[ $TYPE == "movie" ]]; then
   JQ_COMMAND_TYPE=".movie.resource_url"
   JQ_COMMAND_RESULTS=".movie_results"
   PROPERTY=P1265
+  METACRITIC_TYPE=movie
 else
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
@@ -33,6 +34,7 @@ else
   JQ_COMMAND_TYPE=".show.resource_url"
   JQ_COMMAND_RESULTS=".tv_results"
   PROPERTY=P1267
+  METACRITIC_TYPE=tv
 fi
 
 WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(TRUE|FALSE)$" | wc -l | awk '{print $1}')
@@ -311,7 +313,13 @@ do
         fi
 
         if [[ -z $METACRITIC_ID ]]; then
-          METACRITIC_ID=null
+          DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          FIRST_THREE_LETTERS_TITLE=$(echo "$TITLE_URL_ENCODED" | cut -c1-3)
+          METACRITIC_ID=$(curl -s "https://www.metacritic.com/search/all/$TITLE_URL_ENCODED/results?cats%5B$METACRITIC_TYPE%5D=1&search_type=advanced&sort=relevancy" -H "$DATE" | grep "<a href=\"/$METACRITIC_TYPE/$FIRST_THREE_LETTERS_TITLE" | head -1 | cut -d'/' -f3 | cut -d'"' -f1)
+
+          if [[ -z $METACRITIC_ID ]]; then
+            METACRITIC_ID=null
+          fi
         fi
 
         if [[ -z $ROTTEN_TOMATOES_ID ]]; then
