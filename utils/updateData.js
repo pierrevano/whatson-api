@@ -27,6 +27,7 @@ const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
 const { controlData } = require("./controlData");
+const { setAllToInactive } = require("../src/setAllToInactive");
 
 const item_type = node_vars_values.item_type;
 
@@ -384,6 +385,8 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     await countNullElements(collectionData);
 
     await client.close();
+
+    await setAllToInactive();
   }
 
   console.timeEnd("Duration", `- ${jsonArray.length} elements imported.`);

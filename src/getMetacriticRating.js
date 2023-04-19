@@ -50,19 +50,52 @@ const getMetacriticRating = async (imdbHomepage, metacriticHomepage, metacriticI
       let criticsRating = parseInt($(".score_wrapper .metascore_w").text());
       if (isNaN(criticsRating)) criticsRating = null;
 
-      const criticName = $(".critic_reviews .right.fl .title .source")
+      let criticName = $(".critic_reviews .right.fl .title .source")
         .map((_i, element) => (typeof element.children[0].children[0].data !== "undefined" ? element.children[0].children[0].data : element.children[0].children[0].attribs.title))
         .get()
         .filter((el) => typeof el === "string");
 
-      const criticRating = $(".critic_reviews .left.fl div")
+      let criticRating = $(".critic_reviews .left.fl div")
         .map((_i, element) => element.children[0].data)
         .get()
         .filter((el) => typeof el === "string");
 
+      const hasOverHundredsOfCritics = parseInt($(".based_on").text().replace("based on", "").replace("Critic Reviews", "").trim()) > 100;
+      if (hasOverHundredsOfCritics) {
+        const criticNameGlobal = [criticName];
+        const criticRatingGlobal = [criticRating];
+        for (let index = 1; index < $(".page_num").length; index++) {
+          $ = await getCheerioContent(`${url}/critic-reviews?page=${index}`, options);
+
+          const criticNameAdditional = $(".critic_reviews .right.fl .title .source")
+            .map((_i, element) => (typeof element.children[0].children[0].data !== "undefined" ? element.children[0].children[0].data : element.children[0].children[0].attribs.title))
+            .get()
+            .filter((el) => typeof el === "string");
+          criticNameGlobal.push(criticNameAdditional);
+
+          const criticRatingAdditional = $(".critic_reviews .left.fl div")
+            .map((_i, element) => element.children[0].data)
+            .get()
+            .filter((el) => typeof el === "string");
+          criticRatingGlobal.push(criticRatingAdditional);
+        }
+        criticName = criticNameGlobal.flat();
+        criticRating = criticRatingGlobal.flat();
+      }
+
       let criticsRatingDetails = criticName.map((el, i) => {
         return { critic_name: el, critic_rating: parseInt(criticRating[i]) };
       });
+
+      if (criticsRating === null && criticRating.length > 0) {
+        const criticsRatingNumber = criticRating.length;
+        let criticsRatingTotal = 0;
+        criticsRatingDetails.forEach((element) => {
+          criticsRatingTotal += element.critic_rating;
+        });
+        criticsRating = parseInt(Number(criticsRatingTotal / criticsRatingNumber).toFixed(0));
+        if (isNaN(criticsRating)) criticsRating = null;
+      }
 
       let criticsRatingLength = criticsRatingDetails.length;
       if (criticsRatingLength === 0) criticsRatingLength = null;

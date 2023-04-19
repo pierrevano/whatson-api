@@ -1,3 +1,7 @@
+/* Importing the libraries that are needed for the script to work. */
+const axiosRetry = require("axios-retry");
+const axios = require("axios");
+
 /**
  * Checks if the given input is in all lowercase letters.
  * @param {string} input - the string to check
@@ -73,6 +77,14 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
           process.exit(0);
         }
       });
+    }
+
+    if (isDocumentHasInfo && document.metacritic !== null) {
+      const { status } = await axios(document.metacritic.url);
+      if (status !== 200) {
+        console.log(`Broken link for ${completeAllocineURL}`);
+        process.exit(0);
+      }
     }
   } catch (error) {
     console.log(`controlData - ${completeAllocineURL}: ${error}`);

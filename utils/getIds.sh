@@ -72,7 +72,7 @@ reset_and_set_all_to_false () {
     sed -i "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
 
     # Don't add to the header (first line) of the CSV file
-    sed -i "/[0-9]$/ s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
+    sed -i "/IS_ACTIVE$/! s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
   else
     sed -i '' "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
     sed -i '' "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
