@@ -22,8 +22,8 @@ const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {
     const url = `${baseURLTMDB}/${type}/${theMoviedbId}?api_key=${themoviedb_api_key}`;
 
     const options = { validateStatus: (status) => status < 500 };
-    const { response, status } = await axios.get(url, options);
-    let image_path = response.data.poster_path || response.data.profile_path;
+    const { data, status } = await axios.get(url, options);
+    let image_path = data.poster_path || data.profile_path;
     if (status !== 200) image_path = null;
 
     return image_path;

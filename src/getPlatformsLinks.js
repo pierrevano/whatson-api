@@ -22,17 +22,18 @@ const getPlatformsLinks = async (allocineHomepage, imdbHomepage) => {
       const baseURLBetaseriesAPI = config.baseURLBetaseriesAPI;
       const imdbHomepageId = imdbHomepage.split("/")[4];
       const url = `${baseURLBetaseriesAPI}?key=${betaseries_api_key}&imdb_id=${imdbHomepageId}`;
+      console.log(url);
 
       const options = { validateStatus: (status) => status < 500 };
-      const { response, status } = await axios.get(url, options);
+      const { data, status } = await axios.get(url, options);
       if (status !== 200) {
         platformsLinks = null;
 
         return platformsLinks;
       }
 
-      if (response.data.show.platforms && response.data.show.platforms.svods) {
-        const svods = response.data.show.platforms.svods;
+      if (data.show.platforms && data.show.platforms.svods) {
+        const svods = data.show.platforms.svods;
         platformsLinks = [];
         svods.forEach((element) => {
           platformsLinks.push({
