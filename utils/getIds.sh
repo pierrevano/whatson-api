@@ -34,11 +34,21 @@ else
   METACRITIC_TYPE=tv
 fi
 
-WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(TRUE|FALSE)$" | wc -l | awk '{print $1}')
+if [[ $SOURCE == "circleci" ]]; then
+  sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
+
+  sed -i "/IS_ACTIVE_4$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
+else
+  sed -i '' "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
+
+  sed -i '' "/IS_ACTIVE_4$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
+fi
+
+WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,4}$" | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
   echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH!"
   echo "details:"
-  cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(TRUE|FALSE)$"
+  cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,4}$"
   exit
 fi
 
@@ -97,12 +107,6 @@ data_found () {
 }
 
 remove_files
-
-if [[ $SOURCE == "circleci" ]]; then
-  sed -i "s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
-else
-  sed -i '' "s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
-fi
 
 # Downloading base URL
 curl -s $BASE_URL > temp_baseurl

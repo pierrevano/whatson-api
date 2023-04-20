@@ -350,7 +350,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
         metacriticHomepage = `${baseURLMetacriticSerie}${metacriticId}`;
       }
 
-      const isActive = json.IS_ACTIVE === "TRUE";
+      const isActive = json.IS_ACTIVE_1 === "TRUE";
 
       const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
 

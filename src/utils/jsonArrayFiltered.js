@@ -1,10 +1,10 @@
 /**
- * Filter out all the elements in the array that have an IS_ACTIVE property that is not equal to TRUE.
- * @param jsonArray - The array of JSON objects that you want to filter.
- * @returns An array of objects that have the property IS_ACTIVE with the value of TRUE.
+ * Filters a JSON array to only include elements where the IS_ACTIVE_1 property is "TRUE".
+ * @param {Array} jsonArray - the JSON array to filter
+ * @returns {Array} - a new array containing only the elements where IS_ACTIVE_1 is "TRUE"
  */
 const jsonArrayFiltered = (jsonArray) => {
-  return jsonArray.filter((element) => element.IS_ACTIVE === "TRUE");
+  return jsonArray.filter((element) => element.IS_ACTIVE_1 === "TRUE");
 };
 
 module.exports = { jsonArrayFiltered };
