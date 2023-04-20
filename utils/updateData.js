@@ -150,7 +150,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
    * @returns None
    */
   const allocineImage = allocineFirstInfo.allocineImage;
-  const allocineSeasonsNumber = allocineFirstInfo.allocineSeasonsNumber;
+  const seasonsNumber = allocineFirstInfo.seasonsNumber;
   const allocineTitle = allocineFirstInfo.allocineTitle;
   const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
   const criticsNumber = allocineCriticInfo.criticsNumber;
@@ -218,7 +218,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     title: allocineTitle,
     image: allocineImage,
     platforms_links: betaseriesPlatformsLinks,
-    seasons_number: allocineSeasonsNumber,
+    seasons_number: seasonsNumber,
     status: status,
     trailer: trailer,
     allocine: allocineObj,

@@ -2,6 +2,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+const axios = require("axios");
+
 /* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("./config");
 
@@ -26,7 +28,7 @@ const { getStatus } = require("./getStatus");
  */
 const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
   try {
-    const options = { validateStatus: (status) => status === 200 };
+    const options = { validateStatus: (status) => status < 500 };
     const $ = await getCheerioContent(allocineHomepage, options);
 
     const title = $('meta[property="og:title"]').attr("content");
@@ -39,9 +41,20 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = null;
 
-    let allocineSeasonsNumber = null;
-    if (allocineHomepage.includes(config.baseURLTypeSeries)) allocineSeasonsNumber = parseInt($(".stats-number").eq(0).text());
-    if (isNaN(allocineSeasonsNumber)) allocineSeasonsNumber = null;
+    let seasonsNumber = null;
+
+    const baseURLTMDB = config.baseURLTMDB;
+    const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
+    const themoviedb_api_key = process.env.THEMOVIEDB_API_KEY;
+    const url = `${baseURLTMDB}/${type}/${theMoviedbId}?api_key=${themoviedb_api_key}`;
+
+    const { data } = await axios.get(url, options);
+    if (data && data.number_of_seasons) {
+      seasonsNumber = data.number_of_seasons;
+    } else {
+      if (allocineHomepage.includes(config.baseURLTypeSeries)) seasonsNumber = parseInt($(".stats-number").eq(0).text());
+      if (isNaN(seasonsNumber)) seasonsNumber = null;
+    }
 
     const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
 
@@ -51,7 +64,7 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
       allocineTitle: title,
       allocineImage: image,
       allocineUsersRating: allocineUsersRating,
-      allocineSeasonsNumber: allocineSeasonsNumber,
+      seasonsNumber: seasonsNumber,
       status: status,
       trailer: trailer,
     };
