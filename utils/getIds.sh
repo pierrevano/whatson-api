@@ -1,17 +1,14 @@
 # Defining the variables used in the script.
-DELETE_NO_DATA=$1
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
 IMDB_NOT_FOUND_PATH=temp_not_found
-IS_ACTIVE=TRUE
-IS_NOT_ACTIVE=FALSE
 PAGES_MAX_NUMBER=15
 PAGES_MIN_NUMBER=1
-PROMPT=$4
+PROMPT=$3
 SECONDS=0
-SOURCE=$2
+SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
-TYPE=$3
+TYPE=$2
 URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
 
 # Defining alternative base variables
@@ -65,23 +62,6 @@ if [[ -z $BETASERIES_API_KEY ]]; then
   exit
 fi
 
-# Resetting the active and inactive status of all items and setting all to inactive.
-reset_and_set_all_to_false () {
-  if [[ $SOURCE == "circleci" ]]; then
-    sed -i "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
-    sed -i "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
-
-    # Don't add to the header (first line) of the CSV file
-    sed -i "/IS_ACTIVE$/! s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
-  else
-    sed -i '' "s/,$IS_ACTIVE//g" $FILMS_IDS_FILE_PATH
-    sed -i '' "s/,$IS_NOT_ACTIVE//g" $FILMS_IDS_FILE_PATH
-
-    # Don't add to the header (first line) of the CSV file
-    sed -i '' "/IS_ACTIVE$/! s/$/,$IS_NOT_ACTIVE/g" $FILMS_IDS_FILE_PATH
-  fi
-}
-
 # Sorting the ids in the file and removing duplicates.
 sort_ids () {
   cat $FILMS_IDS_FILE_PATH | sort -V | uniq > ./temp_ids.txt
@@ -93,16 +73,6 @@ remove_files () {
   sort_ids
 
   rm -f ./temp_*
-
-  if [[ $DELETE_NO_DATA == "delete" ]]; then
-    echo "Deleting no data lines"
-    echo "----------------------------------------------------------------------------------------------------"
-    if [[ $SOURCE == "circleci" ]]; then
-      sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
-    else
-      sed -i '' "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
-    fi
-  fi
 }
 
 # A function that is called when the data is not found.
@@ -111,24 +81,28 @@ data_not_found () {
   BETASERIES_ID="noBetaseriesId"
   THEMOVIEDB_ID="noTheMovieDBId"
 
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$IS_ACTIVE"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 betaseries_to_null () {
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$IS_ACTIVE"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 # A function that is called when the data is found.
 data_found () {
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$IS_ACTIVE"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
-reset_and_set_all_to_false
-
 remove_files
+
+if [[ $SOURCE == "circleci" ]]; then
+  sed -i "s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
+else
+  sed -i '' "s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
+fi
 
 # Downloading base URL
 curl -s $BASE_URL > temp_baseurl
@@ -182,9 +156,9 @@ do
     ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
     if [[ $URL == $ALLOCINE_URL ]]; then
       if [[ $SOURCE == "circleci" ]]; then
-        sed -i "/.*=$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
+        sed -i "/.*=$FILM_ID\.html.*$/ s/,FALSE$/,TRUE/" $FILMS_IDS_FILE_PATH
       else
-        sed -i '' "/.*=$FILM_ID\.html.*$IS_NOT_ACTIVE$/ s/,$IS_NOT_ACTIVE/,$IS_ACTIVE/" $FILMS_IDS_FILE_PATH
+        sed -i '' "/.*=$FILM_ID\.html.*$/ s/,FALSE$/,TRUE/" $FILMS_IDS_FILE_PATH
       fi
       cat $FILMS_IDS_FILE_PATH | grep ".*=$FILM_ID\.html"
       cat $FILMS_IDS_FILE_PATH | grep "TRUE$" | wc -l | awk '{print $1}'
@@ -359,7 +333,7 @@ do
           fi
         fi
 
-        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$IS_ACTIVE" >> $FILMS_IDS_FILE_PATH
+        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,TRUE" >> $FILMS_IDS_FILE_PATH
 
         echo "----------------------------------------------------------------------------------------------------"
       fi
@@ -370,6 +344,14 @@ do
 done
 
 remove_files
+
+if [[ $SOURCE == "circleci" ]]; then
+  sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){3}/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/(,TRUE|,FALSE){4}/,TRUE/g" $FILMS_IDS_FILE_PATH
+else
+  sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){3}/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/(,TRUE|,FALSE){4}/,TRUE/g" $FILMS_IDS_FILE_PATH
+fi
 
 # Add ending message with duration
 DATA_DURATION=$SECONDS

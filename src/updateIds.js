@@ -15,18 +15,18 @@ const updateIds = () => {
 
   if (!environment) {
     if (item_type === "movie") {
-      shell.exec("bash ./utils/getIds.sh no_delete circleci movie");
+      shell.exec("bash ./utils/getIds.sh circleci movie");
       shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
     } else {
-      shell.exec("bash ./utils/getIds.sh no_delete circleci tvshow");
+      shell.exec("bash ./utils/getIds.sh circleci tvshow");
       shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
     }
   } else {
     if (item_type === "movie") {
-      shell.exec("bash ./utils/getIds.sh delete local movie");
+      shell.exec("bash ./utils/getIds.sh local movie");
       shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
     } else {
-      shell.exec("bash ./utils/getIds.sh delete local tvshow");
+      shell.exec("bash ./utils/getIds.sh local tvshow");
       shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
     }
   }
