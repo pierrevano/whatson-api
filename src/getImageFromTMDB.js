@@ -2,7 +2,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const axiosRetry = require("axios-retry");
 const axios = require("axios");
 
 /* Importing the config.js file and assigning it to the config variable. */
@@ -22,11 +21,10 @@ const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {
     const themoviedb_api_key = process.env.THEMOVIEDB_API_KEY;
     const url = `${baseURLTMDB}/${type}/${theMoviedbId}?api_key=${themoviedb_api_key}`;
 
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-    const options = { validateStatus: (status) => status === 200 };
-    const response = await axios.get(url, options);
-
-    const image_path = response.data.poster_path || response.data.profile_path;
+    const options = { validateStatus: (status) => status < 500 };
+    const { response, status } = await axios.get(url, options);
+    let image_path = response.data.poster_path || response.data.profile_path;
+    if (status !== 200) image_path = null;
 
     return image_path;
   } catch (error) {

@@ -2,7 +2,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const axiosRetry = require("axios-retry");
 const axios = require("axios");
 
 /* Importing the config.js file and assigning it to the config variable. */
@@ -24,9 +23,13 @@ const getPlatformsLinks = async (allocineHomepage, imdbHomepage) => {
       const imdbHomepageId = imdbHomepage.split("/")[4];
       const url = `${baseURLBetaseriesAPI}?key=${betaseries_api_key}&imdb_id=${imdbHomepageId}`;
 
-      axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-      const options = { validateStatus: (status) => status === 200 };
-      const response = await axios.get(url, options);
+      const options = { validateStatus: (status) => status < 500 };
+      const { response, status } = await axios.get(url, options);
+      if (status !== 200) {
+        platformsLinks = null;
+
+        return platformsLinks;
+      }
 
       if (response.data.show.platforms && response.data.show.platforms.svods) {
         const svods = response.data.show.platforms.svods;

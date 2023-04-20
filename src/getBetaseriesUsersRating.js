@@ -1,7 +1,3 @@
-/* Importing the libraries that are needed for the script to work. */
-const axiosRetry = require("axios-retry");
-const axios = require("axios");
-
 /* Importing the function `getCheerioContent` from the file `getCheerioContent.js` in the folder
 `utils`. */
 const { getCheerioContent } = require("./utils/getCheerioContent");
@@ -15,7 +11,6 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
   try {
     let criticsRating;
     if (!betaseriesHomepage.includes("null")) {
-      axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
       const options = { validateStatus: (status) => status === 200 };
       const $ = await getCheerioContent(betaseriesHomepage, options);
 

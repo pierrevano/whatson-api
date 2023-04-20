@@ -1,7 +1,3 @@
-/* Importing the libraries that are needed for the script to work. */
-const axiosRetry = require("axios-retry");
-const axios = require("axios");
-
 /* Used to load environment variables from a .env file into process.env. */
 const dotenv = require("dotenv");
 dotenv.config();
@@ -30,7 +26,6 @@ const { getStatus } = require("./getStatus");
  */
 const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
   try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = { validateStatus: (status) => status === 200 };
     const $ = await getCheerioContent(allocineHomepage, options);
 

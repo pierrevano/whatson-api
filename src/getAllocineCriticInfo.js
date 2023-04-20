@@ -1,7 +1,3 @@
-/* Importing the libraries that are needed for the script to work. */
-const axiosRetry = require("axios-retry");
-const axios = require("axios");
-
 /* Importing the functions from the files getCheerioContent.js and convertTitleToNumber.js. */
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { convertTitleToNumber } = require("./utils/convertTitleToNumber");
@@ -19,7 +15,6 @@ const { convertTitleToNumber } = require("./utils/convertTitleToNumber");
  */
 const getAllocineCriticInfo = async (allocineCriticsDetails) => {
   try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = { validateStatus: (status) => status === 200 };
     const $ = await getCheerioContent(allocineCriticsDetails, options);
 

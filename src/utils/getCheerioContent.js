@@ -1,4 +1,5 @@
 /* Importing the libraries that are needed for the script to work. */
+const axiosRetry = require("axios-retry");
 const axios = require("axios");
 const cheerio = require("cheerio");
 
@@ -11,6 +12,7 @@ const cheerio = require("cheerio");
  * @returns A function that returns a promise that resolves to a cheerio object.
  */
 const getCheerioContent = async (url, options) => {
+  axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
   const response = await axios.get(url, options);
   const $ = cheerio.load(response.data);
 
