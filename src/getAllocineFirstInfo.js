@@ -1,30 +1,15 @@
-/* Used to load environment variables from a .env file into process.env. */
-const dotenv = require("dotenv");
-dotenv.config();
-
-const axios = require("axios");
-
-/* Importing the config.js file and assigning it to the config variable. */
-const { config } = require("./config");
-
-/**
- * This module exports four functions: getCheerioContent, getImageFromTMDB, getTrailer, and getStatus.
- * getCheerioContent is used to extract content from a webpage using Cheerio.
- * getImageFromTMDB is used to retrieve an image from The Movie Database API.
- * getTrailer is used to retrieve a trailer for a movie.
- * getStatus is used to retrieve the status of a movie or TV show.
- */
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { getImageFromTMDB } = require("./getImageFromTMDB");
 const { getTrailer } = require("./getTrailer");
 const { getStatus } = require("./getStatus");
+const { getSeasonsNumber } = require("./getSeasonsNumber");
 
 /**
  * Retrieves information about a movie or TV show from Allocine.
  * @param {string} allocineHomepage - The URL of the Allocine page for the movie or TV show.
  * @param {string} betaseriesHomepage - The URL of the Betaseries page for the movie or TV show.
  * @param {number} theMoviedbId - The ID of the movie or TV show on The Movie Database.
- * @returns An object containing information about the movie or TV show, including its title, image, user rating, number of seasons (if applicable), status, and trailer.
+ * @returns An object containing information about the movie or TV show, including its title, image, user rating, number of seasons, status, and trailer.
  */
 const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
   try {
@@ -41,24 +26,9 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = null;
 
-    let seasonsNumber = null;
-
-    const baseURLTMDB = config.baseURLTMDB;
-    const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
-    const themoviedb_api_key = process.env.THEMOVIEDB_API_KEY;
-    const url = `${baseURLTMDB}/${type}/${theMoviedbId}?api_key=${themoviedb_api_key}`;
-
-    const { data } = await axios.get(url, options);
-    if (data && data.number_of_seasons) {
-      seasonsNumber = data.number_of_seasons;
-    } else {
-      if (allocineHomepage.includes(config.baseURLTypeSeries)) seasonsNumber = parseInt($(".stats-number").eq(0).text());
-      if (isNaN(seasonsNumber)) seasonsNumber = null;
-    }
-
-    const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
-
+    const seasonsNumber = await getSeasonsNumber(allocineHomepage, theMoviedbId);
     const status = await getStatus($(".thumbnail .label-status").text());
+    const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
 
     let allocineFirstInfo = {
       allocineTitle: title,
