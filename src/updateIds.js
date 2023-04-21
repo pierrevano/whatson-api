@@ -1,11 +1,11 @@
 /* Importing the libraries that are needed for the script to work. */
 const shell = require("shelljs");
 
-/* Importing the environment and item_type variables from the node_vars_values.js file. */
-const { node_vars_values } = require("./node_vars_values");
+/* Importing the environment and item_type variables from the getNodeVarsValues.js file. */
+const { getNodeVarsValues } = require("./getNodeVarsValues");
 
-const environment = node_vars_values.environment;
-const item_type = node_vars_values.item_type;
+const environment = getNodeVarsValues.environment;
+const item_type = getNodeVarsValues.item_type;
 
 /**
  * It updates the ids of the movies and tv shows in the database

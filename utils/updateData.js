@@ -12,9 +12,9 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-/* Importing the config and node_vars_values from the src folder. */
+/* Importing the config and getNodeVarsValues from the src folder. */
 const { config } = require("../src/config");
-const { node_vars_values } = require("../src/node_vars_values");
+const { getNodeVarsValues } = require("../src/getNodeVarsValues");
 
 /* Importing the functions from the files in the src folder. */
 const { b64Encode } = require("../src/utils/b64Encode");
@@ -28,14 +28,14 @@ const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
 const { controlData } = require("./controlData");
 
-const item_type = node_vars_values.item_type;
+const item_type = getNodeVarsValues.item_type;
 
 /* Checking if the variable get_ids is true. If it is not true, it will run the function updateIds(). */
-const get_ids = node_vars_values.get_ids;
+const get_ids = getNodeVarsValues.get_ids;
 if (get_ids === "update_ids") updateIds();
 
 /* Checking if the second argument is true. If it is, it exits the process. */
-const get_db = node_vars_values.get_db;
+const get_db = getNodeVarsValues.get_db;
 if (get_db !== "update_db") process.exit(1);
 
 /* Removing the file logs.txt */
@@ -237,7 +237,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   const database = client.db(dbName);
   const collectionData = database.collection(collectionName);
 
-  const skip_already_added_documents = node_vars_values.skip_already_added_documents;
+  const skip_already_added_documents = getNodeVarsValues.skip_already_added_documents;
 
   /* Updating all documents in the collection to is_active: false. */
   if (!skip_already_added_documents && get_ids === "update_ids") {
@@ -254,7 +254,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
   }
   console.log(`Ids file path to use: ${idsFilePath}`);
 
-  const is_not_active = node_vars_values.is_not_active;
+  const is_not_active = getNodeVarsValues.is_not_active;
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   let jsonArray = [];
 
@@ -264,16 +264,16 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
   /* Setting the index_to_start variable to the value of the node_vars[5] variable. If node_vars[5] is
   not defined, then index_to_start is set to 0. */
-  let index_to_start = node_vars_values.index_to_start;
+  let index_to_start = getNodeVarsValues.index_to_start;
   if (!index_to_start) index_to_start = 0;
 
   console.time("Duration");
 
   try {
-    /* Printing out the value of each variable in the node_vars_values object. */
-    for (let variable in node_vars_values) {
-      let variable_value = node_vars_values[variable];
-      if (!node_vars_values[variable]) variable_value = "not set";
+    /* Printing out the value of each variable in the getNodeVarsValues object. */
+    for (let variable in getNodeVarsValues) {
+      let variable_value = getNodeVarsValues[variable];
+      if (!getNodeVarsValues[variable]) variable_value = "not set";
       console.log(`${variable}: ${variable_value}`);
     }
 
