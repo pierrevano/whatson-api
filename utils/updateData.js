@@ -12,12 +12,12 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-/* Importing the config and getNodeVarsValues from the src folder. */
 const { config } = require("../src/config");
 const { getNodeVarsValues } = require("../src/getNodeVarsValues");
 
-/* Importing the functions from the files in the src folder. */
 const { b64Encode } = require("../src/utils/b64Encode");
+const { controlData } = require("./controlData");
+const { countNullElements } = require("./countNullElements");
 const { getAllocineCriticInfo } = require("../src/getAllocineCriticInfo");
 const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
 const { getBetaseriesUsersRating } = require("../src/getBetaseriesUsersRating");
@@ -26,7 +26,7 @@ const { getMetacriticRating } = require("../src/getMetacriticRating");
 const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
-const { controlData } = require("./controlData");
+const { upsertToDatabase } = require("./upsertToDatabase");
 
 const item_type = getNodeVarsValues.item_type;
 
@@ -40,82 +40,6 @@ if (get_db !== "update_db") process.exit(1);
 
 /* Removing the file logs.txt */
 shell.exec("rm -f ./logs.txt");
-
-/**
- * It takes in a data object and a collectionData object, and then it updates the database with the
- * data object
- * @param data - The data to be inserted into the database.
- * @param collectionData - The collection object that we created earlier.
- */
-async function upsertToDatabase(data, collectionData) {
-  try {
-    console.log(data);
-
-    const filter = { _id: b64Encode(data.allocine.url) };
-    const options = { upsert: true };
-    const updateDoc = { $set: data };
-
-    await collectionData.updateOne(filter, updateDoc, options);
-  } catch (error) {
-    console.log(`upsertToDatabase: ${error}`);
-  }
-}
-
-/**
- * It counts the number of documents in the collection, and then counts the number of null values for
- * each of the three rating fields. If the number of null values is greater than 1/3 of the number of
- * documents in the collection, the function exits with an error code
- * @param collectionData - The collection to be queried.
- */
-async function countNullElements(collectionData) {
-  try {
-    /* Counting the number of documents in the collection. */
-    const documents = await collectionData.estimatedDocumentCount();
-    console.log(`Number of documents in the collection: ${documents}`);
-
-    /* The above code is counting the number of null values for the allocine.users_rating field. */
-    const query_allocine = { "allocine.users_rating": null };
-    const countAllocineNull = await collectionData.countDocuments(query_allocine);
-    console.log(`Number of null for allocine.users_rating: ${countAllocineNull}`);
-
-    if ((countAllocineNull * 100) / documents > 30) {
-      console.log("Something went wrong, at least 30% of Allociné ratings are set to null");
-      process.exit(1);
-    }
-
-    const query_allocine_critics = { "allocine.critics_rating": null };
-    const countAllocineCriticsNull = await collectionData.countDocuments(query_allocine_critics);
-    console.log(`Number of null for allocine.critics_rating: ${countAllocineCriticsNull}`);
-
-    if ((countAllocineCriticsNull * 100) / documents > 80) {
-      console.log("Something went wrong, at least 80% of Allociné critics ratings are set to null");
-      process.exit(1);
-    }
-
-    /* The above code is counting the number of null values for the betaseries.users_rating field. */
-    const query_betaseries = { "betaseries.users_rating": null };
-    const countBetaseriesNull = await collectionData.countDocuments(query_betaseries);
-    console.log(`Number of null for betaseries.users_rating: ${countBetaseriesNull}`);
-
-    if ((countBetaseriesNull * 100) / documents > 30) {
-      console.log("Something went wrong, at least 30% of Betaseries ratings are set to null");
-      process.exit(1);
-    }
-
-    /* The above code is counting the number of documents in the collection that have a null value
-      for the imdb.users_rating field. */
-    const query_imdb = { "imdb.users_rating": null };
-    const countIMDbNull = await collectionData.countDocuments(query_imdb);
-    console.log(`Number of null for imdb.users_rating: ${countIMDbNull}`);
-
-    if ((countIMDbNull * 100) / documents > 30) {
-      console.log("Something went wrong, at least 30% of IMDb ratings are set to null");
-      process.exit(1);
-    }
-  } catch (error) {
-    console.log(`countNullElements: ${error}`);
-  }
-}
 
 /**
  * Creates a JSON object with information about a movie or TV show from various sources.
@@ -298,7 +222,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
         if (isDocumentHasInfo) continue;
       }
 
-      // AlloCiné info
+      /* AlloCiné info */
       let baseURLType;
       let baseURLCriticDetails;
       if (item_type === "movie") {
@@ -314,12 +238,12 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       const allocineHomepage = `${baseURLAllocine}${baseURLType}${allocineId}.html`;
       const allocineCriticsDetails = `${baseURLAllocine}${baseURLCriticDetails}${allocineId}${endURLCriticDetails}`;
 
-      // IMDb info
+      /* IMDb info */
       const baseURLIMDB = config.baseURLIMDB;
       const imdbId = json.IMDB_ID;
       const imdbHomepage = `${baseURLIMDB}${imdbId}/`;
 
-      // BetaSeries info
+      /* BetaSeries info */
       const baseURLBetaseriesFilm = config.baseURLBetaseriesFilm;
       const baseURLBetaseriesSerie = config.baseURLBetaseriesSerie;
       let betaseriesId = json.BETASERIES_ID;
@@ -331,14 +255,14 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
         betaseriesHomepage = `${baseURLBetaseriesSerie}${betaseriesId}`;
       }
 
-      // If the BetaSeries movie was categorized as a serie
+      /* If the BetaSeries movie was categorized as a serie */
       if (betaseriesId.startsWith("serie/")) {
         const betaseriesIdNew = betaseriesId.split("/");
         betaseriesId = betaseriesIdNew[1];
         betaseriesHomepage = `${baseURLBetaseriesSerie}${betaseriesId}`;
       }
 
-      // Metacritic info
+      /* Metacritic info */
       const baseURLMetacriticFilm = config.baseURLMetacriticFilm;
       const baseURLMetacriticSerie = config.baseURLMetacriticSerie;
       let metacriticId = json.METACRITIC_ID;
