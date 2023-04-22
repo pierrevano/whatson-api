@@ -22,6 +22,8 @@ if [[ $TYPE == "movie" ]]; then
   JQ_COMMAND_RESULTS=".movie_results"
   PROPERTY=P1265
   METACRITIC_TYPE=movie
+  FALSE_NUMBER=2
+  TRUE_OR_FALSE_NUMBER=3
 else
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
@@ -32,6 +34,8 @@ else
   JQ_COMMAND_RESULTS=".tv_results"
   PROPERTY=P1267
   METACRITIC_TYPE=tv
+  FALSE_NUMBER=4
+  TRUE_OR_FALSE_NUMBER=5
 fi
 
 if [[ $SOURCE == "circleci" ]]; then
@@ -349,22 +353,12 @@ done
 
 remove_files
 
-if [[ $TYPE == "movie" ]]; then
-  if [[ $SOURCE == "circleci" ]]; then
-    sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){2}/,FALSE/g" $FILMS_IDS_FILE_PATH
-    sed -i -E "s/(,TRUE|,FALSE){3}/,TRUE/g" $FILMS_IDS_FILE_PATH
-  else
-    sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){2}/,FALSE/g" $FILMS_IDS_FILE_PATH
-    sed -i '' -E "s/(,TRUE|,FALSE){3}/,TRUE/g" $FILMS_IDS_FILE_PATH
-  fi
+if [[ $SOURCE == "circleci" ]]; then
+  sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER}/,TRUE/g" $FILMS_IDS_FILE_PATH
 else
-  if [[ $SOURCE == "circleci" ]]; then
-    sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){4}/,FALSE/g" $FILMS_IDS_FILE_PATH
-    sed -i -E "s/(,TRUE|,FALSE){5}/,TRUE/g" $FILMS_IDS_FILE_PATH
-  else
-    sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){4}/,FALSE/g" $FILMS_IDS_FILE_PATH
-    sed -i '' -E "s/(,TRUE|,FALSE){5}/,TRUE/g" $FILMS_IDS_FILE_PATH
-  fi
+  sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER}/,TRUE/g" $FILMS_IDS_FILE_PATH
 fi
 
 # Add ending message with duration
