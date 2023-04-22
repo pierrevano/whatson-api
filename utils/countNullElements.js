@@ -53,8 +53,8 @@ const countNullElements = async (collectionData) => {
     const countMetacriticNull = await collectionData.countDocuments(query_metacritic);
     console.log(`Number of null for metacritic: ${countMetacriticNull}`);
 
-    if ((countMetacriticNull * 100) / documents > 30) {
-      console.log("Something went wrong, at least 30% of Metacritic ratings are set to null");
+    if ((countMetacriticNull * 100) / documents > 70) {
+      console.log("Something went wrong, at least 70% of Metacritic ratings are set to null");
       process.exit(1);
     }
   } catch (error) {

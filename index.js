@@ -24,7 +24,7 @@ const config = {
   baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
 
   limit: 200,
-  maxSeasonsNumber: 4,
+  maxSeasonsNumber: 5,
 };
 
 /* Connecting to the database and the collection. */
