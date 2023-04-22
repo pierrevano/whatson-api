@@ -37,11 +37,11 @@ fi
 if [[ $SOURCE == "circleci" ]]; then
   sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
 
-  sed -i "/IS_ACTIVE_3$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i "/IS_ACTIVE_1$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
 else
   sed -i '' "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
 
-  sed -i '' "/IS_ACTIVE_3$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' "/IS_ACTIVE_1$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
 WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,4}$" | wc -l | awk '{print $1}')
@@ -349,12 +349,22 @@ done
 
 remove_files
 
-if [[ $SOURCE == "circleci" ]]; then
-  sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){2}/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i -E "s/(,TRUE|,FALSE){3}/,TRUE/g" $FILMS_IDS_FILE_PATH
+if [[ $TYPE == "movie" ]]; then
+  if [[ $SOURCE == "circleci" ]]; then
+    sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){2}/,FALSE/g" $FILMS_IDS_FILE_PATH
+    sed -i -E "s/(,TRUE|,FALSE){3}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  else
+    sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){2}/,FALSE/g" $FILMS_IDS_FILE_PATH
+    sed -i '' -E "s/(,TRUE|,FALSE){3}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  fi
 else
-  sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){2}/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i '' -E "s/(,TRUE|,FALSE){3}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  if [[ $SOURCE == "circleci" ]]; then
+    sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){4}/,FALSE/g" $FILMS_IDS_FILE_PATH
+    sed -i -E "s/(,TRUE|,FALSE){5}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  else
+    sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){4}/,FALSE/g" $FILMS_IDS_FILE_PATH
+    sed -i '' -E "s/(,TRUE|,FALSE){5}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  fi
 fi
 
 # Add ending message with duration

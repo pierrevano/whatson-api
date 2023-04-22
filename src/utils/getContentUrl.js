@@ -2,16 +2,23 @@
 const { removeExtraChar } = require("./removeExtraChar");
 
 /**
- * It gets the last script tag with the type of application/ld+json and parses it into a JSON object
- * @param $ - The cheerio object
- * @param backup - If the first script tag doesn't work, we'll try the last one.
- * @returns The content of the last script tag with the type application/ld+json
+ * Extracts the content URL from the given HTML using jQuery.
+ * @param {CheerioStatic} $ - The Cheerio object representing the HTML.
+ * @param {boolean} backup - Whether to use the first or last script tag with type "application/ld+json".
+ * @param {string} allocineHomepage - The URL of the Allocine homepage.
+ * @returns The content URL parsed from the JSON object.
  */
-function getContentUrl($, backup) {
-  const JSONValue = backup ? $('script[type="application/ld+json"]') : $('script[type="application/ld+json"]').last();
-  const contentParsed = JSON.parse(removeExtraChar(JSONValue.text()));
+function getContentUrl($, backup, allocineHomepage) {
+  try {
+    const JSONValue = backup ? $('script[type="application/ld+json"]') : $('script[type="application/ld+json"]').last();
+    const contentParsed = JSON.parse(removeExtraChar(JSONValue.text()));
 
-  return contentParsed;
+    return contentParsed;
+  } catch (error) {
+    console.log(`getContentUrl - ${allocineHomepage}: ${error}`);
+
+    return null;
+  }
 }
 
 module.exports = { getContentUrl };

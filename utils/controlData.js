@@ -1,6 +1,9 @@
 /* Importing the libraries that are needed for the script to work. */
-const axiosRetry = require("axios-retry");
 const axios = require("axios");
+
+const config = {
+  metacriticURLCheck: false,
+};
 
 /**
  * Checks if the given input is in all lowercase letters.
@@ -79,11 +82,13 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
       });
     }
 
-    if (isDocumentHasInfo && document.metacritic !== null) {
-      const { status } = await axios(document.metacritic.url);
-      if (status !== 200) {
-        console.log(`Broken link for ${completeAllocineURL}`);
-        process.exit(0);
+    if (config.metacriticURLCheck) {
+      if (isDocumentHasInfo && document.metacritic !== null) {
+        const { status } = await axios(document.metacritic.url);
+        if (status !== 200) {
+          console.log(`Broken link for ${completeAllocineURL}`);
+          process.exit(0);
+        }
       }
     }
   } catch (error) {
