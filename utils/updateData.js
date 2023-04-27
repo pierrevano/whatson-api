@@ -15,7 +15,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const { config } = require("../src/config");
 const { getNodeVarsValues } = require("../src/getNodeVarsValues");
 
-const { b64Encode } = require("../src/utils/b64Encode");
+const { b64Encode, b64Decode } = require("../src/utils/b64EncodeAndDecode");
 const { controlData } = require("./controlData");
 const { countNullElements } = require("./countNullElements");
 const { getAllocineCriticInfo } = require("../src/getAllocineCriticInfo");
@@ -199,6 +199,25 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
       let variable_value = getNodeVarsValues[variable];
       if (!getNodeVarsValues[variable]) variable_value = "not set";
       console.log(`${variable}: ${variable_value}`);
+    }
+
+    const check_db_ids = getNodeVarsValues.check_db_ids;
+    if (check_db_ids === "check") {
+      let idFromFiles = [];
+      jsonArrayFromCSV.forEach((element) => {
+        idFromFiles.push(b64Encode(`${config.baseURLAllocine}${element.URL}`));
+      });
+      const allDbIdsArray = await collectionData
+        .find({ item_type: item_type })
+        .map((el) => {
+          return el._id;
+        })
+        .toArray();
+      const idsOnlyInDb = allDbIdsArray.filter((x) => !idFromFiles.includes(x));
+      idsOnlyInDb.forEach((element) => {
+        console.log(`${element}: ${b64Decode(element)}`);
+      });
+      process.exit(0);
     }
 
     for (let index = index_to_start; index < jsonArray.length; index++) {

@@ -48,11 +48,11 @@ else
   sed -i '' "/IS_ACTIVE_1$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
-WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,4}$" | wc -l | awk '{print $1}')
+WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,5}$" | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
   echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH!"
   echo "details:"
-  cat $FILMS_IDS_FILE_PATH | grep -E -v "\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,4}$"
+  cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,5}$"
   exit
 fi
 

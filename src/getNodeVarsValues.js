@@ -7,8 +7,9 @@ const getNodeVarsValues = {
   get_db: node_vars[2],
   environment: node_vars[3],
   is_not_active: node_vars[4],
-  index_to_start: node_vars[5],
-  skip_already_added_documents: node_vars[6],
+  check_db_ids: node_vars[5],
+  index_to_start: node_vars[6],
+  skip_already_added_documents: node_vars[7],
 };
 
 module.exports = { getNodeVarsValues };
