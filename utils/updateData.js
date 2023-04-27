@@ -36,7 +36,7 @@ if (get_ids === "update_ids") updateIds();
 
 /* Checking if the second argument is true. If it is, it exits the process. */
 const get_db = getNodeVarsValues.get_db;
-if (get_db !== "update_db") process.exit(1);
+if (get_db !== "update_db") process.exit(0);
 
 /* Removing the file logs.txt */
 shell.exec("rm -f ./logs.txt");

@@ -29,37 +29,37 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
     keysArray.forEach((key) => {
       if (isDocumentHasInfo && !document.hasOwnProperty(`${key}`)) {
         console.log(`Missing ${key} for ${completeAllocineURL}`);
-        process.exit(0);
+        process.exit(1);
       }
     });
 
     keysArray.forEach((key) => {
       if (isDocumentHasInfo && typeof document[key] === "undefined") {
         console.log(`Undefined ${key} for ${completeAllocineURL}`);
-        process.exit(0);
+        process.exit(1);
       }
     });
 
     if (isDocumentHasInfo && document.title === null) {
       console.log(`Missing title for ${completeAllocineURL}`);
-      process.exit(0);
+      process.exit(1);
     }
 
     if (isDocumentHasInfo && document.image === null) {
       console.log(`Missing image for ${completeAllocineURL}`);
-      process.exit(0);
+      process.exit(1);
     }
 
     if (isDocumentHasInfo && document.item_type === "tvshow" && document.status === null) {
       if (!idsToExclude.includes(document.allocine.id)) {
         console.log(`Missing status for ${completeAllocineURL}`);
-        process.exit(0);
+        process.exit(1);
       }
     }
 
     if (isDocumentHasInfo && Object.keys(document.imdb).length !== 3) {
       console.log(`IMDb obj length !== 3 for ${completeAllocineURL}`);
-      process.exit(0);
+      process.exit(1);
     }
 
     if (isDocumentHasInfo && document.allocine.critics_rating_details !== null) {
@@ -67,7 +67,7 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
       allocineKeys.forEach((element) => {
         if (!isLowerCase(element)) {
           console.log(`Is not lowercase for ${completeAllocineURL}`);
-          process.exit(0);
+          process.exit(1);
         }
       });
     }
@@ -77,7 +77,7 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
       metacriticKeys.forEach((element) => {
         if (!isLowerCase(element)) {
           console.log(`Is not lowercase for ${completeAllocineURL}`);
-          process.exit(0);
+          process.exit(1);
         }
       });
     }
@@ -87,13 +87,13 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
         const { status } = await axios(document.metacritic.url);
         if (status !== 200) {
           console.log(`Broken link for ${completeAllocineURL}`);
-          process.exit(0);
+          process.exit(1);
         }
       }
     }
   } catch (error) {
     console.log(`controlData - ${completeAllocineURL}: ${error}`);
-    process.exit(0);
+    process.exit(1);
   }
 };
 
