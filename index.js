@@ -23,8 +23,9 @@ const config = {
   corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
   baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
 
-  limit: 200,
+  limit: 20,
   maxSeasonsNumber: 5,
+  page: 1,
 };
 
 /* Connecting to the database and the collection. */
@@ -112,20 +113,33 @@ const getRatingsFilters = async (ratings_filters_query) => {
 };
 
 /**
- * It returns the data from the database, based on the parameters passed to it
- * @param id - the id of the item you want to get the recommendations for
- * @param item_type - movie or tvshow
- * @param movies_ids - a list of movies ids
- * @param ratings_filters - an array of the ratings filters to apply to the query.
- * @param seasons_number - the number of seasons of a TV show
- * @returns An array of objects.
+ * Retrieves items from the database based on the given parameters.
+ * @param {string} cinema_id_query - The cinema ID to filter by.
+ * @param {string} id_path - The ID path to filter by.
+ * @param {string} item_type_query - The item type to filter by.
+ * @param {number} limit_query - The maximum number of items to retrieve.
+ * @param {number} page_query - The page number to retrieve.
+ * @param {string} ratings_filters_query - The ratings filters to apply.
+ * @param {string} seasons_number_query - The seasons number to filter by.
+ * @returns An object containing the number of elements, the retrieved items, the limit, and the page.
  */
-const getData = async (id, item_type, movies_ids, ratings_filters, seasons_number) => {
+const getItems = async (cinema_id_query, id_path, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query) => {
+  const id = isNaN(id_path) ? "" : id_path;
+  const item_type = typeof item_type_query !== "undefined" ? item_type_query : "";
+  const limit = isNaN(limit_query) ? config.limit : limit_query;
+  const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
+  const page = isNaN(page_query) ? config.page : page_query;
+  const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
+  const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
+  const seasons_number = typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
+
   console.log(`id: ${id}`);
   console.log(`item_type: ${item_type}`);
+  console.log(`limit: ${limit}`);
   console.log(`movies_ids: ${movies_ids}`);
-  console.log(ratings_filters);
+  console.log(`page: ${page}`);
   console.log(`seasons_number: ${seasons_number}`);
+  console.log(ratings_filters);
 
   const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
   const is_active = { is_active: true };
@@ -136,71 +150,49 @@ const getData = async (id, item_type, movies_ids, ratings_filters, seasons_numbe
   const seasons_number_first = { seasons_number: { $in: seasons_number.split(",").map(Number) } };
   const seasons_number_last = { seasons_number: { $gt: config.maxSeasonsNumber } };
 
+  const limit_results = { $limit: limit };
   const match_item_type_movie = { $match: { $and: [item_type_movie, is_active] } };
   const match_item_type_tvshow = { $match: { $and: [item_type_tvshow, is_active] } };
   const match_item_type_tvshow_and_seasons_number = { $match: { $and: [item_type_tvshow, is_active, seasons_number_first] } };
   const match_item_type_tvshow_and_seasons_number_more_than_max = { $match: { $and: [item_type_tvshow, is_active, { $or: [seasons_number_first, seasons_number_last] }] } };
+  const skip_results = { $skip: (page - 1) * limit };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 
   const pipeline = [];
   if (id !== "") {
-    pipeline.push(match_id, addFields_ratings_filters, sort_ratings);
+    pipeline.push(match_id);
   } else if (item_type === "tvshow" && seasons_number.includes(config.maxSeasonsNumber)) {
-    pipeline.push(match_item_type_tvshow_and_seasons_number_more_than_max, addFields_ratings_filters, sort_ratings);
+    pipeline.push(match_item_type_tvshow_and_seasons_number_more_than_max);
   } else if (item_type === "tvshow" && seasons_number !== "") {
-    pipeline.push(match_item_type_tvshow_and_seasons_number, addFields_ratings_filters, sort_ratings);
+    pipeline.push(match_item_type_tvshow_and_seasons_number);
   } else if (item_type === "tvshow") {
-    pipeline.push(match_item_type_tvshow, addFields_ratings_filters, sort_ratings);
+    pipeline.push(match_item_type_tvshow);
   } else if (movies_ids !== "") {
-    pipeline.push(match_in_movies_ids, addFields_ratings_filters, sort_ratings);
+    pipeline.push(match_in_movies_ids);
   } else {
-    pipeline.push(match_item_type_movie, addFields_ratings_filters, sort_ratings);
+    pipeline.push(match_item_type_movie);
   }
+
+  const rawData = await collectionData.aggregate(pipeline);
+  const elements_nb = (await rawData.toArray()).length;
+
+  pipeline.push(addFields_ratings_filters, sort_ratings, skip_results, limit_results);
 
   console.log(pipeline);
 
   const data = await collectionData.aggregate(pipeline);
-  const items = [];
-  for await (const item of data) {
-    items.push(item);
-  }
-  const limitedItems = items.slice(0, config.limit);
+  const items = await data.toArray();
 
-  return limitedItems;
+  return { elements_nb: elements_nb, items: items, limit: limit, page: page };
 };
 
 /**
- * Retrieves items from the server based on the given parameters.
- * @param {string} id_path - The ID of the item to retrieve.
- * @param {string} item_type_query - The type of item to retrieve.
- * @param {string} cinema_id_query - The ID of the cinema to retrieve items for.
- * @param {string} ratings_filters_query - The rating filters to apply to the items.
- * @param {string} seasons_number_query - The number of seasons to retrieve for TV shows.
- * @returns {Promise} A promise that resolves to an array of items.
- */
-const getItems = async (id_path, item_type_query, cinema_id_query, ratings_filters_query, seasons_number_query) => {
-  console.log(`id_path: ${id_path}`);
-  console.log(`item_type_query: ${item_type_query}`);
-  console.log(`cinema_id_query: ${cinema_id_query}`);
-  console.log(`ratings_filters_query: ${ratings_filters_query}`);
-  console.log(`seasons_number_query: ${seasons_number_query}`);
-
-  const id = isNaN(id_path) ? "" : id_path;
-  const item_type = typeof item_type_query !== "undefined" ? item_type_query : "";
-  const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
-  const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
-  const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
-  const seasons_number = typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
-  const items = await getData(id, item_type, movies_ids, ratings_filters, seasons_number);
-
-  return items;
-};
-
-/**
- * It takes in a request and a response, and then it tries to get the id from the request, and then it
- * tries to get the items from the database, and then it sends the items back in the response
- * @param req - The request object.
- * @param res - the response object
+ * Retrieves an item's ID from the database based on the given parameters.
+ * @async
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns None
+ * @throws {Error} If there is an error retrieving the item from the database.
  */
 async function getId(req, res) {
   try {
@@ -210,7 +202,7 @@ async function getId(req, res) {
     const ratings_filters_query = req.query.ratings_filters;
     if (id_path && ratings_filters_query) {
       try {
-        const items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query);
+        const { items } = await getItems(cinema_id_query, id_path, item_type_query, ratings_filters_query);
         res.status(200).json(items[0]);
       } catch (error) {
         res.status(400).send(error);
@@ -273,15 +265,15 @@ async function findId(json) {
 
 app.get("/", async (req, res) => {
   try {
-    let items = "";
-
     const cinema_id_query = req.query.cinema_id;
     const id_path = parseInt(req.params.id);
     const item_type_query = req.query.item_type;
+    const limit_query = parseInt(req.query.limit);
+    const page_query = parseInt(req.query.page);
     const ratings_filters_query = req.query.ratings_filters;
     const seasons_number_query = req.query.seasons_number;
 
-    items = await getItems(id_path, item_type_query, cinema_id_query, ratings_filters_query, seasons_number_query);
+    let { elements_nb, items, limit, page } = await getItems(cinema_id_query, id_path, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query);
 
     const keysToCheck = ["allocineId", "betaseriesId", "imdbId", "metacriticId", "rottentomatoesId", "themoviedbId", "title"];
     for (let index = 0; index < keysToCheck.length; index++) {
@@ -295,7 +287,12 @@ app.get("/", async (req, res) => {
     if (items.length === 0) {
       res.status(204).json({ message: "No items have been found!" });
     } else {
-      res.status(200).json(items);
+      res.status(200).json({
+        page: page,
+        results: items,
+        total_pages: Math.ceil(elements_nb / limit),
+        total_results: elements_nb,
+      });
     }
   } catch (error) {
     res.status(400).send(error);
