@@ -115,17 +115,19 @@ const getRatingsFilters = async (ratings_filters_query) => {
 /**
  * Retrieves items from the database based on the given parameters.
  * @param {string} cinema_id_query - The cinema ID to filter by.
- * @param {string} id_path - The ID path to filter by.
- * @param {string} item_type_query - The item type to filter by.
+ * @param {string} id_path - The ID of the item to retrieve.
+ * @param {boolean} is_active_query - Whether or not the item is active.
+ * @param {string} item_type_query - The type of item to retrieve.
  * @param {number} limit_query - The maximum number of items to retrieve.
  * @param {number} page_query - The page number to retrieve.
  * @param {string} ratings_filters_query - The ratings filters to apply.
  * @param {string} seasons_number_query - The seasons number to filter by.
  * @returns An object containing the number of elements, the retrieved items, the limit, and the page.
  */
-const getItems = async (cinema_id_query, id_path, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query) => {
+const getItems = async (cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query) => {
   const id = isNaN(id_path) ? "" : id_path;
-  const item_type = typeof item_type_query !== "undefined" ? item_type_query : "";
+  const is_active = typeof is_active_query !== "undefined" ? is_active_query : true;
+  const item_type = typeof item_type_query !== "undefined" ? item_type_query : "movie";
   const limit = isNaN(limit_query) ? config.limit : limit_query;
   const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
   const page = isNaN(page_query) ? config.page : page_query;
@@ -133,17 +135,16 @@ const getItems = async (cinema_id_query, id_path, item_type_query, limit_query, 
   const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
   const seasons_number = typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
 
-  console.log(`id: ${id}`);
-  console.log(`item_type: ${item_type}`);
-  console.log(`limit: ${limit}`);
-  console.log(`movies_ids: ${movies_ids}`);
-  console.log(`page: ${page}`);
-  console.log(`seasons_number: ${seasons_number}`);
-  console.log(ratings_filters);
-
   const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
-  const is_active = { is_active: true };
-  const item_type_movie = { item_type: "movie" };
+
+  let is_active_item = { is_active: (is_true = is_active === "true") };
+  const is_active_all = { $or: [{ is_active: true }, { is_active: false }] };
+  is_active_item = is_active === "true,false" || is_active === "false,true" ? is_active_all : is_active_item;
+
+  let item_type_default = { item_type: item_type };
+  const item_type_all = { $or: [{ item_type: "movie" }, { item_type: "tvshow" }] };
+  item_type_default = item_type === "movie,tvshow" || item_type === "tvshow,movie" ? item_type_all : item_type_default;
+
   const item_type_tvshow = { item_type: "tvshow" };
   const match_id = { $match: { id: id } };
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
@@ -151,10 +152,9 @@ const getItems = async (cinema_id_query, id_path, item_type_query, limit_query, 
   const seasons_number_last = { seasons_number: { $gt: config.maxSeasonsNumber } };
 
   const limit_results = { $limit: limit };
-  const match_item_type_movie = { $match: { $and: [item_type_movie, is_active] } };
-  const match_item_type_tvshow = { $match: { $and: [item_type_tvshow, is_active] } };
-  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [item_type_tvshow, is_active, seasons_number_first] } };
-  const match_item_type_tvshow_and_seasons_number_more_than_max = { $match: { $and: [item_type_tvshow, is_active, { $or: [seasons_number_first, seasons_number_last] }] } };
+  const match_item_type = { $match: { $and: [item_type_default, is_active_item] } };
+  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [item_type_tvshow, is_active_item, seasons_number_first] } };
+  const match_item_type_tvshow_and_seasons_number_more_than_max = { $match: { $and: [item_type_tvshow, is_active_item, { $or: [seasons_number_first, seasons_number_last] }] } };
   const skip_results = { $skip: (page - 1) * limit };
   const sort_ratings = { $sort: { ratings_average: -1 } };
 
@@ -166,11 +166,11 @@ const getItems = async (cinema_id_query, id_path, item_type_query, limit_query, 
   } else if (item_type === "tvshow" && seasons_number !== "") {
     pipeline.push(match_item_type_tvshow_and_seasons_number);
   } else if (item_type === "tvshow") {
-    pipeline.push(match_item_type_tvshow);
+    pipeline.push(match_item_type);
   } else if (movies_ids !== "") {
     pipeline.push(match_in_movies_ids);
   } else {
-    pipeline.push(match_item_type_movie);
+    pipeline.push(match_item_type);
   }
 
   const rawData = await collectionData.aggregate(pipeline);
@@ -267,13 +267,14 @@ app.get("/", async (req, res) => {
   try {
     const cinema_id_query = req.query.cinema_id;
     const id_path = parseInt(req.params.id);
+    const is_active_query = req.query.is_active;
     const item_type_query = req.query.item_type;
     const limit_query = parseInt(req.query.limit);
     const page_query = parseInt(req.query.page);
     const ratings_filters_query = req.query.ratings_filters;
     const seasons_number_query = req.query.seasons_number;
 
-    let { elements_nb, items, limit, page } = await getItems(cinema_id_query, id_path, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query);
+    let { elements_nb, items, limit, page } = await getItems(cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query);
 
     const keysToCheck = ["allocineId", "betaseriesId", "imdbId", "metacriticId", "rottentomatoesId", "themoviedbId", "title"];
     for (let index = 0; index < keysToCheck.length; index++) {

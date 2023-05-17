@@ -7,16 +7,12 @@ const axios = require("axios");
 const { getCheerioContent } = require("./utils/getCheerioContent");
 
 /**
- * Retrieves the Metacritic rating for a given IMDb homepage.
- * @param {string} imdbHomepage - The IMDb homepage URL.
- * @returns {Promise<Object>} - A promise that resolves to an object containing the Metacritic rating information.
- * The object has the following properties:
- * - id: The ID of the Metacritic page.
- * - url: The URL of the Metacritic page.
- * - usersRating: The user rating on Metacritic.
- * - criticsRating: The critic rating on Metacritic.
- * - criticsNumber: The number of critics who have rated the movie.
- * - criticsRatingDetails: An array of objects containing the name of the critic and their rating.
+ * Retrieves the Metacritic rating for a given movie or TV show.
+ * @param {string} imdbHomepage - The IMDb homepage URL for the movie or TV show.
+ * @param {string} metacriticHomepage - The Metacritic homepage URL.
+ * @param {string} metacriticId - The Metacritic ID for the movie or TV show.
+ * @returns {Promise<Object>} - An object containing the Metacritic rating information.
+ * @throws {Error} - If there is an error retrieving the Metacritic rating.
  */
 const getMetacriticRating = async (imdbHomepage, metacriticHomepage, metacriticId) => {
   try {
@@ -43,7 +39,7 @@ const getMetacriticRating = async (imdbHomepage, metacriticHomepage, metacriticI
       const url = metacriticLink.includes("?") ? metacriticLink.split("?")[0] : metacriticHomepage;
 
       $ = await getCheerioContent(`${url}`, options);
-      let usersRating = parseFloat($(".metascore_w.user").text());
+      let usersRating = parseFloat($(".metascore_w.user").first().text());
       if (isNaN(usersRating)) usersRating = null;
 
       $ = await getCheerioContent(`${url}/critic-reviews`, options);

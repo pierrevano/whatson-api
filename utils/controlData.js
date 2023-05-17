@@ -15,11 +15,11 @@ function isLowerCase(input) {
 }
 
 /**
- * Controls the data for a given Allocine URL and checks if the necessary keys are present in the document object.
- * @param {string} completeAllocineURL - The complete URL of the Allocine page.
+ * Checks the given document object for missing or undefined keys and values, and other errors.
+ * @param {string} completeAllocineURL - The complete URL of the Allocine page being checked.
  * @param {Array} keysArray - An array of keys to check for in the document object.
  * @param {boolean} isDocumentHasInfo - A boolean indicating whether the document object has the necessary information.
- * @param {object} document - The document object to check for the necessary keys.
+ * @param {object} document - The document object to check.
  * @returns None
  */
 const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, document) => {
@@ -40,29 +40,29 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
       }
     });
 
-    if (isDocumentHasInfo && document.title === null) {
+    if (document.title === null) {
       console.log(`Missing title for ${completeAllocineURL}`);
       process.exit(1);
     }
 
-    if (isDocumentHasInfo && document.image === null) {
+    if (document.image === null) {
       console.log(`Missing image for ${completeAllocineURL}`);
       process.exit(1);
     }
 
-    if (isDocumentHasInfo && document.item_type === "tvshow" && document.status === null) {
+    if (document.item_type === "tvshow" && document.status === null) {
       if (!idsToExclude.includes(document.allocine.id)) {
         console.log(`Missing status for ${completeAllocineURL}`);
         process.exit(1);
       }
     }
 
-    if (isDocumentHasInfo && Object.keys(document.imdb).length !== 3) {
+    if (Object.keys(document.imdb).length !== 3) {
       console.log(`IMDb obj length !== 3 for ${completeAllocineURL}`);
       process.exit(1);
     }
 
-    if (isDocumentHasInfo && document.allocine.critics_rating_details !== null) {
+    if (document.allocine.critics_rating_details !== null) {
       const allocineKeys = Object.keys(document.allocine.critics_rating_details[0]);
       allocineKeys.forEach((element) => {
         if (!isLowerCase(element)) {
@@ -72,7 +72,7 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
       });
     }
 
-    if (isDocumentHasInfo && document.metacritic !== null && document.metacritic.critics_rating_details !== null) {
+    if (document.metacritic !== null && document.metacritic.critics_rating_details !== null) {
       const metacriticKeys = Object.keys(document.metacritic.critics_rating_details[0]);
       metacriticKeys.forEach((element) => {
         if (!isLowerCase(element)) {
@@ -83,13 +83,30 @@ const controlData = async (completeAllocineURL, keysArray, isDocumentHasInfo, do
     }
 
     if (config.metacriticURLCheck) {
-      if (isDocumentHasInfo && document.metacritic !== null) {
+      if (document.metacritic !== null) {
         const { status } = await axios(document.metacritic.url);
         if (status !== 200) {
           console.log(`Broken link for ${completeAllocineURL}`);
           process.exit(1);
         }
       }
+    }
+
+    if (document.metacritic !== null) {
+      if (document.metacritic.users_rating < 0 || document.metacritic.users_rating > 10) {
+        console.log(`Wrong Metacritic users rating for ${completeAllocineURL}`);
+        process.exit(1);
+      }
+    }
+
+    if (document.item_type !== "movie" && document.item_type !== "tvshow") {
+      console.log(`Wrong item_type for ${completeAllocineURL}`);
+      process.exit(1);
+    }
+
+    if (document.is_active !== true && document.is_active !== false) {
+      console.log(`Wrong is_active for ${completeAllocineURL}`);
+      process.exit(1);
     }
   } catch (error) {
     console.log(`controlData - ${completeAllocineURL}: ${error}`);
