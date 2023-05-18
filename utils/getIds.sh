@@ -56,7 +56,7 @@ if [[ $WRONG_LINES_NB -gt 1 ]]; then
   exit
 fi
 
-DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f4 | uniq -cd)
+DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f3 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f4 | uniq -cd)
 if [[ $DUPLICATES_LINES_NB ]]; then
   echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
@@ -354,11 +354,11 @@ done
 remove_files
 
 if [[ $SOURCE == "circleci" ]]; then
-  sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}|(,FALSE){$FALSE_NUMBER,}/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER,}/,TRUE/g" $FILMS_IDS_FILE_PATH
 else
-  sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i '' -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}|(,FALSE){$FALSE_NUMBER,}/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER,}/,TRUE/g" $FILMS_IDS_FILE_PATH
 fi
 
 # Add ending message with duration

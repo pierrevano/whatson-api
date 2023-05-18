@@ -149,4 +149,21 @@ describe("What's on? API tests", () => {
       config.timeout
     );
   });
+
+  it(
+    "API response time should be within an acceptable range",
+    async () => {
+      const start = new Date().valueOf();
+
+      await axios.get(`${config.baseURL}`);
+
+      const end = new Date().valueOf();
+      const responseTime = end - start;
+
+      const maxResponseTime = 10000;
+
+      expect(responseTime).toBeLessThan(maxResponseTime);
+    },
+    config.timeout
+  );
 });

@@ -157,6 +157,7 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
   const match_item_type_tvshow_and_seasons_number_more_than_max = { $match: { $and: [item_type_tvshow, is_active_item, { $or: [seasons_number_first, seasons_number_last] }] } };
   const skip_results = { $skip: (page - 1) * limit };
   const sort_ratings = { $sort: { ratings_average: -1 } };
+  const facet = { $facet: { results: [addFields_ratings_filters, sort_ratings, skip_results, limit_results], total_results: [{ $count: "total_results" }] } };
 
   const pipeline = [];
   if (id !== "") {
@@ -173,17 +174,14 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
     pipeline.push(match_item_type);
   }
 
-  const rawData = await collectionData.aggregate(pipeline);
-  const elements_nb = (await rawData.toArray()).length;
-
-  pipeline.push(addFields_ratings_filters, sort_ratings, skip_results, limit_results);
+  pipeline.push(facet);
 
   console.log(pipeline);
 
   const data = await collectionData.aggregate(pipeline);
   const items = await data.toArray();
 
-  return { elements_nb: elements_nb, items: items, limit: limit, page: page };
+  return { items: items, limit: limit, page: page };
 };
 
 /**
@@ -274,7 +272,7 @@ app.get("/", async (req, res) => {
     const ratings_filters_query = req.query.ratings_filters;
     const seasons_number_query = req.query.seasons_number;
 
-    let { elements_nb, items, limit, page } = await getItems(cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query);
+    let { items, limit, page } = await getItems(cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query);
 
     const keysToCheck = ["allocineId", "betaseriesId", "imdbId", "metacriticId", "rottentomatoesId", "themoviedbId", "title"];
     for (let index = 0; index < keysToCheck.length; index++) {
@@ -288,11 +286,14 @@ app.get("/", async (req, res) => {
     if (items.length === 0) {
       res.status(204).json({ message: "No items have been found!" });
     } else {
+      const results = items[0].results;
+      const total_results = items[0].total_results[0].total_results;
+
       res.status(200).json({
         page: page,
-        results: items,
-        total_pages: Math.ceil(elements_nb / limit),
-        total_results: elements_nb,
+        results: results,
+        total_pages: Math.ceil(total_results / limit),
+        total_results: total_results,
       });
     }
   } catch (error) {
