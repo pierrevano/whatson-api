@@ -201,7 +201,9 @@ async function getId(req, res) {
     if (id_path && ratings_filters_query) {
       try {
         const { items } = await getItems(cinema_id_query, id_path, item_type_query, ratings_filters_query);
-        res.status(200).json(items[0]);
+        const results = items[0].results[0];
+
+        res.status(200).json(results);
       } catch (error) {
         res.status(400).send(error);
       }
@@ -253,12 +255,10 @@ async function findId(json) {
   }
 
   const data = collectionData.find(query);
-  const items = [];
-  for await (const item of data) {
-    items.push(item);
-  }
+  const results = await data.toArray();
+  const total_results = await collectionData.countDocuments(query);
 
-  return items;
+  return { results: results, total_results: total_results };
 }
 
 app.get("/", async (req, res) => {
@@ -273,12 +273,31 @@ app.get("/", async (req, res) => {
     const seasons_number_query = req.query.seasons_number;
 
     let { items, limit, page } = await getItems(cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query);
+    const results = items[0].results;
+    const total_results = items[0].total_results[0].total_results;
+
+    let json = {
+      page: page,
+      results: results,
+      total_pages: Math.ceil(total_results / limit),
+      total_results: total_results,
+    };
 
     const keysToCheck = ["allocineId", "betaseriesId", "imdbId", "metacriticId", "rottentomatoesId", "themoviedbId", "title"];
     for (let index = 0; index < keysToCheck.length; index++) {
       const key = keysToCheck[index];
       if (req.query.hasOwnProperty(key)) {
-        items = await findId(req.query);
+        const items = await findId(req.query);
+        const results = items.results;
+        const total_results = items.total_results;
+
+        json = {
+          page: 1,
+          results: results,
+          total_pages: 1,
+          total_results: total_results,
+        };
+
         break;
       }
     }
@@ -286,15 +305,7 @@ app.get("/", async (req, res) => {
     if (items.length === 0) {
       res.status(204).json({ message: "No items have been found!" });
     } else {
-      const results = items[0].results;
-      const total_results = items[0].total_results[0].total_results;
-
-      res.status(200).json({
-        page: page,
-        results: results,
-        total_pages: Math.ceil(total_results / limit),
-        total_results: total_results,
-      });
+      res.status(200).json(json);
     }
   } catch (error) {
     res.status(400).send(error);

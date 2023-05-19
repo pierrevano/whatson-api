@@ -15,6 +15,7 @@ function countLines(filename) {
 
 const config = {
   baseURL: "http://localhost:8081",
+  maxResponseTime: 3000,
   timeout: 500000,
 
   films_ids_path: "./src/assets/films_ids.txt",
@@ -78,7 +79,7 @@ const params = {
   },
 
   only_20_items_on_page_2: {
-    query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=2&limit=20&data=true",
+    query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=2&limit=20&allData=true",
     expectedResult: (data) => {
       expect(data.page).toBe(2);
       expect(data.results.length).toBe(20);
@@ -86,7 +87,7 @@ const params = {
   },
 
   only_200_items_on_page_3: {
-    query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=3&limit=200&data=true",
+    query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
     expectedResult: (data) => {
       expect(data.page).toBe(3);
       expect(data.results.length).toBe(200);
@@ -116,14 +117,29 @@ const params = {
   },
 
   only_same_files_line_number_with_remote: {
-    query: "?item_type=movie,tvshow&is_active=true,false&total=true",
+    query: "?item_type=movie,tvshow&is_active=true,false&allData=true",
     expectedResult: (items) => {
       if (config.checkItemsNumber) {
         const filmsLines = countLines(config.films_ids_path);
         const seriesLines = countLines(config.series_ids_path);
 
-        expect(filmsLines + seriesLines - 2).toEqual(items);
+        expect(filmsLines + seriesLines - 2).toEqual(items.total_results);
       }
+    },
+  },
+
+  correct_tmdb_id_returned: {
+    query: "/tv/101389&allData=true",
+    expectedResult: (data) => {
+      expect(data.id).toBe(101389);
+    },
+  },
+
+  only_20_results_returned_on_a_search: {
+    query: "?title=wolf&allData=true",
+    expectedResult: (data) => {
+      expect(data.page).toBe(1);
+      expect(data.results.length).toEqual(data.total_results);
     },
   },
 };
@@ -138,10 +154,8 @@ describe("What's on? API tests", () => {
         const items = data.results;
         const total = data.total_results;
 
-        if (query.includes("data=true")) {
+        if (query.includes("allData=true")) {
           expectedResult(data);
-        } else if (query.includes("total=true")) {
-          expectedResult(total);
         } else {
           expectedResult(items);
         }
@@ -160,7 +174,7 @@ describe("What's on? API tests", () => {
       const end = new Date().valueOf();
       const responseTime = end - start;
 
-      const maxResponseTime = 10000;
+      const maxResponseTime = config.maxResponseTime;
 
       expect(responseTime).toBeLessThan(maxResponseTime);
     },
