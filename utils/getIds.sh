@@ -1,4 +1,6 @@
 # Defining the variables used in the script.
+BASE_URL_SURGE=https://whatson-assets.surge.sh
+FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
 IMDB_NOT_FOUND_PATH=temp_not_found
@@ -15,6 +17,7 @@ URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
 if [[ $TYPE == "movie" ]]; then
   BASE_URL=https://www.allocine.fr/film/aucinema/
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
+  FILMS_FILE_NAME=films_ids.txt
   FILMS_NUMBER_HREF=/film/fichefilm_gen_cfilm=
   TITLE_TYPE=feature,tv_movie,tv_special,documentary,short
   BETASERIES_TYPE=movies/movie
@@ -27,6 +30,7 @@ if [[ $TYPE == "movie" ]]; then
 else
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
+  FILMS_FILE_NAME=series_ids.txt
   FILMS_NUMBER_HREF=/series/ficheserie_gen_cserie=
   TITLE_TYPE=tv_series,tv_episode,tv_special,tv_miniseries,documentary,tv_short
   BETASERIES_TYPE=shows/display
@@ -34,9 +38,12 @@ else
   JQ_COMMAND_RESULTS=".tv_results"
   PROPERTY=P1267
   METACRITIC_TYPE=tv
-  FALSE_NUMBER=4
-  TRUE_OR_FALSE_NUMBER=5
+  FALSE_NUMBER=2
+  TRUE_OR_FALSE_NUMBER=3
 fi
+
+curl -s "$BASE_URL_SURGE/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
+echo "Downloading $BASE_URL_SURGE/$FILMS_FILE_NAME to $FILMS_IDS_FILE_PATH"
 
 if [[ $SOURCE == "circleci" ]]; then
   sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
@@ -50,15 +57,15 @@ fi
 
 WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,5}$" | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
-  echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
+  echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
   cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,5}$"
   exit
 fi
 
-DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f3 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f4 | uniq -cd)
+DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | sort | uniq -cd | awk '$1 > 3')
 if [[ $DUPLICATES_LINES_NB ]]; then
-  echo "Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
+  echo "DUPLICATES_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
   echo $DUPLICATES_LINES_NB
   exit
@@ -360,6 +367,9 @@ else
   sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}|(,FALSE){$FALSE_NUMBER,}/,FALSE/g" $FILMS_IDS_FILE_PATH
   sed -i '' -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER,}/,TRUE/g" $FILMS_IDS_FILE_PATH
 fi
+
+surge $FILMS_ASSETS_PATH $BASE_URL_SURGE
+echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_SURGE"
 
 # Add ending message with duration
 DATA_DURATION=$SECONDS
