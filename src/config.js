@@ -21,6 +21,13 @@ const config = {
   seriesIdsFilePath: "./src/assets/series_ids.txt",
 
   keysToCheck: ["allocine", "betaseries", "id", "image", "imdb", "is_active", "item_type", "metacritic", "platforms_links", "seasons_number", "status", "title", "trailer"],
+
+  baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
+  corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
+
+  limit: 20,
+  maxSeasonsNumber: 5,
+  page: 1,
 };
 
 module.exports = { config };
