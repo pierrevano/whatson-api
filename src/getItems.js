@@ -53,6 +53,7 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
   const item_type_tvshow = { item_type: "tvshow" };
   const match_id = { $match: { id: id } };
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
+  const match_not_allocine_null = { $match: { $or: [{ "allocine.critics_rating": { $ne: null } }, { "allocine.users_rating": { $ne: null } }] } };
   const seasons_number_first = { seasons_number: { $in: seasons_number.split(",").map(Number) } };
   const seasons_number_last = { seasons_number: { $gt: config.maxSeasonsNumber } };
 
@@ -62,7 +63,7 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
   const match_item_type_tvshow_and_seasons_number_more_than_max = { $match: { $and: [item_type_tvshow, is_active_item, { $or: [seasons_number_first, seasons_number_last] }] } };
   const skip_results = { $skip: (page - 1) * limit };
   const sort_ratings = { $sort: { ratings_average: -1 } };
-  const facet = { $facet: { results: [addFields_ratings_filters, sort_ratings, skip_results, limit_results], total_results: [{ $count: "total_results" }] } };
+  const facet = { $facet: { results: [match_not_allocine_null, addFields_ratings_filters, sort_ratings, skip_results, limit_results], total_results: [{ $count: "total_results" }] } };
 
   const pipeline = [];
   if (id !== "") {
