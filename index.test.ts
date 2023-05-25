@@ -69,12 +69,49 @@ const params = {
       }),
   },
 
+  only_season_1_and_2_when_item_type_not_specified: {
+    query: "?seasons_number=1,2",
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.seasons_number).toBeLessThanOrEqual(2);
+      }),
+  },
+
   only_greater_than_1: {
     query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2,5",
     expectedResult: (items) =>
       items.every((item) => {
         expect(item.item_type).toBe("tvshow");
         expect(item.seasons_number).toBeGreaterThanOrEqual(1);
+      }),
+  },
+
+  only_greater_than_1_when_item_type_not_specified: {
+    query: "?seasons_number=1,2,5,6",
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.seasons_number).toBeGreaterThanOrEqual(1);
+      }),
+  },
+
+  only_ongoing_status: {
+    query: "?status=ongoing",
+    expectedResult: (items) => items.every((item) => expect(item.status).toBe("Ongoing")),
+  },
+
+  only_null_status: {
+    query: "?status=&limit=200",
+    expectedResult: (items) => items.every((item) => expect(item.status).toBe(null)),
+  },
+
+  only_ongoing_status_with_1_and_2_seasons: {
+    query: "?status=ongoing&seasons_number=1,2",
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item.status).toBe("Ongoing");
+        expect(item.seasons_number).toBeLessThanOrEqual(2);
       }),
   },
 
@@ -128,7 +165,7 @@ const params = {
     },
   },
 
-  correct_tmdb_id_returned: {
+  only_correct_tmdb_id_returned: {
     query: "/tv/101389&allData=true",
     expectedResult: (data) => {
       expect(data.id).toBe(101389);
@@ -146,13 +183,12 @@ const params = {
 
 describe("What's on? API tests", () => {
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
-    it(
+    test(
       name,
       async () => {
         const response = await axios.get(`${config.baseURL}${query}`);
         const data = response.data;
         const items = data.results;
-        const total = data.total_results;
 
         if (query.includes("allData=true")) {
           expectedResult(data);
@@ -164,8 +200,8 @@ describe("What's on? API tests", () => {
     );
   });
 
-  it(
-    "API response time should be within an acceptable range",
+  test(
+    "api_response_time_should_be_within_an_acceptable_range",
     async () => {
       const start = new Date().valueOf();
 

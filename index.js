@@ -109,8 +109,9 @@ app.get("/", async (req, res) => {
     const page_query = parseInt(req.query.page);
     const ratings_filters_query = req.query.ratings_filters;
     const seasons_number_query = req.query.seasons_number;
+    const status_query = req.query.status;
 
-    let { items, limit, page } = await getItems(cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query);
+    let { items, limit, page } = await getItems(cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query, status_query);
     const results = items[0].results;
     const total_results = items[0].total_results[0].total_results;
 

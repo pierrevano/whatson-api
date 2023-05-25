@@ -6,6 +6,7 @@ const { config } = require("./config");
 const { getMoviesIds } = require("./getMoviesIds");
 const { getRatingsFilters } = require("./getRatingsFilters");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 
 const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
@@ -29,7 +30,7 @@ const collectionData = database.collection(collectionName);
  * @param {string} seasons_number_query - The seasons number to filter by.
  * @returns An object containing the number of elements, the retrieved items, the limit, and the page.
  */
-const getItems = async (cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query) => {
+const getItems = async (cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query, status_query) => {
   const id = isNaN(id_path) ? "" : id_path;
   const is_active = typeof is_active_query !== "undefined" ? is_active_query : true;
   const item_type = typeof item_type_query !== "undefined" ? item_type_query : "movie";
@@ -39,6 +40,7 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
   const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
   const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
   const seasons_number = typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
+  const status = typeof status_query !== "undefined" ? status_query : "";
 
   const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
 
@@ -50,15 +52,9 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
   const item_type_all = { $or: [{ item_type: "movie" }, { item_type: "tvshow" }] };
   item_type_default = item_type === "movie,tvshow" || item_type === "tvshow,movie" ? item_type_all : item_type_default;
 
-  const item_type_tvshow = { item_type: "tvshow" };
   const match_id = { $match: { id: id } };
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
   const match_item_type = { $match: { $and: [item_type_default, is_active_item] } };
-  const seasons_number_first = { seasons_number: { $in: seasons_number.split(",").map(Number) } };
-  const seasons_number_last = { seasons_number: { $gt: config.maxSeasonsNumber } };
-
-  const match_item_type_tvshow_and_seasons_number = { $match: { $and: [item_type_tvshow, is_active_item, seasons_number_first] } };
-  const match_item_type_tvshow_and_seasons_number_more_than_max = { $match: { $and: [item_type_tvshow, is_active_item, { $or: [seasons_number_first, seasons_number_last] }] } };
 
   const limit_results = { $limit: limit };
   const match_not_allocine_null = { $match: { $or: [{ "allocine.critics_rating": { $ne: null } }, { "allocine.users_rating": { $ne: null } }] } };
@@ -75,12 +71,8 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
   const pipeline = [];
   if (id !== "") {
     pipeline.push(match_id);
-  } else if (item_type === "tvshow" && seasons_number.includes(config.maxSeasonsNumber)) {
-    pipeline.push(match_item_type_tvshow_and_seasons_number_more_than_max);
-  } else if (item_type === "tvshow" && seasons_number !== "") {
-    pipeline.push(match_item_type_tvshow_and_seasons_number);
-  } else if (item_type === "tvshow") {
-    pipeline.push(match_item_type);
+  } else if (item_type === "tvshow" || seasons_number !== "" || status !== "") {
+    await getPipelineFromTVShow(config, is_active_item, item_type, pipeline, seasons_number, status);
   } else if (movies_ids !== "") {
     pipeline.push(match_in_movies_ids);
   } else {

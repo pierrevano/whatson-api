@@ -368,7 +368,7 @@ else
   sed -i '' -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER,}/,TRUE/g" $FILMS_IDS_FILE_PATH
 fi
 
-surge $FILMS_ASSETS_PATH $BASE_URL_SURGE
+node_modules/.bin/surge $FILMS_ASSETS_PATH $BASE_URL_SURGE
 echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_SURGE"
 
 # Add ending message with duration
