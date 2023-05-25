@@ -1,3 +1,13 @@
+/**
+ * Constructs a MongoDB aggregation pipeline for retrieving TV show data based on the given parameters.
+ * @param {Object} config - The configuration object.
+ * @param {Object} is_active_item - The active item object.
+ * @param {string} item_type - The type of item to retrieve.
+ * @param {Array} pipeline - The current pipeline to add to.
+ * @param {string} seasons_number - The number of seasons to retrieve.
+ * @param {string} status - The status of the TV show to retrieve.
+ * @returns {Array} - The updated pipeline.
+ */
 const getPipelineFromTVShow = async (config, is_active_item, item_type, pipeline, seasons_number, status) => {
   const caseInsensitiveStatus = new RegExp(status, "i");
   const item_status = { status: caseInsensitiveStatus };

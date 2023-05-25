@@ -1,6 +1,12 @@
 const fs = require("fs");
 const axios = require("axios");
 
+/**
+ * Reads a file and counts the number of lines in it.
+ * @param {string} filename - the name of the file to read
+ * @returns {number} - the number of lines in the file
+ * @throws {Error} - if the file cannot be read
+ */
 function countLines(filename) {
   const data = fs.readFileSync(filename, "utf8");
   const lines = data.split("\n");
@@ -13,6 +19,15 @@ function countLines(filename) {
   return lines.length;
 }
 
+/**
+ * Configuration object for the application.
+ * @property {string} baseURL - The base URL for the API requests.
+ * @property {number} maxResponseTime - The maximum response time for API requests.
+ * @property {number} timeout - The timeout for API requests.
+ * @property {string} films_ids_path - The path to the file containing the IDs of films.
+ * @property {string} series_ids_path - The path to the file containing the IDs of series.
+ * @property {boolean} checkItemsNumber - Whether or not to check the number of items in the response.
+ */
 const config = {
   baseURL: "http://localhost:8081",
   maxResponseTime: 3000,
@@ -24,6 +39,11 @@ const config = {
   checkItemsNumber: false,
 };
 
+/**
+ * An object containing various query parameters and their expected results.
+ * @param {object} params - An object containing various query parameters and their expected results.
+ * @returns None
+ */
 const params = {
   default: {
     query: "",
@@ -181,6 +201,10 @@ const params = {
   },
 };
 
+/**
+ * Tests the What's on? API by iterating through the params object and running each test case.
+ * @returns None
+ */
 describe("What's on? API tests", () => {
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     test(

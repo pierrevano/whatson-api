@@ -99,6 +99,13 @@ async function findId(json) {
   return { results: results, total_results: total_results };
 }
 
+/**
+ * Handles a GET request to the root endpoint and returns a JSON object containing
+ * items that match the given query parameters.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns None
+ */
 app.get("/", async (req, res) => {
   try {
     const cinema_id_query = req.query.cinema_id;
