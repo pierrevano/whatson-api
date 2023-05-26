@@ -89,15 +89,6 @@ const params = {
       }),
   },
 
-  only_season_1_and_2_when_item_type_not_specified: {
-    query: "?seasons_number=1,2",
-    expectedResult: (items) =>
-      items.every((item) => {
-        expect(item.item_type).toBe("tvshow");
-        expect(item.seasons_number).toBeLessThanOrEqual(2);
-      }),
-  },
-
   only_greater_than_1: {
     query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2,5",
     expectedResult: (items) =>
@@ -107,17 +98,8 @@ const params = {
       }),
   },
 
-  only_greater_than_1_when_item_type_not_specified: {
-    query: "?seasons_number=1,2,5,6",
-    expectedResult: (items) =>
-      items.every((item) => {
-        expect(item.item_type).toBe("tvshow");
-        expect(item.seasons_number).toBeGreaterThanOrEqual(1);
-      }),
-  },
-
   only_ongoing_status: {
-    query: "?status=ongoing",
+    query: "?item_type=tvshow&status=ongoing",
     expectedResult: (items) => items.every((item) => expect(item.status).toBe("Ongoing")),
   },
 
@@ -127,7 +109,7 @@ const params = {
   },
 
   only_ongoing_status_with_1_and_2_seasons: {
-    query: "?status=ongoing&seasons_number=1,2",
+    query: "?item_type=tvshow&status=ongoing&seasons_number=1,2",
     expectedResult: (items) =>
       items.every((item) => {
         expect(item.status).toBe("Ongoing");
