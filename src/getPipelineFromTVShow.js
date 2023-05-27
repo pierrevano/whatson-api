@@ -1,3 +1,7 @@
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+
 /**
  * Constructs a MongoDB aggregation pipeline for retrieving TV show data based on the given parameters.
  * @param {Object} config - The configuration object.
@@ -8,9 +12,8 @@
  * @param {string} status - The status of the TV show to retrieve.
  * @returns {Array} - The updated pipeline.
  */
-const getPipelineFromTVShow = async (config, is_active_item, item_type, pipeline, seasons_number, status) => {
-  const caseInsensitiveStatus = new RegExp(status, "i");
-  const item_status = { status: caseInsensitiveStatus };
+const getPipelineFromTVShow = (config, is_active_item, item_type, pipeline, seasons_number, status) => {
+  const item_status = { status: { $in: status.split(",").map(capitalize) } };
   const item_type_tvshow = { item_type: "tvshow" };
   const seasons_number_first = { seasons_number: { $in: seasons_number.split(",").map(Number) } };
   const seasons_number_last = { seasons_number: { $gt: config.maxSeasonsNumber } };

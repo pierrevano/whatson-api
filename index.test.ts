@@ -103,6 +103,11 @@ const params = {
     expectedResult: (items) => items.every((item) => expect(item.status).toBe("Ongoing")),
   },
 
+  only_ongoing_and_canceled_status: {
+    query: "?item_type=tvshow&status=canceled,soon",
+    expectedResult: (items) => items.every((item) => expect(["Canceled" || "Soon"]).toContain(item.status)),
+  },
+
   only_null_status: {
     query: "?status=&limit=200",
     expectedResult: (items) => items.every((item) => expect(item.status).toBe(null)),

@@ -72,7 +72,7 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
   if (id !== "") {
     pipeline.push(match_id);
   } else if (item_type === "tvshow") {
-    await getPipelineFromTVShow(config, is_active_item, item_type, pipeline, seasons_number, status);
+    getPipelineFromTVShow(config, is_active_item, item_type, pipeline, seasons_number, status);
   } else if (movies_ids !== "") {
     pipeline.push(match_in_movies_ids);
   } else {
