@@ -42,10 +42,10 @@ else
   TRUE_OR_FALSE_NUMBER=3
 fi
 
-curl -s "$BASE_URL_SURGE/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
-echo "Downloading $BASE_URL_SURGE/$FILMS_FILE_NAME to $FILMS_IDS_FILE_PATH"
-
 if [[ $SOURCE == "circleci" ]]; then
+  curl -s "$BASE_URL_SURGE/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
+  echo "Downloading $BASE_URL_SURGE/$FILMS_FILE_NAME to $FILMS_IDS_FILE_PATH"
+
   sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
 
   sed -i "/IS_ACTIVE_1$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
