@@ -119,6 +119,10 @@ data_found () {
 
 remove_files
 
+if [[ $TYPE == "tvshow" ]]; then
+  rm -f popularity
+fi
+
 # Downloading base URL
 curl -s $BASE_URL > temp_baseurl
 
@@ -169,6 +173,15 @@ do
 
     # Check if missing shows
     ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
+
+    # Get Allociné tvshow popularity number
+    if [[ $TYPE == "tvshow" ]]; then
+      POPULARITY_NUMBER=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "label-primary-full label-ranking" | tail -1 | head -1 | cut -d'>' -f2 | cut -d'<' -f1)
+
+      # echo "POPULARITY_NUMBER: $POPULARITY_NUMBER / ALLOCINE_URL: $ALLOCINE_URL"
+      echo "$POPULARITY_NUMBER,$ALLOCINE_URL" >> popularity
+    fi
+
     if [[ $URL == $ALLOCINE_URL ]]; then
       if [[ $SOURCE == "circleci" ]]; then
         sed -i "/.*=$FILM_ID\.html.*$/ s/,FALSE$/,TRUE/" $FILMS_IDS_FILE_PATH
@@ -176,7 +189,6 @@ do
         sed -i '' "/.*=$FILM_ID\.html.*$/ s/,FALSE$/,TRUE/" $FILMS_IDS_FILE_PATH
       fi
       cat $FILMS_IDS_FILE_PATH | grep ".*=$FILM_ID\.html"
-      cat $FILMS_IDS_FILE_PATH | grep "TRUE$" | wc -l | awk '{print $1}'
 
       MATCH_NUMBER=$(cat $FILMS_IDS_FILE_PATH | grep ".*=$FILM_ID\.html" | wc -l | awk '{print $1}')
       if [[ $MATCH_NUMBER != 1 ]]; then

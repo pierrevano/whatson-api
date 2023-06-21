@@ -7,6 +7,7 @@ const { getMoviesIds } = require("./getMoviesIds");
 const { getRatingsFilters } = require("./getRatingsFilters");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
+const { getPopularityFilters } = require("./getPopularityFilters");
 
 const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
@@ -18,33 +19,42 @@ const collectionName = config.collectionName;
 const database = client.db(dbName);
 const collectionData = database.collection(collectionName);
 
-/**
- * Retrieves items from the database based on the given parameters.
- * @param {string} cinema_id_query - The cinema ID to filter by.
- * @param {string} id_path - The ID of the item to retrieve.
- * @param {boolean} is_active_query - Whether or not the item is active.
- * @param {string} item_type_query - The type of item to retrieve.
- * @param {number} limit_query - The maximum number of items to retrieve.
- * @param {number} page_query - The page number to retrieve.
- * @param {string} ratings_filters_query - The ratings filters to apply.
- * @param {string} seasons_number_query - The seasons number to filter by.
- * @returns An object containing the number of elements, the retrieved items, the limit, and the page.
- */
-const getItems = async (cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query, status_query) => {
+const getItems = async (
+  cinema_id_query,
+  id_path,
+  is_active_query,
+  item_type_query,
+  limit_query,
+  page_query,
+  popularity_filters_query,
+  ratings_filters_query,
+  seasons_number_query,
+  status_query
+) => {
   const id = isNaN(id_path) ? "" : id_path;
   const is_active = typeof is_active_query !== "undefined" ? is_active_query : true;
   const item_type = typeof item_type_query !== "undefined" ? item_type_query : "movie";
   const limit = isNaN(limit_query) ? config.limit : limit_query;
   const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
   const page = isNaN(page_query) ? config.page : page_query;
+  const popularity_filters_query_value = typeof popularity_filters_query !== "undefined" ? popularity_filters_query : "all";
+  const popularity_filters = await getPopularityFilters(popularity_filters_query_value);
   const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
   const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
   const seasons_number = typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
   const status = typeof status_query !== "undefined" ? status_query : "";
 
-  const addFields_ratings_filters = { $addFields: { ratings_average: { $avg: ratings_filters } } };
+  const addFields_popularity_and_ratings = {
+    $addFields: {
+      popularity_average: { $avg: popularity_filters },
+      ratings_average: { $avg: ratings_filters },
+      sortAvgField: {
+        $cond: [{ $eq: [{ $avg: popularity_filters }, null] }, Infinity, { $avg: popularity_filters }],
+      },
+    },
+  };
 
-  let is_active_item = { is_active: (is_true = is_active === "true") };
+  let is_active_item = { is_active: is_active === "true" || is_active === true };
   const is_active_all = { $or: [{ is_active: true }, { is_active: false }] };
   is_active_item = is_active === "true,false" || is_active === "false,true" ? is_active_all : is_active_item;
 
@@ -60,10 +70,12 @@ const getItems = async (cinema_id_query, id_path, is_active_query, item_type_que
   const match_not_allocine_null = { $match: { $or: [{ "allocine.critics_rating": { $ne: null } }, { "allocine.users_rating": { $ne: null } }] } };
   const match_not_betaseries_or_imdb_null = { $match: { $or: [{ "betaseries.users_rating": { $ne: null } }, { "imdb.users_rating": { $ne: null } }] } };
   const skip_results = { $skip: (page - 1) * limit };
-  const sort_ratings = { $sort: { ratings_average: -1 } };
+  const sort_popularity_and_ratings = { $sort: { sortAvgField: 1, popularity_average: 1, ratings_average: -1 } };
+  const remove_sort_popularity = { $project: { sortAvgField: 0 } };
+
   const facet = {
     $facet: {
-      results: [match_not_allocine_null, match_not_betaseries_or_imdb_null, addFields_ratings_filters, sort_ratings, skip_results, limit_results],
+      results: [match_not_allocine_null, match_not_betaseries_or_imdb_null, addFields_popularity_and_ratings, sort_popularity_and_ratings, remove_sort_popularity, skip_results, limit_results],
       total_results: [{ $count: "total_results" }],
     },
   };

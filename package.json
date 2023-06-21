@@ -6,10 +6,11 @@
   "scripts": {
     "test": "jest",
     "prettier": "prettier --write .",
-    "update": "rm -rf node_modules package-lock.json && npm install"
+    "update": "rm -rf node_modules package-lock.json && npm install",
+    "push": "npm run test && git add . && git cz && git push origin dev"
   },
   "prettier": {
-    "printWidth": 200
+    "printWidth": 195
   },
   "author": "Pierre Vanoverschelde",
   "license": "ISC",
