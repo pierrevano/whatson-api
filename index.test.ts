@@ -130,11 +130,10 @@ const params = {
     },
   },
 
-  only_200_items_on_page_3: {
+  only_not_found_items_on_page_3: {
     query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
     expectedResult: (data) => {
-      expect(data.page).toBe(3);
-      expect(data.results.length).toBe(200);
+      expect(data.message).toBe("No items have been found for page 3.");
     },
   },
 
@@ -184,6 +183,15 @@ const params = {
     expectedResult: (data) => {
       expect(data.page).toBe(1);
       expect(data.results.length).toEqual(data.total_results);
+    },
+  },
+
+  only_ascending_popularity_average: {
+    query: "?item_type=tvshow",
+    expectedResult: (items) => {
+      for (let i = 1; i < items.length; i++) {
+        expect(items[i].popularity_average).toBeGreaterThanOrEqual(items[i - 1].popularity_average);
+      }
     },
   },
 };

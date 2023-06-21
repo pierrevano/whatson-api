@@ -11,6 +11,9 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const config = {
   collectionName: "data",
   dbName: "whatson",
+
+  deleteMany: false,
+  updateMany: false,
 };
 
 /* Connecting to the database and the collection. */
@@ -23,7 +26,22 @@ async function run() {
   try {
     await client.connect();
 
-    const result = await collectionData.deleteMany({});
+    let result;
+    if (config.deleteMany) {
+      result = await collectionData.deleteMany({});
+    } else if (config.updateMany) {
+      result = await collectionData.bulkWrite([
+        {
+          updateMany: {
+            filter: {},
+            update: { $set: { "imdb.popularity": null } },
+          },
+        },
+      ]);
+    } else {
+      console.log("Choose an operation between deleteMany or updateMany first.");
+      process.exit(1);
+    }
     console.log(result);
 
     await client.close();

@@ -4,6 +4,7 @@
 logs.txt
 node_modules
 package-lock.json
+popularity
 src/assets/.!*!films_ids.txt
 temp_*
 utils/controlAllTheIds.sh

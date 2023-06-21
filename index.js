@@ -114,11 +114,23 @@ app.get("/", async (req, res) => {
     const item_type_query = req.query.item_type;
     const limit_query = parseInt(req.query.limit);
     const page_query = parseInt(req.query.page);
+    const popularity_filters_query = req.query.popularity_filters;
     const ratings_filters_query = req.query.ratings_filters;
     const seasons_number_query = req.query.seasons_number;
     const status_query = req.query.status;
 
-    let { items, limit, page } = await getItems(cinema_id_query, id_path, is_active_query, item_type_query, limit_query, page_query, ratings_filters_query, seasons_number_query, status_query);
+    let { items, limit, page } = await getItems(
+      cinema_id_query,
+      id_path,
+      is_active_query,
+      item_type_query,
+      limit_query,
+      page_query,
+      popularity_filters_query,
+      ratings_filters_query,
+      seasons_number_query,
+      status_query
+    );
     const results = items[0].results;
     const total_results = items[0].total_results[0].total_results;
 
@@ -148,8 +160,10 @@ app.get("/", async (req, res) => {
       }
     }
 
-    if (items.length === 0) {
-      res.status(204).json({ message: "No items have been found!" });
+    if (page > Math.ceil(total_results / limit)) {
+      res.status(200).json({ message: `No items have been found for page ${page}.` });
+    } else if (items.length === 0) {
+      res.status(200).json({ message: "No items have been found." });
     } else {
       res.status(200).json(json);
     }

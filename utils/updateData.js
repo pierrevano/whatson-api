@@ -27,6 +27,8 @@ const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
 const { upsertToDatabase } = require("./upsertToDatabase");
+const { getAllocinePopularity } = require("../src/getAllocinePopularity");
+const { getImdbPopularity } = require("../src/getImdbPopularity");
 
 const item_type = getNodeVarsValues.item_type;
 
@@ -50,7 +52,20 @@ shell.exec("rm -f ./logs.txt");
  * @param {string} betaseriesId - The ID of the movie or TV show on Betaseries.
  * @param {string} imdbHomepage - The URL of the movie or TV
  */
-const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, betaseriesHomepage, betaseriesId, imdbHomepage, imdbId, isActive, metacriticHomepage, metacriticId, theMoviedbId) => {
+const createJSON = async (
+  allocineCriticsDetails,
+  allocineURL,
+  allocineHomepage,
+  allocineId,
+  betaseriesHomepage,
+  betaseriesId,
+  imdbHomepage,
+  imdbId,
+  isActive,
+  metacriticHomepage,
+  metacriticId,
+  theMoviedbId
+) => {
   /**
    * Asynchronously retrieves various pieces of information from different sources for a movie.
    * @param {string} allocineHomepage - The URL of the movie's Allocine homepage.
@@ -62,43 +77,25 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
    */
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
+  const allocinePopularity = await getAllocinePopularity(allocineURL);
   const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
   const betaseriesPlatformsLinks = await getPlatformsLinks(allocineHomepage, imdbHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
+  const imdbPopularity = await getImdbPopularity(imdbHomepage);
   const metacriticRating = await getMetacriticRating(imdbHomepage, metacriticHomepage, metacriticId);
 
-  /**
-   * Destructures the properties of the given object and assigns them to individual variables.
-   * @param {Object} allocineFirstInfo - The object containing the first set of Allocine information.
-   * @param {Object} allocineCriticInfo - The object containing the Allocine critic information.
-   * @returns None
-   */
-  const allocineImage = allocineFirstInfo.allocineImage;
-  const seasonsNumber = allocineFirstInfo.seasonsNumber;
-  const allocineTitle = allocineFirstInfo.allocineTitle;
-  const allocineUsersRating = allocineFirstInfo.allocineUsersRating;
-  const criticsNumber = allocineCriticInfo.criticsNumber;
-  const criticsRating = allocineCriticInfo.criticsRating;
-  const criticsRatingDetails = allocineCriticInfo.criticsRatingDetails;
-  const status = allocineFirstInfo.status;
-  const trailer = allocineFirstInfo.trailer;
+  console.log(`allocinePopularity: ${allocinePopularity.popularity}`);
+  console.log(`imdbPopularity: ${imdbPopularity.popularity}`);
 
-  /**
-   * An object representing information about a movie from Allocine.
-   * @property {number} id - The ID of the movie on Allocine.
-   * @property {string} url - The URL of the movie's page on Allocine.
-   * @property {number} users_rating - The average rating given by users on Allocine.
-   * @property {number} critics_rating - The average rating given by critics on Allocine.
-   * @property {number} critics_number - The number of critics who have rated the movie on Allocine.
-   * @property {Object} critics_rating_details - Details about the ratings given by critics on Allocine.
-   */
+  /* Creating an object called allocineObj. */
   const allocineObj = {
     id: allocineId,
     url: allocineHomepage,
-    users_rating: allocineUsersRating,
-    critics_rating: criticsRating,
-    critics_number: criticsNumber,
-    critics_rating_details: criticsRatingDetails,
+    users_rating: allocineFirstInfo.allocineUsersRating,
+    critics_rating: allocineCriticInfo.criticsRating,
+    critics_number: allocineCriticInfo.criticsNumber,
+    critics_rating_details: allocineCriticInfo.criticsRatingDetails,
+    popularity: allocinePopularity.popularity,
   };
 
   /* Creating an object called betaseriesObj. */
@@ -116,6 +113,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     id: imdbId,
     url: imdbHomepage,
     users_rating: imdbUsersRating,
+    popularity: imdbPopularity.popularity,
   };
 
   /**
@@ -139,12 +137,12 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
     id: theMoviedbId,
     is_active: isActive,
     item_type: item_type,
-    title: allocineTitle,
-    image: allocineImage,
+    title: allocineFirstInfo.allocineTitle,
+    image: allocineFirstInfo.allocineImage,
     platforms_links: betaseriesPlatformsLinks,
-    seasons_number: seasonsNumber,
-    status: status,
-    trailer: trailer,
+    seasons_number: allocineFirstInfo.seasonsNumber,
+    status: allocineFirstInfo.status,
+    trailer: allocineFirstInfo.trailer,
     allocine: allocineObj,
     betaseries: betaseriesObj,
     imdb: imdbObj,
@@ -165,9 +163,9 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
   /* Updating all documents in the collection to is_active: false. */
   if (!skip_already_added_documents && get_ids === "update_ids") {
-    const updateQuery = { $set: { is_active: false } };
-    await collectionData.updateMany({ item_type: item_type }, updateQuery);
-    console.log("All documents have been set to false.");
+    const resetIsActiveAndPopularity = { $set: { is_active: false, "allocine.popularity": null, "imdb.popularity": null } };
+    await collectionData.updateMany({ item_type: item_type }, resetIsActiveAndPopularity);
+    console.log("All documents have been reset.");
   }
 
   let idsFilePath;
@@ -304,6 +302,7 @@ const createJSON = async (allocineCriticsDetails, allocineHomepage, allocineId, 
 
       const data = await createJSON(
         allocineCriticsDetails,
+        allocineURL,
         allocineHomepage,
         allocineId,
         betaseriesHomepage,
