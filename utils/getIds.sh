@@ -40,6 +40,7 @@ else
   METACRITIC_TYPE=tv
   FALSE_NUMBER=2
   TRUE_OR_FALSE_NUMBER=3
+  POPULARITY_ASSETS_PATH=./src/assets/popularity.txt
 fi
 
 if [[ $SOURCE == "circleci" ]]; then
@@ -120,7 +121,7 @@ data_found () {
 remove_files
 
 if [[ $TYPE == "tvshow" ]]; then
-  rm -f popularity
+  rm -f $POPULARITY_ASSETS_PATH
 fi
 
 # Downloading base URL
@@ -178,8 +179,7 @@ do
     if [[ $TYPE == "tvshow" ]]; then
       POPULARITY_NUMBER=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "label-primary-full label-ranking" | tail -1 | head -1 | cut -d'>' -f2 | cut -d'<' -f1)
 
-      # echo "POPULARITY_NUMBER: $POPULARITY_NUMBER / ALLOCINE_URL: $ALLOCINE_URL"
-      echo "$POPULARITY_NUMBER,$ALLOCINE_URL" >> popularity
+      echo "$POPULARITY_NUMBER,$ALLOCINE_URL" >> $POPULARITY_ASSETS_PATH
     fi
 
     if [[ $URL == $ALLOCINE_URL ]]; then

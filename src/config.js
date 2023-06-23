@@ -12,6 +12,7 @@ const config = {
   baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
   baseURLMetacriticFilm: "https://www.metacritic.com/movie/",
   baseURLMetacriticSerie: "https://www.metacritic.com/tv/",
+  baseURLSurgeAssets: "https://whatson-assets.surge.sh",
 
   collectionName: "data",
   dbName: "whatson",
