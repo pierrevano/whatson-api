@@ -1,11 +1,12 @@
 .env
 .jshintrc
 .prettierignore
+data/controlAllTheIds.sh
+data/controlData.js
+data/getAllIdsFromWikidata.sh
+data/massActionsOnItems.js
 logs.txt
 node_modules
 package-lock.json
 src/assets/.!*!films_ids.txt
-src/assets/popularity.txt
 temp_*
-utils/controlAllTheIds.sh
-utils/getAllIdsFromWikidata.sh

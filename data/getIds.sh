@@ -11,7 +11,7 @@ SECONDS=0
 SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
 TYPE=$2
-URL_ESCAPE_FILE_PATH=./utils/urlEscape.sed
+URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
 
 # Defining alternative base variables
 if [[ $TYPE == "movie" ]]; then

@@ -47,44 +47,74 @@ const config = {
 const params = {
   default: {
     query: "",
-    expectedResult: (items) => items.every((item) => expect(item.item_type).toBe("movie")),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+      }),
   },
 
   only_movie: {
     query: "?item_type=movie",
-    expectedResult: (items) => items.every((item) => expect(item.item_type).toBe("movie")),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+      }),
   },
 
   only_tvshow: {
     query: "?item_type=tvshow",
-    expectedResult: (items) => items.every((item) => expect(item.item_type).toBe("tvshow")),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("tvshow");
+      }),
   },
 
   only_active: {
     query: "?is_active=true",
-    expectedResult: (items) => items.every((item) => expect(item.is_active).toBeTruthy),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("is_active");
+        expect(item.is_active).toBeTruthy();
+      }),
   },
 
   only_non_active: {
     query: "?is_active=false",
-    expectedResult: (items) => items.every((item) => expect(item.is_active).toBeFalsy),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("is_active");
+        expect(item.is_active).toBeFalsy();
+      }),
   },
 
   only_active_and_non_active: {
     query: "?is_active=true,false",
-    expectedResult: (items) => items.every((item) => expect(item.is_active).toBeTruthy || expect(item.is_active).toBeFalsy),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("is_active");
+        expect(item.is_active === true || item.is_active === false).toBeTruthy();
+      }),
   },
 
   only_cinema_movie: {
     query: "?cinema_id=B2619&item_type=movie",
-    expectedResult: (items) => items.every((item) => expect(item.item_type).toBe("movie")),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+      }),
   },
 
   only_season_1_and_2: {
     query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2",
     expectedResult: (items) =>
       items.every((item) => {
+        expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("tvshow");
+        expect(item).toHaveProperty("seasons_number");
         expect(item.seasons_number).toBeLessThanOrEqual(2);
       }),
   },
@@ -93,31 +123,47 @@ const params = {
     query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2,5",
     expectedResult: (items) =>
       items.every((item) => {
+        expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("tvshow");
+        expect(item).toHaveProperty("seasons_number");
         expect(item.seasons_number).toBeGreaterThanOrEqual(1);
       }),
   },
 
   only_ongoing_status: {
     query: "?item_type=tvshow&status=ongoing",
-    expectedResult: (items) => items.every((item) => expect(item.status).toBe("Ongoing")),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("status");
+        expect(item.status).toBe("Ongoing");
+      }),
   },
 
   only_ongoing_and_canceled_status: {
     query: "?item_type=tvshow&status=canceled,soon",
-    expectedResult: (items) => items.every((item) => expect(["Canceled" || "Soon"]).toContain(item.status)),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("status");
+        expect(["Canceled", "Soon"]).toContain(item.status);
+      }),
   },
 
   only_null_status: {
     query: "?status=&limit=200",
-    expectedResult: (items) => items.every((item) => expect(item.status).toBe(null)),
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item).toHaveProperty("status");
+        expect(item.status).toBe(null);
+      }),
   },
 
   only_ongoing_status_with_1_and_2_seasons: {
     query: "?item_type=tvshow&status=ongoing&seasons_number=1,2",
     expectedResult: (items) =>
       items.every((item) => {
+        expect(item).toHaveProperty("status");
         expect(item.status).toBe("Ongoing");
+        expect(item).toHaveProperty("seasons_number");
         expect(item.seasons_number).toBeLessThanOrEqual(2);
       }),
   },
@@ -125,6 +171,7 @@ const params = {
   only_20_items_on_page_2: {
     query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=2&limit=20&allData=true",
     expectedResult: (data) => {
+      expect(data).toHaveProperty("page");
       expect(data.page).toBe(2);
       expect(data.results.length).toBe(20);
     },
@@ -133,6 +180,7 @@ const params = {
   only_not_found_items_on_page_3: {
     query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
     expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
       expect(data.message).toBe("No items have been found for page 3.");
     },
   },
@@ -142,18 +190,22 @@ const params = {
     expectedResult: (items) =>
       items.every((item) => {
         if (item.allocine && item.allocine.users_rating !== null) {
+          expect(item.allocine.users_rating).toBeGreaterThanOrEqual(0);
           expect(item.allocine.users_rating).toBeLessThanOrEqual(5);
         }
 
         if (item.betaseries !== null) {
+          expect(item.betaseries.users_rating).toBeGreaterThanOrEqual(0);
           expect(item.betaseries.users_rating).toBeLessThanOrEqual(5);
         }
 
         if (item.imdb !== null) {
+          expect(item.imdb.users_rating).toBeGreaterThanOrEqual(0);
           expect(item.imdb.users_rating).toBeLessThanOrEqual(10);
         }
 
         if (item.metacritic !== null) {
+          expect(item.metacritic.users_rating).toBeGreaterThanOrEqual(0);
           expect(item.metacritic.users_rating).toBeLessThanOrEqual(10);
         }
       }),
@@ -174,6 +226,7 @@ const params = {
   only_correct_tmdb_id_returned: {
     query: "/tv/101389&allData=true",
     expectedResult: (data) => {
+      expect(typeof data).toBe("object");
       expect(data.id).toBe(101389);
     },
   },
@@ -181,8 +234,25 @@ const params = {
   only_20_results_returned_on_a_search: {
     query: "?title=wolf&allData=true",
     expectedResult: (data) => {
+      expect(data).toHaveProperty("page");
       expect(data.page).toBe(1);
       expect(data.results.length).toEqual(data.total_results);
+    },
+  },
+
+  only_titles_with_game_returned_on_a_search: {
+    query: "?title=game",
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item.title.toLowerCase()).toContain("game");
+      }),
+  },
+
+  only_not_found_items_returned: {
+    query: "?title=some invalid value to be tested&allData=true",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe("No items have been found.");
     },
   },
 
