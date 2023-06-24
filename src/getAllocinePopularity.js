@@ -8,7 +8,7 @@ const { config } = require("./config");
  */
 const extractIdFromRemotePopularityFile = async (allocineURL) => {
   try {
-    const response = await axios.get(`${config.baseURLSurgeAssets}/popularity.txt`);
+    const response = await axios.get(`${config.baseURLSurgeAssets}/popularity_ids.txt`);
     const lines = response.data.split("\n");
 
     const lastLineWithAllocineURL = lines

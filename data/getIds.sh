@@ -40,7 +40,7 @@ else
   METACRITIC_TYPE=tv
   FALSE_NUMBER=2
   TRUE_OR_FALSE_NUMBER=3
-  POPULARITY_ASSETS_PATH=./src/assets/popularity.txt
+  POPULARITY_ASSETS_PATH=./src/assets/popularity_ids.txt
 fi
 
 if [[ $SOURCE == "circleci" ]]; then
