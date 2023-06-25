@@ -8,7 +8,7 @@
     "test_remote": "SOURCE=remote jest",
     "prettier": "prettier --write .",
     "update": "rm -rf node_modules package-lock.json && npm install",
-    "push": "npm run test && git add . && git cz && git push origin main && git push origin bitbucket"
+    "push": "npm run test && git add . && git cz && git push origin main && git push bitbucket main"
   },
   "prettier": {
     "printWidth": 195
