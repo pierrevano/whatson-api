@@ -30,6 +30,7 @@ function countLines(filename) {
  */
 const config = {
   baseURL: "http://localhost:8081",
+  baseURLRemote: "https://whatson-api.onrender.com",
   maxResponseTime: 3000,
   timeout: 500000,
 
@@ -294,7 +295,10 @@ describe("What's on? API tests", () => {
     async () => {
       const start = new Date().valueOf();
 
-      await axios.get(`${config.baseURL}`);
+      const param = process.argv.slice(2)[0].split("-")[1];
+      const baseURL = param === "remote" ? config.baseURLRemote : config.baseURL;
+      console.log(`Testing on ${baseURL}.`);
+      await axios.get(`${baseURL}`);
 
       const end = new Date().valueOf();
       const responseTime = end - start;

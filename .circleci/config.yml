@@ -22,6 +22,9 @@ jobs:
       - run:
           name: run updateData script
           command: chmod +x run.sh && bash run.sh
+      - run:
+          name: run test
+          command: npm run test_remote
 
 # Run the build job
 workflows:

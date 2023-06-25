@@ -4,7 +4,8 @@
   "description": "What's on? API to retrieve movies and tv shows",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest -local",
+    "test_remote": "jest -remote",
     "prettier": "prettier --write .",
     "update": "rm -rf node_modules package-lock.json && npm install",
     "push": "npm run test && git add . && git cz && git push origin dev"
