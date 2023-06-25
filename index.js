@@ -1,6 +1,8 @@
-/* Used to load environment variables from a .env file into process.env. */
-const dotenv = require("dotenv");
-dotenv.config();
+/**
+ * Loads environment variables from a .env file into process.env.
+ * @returns None
+ */
+require("dotenv").config();
 
 /* Importing the express module, creating an express app, importing the fetch module, and setting the
 port to the one defined in the PORT variable. */

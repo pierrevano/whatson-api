@@ -4,11 +4,11 @@
   "description": "What's on? API to retrieve movies and tv shows",
   "main": "index.js",
   "scripts": {
-    "test": "jest -local",
-    "test_remote": "jest -remote",
+    "test": "jest",
+    "test_remote": "SOURCE=remote jest",
     "prettier": "prettier --write .",
     "update": "rm -rf node_modules package-lock.json && npm install",
-    "push": "npm run test && git add . && git cz && git push origin dev"
+    "push": "npm run test && git add . && git cz && git push origin main && git push origin bitbucket"
   },
   "prettier": {
     "printWidth": 195

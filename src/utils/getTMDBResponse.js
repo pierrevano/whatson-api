@@ -1,10 +1,12 @@
+/**
+ * Loads environment variables from a .env file into process.env.
+ * @returns None
+ */
+require("dotenv").config();
+
 /* Importing the libraries that are needed for the script to work. */
 const axiosRetry = require("axios-retry");
 const axios = require("axios");
-
-/* Importing the libraries that are needed for the script to work. */
-const dotenv = require("dotenv");
-dotenv.config();
 
 /* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("../config");

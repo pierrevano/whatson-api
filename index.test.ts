@@ -1,3 +1,9 @@
+/**
+ * Loads environment variables from a .env file into process.env.
+ * @returns None
+ */
+require("dotenv").config();
+
 const fs = require("fs");
 const axios = require("axios");
 
@@ -272,11 +278,15 @@ const params = {
  * @returns None
  */
 describe("What's on? API tests", () => {
+  const param = process.env.SOURCE;
+  const baseURL = param === "remote" ? config.baseURLRemote : config.baseURL;
+  console.log(`Testing on ${baseURL}.`);
+
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     test(
       name,
       async () => {
-        const response = await axios.get(`${config.baseURL}${query}`);
+        const response = await axios.get(`${baseURL}${query}`);
         const data = response.data;
         const items = data.results;
 
@@ -295,9 +305,6 @@ describe("What's on? API tests", () => {
     async () => {
       const start = new Date().valueOf();
 
-      const param = process.argv.slice(2)[0].split("-")[1];
-      const baseURL = param === "remote" ? config.baseURLRemote : config.baseURL;
-      console.log(`Testing on ${baseURL}.`);
       await axios.get(`${baseURL}`);
 
       const end = new Date().valueOf();

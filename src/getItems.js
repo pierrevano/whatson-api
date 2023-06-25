@@ -1,6 +1,8 @@
-/* Used to load environment variables from a .env file into process.env. */
-const dotenv = require("dotenv");
-dotenv.config();
+/**
+ * Loads environment variables from a .env file into process.env.
+ * @returns None
+ */
+require("dotenv").config();
 
 const { config } = require("./config");
 const { getMoviesIds } = require("./getMoviesIds");

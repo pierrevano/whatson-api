@@ -1,6 +1,8 @@
-/* Importing the libraries that are needed for the script to work. */
-const dotenv = require("dotenv");
-dotenv.config();
+/**
+ * Loads environment variables from a .env file into process.env.
+ * @returns None
+ */
+require("dotenv").config();
 
 const axios = require("axios");
 
