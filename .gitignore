@@ -2,7 +2,6 @@
 .jshintrc
 .prettierignore
 data/controlAllTheIds.sh
-data/controlData.js
 data/getAllIdsFromWikidata.sh
 data/massActionsOnItems.js
 logs.txt
