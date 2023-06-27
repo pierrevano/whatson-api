@@ -107,7 +107,7 @@ const params = {
   },
 
   only_cinema_movie: {
-    query: "?cinema_id=B2619&item_type=movie",
+    query: "?cinema_id=C0159&item_type=movie",
     expectedResult: (items) =>
       items.every((item) => {
         expect(item).toHaveProperty("item_type");
@@ -116,7 +116,7 @@ const params = {
   },
 
   only_season_1_and_2: {
-    query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2",
+    query: "?cinema_id=C0159&item_type=tvshow&seasons_number=1,2",
     expectedResult: (items) =>
       items.every((item) => {
         expect(item).toHaveProperty("item_type");
@@ -127,7 +127,7 @@ const params = {
   },
 
   only_greater_than_1: {
-    query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2,5",
+    query: "?cinema_id=C0159&item_type=tvshow&seasons_number=1,2,5",
     expectedResult: (items) =>
       items.every((item) => {
         expect(item).toHaveProperty("item_type");
@@ -176,7 +176,7 @@ const params = {
   },
 
   only_20_items_on_page_2: {
-    query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=2&limit=20&allData=true",
+    query: "?cinema_id=C0159&item_type=tvshow&seasons_number=1,2&page=2&limit=20&allData=true",
     expectedResult: (data) => {
       expect(data).toHaveProperty("page");
       expect(data.page).toBe(2);
@@ -185,7 +185,7 @@ const params = {
   },
 
   only_not_found_items_on_page_3: {
-    query: "?cinema_id=B2619&item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
+    query: "?cinema_id=C0159&item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data.message).toBe("No items have been found for page 3.");
