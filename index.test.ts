@@ -7,6 +7,9 @@ require("dotenv").config();
 const fs = require("fs");
 const axios = require("axios");
 
+const config = require("./src/config").config;
+const isLowerCase = require("./src/utils/isLowerCase");
+
 /**
  * Reads a file and counts the number of lines in it.
  * @param {string} filename - the name of the file to read
@@ -24,27 +27,6 @@ function countLines(filename) {
 
   return lines.length;
 }
-
-/**
- * Configuration object for the application.
- * @property {string} baseURL - The base URL for the API requests.
- * @property {number} maxResponseTime - The maximum response time for API requests.
- * @property {number} timeout - The timeout for API requests.
- * @property {string} films_ids_path - The path to the file containing the IDs of films.
- * @property {string} series_ids_path - The path to the file containing the IDs of series.
- * @property {boolean} checkItemsNumber - Whether or not to check the number of items in the response.
- */
-const config = {
-  baseURL: "http://localhost:8081",
-  baseURLRemote: "https://whatson-api.onrender.com",
-  maxResponseTime: 3000,
-  timeout: 500000,
-
-  films_ids_path: "./src/assets/films_ids.txt",
-  series_ids_path: "./src/assets/series_ids.txt",
-
-  checkItemsNumber: false,
-};
 
 /**
  * An object containing various query parameters and their expected results.
@@ -143,6 +125,7 @@ const params = {
       items.every((item) => {
         expect(item).toHaveProperty("status");
         expect(item.status).toBe("Ongoing");
+        expect(item.status).not.toBeNull();
       }),
   },
 
@@ -270,6 +253,33 @@ const params = {
         expect(items[i].popularity_average).toBeGreaterThanOrEqual(items[i - 1].popularity_average);
       }
     },
+  },
+
+  only_items_with_all_required_keys: {
+    query: "",
+    expectedResult: (items) =>
+      items.every((item) => {
+        config.keysToCheck.forEach((key) => {
+          expect(item).toHaveProperty(key);
+          expect(typeof item[key]).not.toBe("undefined");
+          expect(isLowerCase(key)).toBe(true);
+
+          expect(Object.keys(item.allocine)).toHaveLength(7);
+          expect(items.filter((item) => item.allocine.users_rating !== null && item.allocine.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+
+          expect(Object.keys(item.imdb)).toHaveLength(4);
+          expect(items.filter((item) => item.imdb.users_rating !== null && item.imdb.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+
+          expect(Object.keys(item.betaseries)).toHaveLength(3);
+          expect(items.filter((item) => item.betaseries.users_rating !== null && item.betaseries.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+
+          expect(Object.keys(item.metacritic)).toHaveLength(6);
+          expect(items.filter((item) => item.metacritic !== null && item.metacritic.users_rating !== null && item.metacritic.users_rating !== undefined).length).toBeGreaterThanOrEqual(1);
+
+          expect(item.title).not.toBeNull();
+          expect(item.image).not.toBeNull();
+        });
+      }),
   },
 };
 

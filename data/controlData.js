@@ -5,14 +5,7 @@ const config = {
   metacriticURLCheck: false,
 };
 
-/**
- * Checks if the given input is in all lowercase letters.
- * @param {string} input - the string to check
- * @returns {boolean} - true if the input is all lowercase, false otherwise.
- */
-function isLowerCase(input) {
-  return input === String(input).toLowerCase();
-}
+const isLowerCase = require("../src/utils/isLowerCase");
 
 /**
  * Checks the given document object for missing or undefined keys and values, and other errors.

@@ -1,5 +1,6 @@
 /* A configuration file for the project. */
 const config = {
+  /* Prod config */
   baseURLAllocine: "https://www.allocine.fr",
   baseURLBetaseriesAPI: "https://api.betaseries.com/shows/display",
   baseURLBetaseriesFilm: "https://www.betaseries.com/film/",
@@ -29,6 +30,17 @@ const config = {
   limit: 20,
   maxSeasonsNumber: 5,
   page: 1,
+
+  /* Tests config */
+  baseURL: "http://localhost:8081",
+  baseURLRemote: "https://whatson-api.onrender.com",
+  maxResponseTime: 3000,
+  timeout: 500000,
+
+  films_ids_path: "./src/assets/films_ids.txt",
+  series_ids_path: "./src/assets/series_ids.txt",
+
+  checkItemsNumber: false,
 };
 
 module.exports = { config };
