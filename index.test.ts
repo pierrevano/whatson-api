@@ -214,10 +214,10 @@ const params = {
   },
 
   only_correct_tmdb_id_returned: {
-    query: "/tv/101389&allData=true",
+    query: "/tv/87108?ratings_filters=all&allData=true",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
-      expect(data.id).toBe(101389);
+      expect(data.id).toBe(87108);
     },
   },
 
