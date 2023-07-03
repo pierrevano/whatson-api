@@ -263,22 +263,22 @@ const params = {
           expect(item).toHaveProperty(key);
           expect(typeof item[key]).not.toBe("undefined");
           expect(isLowerCase(key)).toBe(true);
-
-          expect(Object.keys(item.allocine)).toHaveLength(7);
-          expect(items.filter((item) => item.allocine.users_rating !== null && item.allocine.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
-
-          expect(Object.keys(item.imdb)).toHaveLength(4);
-          expect(items.filter((item) => item.imdb.users_rating !== null && item.imdb.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
-
-          expect(Object.keys(item.betaseries)).toHaveLength(3);
-          expect(items.filter((item) => item.betaseries.users_rating !== null && item.betaseries.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
-
-          expect(Object.keys(item.metacritic)).toHaveLength(6);
-          expect(items.filter((item) => item.metacritic !== null && item.metacritic.users_rating !== null && item.metacritic.users_rating !== undefined).length).toBeGreaterThanOrEqual(1);
-
-          expect(item.title).not.toBeNull();
-          expect(item.image).not.toBeNull();
         });
+
+        expect(Object.keys(item.allocine)).toHaveLength(7);
+        expect(items.filter((item) => item.allocine.users_rating !== null && item.allocine.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+
+        expect(Object.keys(item.imdb)).toHaveLength(4);
+        expect(items.filter((item) => item.imdb.users_rating !== null && item.imdb.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+
+        expect(Object.keys(item.betaseries)).toHaveLength(3);
+        expect(items.filter((item) => item.betaseries.users_rating !== null && item.betaseries.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+
+        expect(Object.keys(item.metacritic)).toHaveLength(6);
+        expect(items.filter((item) => item.metacritic !== null && item.metacritic.users_rating !== null && item.metacritic.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+
+        expect(item.title).not.toBeNull();
+        expect(item.image).not.toBeNull();
       }),
   },
 };
