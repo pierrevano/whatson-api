@@ -21,7 +21,6 @@ const compareUsersRating = async (allocineHomepage, betaseriesHomepage, theMovie
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
 
   try {
-    console.log(apiUrl);
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
