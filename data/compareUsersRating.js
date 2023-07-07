@@ -1,3 +1,5 @@
+const axios = require("axios");
+
 const { config } = require("../src/config");
 const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
 
@@ -21,13 +23,13 @@ const compareUsersRating = async (allocineHomepage, betaseriesHomepage, theMovie
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
 
   try {
-    const response = await fetch(apiUrl);
+    const response = await axios.get(apiUrl);
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error(`API request failed with status ${response.status}`);
     }
 
-    const { _id, ...dataWithoutId } = await response.json();
+    const { _id, ...dataWithoutId } = response.data;
 
     console.log(`users_rating fetched from the db: ${dataWithoutId.allocine.users_rating}`);
 

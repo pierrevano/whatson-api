@@ -221,6 +221,22 @@ const params = {
     },
   },
 
+  only_correct_tvshow_item_type_returned: {
+    query: "/tv/121?allData=true",
+    expectedResult: (data) => {
+      expect(typeof data).toBe("object");
+      expect(data.item_type).toBe("tvshow");
+    },
+  },
+
+  only_correct_movie_item_type_returned: {
+    query: "/movie/121?allData=true",
+    expectedResult: (data) => {
+      expect(typeof data).toBe("object");
+      expect(data.item_type).toBe("movie");
+    },
+  },
+
   only_20_results_returned_on_a_search: {
     query: "?title=wolf&allData=true",
     expectedResult: (data) => {
