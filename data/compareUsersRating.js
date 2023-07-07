@@ -13,7 +13,7 @@ const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
-const compareUsersRating = async (allocineHomepage, betaseriesHomepage, theMoviedbId, item_type) => {
+const compareUsersRating = async (allocineHomepage, betaseriesHomepage, theMoviedbId, item_type, isActive) => {
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
   const users_rating = allocineFirstInfo.allocineUsersRating;
 
@@ -29,7 +29,8 @@ const compareUsersRating = async (allocineHomepage, betaseriesHomepage, theMovie
       throw new Error(`API request failed with status ${response.status}`);
     }
 
-    const { _id, ...dataWithoutId } = response.data;
+    const { _id, is_active, ...dataWithoutId } = response.data;
+    dataWithoutId.is_active = isActive;
 
     console.log(`users_rating fetched from the db: ${dataWithoutId.allocine.users_rating}`);
 
