@@ -8,6 +8,7 @@ const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
  */
 const upsertToDatabase = async (data, collectionData) => {
   try {
+    console.log(data);
     console.log();
 
     const filter = { _id: b64Encode(data.allocine.url) };

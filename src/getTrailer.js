@@ -22,35 +22,28 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
       let $ = await getCheerioContent(url, options);
       const content = getContentUrl($, false, allocineHomepage);
       if (content && content.video && content.video.embedUrl) trailer = content.video.embedUrl;
-      console.log(`trailer: ${trailer}`);
 
       /* Checking to see if the trailer variable is null. If it is, it will run the code below as a backup video link. */
       if (!trailer) {
         url = `${allocineHomepage}`;
-        console.log(`url: ${url}`);
 
         $ = await getCheerioContent(url, options);
         const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text()).trim()).includes("Vidéos");
-        console.log(`hasInactiveVideos: ${hasInactiveVideos}`);
 
         if (!hasInactiveVideos) {
           const allocineId = parseInt(allocineHomepage.match(/=(.*)\./).pop());
           url = `${config.baseURLAllocine}${config.baseURLCriticDetailsSeries}${allocineId}/videos/`;
-          console.log(`url: ${url}`);
 
           $ = await getCheerioContent(url, options);
           const linkToVideo = $(".meta-title-link").first().attr("href");
           url = `${config.baseURLAllocine}${linkToVideo}`;
-          console.log(`url: ${url}`);
 
           if (linkToVideo) {
             $ = await getCheerioContent(url, options);
             const isPageBroken = $.html().length === 0;
-            console.log(`isPageBroken: ${isPageBroken}`);
             if (!isPageBroken) {
               const content = getContentUrl($, true, allocineHomepage);
               trailer = content.contentUrl;
-              console.log(`trailer: ${trailer}`);
             }
           }
         }
@@ -58,7 +51,6 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
     } else {
       /* Movie logic to get trailer link */
       const url = `${allocineHomepage}`;
-      console.log(`url: ${url}`);
 
       $ = await getCheerioContent(url, options);
 
@@ -71,7 +63,6 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
         $ = await getCheerioContent(url, options);
         const content = getContentUrl($, true, allocineHomepage);
         trailer = content.contentUrl;
-        console.log(`trailer: ${trailer}`);
       }
     }
 

@@ -31,6 +31,7 @@ const { updateIds } = require("../src/updateIds");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const { getAllocinePopularity } = require("../src/getAllocinePopularity");
 const { getImdbPopularity } = require("../src/getImdbPopularity");
+const compareUsersRating = require("./compareUsersRating");
 
 const item_type = getNodeVarsValues.item_type;
 
@@ -85,9 +86,6 @@ const createJSON = async (
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(imdbHomepage);
   const metacriticRating = await getMetacriticRating(imdbHomepage, metacriticHomepage, metacriticId);
-
-  console.log(`allocinePopularity: ${allocinePopularity.popularity}`);
-  console.log(`imdbPopularity: ${imdbPopularity.popularity}`);
 
   /* Creating an object called allocineObj. */
   const allocineObj = {
@@ -302,20 +300,28 @@ const createJSON = async (
         process.exit(1);
       }
 
-      const data = await createJSON(
-        allocineCriticsDetails,
-        allocineURL,
-        allocineHomepage,
-        allocineId,
-        betaseriesHomepage,
-        betaseriesId,
-        imdbHomepage,
-        imdbId,
-        isActive,
-        metacriticHomepage,
-        metacriticId,
-        theMoviedbId
-      );
+      const getIsEqualValue = await compareUsersRating(allocineHomepage, betaseriesHomepage, theMoviedbId, item_type);
+      const isEqual = getIsEqualValue.isEqual;
+      let data = null;
+      if (isEqual) {
+        data = getIsEqualValue.data;
+      } else {
+        data = await createJSON(
+          allocineCriticsDetails,
+          allocineURL,
+          allocineHomepage,
+          allocineId,
+          betaseriesHomepage,
+          betaseriesId,
+          imdbHomepage,
+          imdbId,
+          isActive,
+          metacriticHomepage,
+          metacriticId,
+          theMoviedbId
+        );
+      }
+
       if (typeof data.title === "string") {
         await upsertToDatabase(data, collectionData);
       } else {

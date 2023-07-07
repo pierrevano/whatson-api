@@ -29,9 +29,6 @@ const getMetacriticRating = async (imdbHomepage, metacriticHomepage, metacriticI
       metacriticLink = $('li[data-testid="metacritic-link"] a').attr("href");
     } else {
       metacriticLink = metacriticHomepage;
-
-      console.log(`metacriticId: ${metacriticId}`);
-      console.log(`metacriticLink: ${metacriticLink}`);
     }
 
     if (metacriticLink && metacriticLink.startsWith("https://www.metacritic.com")) {
