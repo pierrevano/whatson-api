@@ -300,7 +300,7 @@ const createJSON = async (
         process.exit(1);
       }
 
-      const getIsEqualValue = await compareUsersRating(allocineHomepage, betaseriesHomepage, theMoviedbId, item_type, isActive);
+      const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, isActive, item_type, theMoviedbId);
       const isEqual = getIsEqualValue.isEqual;
       let data = null;
       if (isEqual) {

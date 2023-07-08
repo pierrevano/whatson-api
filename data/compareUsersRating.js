@@ -2,6 +2,8 @@ const axios = require("axios");
 
 const { config } = require("../src/config");
 const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
+const { getAllocinePopularity } = require("../src/getAllocinePopularity");
+const { getImdbPopularity } = require("../src/getImdbPopularity");
 
 /**
  * Compares the users rating of a movie or TV show from Allocine with the rating
@@ -13,9 +15,10 @@ const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
-const compareUsersRating = async (allocineHomepage, betaseriesHomepage, theMoviedbId, item_type, isActive) => {
-  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
-  const users_rating = allocineFirstInfo.allocineUsersRating;
+const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, isActive, item_type, theMoviedbId) => {
+  const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId)).allocineUsersRating;
+  const allocinePopularity = (await getAllocinePopularity(allocineURL)).popularity;
+  const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;
 
   console.log(`users_rating fetched remotely: ${users_rating}`);
 
@@ -29,8 +32,10 @@ const compareUsersRating = async (allocineHomepage, betaseriesHomepage, theMovie
       throw new Error(`API request failed with status ${response.status}`);
     }
 
-    const { _id, is_active, ...dataWithoutId } = response.data;
+    const { _id, ...dataWithoutId } = response.data;
     dataWithoutId.is_active = isActive;
+    dataWithoutId.allocine.popularity = allocinePopularity;
+    dataWithoutId.imdb.popularity = imdbPopularity;
 
     console.log(`users_rating fetched from the db: ${dataWithoutId.allocine.users_rating}`);
 
