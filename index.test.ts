@@ -271,6 +271,14 @@ const params = {
     },
   },
 
+  only_at_least_one_popularity: {
+    query: "?item_type=tvshow&limit=200",
+    expectedResult: (items) => {
+      expect(items.filter((item) => item.allocine.popularity !== null).length).toBeGreaterThanOrEqual(1);
+      expect(items.filter((item) => item.imdb.popularity !== null).length).toBeGreaterThanOrEqual(1);
+    },
+  },
+
   only_items_with_all_required_keys: {
     query: "",
     expectedResult: (items) =>
@@ -295,6 +303,13 @@ const params = {
 
         expect(item.title).not.toBeNull();
         expect(item.image).not.toBeNull();
+        expect(item.image).toMatch(/\.jpg$/);
+
+        item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
+
+        item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
+
+        item.critics_number && item.critics_rating_details ? expect(item.critics_number).toBe(item.critics_rating_details.length) : null;
       }),
   },
 };

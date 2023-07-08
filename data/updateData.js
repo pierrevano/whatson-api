@@ -20,18 +20,11 @@ const { getNodeVarsValues } = require("../src/getNodeVarsValues");
 const { b64Encode, b64Decode } = require("../src/utils/b64EncodeAndDecode");
 const { controlData } = require("./controlData");
 const { countNullElements } = require("./countNullElements");
-const { getAllocineCriticInfo } = require("../src/getAllocineCriticInfo");
-const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
-const { getBetaseriesUsersRating } = require("../src/getBetaseriesUsersRating");
-const { getImdbUsersRating } = require("../src/getImdbUsersRating");
-const { getMetacriticRating } = require("../src/getMetacriticRating");
-const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
 const { upsertToDatabase } = require("./upsertToDatabase");
-const { getAllocinePopularity } = require("../src/getAllocinePopularity");
-const { getImdbPopularity } = require("../src/getImdbPopularity");
 const compareUsersRating = require("./compareUsersRating");
+const createJSON = require("./createJSON");
 
 const item_type = getNodeVarsValues.item_type;
 
@@ -46,112 +39,6 @@ if (get_db !== "update_db") process.exit(0);
 /* Removing the file logs.txt */
 shell.exec("rm -f ./logs.txt");
 
-/**
- * Creates a JSON object with information about a movie or TV show from various sources.
- * @param {Object} allocineCriticsDetails - Details about the critics' ratings from Allocine.
- * @param {string} allocineHomepage - The URL of the movie or TV show's Allocine page.
- * @param {string} allocineId - The ID of the movie or TV show on Allocine.
- * @param {string} betaseriesHomepage - The URL of the movie or TV show's Betaseries page.
- * @param {string} betaseriesId - The ID of the movie or TV show on Betaseries.
- * @param {string} imdbHomepage - The URL of the movie or TV
- */
-const createJSON = async (
-  allocineCriticsDetails,
-  allocineURL,
-  allocineHomepage,
-  allocineId,
-  betaseriesHomepage,
-  betaseriesId,
-  imdbHomepage,
-  imdbId,
-  isActive,
-  metacriticHomepage,
-  metacriticId,
-  theMoviedbId
-) => {
-  /**
-   * Asynchronously retrieves various pieces of information from different sources for a movie.
-   * @param {string} allocineHomepage - The URL of the movie's Allocine homepage.
-   * @param {string} betaseriesHomepage - The URL of the movie's Betaseries homepage.
-   * @param {string} theMoviedbId - The ID of the movie on The Movie Database.
-   * @param {string} allocineCriticsDetails - The URL of the movie's Allocine critics details page.
-   * @param {string} imdbHomepage - The URL of the movie's IMDb homepage.
-   * @returns An object containing various pieces of information about the movie.
-   */
-  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
-  const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
-  const allocinePopularity = await getAllocinePopularity(allocineURL);
-  const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage);
-  const betaseriesPlatformsLinks = await getPlatformsLinks(allocineHomepage, imdbHomepage);
-  const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
-  const imdbPopularity = await getImdbPopularity(imdbHomepage);
-  const metacriticRating = await getMetacriticRating(imdbHomepage, metacriticHomepage, metacriticId);
-
-  /* Creating an object called allocineObj. */
-  const allocineObj = {
-    id: allocineId,
-    url: allocineHomepage,
-    users_rating: allocineFirstInfo.allocineUsersRating,
-    critics_rating: allocineCriticInfo.criticsRating,
-    critics_number: allocineCriticInfo.criticsNumber,
-    critics_rating_details: allocineCriticInfo.criticsRatingDetails,
-    popularity: allocinePopularity.popularity,
-  };
-
-  /* Creating an object called betaseriesObj. */
-  let betaseriesObj = null;
-  if (betaseriesId !== "null") {
-    betaseriesObj = {
-      id: betaseriesId,
-      url: betaseriesHomepage,
-      users_rating: betaseriesUsersRating,
-    };
-  }
-
-  /* Creating an object called imdbObj. */
-  const imdbObj = {
-    id: imdbId,
-    url: imdbHomepage,
-    users_rating: imdbUsersRating,
-    popularity: imdbPopularity.popularity,
-  };
-
-  /**
-   * Creates a Metacritic object if the metacritic rating is not null.
-   * @param {object} metacriticRating - the Metacritic rating object
-   * @returns {object | null} - the Metacritic object or null if the rating is null
-   */
-  let metacriticObj = null;
-  if (metacriticRating !== null) {
-    metacriticObj = {
-      id: metacriticRating.id,
-      url: metacriticRating.url,
-      users_rating: metacriticRating.usersRating,
-      critics_rating: metacriticRating.criticsRating,
-      critics_number: metacriticRating.criticsNumber,
-      critics_rating_details: metacriticRating.criticsRatingDetails,
-    };
-  }
-
-  const data = {
-    id: theMoviedbId,
-    is_active: isActive,
-    item_type: item_type,
-    title: allocineFirstInfo.allocineTitle,
-    image: allocineFirstInfo.allocineImage,
-    platforms_links: betaseriesPlatformsLinks,
-    seasons_number: allocineFirstInfo.seasonsNumber,
-    status: allocineFirstInfo.status,
-    trailer: allocineFirstInfo.trailer,
-    allocine: allocineObj,
-    betaseries: betaseriesObj,
-    imdb: imdbObj,
-    metacritic: metacriticObj,
-  };
-
-  return data;
-};
-
 /* Importing data from a CSV file into a MongoDB database. */
 (async () => {
   const dbName = config.dbName;
@@ -159,21 +46,16 @@ const createJSON = async (
   const database = client.db(dbName);
   const collectionData = database.collection(collectionName);
 
+  /* If 'skip_already_added_documents' is false and 'get_ids' equals "update_ids", proceed with the update.
+  Prepare an update operation to reset 'is_active' field to false and set 'popularity' fields to null for both 'allocine' and 'imdb' */
   const skip_already_added_documents = getNodeVarsValues.skip_already_added_documents;
-
-  /* Updating all documents in the collection to is_active: false. */
   if (!skip_already_added_documents && get_ids === "update_ids") {
     const resetIsActiveAndPopularity = { $set: { is_active: false, "allocine.popularity": null, "imdb.popularity": null } };
     await collectionData.updateMany({ item_type: item_type }, resetIsActiveAndPopularity);
     console.log("All documents have been reset.");
   }
 
-  let idsFilePath;
-  if (item_type === "movie") {
-    idsFilePath = config.filmsIdsFilePath;
-  } else {
-    idsFilePath = config.seriesIdsFilePath;
-  }
+  const idsFilePath = item_type === "movie" ? config.filmsIdsFilePath : config.seriesIdsFilePath;
   console.log(`Ids file path to use: ${idsFilePath}`);
 
   const is_not_active = getNodeVarsValues.is_not_active;
@@ -240,37 +122,21 @@ const createJSON = async (
       }
 
       /* AlloCiné info */
-      let baseURLType;
-      let baseURLCriticDetails;
-      if (item_type === "movie") {
-        baseURLType = config.baseURLTypeFilms;
-        baseURLCriticDetails = config.baseURLCriticDetailsFilms;
-      } else {
-        baseURLType = config.baseURLTypeSeries;
-        baseURLCriticDetails = config.baseURLCriticDetailsSeries;
-      }
+      const baseURLType = item_type === "movie" ? config.baseURLTypeFilms : config.baseURLTypeSeries;
+      const baseURLCriticDetails = item_type === "movie" ? config.baseURLCriticDetailsFilms : config.baseURLCriticDetailsSeries;
 
-      const endURLCriticDetails = config.endURLCriticDetails;
       const allocineId = parseInt(allocineURL.match(/=(.*)\./).pop());
       const allocineHomepage = `${baseURLAllocine}${baseURLType}${allocineId}.html`;
-      const allocineCriticsDetails = `${baseURLAllocine}${baseURLCriticDetails}${allocineId}${endURLCriticDetails}`;
+      const allocineCriticsDetails = `${baseURLAllocine}${baseURLCriticDetails}${allocineId}${config.endURLCriticDetails}`;
 
       /* IMDb info */
-      const baseURLIMDB = config.baseURLIMDB;
       const imdbId = json.IMDB_ID;
-      const imdbHomepage = `${baseURLIMDB}${imdbId}/`;
+      const imdbHomepage = `${config.baseURLIMDB}${imdbId}/`;
 
       /* BetaSeries info */
-      const baseURLBetaseriesFilm = config.baseURLBetaseriesFilm;
-      const baseURLBetaseriesSerie = config.baseURLBetaseriesSerie;
       let betaseriesId = json.BETASERIES_ID;
 
-      let betaseriesHomepage;
-      if (item_type === "movie") {
-        betaseriesHomepage = `${baseURLBetaseriesFilm}${betaseriesId}`;
-      } else {
-        betaseriesHomepage = `${baseURLBetaseriesSerie}${betaseriesId}`;
-      }
+      const betaseriesHomepage = item_type === "movie" ? `${config.baseURLBetaseriesFilm}${betaseriesId}` : `${config.baseURLBetaseriesSerie}${betaseriesId}`;
 
       /* If the BetaSeries movie was categorized as a serie */
       if (betaseriesId.startsWith("serie/")) {
@@ -280,16 +146,8 @@ const createJSON = async (
       }
 
       /* Metacritic info */
-      const baseURLMetacriticFilm = config.baseURLMetacriticFilm;
-      const baseURLMetacriticSerie = config.baseURLMetacriticSerie;
-      let metacriticId = json.METACRITIC_ID;
-
-      let metacriticHomepage;
-      if (item_type === "movie") {
-        metacriticHomepage = `${baseURLMetacriticFilm}${metacriticId}`;
-      } else {
-        metacriticHomepage = `${baseURLMetacriticSerie}${metacriticId}`;
-      }
+      const metacriticId = json.METACRITIC_ID;
+      const metacriticHomepage = item_type === "movie" ? `${config.baseURLMetacriticFilm}${metacriticId}` : `${config.baseURLMetacriticSerie}${metacriticId}`;
 
       const isActive = json.IS_ACTIVE_1 === "TRUE";
 
@@ -316,6 +174,7 @@ const createJSON = async (
           imdbHomepage,
           imdbId,
           isActive,
+          item_type,
           metacriticHomepage,
           metacriticId,
           theMoviedbId
