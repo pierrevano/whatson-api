@@ -20,6 +20,10 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
   const allocinePopularity = (await getAllocinePopularity(allocineURL)).popularity;
   const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;
 
+  const isEqualObj = {
+    isEqual: false,
+  };
+
   console.log(`users_rating fetched remotely: ${users_rating}`);
 
   const item_type_api = item_type === "movie" ? "movie" : "tv";
@@ -29,7 +33,7 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
     const response = await axios.get(apiUrl);
 
     if (response.status !== 200) {
-      throw new Error(`API request failed with status ${response.status}`);
+      return isEqualObj;
     }
 
     const { _id, ...dataWithoutId } = response.data;
@@ -46,9 +50,7 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
       };
     } else {
       console.log("The users_rating values are not equal.");
-      return {
-        isEqual: false,
-      };
+      return isEqualObj;
     }
   } catch (error) {
     console.error("Error fetching data:", error);
