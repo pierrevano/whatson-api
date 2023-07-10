@@ -22,6 +22,7 @@ const generateURLs = (item_type, config, json) => {
   const metacriticHomepage = item_type === "movie" ? `${config.baseURLMetacriticFilm}${metacriticId}` : `${config.baseURLMetacriticSerie}${metacriticId}`;
 
   const isActive = json.IS_ACTIVE_1 === "TRUE";
+
   const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
 
   // If The Movie Database ID is not found, log an error and exit

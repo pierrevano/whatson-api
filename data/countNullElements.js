@@ -3,8 +3,10 @@
  * @param {Object} collectionData - The collection to search for null values.
  * @returns None
  */
-const countNullElements = async (collectionData) => {
+const countNullElements = async (collectionData, newOrUpdatedItems) => {
   try {
+    console.log(`Number of new or updated items: ${newOrUpdatedItems}`);
+
     /* Counting the number of documents in the collection. */
     const documents = await collectionData.estimatedDocumentCount();
     console.log(`Number of documents in the collection: ${documents}`);

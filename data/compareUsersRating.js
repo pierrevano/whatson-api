@@ -36,20 +36,24 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
       return isEqualObj;
     }
 
-    const { _id, ...dataWithoutId } = response.data;
-    dataWithoutId.is_active = isActive;
-    dataWithoutId.allocine.popularity = allocinePopularity;
-    dataWithoutId.imdb.popularity = imdbPopularity;
+    if (response && response.data) {
+      const { _id, ...dataWithoutId } = response.data;
+      dataWithoutId.is_active = isActive;
+      dataWithoutId.allocine.popularity = allocinePopularity;
+      dataWithoutId.imdb.popularity = imdbPopularity;
 
-    console.log(`users_rating fetched from the db: ${dataWithoutId.allocine.users_rating}`);
+      console.log(`users_rating fetched from the db: ${dataWithoutId.allocine.users_rating}`);
 
-    if (dataWithoutId.allocine.users_rating === users_rating) {
-      return {
-        isEqual: true,
-        data: dataWithoutId,
-      };
+      if (dataWithoutId.allocine.users_rating === users_rating) {
+        return {
+          isEqual: true,
+          data: dataWithoutId,
+        };
+      } else {
+        console.log("The users_rating values are not equal.");
+        return isEqualObj;
+      }
     } else {
-      console.log("The users_rating values are not equal.");
       return isEqualObj;
     }
   } catch (error) {

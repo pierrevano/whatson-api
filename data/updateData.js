@@ -31,7 +31,7 @@ shell.exec("rm -f ./logs.txt");
   const database = client.db(config.dbName);
   const collectionData = database.collection(config.collectionName);
 
-  if (!getNodeVarsValues.skip_already_added_documents && getNodeVarsValues.get_ids === "update_ids") {
+  if (getNodeVarsValues.skip_already_added_documents !== "skip") {
     const resetIsActiveAndPopularity = { $set: { is_active: false, "allocine.popularity": null, "imdb.popularity": null } };
     await collectionData.updateMany({ item_type: getNodeVarsValues.item_type }, resetIsActiveAndPopularity);
     console.log("All documents have been reset.");
@@ -75,13 +75,13 @@ shell.exec("rm -f ./logs.txt");
       process.exit(0);
     }
 
-    await loopItems(collectionData, config, index_to_start, getNodeVarsValues.item_type, jsonArray, getNodeVarsValues.skip_already_added_documents);
+    const force = getNodeVarsValues.force === "force";
+
+    const { newOrUpdatedItems } = await loopItems(collectionData, config, force, index_to_start, getNodeVarsValues.item_type, jsonArray, getNodeVarsValues.skip_already_added_documents);
+    await countNullElements(collectionData, newOrUpdatedItems);
+    await client.close();
   } catch (error) {
     console.log(`Global: ${error}`);
-  } finally {
-    await countNullElements(collectionData);
-
-    await client.close();
   }
 
   console.timeEnd("Duration", `- ${jsonArray.length} elements imported.`);

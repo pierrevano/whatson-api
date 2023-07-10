@@ -15,7 +15,9 @@ const generateURLs = require("./generateURLs");
  * @param {Array} jsonArray - Array of JSON objects to loop through.
  * @param {boolean} skip_already_added_documents - Whether to skip over documents that have already been added to the database.
  */
-const loopItems = async (collectionData, config, index_to_start, item_type, jsonArray, skip_already_added_documents) => {
+const loopItems = async (collectionData, config, force, index_to_start, item_type, jsonArray, skip_already_added_documents) => {
+  let createJsonCounter = 0;
+
   // Loop through jsonArray with the given start index
   for (let index = index_to_start; index < jsonArray.length; index++) {
     const json = jsonArray[index];
@@ -33,7 +35,7 @@ const loopItems = async (collectionData, config, index_to_start, item_type, json
     const allocineCriticsDetails = urls.allocine.criticsDetails;
 
     // If set to skip already added documents
-    if (skip_already_added_documents) {
+    if (skip_already_added_documents === "skip") {
       // Check if the document exists in the database
       const allocineQuery = { _id: b64Encode(allocineHomepage) };
       const isDocumentExisting = await collectionData.find(allocineQuery).toArray();
@@ -66,27 +68,33 @@ const loopItems = async (collectionData, config, index_to_start, item_type, json
 
     // Determine if user ratings are equal and fetch the data
     const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, isActive, item_type, theMoviedbId);
-    const data = getIsEqualValue.isEqual
-      ? getIsEqualValue.data
-      : await createJSON(
-          allocineCriticsDetails,
-          allocineURL,
-          allocineHomepage,
-          allocineId,
-          betaseriesHomepage,
-          betaseriesId,
-          imdbHomepage,
-          imdbId,
-          isActive,
-          item_type,
-          metacriticHomepage,
-          metacriticId,
-          theMoviedbId
-        );
+    const data =
+      !force && getIsEqualValue.isEqual
+        ? getIsEqualValue.data
+        : (createJsonCounter++,
+          await createJSON(
+            allocineCriticsDetails,
+            allocineURL,
+            allocineHomepage,
+            allocineId,
+            betaseriesHomepage,
+            betaseriesId,
+            imdbHomepage,
+            imdbId,
+            isActive,
+            item_type,
+            metacriticHomepage,
+            metacriticId,
+            theMoviedbId
+          ));
 
     // Perform upsert operation on the database with the fetched data
     await upsertToDatabase(data, collectionData);
   }
+
+  return {
+    newOrUpdatedItems: createJsonCounter,
+  };
 };
 
 module.exports = loopItems;
