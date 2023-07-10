@@ -23,7 +23,7 @@ const { updateIds } = require("../src/updateIds");
 const loopItems = require("./loopItems");
 
 if (getNodeVarsValues.get_ids === "update_ids") updateIds();
-if (getNodeVarsValues.get_db !== "update_db") process.exit(0);
+if (getNodeVarsValues.get_db === "no_update_db") process.exit(0);
 
 shell.exec("rm -f ./logs.txt");
 
