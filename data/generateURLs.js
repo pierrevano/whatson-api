@@ -3,7 +3,6 @@ const generateURLs = (item_type, config, json) => {
   const baseURLCriticDetails = item_type === "movie" ? config.baseURLCriticDetailsFilms : config.baseURLCriticDetailsSeries;
 
   const allocineURL = json.URL;
-  const completeAllocineURL = `${config.baseURLAllocine}${allocineURL}`;
   const allocineId = parseInt(allocineURL.match(/=(.*)\./).pop());
   const allocineHomepage = `${config.baseURLAllocine}${baseURLType}${allocineId}.html`;
   const allocineCriticsDetails = `${config.baseURLAllocine}${baseURLCriticDetails}${allocineId}${config.endURLCriticDetails}`;
@@ -27,11 +26,11 @@ const generateURLs = (item_type, config, json) => {
 
   // If The Movie Database ID is not found, log an error and exit
   if (isNaN(theMoviedbId)) {
-    throw new Error(`Something went wrong, The Movie Database id has not been found for ${completeAllocineURL}!`);
+    throw new Error(`Something went wrong, The Movie Database id has not been found for ${allocineHomepage}!`);
   }
 
   return {
-    allocine: { id: allocineId, firstPartUrl: allocineURL, url: completeAllocineURL, homepage: allocineHomepage, criticsDetails: allocineCriticsDetails },
+    allocine: { id: allocineId, lastPartUrl: allocineURL, homepage: allocineHomepage, criticsDetails: allocineCriticsDetails },
     imdb: { id: imdbId, homepage: imdbHomepage },
     betaseries: { id: betaseriesId, homepage: betaseriesHomepage },
     metacritic: { id: metacriticId, homepage: metacriticHomepage },

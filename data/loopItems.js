@@ -28,20 +28,19 @@ const loopItems = async (collectionData, config, index_to_start, item_type, json
 
     /* Handle AlloCiné related data */
     const allocineId = urls.allocine.id;
-    const allocineURL = urls.allocine.firstPartUrl;
-    const completeAllocineURL = urls.allocine.url;
+    const allocineURL = urls.allocine.lastPartUrl;
     const allocineHomepage = urls.allocine.homepage;
-    const allocineCriticsDetails = urls.allocine.allocineCriticsDetails;
+    const allocineCriticsDetails = urls.allocine.criticsDetails;
 
     // If set to skip already added documents
     if (skip_already_added_documents) {
       // Check if the document exists in the database
-      const allocineQuery = { _id: b64Encode(completeAllocineURL) };
+      const allocineQuery = { _id: b64Encode(allocineHomepage) };
       const isDocumentExisting = await collectionData.find(allocineQuery).toArray();
       const isDocumentHasInfo = isDocumentExisting.length > 0;
       const document = isDocumentExisting[0];
 
-      await controlData(completeAllocineURL, config.keysToCheck, isDocumentHasInfo, document);
+      await controlData(allocineHomepage, config.keysToCheck, isDocumentHasInfo, document);
 
       // If the document already exists, skip processing this item
       if (isDocumentHasInfo) continue;
@@ -63,7 +62,7 @@ const loopItems = async (collectionData, config, index_to_start, item_type, json
     const isActive = urls.is_active;
 
     // Get The Movie Database ID
-    const theMoviedbId = parseInt(urls.themoviedb.id);
+    const theMoviedbId = urls.themoviedb.id;
 
     // Determine if user ratings are equal and fetch the data
     const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, isActive, item_type, theMoviedbId);
