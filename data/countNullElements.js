@@ -1,7 +1,8 @@
 /**
  * Counts the number of null elements in various fields of a collection and checks if the percentage of null values exceeds a certain threshold.
  * @param {Object} collectionData - The collection to search for null values.
- * @returns None
+ * @param {Number} newOrUpdatedItems - The number of new or updated items in the collection.
+ * @returns {void}
  */
 const countNullElements = async (collectionData, newOrUpdatedItems) => {
   try {
@@ -17,8 +18,7 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     console.log(`Number of null for allocine.users_rating: ${countAllocineNull}`);
 
     if ((countAllocineNull * 100) / documents > 30) {
-      console.log("Something went wrong, at least 30% of Allociné ratings are set to null");
-      process.exit(1);
+      throw new Error("Something went wrong, at least 30% of Allociné ratings are set to null");
     }
 
     const query_allocine_critics = { "allocine.critics_rating": null };
@@ -26,8 +26,7 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     console.log(`Number of null for allocine.critics_rating: ${countAllocineCriticsNull}`);
 
     if ((countAllocineCriticsNull * 100) / documents > 80) {
-      console.log("Something went wrong, at least 80% of Allociné critics ratings are set to null");
-      process.exit(1);
+      throw new Error("Something went wrong, at least 80% of Allociné critics ratings are set to null");
     }
 
     /* The above code is counting the number of null values for the betaseries.users_rating field. */
@@ -36,8 +35,7 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     console.log(`Number of null for betaseries.users_rating: ${countBetaseriesNull}`);
 
     if ((countBetaseriesNull * 100) / documents > 30) {
-      console.log("Something went wrong, at least 30% of Betaseries ratings are set to null");
-      process.exit(1);
+      throw new Error("Something went wrong, at least 30% of Betaseries ratings are set to null");
     }
 
     /* The above code is counting the number of documents in the collection that have a null value
@@ -47,8 +45,7 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     console.log(`Number of null for imdb.users_rating: ${countIMDbNull}`);
 
     if ((countIMDbNull * 100) / documents > 30) {
-      console.log("Something went wrong, at least 30% of IMDb ratings are set to null");
-      process.exit(1);
+      throw new Error("Something went wrong, at least 30% of IMDb ratings are set to null");
     }
 
     const query_metacritic = { metacritic: null };
@@ -56,11 +53,10 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     console.log(`Number of null for metacritic: ${countMetacriticNull}`);
 
     if ((countMetacriticNull * 100) / documents > 70) {
-      console.log("Something went wrong, at least 70% of Metacritic ratings are set to null");
-      process.exit(1);
+      throw new Error("Something went wrong, at least 70% of Metacritic ratings are set to null");
     }
   } catch (error) {
-    console.log(`countNullElements: ${error}`);
+    throw new Error(`countNullElements: ${error}`);
   }
 };
 

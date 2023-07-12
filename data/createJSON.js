@@ -9,7 +9,19 @@ const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
- * @param {...} Various parameters required for fetching movie details from different sources
+ * @param {Object} allocineCriticsDetails - The Allocine critics details data
+ * @param {string} allocineURL - The Allocine URL
+ * @param {string} allocineHomepage - The Allocine homepage URL
+ * @param {string} allocineId - The Allocine ID
+ * @param {string} betaseriesHomepage - The Betaseries homepage URL
+ * @param {string} betaseriesId - The Betaseries ID
+ * @param {string} imdbHomepage - The IMDB homepage URL
+ * @param {string} imdbId - The IMDB ID
+ * @param {boolean} isActive - The active status of the item
+ * @param {string} item_type - The type of the item (e.g., movie, series)
+ * @param {string} metacriticHomepage - The Metacritic homepage URL
+ * @param {string} metacriticId - The Metacritic ID
+ * @param {number} theMoviedbId - The MovieDB ID
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
  */
 const createJSON = async (
@@ -50,14 +62,14 @@ const createJSON = async (
   };
 
   /* Creating an object called betaseriesObj. */
-  let betaseriesObj = null;
-  if (betaseriesId !== "null") {
-    betaseriesObj = {
-      id: betaseriesId,
-      url: betaseriesHomepage,
-      users_rating: betaseriesUsersRating,
-    };
-  }
+  const betaseriesObj =
+    betaseriesId !== "null"
+      ? {
+          id: betaseriesId,
+          url: betaseriesHomepage,
+          users_rating: betaseriesUsersRating,
+        }
+      : null;
 
   /* Creating an object called imdbObj. */
   const imdbObj = {
@@ -67,22 +79,18 @@ const createJSON = async (
     popularity: imdbPopularity.popularity,
   };
 
-  /**
-   * Creates a Metacritic object if the metacritic rating is not null.
-   * @param {object} metacriticRating - the Metacritic rating object
-   * @returns {object | null} - the Metacritic object or null if the rating is null
-   */
-  let metacriticObj = null;
-  if (metacriticRating !== null) {
-    metacriticObj = {
-      id: metacriticRating.id,
-      url: metacriticRating.url,
-      users_rating: metacriticRating.usersRating,
-      critics_rating: metacriticRating.criticsRating,
-      critics_number: metacriticRating.criticsNumber,
-      critics_rating_details: metacriticRating.criticsRatingDetails,
-    };
-  }
+  /* Creates a Metacritic object if the metacritic rating is not null. */
+  const metacriticObj =
+    metacriticRating !== null
+      ? {
+          id: metacriticRating.id,
+          url: metacriticRating.url,
+          users_rating: metacriticRating.usersRating,
+          critics_rating: metacriticRating.criticsRating,
+          critics_number: metacriticRating.criticsNumber,
+          critics_rating_details: metacriticRating.criticsRatingDetails,
+        }
+      : null;
 
   const data = {
     id: theMoviedbId,

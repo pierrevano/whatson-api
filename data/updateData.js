@@ -1,6 +1,6 @@
 /**
  * Loads environment variables from a .env file into process.env.
- * @returns None
+ * @returns {void}
  */
 require("dotenv").config();
 
@@ -43,17 +43,15 @@ shell.exec("rm -f ./logs.txt");
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   const jsonArray = !getNodeVarsValues.is_not_active || getNodeVarsValues.is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
 
-  let index_to_start = getNodeVarsValues.index_to_start;
-  if (!index_to_start) index_to_start = 0;
+  const index_to_start = getNodeVarsValues.index_to_start || 0;
 
   console.time("Duration");
 
   try {
     /* Printing out the value of each variable in the getNodeVarsValues object. */
-    for (let variable in getNodeVarsValues) {
-      let variable_value = getNodeVarsValues[variable];
-      if (!getNodeVarsValues[variable]) variable_value = "not set";
-      console.log(`${variable}: ${variable_value}`);
+    for (const [variable, value] of Object.entries(getNodeVarsValues)) {
+      const variableValue = value ? value : "not set";
+      console.log(`${variable}: ${variableValue}`);
     }
 
     const check_db_ids = getNodeVarsValues.check_db_ids;
@@ -79,9 +77,10 @@ shell.exec("rm -f ./logs.txt");
 
     const { newOrUpdatedItems } = await loopItems(collectionData, config, force, index_to_start, getNodeVarsValues.item_type, jsonArray, getNodeVarsValues.skip_already_added_documents);
     await countNullElements(collectionData, newOrUpdatedItems);
-    await client.close();
   } catch (error) {
-    console.log(`Global: ${error}`);
+    throw new Error(`Global: ${error}`);
+  } finally {
+    await client.close();
   }
 
   console.timeEnd("Duration", `- ${jsonArray.length} elements imported.`);

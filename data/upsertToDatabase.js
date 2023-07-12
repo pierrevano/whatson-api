@@ -4,7 +4,7 @@ const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
  * Upserts the given data to the database collection.
  * @param {object} data - The data to upsert to the database.
  * @param {object} collectionData - The collection to upsert the data to.
- * @returns None
+ * @returns {void}
  */
 const upsertToDatabase = async (data, collectionData) => {
   try {
@@ -17,7 +17,7 @@ const upsertToDatabase = async (data, collectionData) => {
 
     await collectionData.updateOne(filter, updateDoc, options);
   } catch (error) {
-    console.log(`upsertToDatabase: ${error}`);
+    throw new Error(`upsertToDatabase: ${error}`);
   }
 };
 

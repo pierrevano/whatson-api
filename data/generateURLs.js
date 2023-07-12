@@ -1,9 +1,21 @@
+/**
+ * Generates URLs for various movie or series related websites based on the provided item type, configuration, and JSON data.
+ * @param {string} item_type - The type of item (movie or series).
+ * @param {object} config - The configuration object containing base URLs for different websites.
+ * @param {object} json - The JSON data containing information about the item.
+ * @returns {object} - An object containing URLs for Allocine, IMDb, Betaseries, Metacritic, The Movie Database, and an isActive flag.
+ * @throws {Error} - If an invalid Allocine URL is provided or if The Movie Database ID is not found.
+ */
 const generateURLs = (item_type, config, json) => {
   const baseURLType = item_type === "movie" ? config.baseURLTypeFilms : config.baseURLTypeSeries;
   const baseURLCriticDetails = item_type === "movie" ? config.baseURLCriticDetailsFilms : config.baseURLCriticDetailsSeries;
 
   const allocineURL = json.URL;
-  const allocineId = parseInt(allocineURL.match(/=(.*)\./).pop());
+  const allocineIdMatch = allocineURL.match(/=(.*)\./);
+  if (!allocineIdMatch) {
+    throw new Error(`Invalid Allocine URL: ${allocineURL}`);
+  }
+  const allocineId = parseInt(allocineIdMatch.pop());
   const allocineHomepage = `${config.baseURLAllocine}${baseURLType}${allocineId}.html`;
   const allocineCriticsDetails = `${config.baseURLAllocine}${baseURLCriticDetails}${allocineId}${config.endURLCriticDetails}`;
 

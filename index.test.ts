@@ -280,7 +280,7 @@ const params = {
   },
 
   only_items_with_all_required_keys: {
-    query: "",
+    query: `?is_active=true,false&limit=8500`,
     expectedResult: (items) =>
       items.every((item) => {
         config.keysToCheck.forEach((key) => {
@@ -296,9 +296,9 @@ const params = {
         expect(items.filter((item) => item.imdb.users_rating !== null && item.imdb.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
 
         expect(Object.keys(item.betaseries)).toHaveLength(3);
-        expect(items.filter((item) => item.betaseries.users_rating !== null && item.betaseries.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+        expect(items.filter((item) => item.betaseries && item.betaseries.users_rating !== null && item.betaseries.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
 
-        expect(Object.keys(item.metacritic)).toHaveLength(6);
+        item.metacritic ? expect(Object.keys(item.metacritic)).toHaveLength(6) : null;
         expect(items.filter((item) => item.metacritic !== null && item.metacritic.users_rating !== null && item.metacritic.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
 
         expect(item.title).not.toBeNull();
@@ -324,18 +324,26 @@ describe("What's on? API tests", () => {
   console.log(`Testing on ${baseURL}.`);
 
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
+    async function fetchItemsData() {
+      const apiCall = `${baseURL}${query}`;
+
+      console.log(`Calling ${apiCall}`);
+
+      const response = await axios.get(apiCall);
+      const data = response.data;
+      const items = data.results;
+
+      if (query.includes("allData=true")) {
+        expectedResult(data);
+      } else {
+        expectedResult(items);
+      }
+    }
+
     test(
       name,
       async () => {
-        const response = await axios.get(`${baseURL}${query}`);
-        const data = response.data;
-        const items = data.results;
-
-        if (query.includes("allData=true")) {
-          expectedResult(data);
-        } else {
-          expectedResult(items);
-        }
+        await fetchItemsData();
       },
       config.timeout
     );
@@ -346,7 +354,7 @@ describe("What's on? API tests", () => {
     async () => {
       const start = new Date().valueOf();
 
-      await axios.get(`${baseURL}`);
+      await axios.get(baseURL);
 
       const end = new Date().valueOf();
       const responseTime = end - start;

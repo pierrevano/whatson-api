@@ -13,54 +13,49 @@ const isLowerCase = require("../src/utils/isLowerCase");
  * @param {Array} keysArray - An array of keys to check for in the document object.
  * @param {boolean} isDocumentHasInfo - A boolean indicating whether the document object has the necessary information.
  * @param {object} document - The document object to check.
- * @returns None
+ * @param {string} itemType - The item type (e.g. "movie" or "tvshow") that the document should have.
+ * @returns {void}
  */
-const controlData = async (allocineHomepage, keysArray, isDocumentHasInfo, document, item_type) => {
-  try {
-    const idsToExclude = [8400, 8683, 10276, 19684, 20884, 21855, 22832, 24799, 27986, 28106, 28107, 28117];
 
+const idsToExclude = [8400, 8683, 10276, 19684, 20884, 21855, 22832, 24799, 27986, 28106, 28107, 28117];
+
+const controlData = async (allocineHomepage, keysArray, isDocumentHasInfo, document, itemType) => {
+  try {
     keysArray.forEach((key) => {
       if (isDocumentHasInfo && !document.hasOwnProperty(`${key}`)) {
-        console.log(`Missing ${key} for ${allocineHomepage}`);
-        process.exit(1);
+        throw new Error(`Missing ${key} for ${allocineHomepage}`);
       }
     });
 
     keysArray.forEach((key) => {
       if (isDocumentHasInfo && typeof document[key] === "undefined") {
-        console.log(`Undefined ${key} for ${allocineHomepage}`);
-        process.exit(1);
+        throw new Error(`Undefined ${key} for ${allocineHomepage}`);
       }
     });
 
     if (document.title === null) {
-      console.log(`Missing title for ${allocineHomepage}`);
-      process.exit(1);
+      throw new Error(`Missing title for ${allocineHomepage}`);
     }
 
     if (document.image === null) {
-      console.log(`Missing image for ${allocineHomepage}`);
-      process.exit(1);
+      throw new Error(`Missing image for ${allocineHomepage}`);
     }
 
     if (document.item_type === "tvshow" && document.status === null) {
       if (!idsToExclude.includes(document.allocine.id)) {
-        console.log(`Missing status for ${allocineHomepage}`);
-        process.exit(1);
+        throw new Error(`Missing status for ${allocineHomepage}`);
       }
     }
 
     if (Object.keys(document.imdb).length !== 4) {
-      console.log(`IMDb obj length is ${Object.keys(document.imdb).length} for ${allocineHomepage}`);
-      process.exit(1);
+      throw new Error(`IMDb obj length is ${Object.keys(document.imdb).length} for ${allocineHomepage}`);
     }
 
     if (document.allocine.critics_rating_details !== null) {
       const allocineKeys = Object.keys(document.allocine.critics_rating_details[0]);
       allocineKeys.forEach((element) => {
         if (!isLowerCase(element)) {
-          console.log(`Is not lowercase for ${allocineHomepage}`);
-          process.exit(1);
+          throw new Error(`Is not lowercase for ${allocineHomepage}`);
         }
       });
     }
@@ -69,8 +64,7 @@ const controlData = async (allocineHomepage, keysArray, isDocumentHasInfo, docum
       const metacriticKeys = Object.keys(document.metacritic.critics_rating_details[0]);
       metacriticKeys.forEach((element) => {
         if (!isLowerCase(element)) {
-          console.log(`Is not lowercase for ${allocineHomepage}`);
-          process.exit(1);
+          throw new Error(`Is not lowercase for ${allocineHomepage}`);
         }
       });
     }
@@ -79,31 +73,26 @@ const controlData = async (allocineHomepage, keysArray, isDocumentHasInfo, docum
       if (document.metacritic !== null) {
         const { status } = await axios(document.metacritic.url);
         if (status !== 200) {
-          console.log(`Broken link for ${allocineHomepage}`);
-          process.exit(1);
+          throw new Error(`Broken link for ${allocineHomepage}`);
         }
       }
     }
 
     if (document.metacritic !== null) {
       if (document.metacritic.users_rating < 0 || document.metacritic.users_rating > 10) {
-        console.log(`Wrong Metacritic users rating for ${allocineHomepage}`);
-        process.exit(1);
+        throw new Error(`Wrong Metacritic users rating for ${allocineHomepage}`);
       }
     }
 
-    if ((document.item_type !== "movie" && document.item_type !== "tvshow") || document.item_type !== item_type) {
-      console.log(`Wrong item_type for ${allocineHomepage}`);
-      process.exit(1);
+    if (document.item_type !== itemType) {
+      throw new Error(`Wrong item_type for ${allocineHomepage}`);
     }
 
     if (document.is_active !== true && document.is_active !== false) {
-      console.log(`Wrong is_active for ${allocineHomepage}`);
-      process.exit(1);
+      throw new Error(`Wrong is_active for ${allocineHomepage}`);
     }
   } catch (error) {
-    console.log(`controlData - ${allocineHomepage}: ${error}`);
-    process.exit(1);
+    throw new Error(`controlData - ${allocineHomepage}: ${error}`);
   }
 };
 
