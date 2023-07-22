@@ -279,6 +279,45 @@ const params = {
     },
   },
 
+  only_at_least_three_top_popularity: {
+    query: "?item_type=tvshow&limit=200",
+    expectedResult: (items) => {
+      const firstThreePopularitySum = items.slice(0, 3).reduce((acc, current) => {
+        const allocinePopularity = current.allocine.popularity || 0;
+        return acc + allocinePopularity;
+      }, 0);
+
+      expect(firstThreePopularitySum).toBeLessThanOrEqual(10);
+    },
+  },
+
+  only_correct_allocine_popularity: {
+    query: "?item_type=tvshow&popularity_filters=allocine_popularity",
+    expectedResult: (items) => {
+      for (let i = 1; i < items.length; i++) {
+        expect(items[i].allocine.popularity).toBeGreaterThanOrEqual(items[i - 1].allocine.popularity);
+      }
+    },
+  },
+
+  only_correct_imdb_popularity: {
+    query: "?item_type=tvshow&popularity_filters=imdb_popularity",
+    expectedResult: (items) => {
+      for (let i = 1; i < items.length; i++) {
+        expect(items[i].imdb.popularity).toBeGreaterThanOrEqual(items[i - 1].imdb.popularity);
+      }
+    },
+  },
+
+  only_correct_none_popularity: {
+    query: "?item_type=tvshow&popularity_filters=none,imdb_popularity",
+    expectedResult: (items) => {
+      for (let i = 1; i < items.length; i++) {
+        expect(items[i].ratings_average).toBeLessThanOrEqual(items[i - 1].ratings_average);
+      }
+    },
+  },
+
   only_items_with_all_required_keys: {
     query: `?is_active=true,false&limit=8500`,
     expectedResult: (items) =>

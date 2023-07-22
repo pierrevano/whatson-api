@@ -8,6 +8,8 @@ const getPopularityFilters = async (popularity_filters_query) => {
   const popularity_filters_array = popularity_filters_query.split(",");
   let popularity_filters = [];
 
+  if (popularity_filters_array.includes("none")) return popularity_filters;
+
   if (popularity_filters_array.includes("all")) {
     // prettier-ignore
     popularity_filters = [
