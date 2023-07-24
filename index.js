@@ -28,6 +28,7 @@ app.get("/", async (req, res) => {
     const is_active_query = req.query.is_active;
     const item_type_query = req.query.item_type;
     const limit_query = parseInt(req.query.limit);
+    const minimum_ratings_query = parseFloat(req.query.minimum_ratings);
     const page_query = parseInt(req.query.page);
     const popularity_filters_query = req.query.popularity_filters;
     const ratings_filters_query = req.query.ratings_filters;
@@ -40,6 +41,7 @@ app.get("/", async (req, res) => {
       is_active_query,
       item_type_query,
       limit_query,
+      minimum_ratings_query,
       page_query,
       popularity_filters_query,
       ratings_filters_query,

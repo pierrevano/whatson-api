@@ -34,7 +34,7 @@ function countLines(filename) {
  * @returns None
  */
 const params = {
-  default: {
+  default_movies: {
     query: "",
     expectedResult: (items) =>
       items.every((item) => {
@@ -43,7 +43,7 @@ const params = {
       }),
   },
 
-  only_movie: {
+  only_movies: {
     query: "?item_type=movie",
     expectedResult: (items) =>
       items.every((item) => {
@@ -52,7 +52,7 @@ const params = {
       }),
   },
 
-  only_tvshow: {
+  only_tvshows: {
     query: "?item_type=tvshow",
     expectedResult: (items) =>
       items.every((item) => {
@@ -61,7 +61,7 @@ const params = {
       }),
   },
 
-  only_active: {
+  only_active_items: {
     query: "?is_active=true",
     expectedResult: (items) =>
       items.every((item) => {
@@ -70,7 +70,7 @@ const params = {
       }),
   },
 
-  only_non_active: {
+  only_non_active_items: {
     query: "?is_active=false",
     expectedResult: (items) =>
       items.every((item) => {
@@ -79,7 +79,7 @@ const params = {
       }),
   },
 
-  only_active_and_non_active: {
+  both_active_and_non_active_items: {
     query: "?is_active=true,false",
     expectedResult: (items) =>
       items.every((item) => {
@@ -88,7 +88,7 @@ const params = {
       }),
   },
 
-  only_cinema_movie: {
+  only_cinema_movies: {
     query: "?cinema_id=C0159&item_type=movie",
     expectedResult: (items) =>
       items.every((item) => {
@@ -97,7 +97,7 @@ const params = {
       }),
   },
 
-  only_season_1_and_2: {
+  only_tvshows_with_1_and_2_seasons: {
     query: "?cinema_id=C0159&item_type=tvshow&seasons_number=1,2",
     expectedResult: (items) =>
       items.every((item) => {
@@ -108,7 +108,7 @@ const params = {
       }),
   },
 
-  only_greater_than_1: {
+  only_tvshows_greater_than_1_season: {
     query: "?cinema_id=C0159&item_type=tvshow&seasons_number=1,2,5",
     expectedResult: (items) =>
       items.every((item) => {
@@ -119,7 +119,7 @@ const params = {
       }),
   },
 
-  only_ongoing_status: {
+  only_ongoing_tvshows: {
     query: "?item_type=tvshow&status=ongoing",
     expectedResult: (items) =>
       items.every((item) => {
@@ -129,7 +129,7 @@ const params = {
       }),
   },
 
-  only_ongoing_and_canceled_status: {
+  ongoing_and_canceled_tvshows: {
     query: "?item_type=tvshow&status=canceled,soon",
     expectedResult: (items) =>
       items.every((item) => {
@@ -138,7 +138,7 @@ const params = {
       }),
   },
 
-  only_null_status: {
+  only_null_status_items: {
     query: "?status=&limit=200",
     expectedResult: (items) =>
       items.every((item) => {
@@ -147,7 +147,7 @@ const params = {
       }),
   },
 
-  only_ongoing_status_with_1_and_2_seasons: {
+  ongoing_tvshows_with_1_and_2_seasons: {
     query: "?item_type=tvshow&status=ongoing&seasons_number=1,2",
     expectedResult: (items) =>
       items.every((item) => {
@@ -158,7 +158,7 @@ const params = {
       }),
   },
 
-  only_20_items_on_page_2: {
+  page_2_with_20_items: {
     query: "?cinema_id=C0159&item_type=tvshow&seasons_number=1,2&page=2&limit=20&allData=true",
     expectedResult: (data) => {
       expect(data).toHaveProperty("page");
@@ -167,7 +167,7 @@ const params = {
     },
   },
 
-  only_not_found_items_on_page_3: {
+  no_items_found_on_page_3: {
     query: "?cinema_id=C0159&item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
@@ -175,7 +175,7 @@ const params = {
     },
   },
 
-  only_valid_users_rating: {
+  valid_users_ratings: {
     query: "?item_type=tvshow&is_active=true&limit=200",
     expectedResult: (items) =>
       items.every((item) => {
@@ -201,7 +201,7 @@ const params = {
       }),
   },
 
-  only_same_files_line_number_with_remote: {
+  same_files_line_number_as_remote: {
     query: "?item_type=movie,tvshow&is_active=true,false&allData=true",
     expectedResult: (items) => {
       if (config.checkItemsNumber) {
@@ -213,7 +213,7 @@ const params = {
     },
   },
 
-  only_correct_tmdb_id_returned: {
+  correct_tmdb_id_returned: {
     query: "/tv/87108?ratings_filters=all&allData=true",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
@@ -221,7 +221,7 @@ const params = {
     },
   },
 
-  only_correct_tvshow_item_type_returned: {
+  correct_tvshow_item_type_returned: {
     query: "/tv/121?allData=true",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
@@ -229,7 +229,7 @@ const params = {
     },
   },
 
-  only_correct_movie_item_type_returned: {
+  correct_movie_item_type_returned: {
     query: "/movie/121?allData=true",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
@@ -237,7 +237,7 @@ const params = {
     },
   },
 
-  only_20_results_returned_on_a_search: {
+  results_count_on_search: {
     query: "?title=wolf&allData=true",
     expectedResult: (data) => {
       expect(data).toHaveProperty("page");
@@ -246,7 +246,7 @@ const params = {
     },
   },
 
-  only_titles_with_game_returned_on_a_search: {
+  titles_containing_game_on_search: {
     query: "?title=game",
     expectedResult: (items) =>
       items.every((item) => {
@@ -254,7 +254,7 @@ const params = {
       }),
   },
 
-  only_not_found_items_returned: {
+  no_items_found_for_invalid_query: {
     query: "?title=some invalid value to be tested&allData=true",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
@@ -262,7 +262,7 @@ const params = {
     },
   },
 
-  only_ascending_popularity_average: {
+  ascending_popularity_average: {
     query: "?item_type=tvshow",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
@@ -271,7 +271,7 @@ const params = {
     },
   },
 
-  only_at_least_one_popularity: {
+  at_least_one_popularity: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
       expect(items.filter((item) => item.allocine.popularity !== null).length).toBeGreaterThanOrEqual(1);
@@ -279,7 +279,7 @@ const params = {
     },
   },
 
-  only_at_least_three_top_popularity: {
+  three_top_popularity_items: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
       const firstThreePopularitySum = items.slice(0, 3).reduce((acc, current) => {
@@ -291,7 +291,7 @@ const params = {
     },
   },
 
-  only_correct_allocine_popularity: {
+  correct_allocine_popularity_order: {
     query: "?item_type=tvshow&popularity_filters=allocine_popularity",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
@@ -300,7 +300,7 @@ const params = {
     },
   },
 
-  only_correct_imdb_popularity: {
+  correct_imdb_popularity_order: {
     query: "?item_type=tvshow&popularity_filters=imdb_popularity",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
@@ -309,7 +309,7 @@ const params = {
     },
   },
 
-  only_correct_none_popularity: {
+  correct_none_popularity_order: {
     query: "?item_type=tvshow&popularity_filters=none,imdb_popularity",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
@@ -318,7 +318,24 @@ const params = {
     },
   },
 
-  only_items_with_all_required_keys: {
+  items_with_minimum_ratings: {
+    query: "?minimum_ratings=3.9",
+    expectedResult: (items) =>
+      items.every((item) => {
+        expect(item.ratings_average).toBeGreaterThanOrEqual(4);
+      }),
+  },
+
+  ratings_average_for_incorrect_minimum_ratings: {
+    query: "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
+    expectedResult: (items) => {
+      for (let i = 1; i < items.length; i++) {
+        expect(items[i].ratings_average).toBeLessThanOrEqual(items[i - 1].ratings_average);
+      }
+    },
+  },
+
+  items_with_all_required_keys: {
     query: `?is_active=true,false&limit=8500`,
     expectedResult: (items) =>
       items.every((item) => {

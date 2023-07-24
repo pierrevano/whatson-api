@@ -27,6 +27,7 @@ const getItems = async (
   is_active_query,
   item_type_query,
   limit_query,
+  minimum_ratings_query,
   page_query,
   popularity_filters_query,
   ratings_filters_query,
@@ -38,6 +39,7 @@ const getItems = async (
   const item_type = typeof item_type_query !== "undefined" ? item_type_query : "movie";
   const limit = isNaN(limit_query) ? config.limit : limit_query;
   const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
+  const minimum_ratings = isNaN(minimum_ratings_query) ? "" : minimum_ratings_query;
   const page = isNaN(page_query) ? config.page : page_query;
   const popularity_filters_query_value = typeof popularity_filters_query !== "undefined" ? popularity_filters_query : "all";
   const popularity_filters = await getPopularityFilters(popularity_filters_query_value);
@@ -68,16 +70,27 @@ const getItems = async (
   const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
   const match_item_type = { $match: { $and: [item_type_default, is_active_item] } };
 
-  const limit_results = { $limit: limit };
   const match_not_allocine_null = { $match: { $or: [{ "allocine.critics_rating": { $ne: null } }, { "allocine.users_rating": { $ne: null } }] } };
   const match_not_betaseries_or_imdb_null = { $match: { $or: [{ "betaseries.users_rating": { $ne: null } }, { "imdb.users_rating": { $ne: null } }] } };
+  const match_ratings_above_minimum = { $match: { ratings_average: { $gte: minimum_ratings !== "" ? parseFloat(minimum_ratings) : -Infinity } } };
+
+  const limit_results = { $limit: limit };
   const skip_results = { $skip: (page - 1) * limit };
   const sort_popularity_and_ratings = { $sort: { sortAvgField: 1, popularity_average: 1, ratings_average: -1 } };
   const remove_sort_popularity = { $project: { sortAvgField: 0 } };
 
   const facet = {
     $facet: {
-      results: [match_not_allocine_null, match_not_betaseries_or_imdb_null, addFields_popularity_and_ratings, sort_popularity_and_ratings, remove_sort_popularity, skip_results, limit_results],
+      results: [
+        match_not_allocine_null,
+        match_not_betaseries_or_imdb_null,
+        addFields_popularity_and_ratings,
+        match_ratings_above_minimum,
+        sort_popularity_and_ratings,
+        remove_sort_popularity,
+        skip_results,
+        limit_results,
+      ],
       total_results: [{ $count: "total_results" }],
     },
   };
