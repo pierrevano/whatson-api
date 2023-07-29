@@ -21,6 +21,8 @@ const config = {
   endURLCriticDetails: "/critiques/presse/",
   filmsIdsFilePath: "./src/assets/films_ids.txt",
   seriesIdsFilePath: "./src/assets/series_ids.txt",
+  filmsPopularityPath: "popularity_ids_films.txt",
+  seriesPopularityPath: "popularity_ids_series.txt",
 
   keysToCheck: ["allocine", "betaseries", "id", "image", "imdb", "is_active", "item_type", "metacritic", "platforms_links", "seasons_number", "status", "title", "trailer"],
 

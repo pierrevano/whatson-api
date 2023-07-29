@@ -6,9 +6,10 @@ const { config } = require("./config");
  * @param {string} allocineURL - The URL of the movie or TV show on Allocine.
  * @returns {Promise<string | undefined>} - The ID of the movie or TV show, or undefined if it cannot be found.
  */
-const extractIdFromRemotePopularityFile = async (allocineURL) => {
+const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
   try {
-    const response = await axios.get(`${config.baseURLSurgeAssets}/popularity_ids.txt`);
+    const popularityPath = item_type === "movie" ? config.filmsPopularityPath : config.seriesPopularityPath;
+    const response = await axios.get(`${config.baseURLSurgeAssets}/${popularityPath}`);
     const lines = response.data.split("\n");
 
     const lastLineWithAllocineURL = lines
@@ -30,9 +31,9 @@ const extractIdFromRemotePopularityFile = async (allocineURL) => {
  * @param {string} allocineURL - The URL of the movie on Allocine's website.
  * @returns An object containing the popularity of the movie, or null if it could not be retrieved.
  */
-const getAllocinePopularity = async (allocineURL) => {
+const getAllocinePopularity = async (allocineURL, item_type) => {
   try {
-    const popularityTemp = await extractIdFromRemotePopularityFile(allocineURL);
+    const popularityTemp = await extractIdFromRemotePopularityFile(allocineURL, item_type);
     const popularity = popularityTemp ? parseInt(popularityTemp.trim()) : null;
 
     return {

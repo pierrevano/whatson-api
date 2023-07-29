@@ -20,7 +20,7 @@ const { getImdbPopularity } = require("../src/getImdbPopularity");
  */
 const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, isActive, item_type, theMoviedbId) => {
   const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId)).allocineUsersRating;
-  const allocinePopularity = (await getAllocinePopularity(allocineURL)).popularity;
+  const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
   const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;
 
   const isEqualObj = {

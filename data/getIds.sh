@@ -27,6 +27,7 @@ if [[ $TYPE == "movie" ]]; then
   METACRITIC_TYPE=movie
   FALSE_NUMBER=2
   TRUE_OR_FALSE_NUMBER=3
+  POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_films.txt
 else
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
@@ -40,7 +41,7 @@ else
   METACRITIC_TYPE=tv
   FALSE_NUMBER=2
   TRUE_OR_FALSE_NUMBER=3
-  POPULARITY_ASSETS_PATH=./src/assets/popularity_ids.txt
+  POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_series.txt
 fi
 
 if [[ $SOURCE == "circleci" ]]; then
@@ -120,9 +121,7 @@ data_found () {
 
 remove_files
 
-if [[ $TYPE == "tvshow" ]]; then
-  rm -f $POPULARITY_ASSETS_PATH
-fi
+rm -f $POPULARITY_ASSETS_PATH
 
 # Downloading base URL
 curl -s $BASE_URL > temp_baseurl
@@ -175,13 +174,6 @@ do
     # Check if missing shows
     ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
 
-    # Get Allociné tvshow popularity number
-    if [[ $TYPE == "tvshow" ]]; then
-      POPULARITY_NUMBER=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "label-primary-full label-ranking" | tail -1 | head -1 | cut -d'>' -f2 | cut -d'<' -f1)
-
-      echo "$POPULARITY_NUMBER,$ALLOCINE_URL" >> $POPULARITY_ASSETS_PATH
-    fi
-
     if [[ $URL == $ALLOCINE_URL ]]; then
       if [[ $SOURCE == "circleci" ]]; then
         sed -i "/.*=$FILM_ID\.html.*$/ s/,FALSE$/,TRUE/" $FILMS_IDS_FILE_PATH
@@ -199,6 +191,12 @@ do
     else
       FOUND=0
     fi
+
+    INDEX_POPULARITY=$[$INDEX_POPULARITY+1]
+
+    # Get Allociné popularity number
+    POPULARITY_NUMBER=$INDEX_POPULARITY
+    echo "$POPULARITY_NUMBER,$ALLOCINE_URL" >> $POPULARITY_ASSETS_PATH
 
     # Add first line to URLs check file
     echo "first line" >> $TEMP_URLS_FILE_PATH
