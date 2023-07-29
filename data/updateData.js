@@ -31,17 +31,25 @@ shell.exec("rm -f ./logs.txt");
   const database = client.db(config.dbName);
   const collectionData = database.collection(config.collectionName);
 
-  if (getNodeVarsValues.skip_already_added_documents !== "skip") {
-    const resetIsActiveAndPopularity = { $set: { is_active: false, "allocine.popularity": null, "imdb.popularity": null } };
-    await collectionData.updateMany({ item_type: getNodeVarsValues.item_type }, resetIsActiveAndPopularity);
-    console.log("All documents have been reset.");
-  }
-
   const idsFilePath = getNodeVarsValues.item_type === "movie" ? config.filmsIdsFilePath : config.seriesIdsFilePath;
   console.log(`Ids file path to use: ${idsFilePath}`);
 
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   const jsonArray = !getNodeVarsValues.is_not_active || getNodeVarsValues.is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
+  const allTheMovieDbIds = jsonArray.map((item) => parseInt(item.THEMOVIEDB_ID));
+
+  if (getNodeVarsValues.skip_already_added_documents !== "skip") {
+    const resetIsActive = { $set: { is_active: false } };
+    const resetPopularity = { $set: { "allocine.popularity": null, "imdb.popularity": null } };
+    const filterQueryIsActive = { item_type: getNodeVarsValues.item_type, id: { $nin: allTheMovieDbIds } };
+    const filterQueryPopularity = { item_type: getNodeVarsValues.item_type };
+
+    await collectionData.updateMany(filterQueryIsActive, resetIsActive);
+    console.log(`${allTheMovieDbIds.length} documents have been excluded from the is_active reset.`);
+
+    await collectionData.updateMany(filterQueryPopularity, resetPopularity);
+    console.log("All documents popularity have been reset.");
+  }
 
   const index_to_start = getNodeVarsValues.index_to_start || 0;
 
