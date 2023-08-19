@@ -5,7 +5,6 @@
 require("dotenv").config();
 
 const csv = require("csvtojson");
-const shell = require("shelljs");
 
 /* Connecting to the MongoDB database. */
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -21,13 +20,20 @@ const { countNullElements } = require("./countNullElements");
 const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
 const loopItems = require("./loopItems");
-
-if (getNodeVarsValues.get_ids === "update_ids") updateIds();
-if (getNodeVarsValues.get_db === "no_update_db") process.exit(0);
-
-shell.exec("rm -f ./logs.txt");
+const isRenderStatusOK = require("../src/utils/renderStatus");
 
 (async () => {
+  if (await isRenderStatusOK()) {
+    console.log("Render's status is OK, continuing...");
+    console.log("----------------------------------------------------------------------------------------------------");
+  } else {
+    console.log("Render's status is not OK. Aborting.");
+    process.exit(0);
+  }
+
+  if (getNodeVarsValues.get_ids === "update_ids") updateIds();
+  if (getNodeVarsValues.get_db === "no_update_db") process.exit(0);
+
   const database = client.db(config.dbName);
   const collectionData = database.collection(config.collectionName);
 
