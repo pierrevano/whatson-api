@@ -39,7 +39,7 @@ const getItems = async (
   const item_type = typeof item_type_query !== "undefined" ? item_type_query : "movie";
   const limit = isNaN(limit_query) ? config.limit : limit_query;
   const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
-  const minimum_ratings = isNaN(minimum_ratings_query) ? "" : minimum_ratings_query;
+  const minimum_ratings = typeof minimum_ratings_query !== "undefined" ? minimum_ratings_query : "";
   const page = isNaN(page_query) ? config.page : page_query;
   const popularity_filters_query_value = typeof popularity_filters_query !== "undefined" ? popularity_filters_query : "all";
   const popularity_filters = await getPopularityFilters(popularity_filters_query_value);
@@ -72,7 +72,17 @@ const getItems = async (
 
   const match_not_allocine_null = { $match: { $or: [{ "allocine.critics_rating": { $ne: null } }, { "allocine.users_rating": { $ne: null } }] } };
   const match_not_betaseries_or_imdb_null = { $match: { $or: [{ "betaseries.users_rating": { $ne: null } }, { "imdb.users_rating": { $ne: null } }] } };
-  const match_ratings_above_minimum = { $match: { ratings_average: { $gte: minimum_ratings !== "" ? parseFloat(minimum_ratings) : -Infinity } } };
+
+  const minimum_ratings_sorted = minimum_ratings.includes(",")
+    ? parseFloat(
+        minimum_ratings
+          .split(",")
+          .map(parseFloat)
+          .sort((a, b) => a - b)
+          .join(",")
+      )
+    : parseFloat(minimum_ratings);
+  const match_ratings_above_minimum = { $match: { ratings_average: { $gte: !isNaN(minimum_ratings_sorted) ? minimum_ratings_sorted : -Infinity } } };
 
   const limit_results = { $limit: limit };
   const skip_results = { $skip: (page - 1) * limit };
