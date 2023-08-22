@@ -44,7 +44,7 @@ const isRenderStatusOK = require("../src/utils/renderStatus");
   const jsonArray = !getNodeVarsValues.is_not_active || getNodeVarsValues.is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
   const allTheMovieDbIds = jsonArray.map((item) => parseInt(item.THEMOVIEDB_ID));
 
-  if (getNodeVarsValues.skip_already_added_documents !== "skip") {
+  if (getNodeVarsValues.skip_already_added_documents !== "skip" && getNodeVarsValues.force !== "force") {
     const resetIsActive = { $set: { is_active: false } };
     const resetPopularity = { $set: { "allocine.popularity": null, "imdb.popularity": null } };
     const filterQueryIsActive = { item_type: getNodeVarsValues.item_type, id: { $nin: allTheMovieDbIds } };
