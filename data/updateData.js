@@ -21,6 +21,7 @@ const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
 const loopItems = require("./loopItems");
 const isRenderStatusOK = require("../src/utils/renderStatus");
+const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
 
 (async () => {
   if (await isRenderStatusOK()) {
@@ -46,7 +47,7 @@ const isRenderStatusOK = require("../src/utils/renderStatus");
 
   if (getNodeVarsValues.skip_already_added_documents !== "skip" && getNodeVarsValues.force !== "force") {
     const resetIsActive = { $set: { is_active: false } };
-    const resetPopularity = { $set: { "allocine.popularity": null, "imdb.popularity": null } };
+    const resetPopularity = { $set: { "allocine.popularity": null, "imdb.popularity": null, mojo: null } };
     const filterQueryIsActive = { item_type: getNodeVarsValues.item_type, id: { $nin: allTheMovieDbIds } };
     const filterQueryPopularity = { item_type: getNodeVarsValues.item_type };
 
@@ -89,7 +90,18 @@ const isRenderStatusOK = require("../src/utils/renderStatus");
 
     const force = getNodeVarsValues.force === "force";
 
-    const { newOrUpdatedItems } = await loopItems(collectionData, config, force, index_to_start, getNodeVarsValues.item_type, jsonArray, getNodeVarsValues.skip_already_added_documents);
+    const mojoBoxOfficeArray = await getMojoBoxOffice();
+
+    const { newOrUpdatedItems } = await loopItems(
+      collectionData,
+      config,
+      force,
+      index_to_start,
+      getNodeVarsValues.item_type,
+      jsonArray,
+      mojoBoxOfficeArray,
+      getNodeVarsValues.skip_already_added_documents
+    );
     await countNullElements(collectionData, newOrUpdatedItems);
   } catch (error) {
     throw new Error(`Global: ${error}`);

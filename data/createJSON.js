@@ -5,6 +5,7 @@ const { getBetaseriesUsersRating } = require("../src/getBetaseriesUsersRating");
 const { getImdbPopularity } = require("../src/getImdbPopularity");
 const { getImdbUsersRating } = require("../src/getImdbUsersRating");
 const { getMetacriticRating } = require("../src/getMetacriticRating");
+const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
 const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 
 /**
@@ -37,6 +38,7 @@ const createJSON = async (
   item_type,
   metacriticHomepage,
   metacriticId,
+  mojoBoxOfficeArray,
   theMoviedbId
 ) => {
   console.log(`Updating all item info...`);
@@ -48,6 +50,7 @@ const createJSON = async (
   const betaseriesPlatformsLinks = await getPlatformsLinks(allocineHomepage, imdbHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(imdbHomepage);
+  const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId);
   const metacriticRating = await getMetacriticRating(imdbHomepage, metacriticHomepage, metacriticId);
 
   /* Creating an object called allocineObj. */
@@ -92,6 +95,15 @@ const createJSON = async (
         }
       : null;
 
+  const mojoObj =
+    mojoValues !== null
+      ? {
+          rank: mojoValues.rank,
+          url: mojoValues.url,
+          lifetime_gross: mojoValues.lifetimeGross,
+        }
+      : null;
+
   const data = {
     id: theMoviedbId,
     is_active: isActive,
@@ -106,6 +118,7 @@ const createJSON = async (
     betaseries: betaseriesObj,
     imdb: imdbObj,
     metacritic: metacriticObj,
+    mojo: mojoObj,
   };
 
   return data;

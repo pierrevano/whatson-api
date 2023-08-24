@@ -6,17 +6,19 @@ const createJSON = require("./createJSON");
 const generateURLs = require("./generateURLs");
 
 /**
- * Loop through items in a collection and perform various operations on each item.
+ * Loop through items in a collection, perform various operations on each item, and return an object containing the number of new or updated items.
+ *
  * @param {Object} collectionData - The collection data object.
  * @param {Object} config - The configuration object.
  * @param {boolean} force - Flag indicating whether to force the operations.
  * @param {number} index_to_start - The index to start looping from.
  * @param {string} item_type - The type of item being looped.
  * @param {Array} jsonArray - The array of JSON objects to loop through.
+ * @param {Array} mojoBoxOfficeArray - The array of Mojo Box Office data to be included in the operations.
  * @param {string} skip_already_added_documents - Flag indicating whether to skip already added documents.
- * @returns {Object} - An object containing the number of new or updated items.
+ * @returns {Object} Returns an object containing the number of new or updated items.
  */
-const loopItems = async (collectionData, config, force, index_to_start, item_type, jsonArray, skip_already_added_documents) => {
+const loopItems = async (collectionData, config, force, index_to_start, item_type, jsonArray, mojoBoxOfficeArray, skip_already_added_documents) => {
   let createJsonCounter = 0;
 
   // Loop through jsonArray with the given start index
@@ -87,6 +89,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
               item_type,
               metacriticHomepage,
               metacriticId,
+              mojoBoxOfficeArray,
               theMoviedbId
             ));
 
