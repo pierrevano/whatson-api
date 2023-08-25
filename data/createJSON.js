@@ -50,7 +50,7 @@ const createJSON = async (
   const betaseriesPlatformsLinks = await getPlatformsLinks(allocineHomepage, imdbHomepage);
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(imdbHomepage);
-  const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId);
+  const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
   const metacriticRating = await getMetacriticRating(imdbHomepage, metacriticHomepage, metacriticId);
 
   /* Creating an object called allocineObj. */

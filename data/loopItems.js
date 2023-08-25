@@ -71,7 +71,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       const theMoviedbId = urls.themoviedb.id;
 
       // Determine if user ratings are equal and fetch the data
-      const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, isActive, item_type, theMoviedbId);
+      const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId);
       const data =
         !force && getIsEqualValue.isEqual
           ? getIsEqualValue.data

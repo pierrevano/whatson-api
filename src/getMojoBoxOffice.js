@@ -9,10 +9,10 @@ const config = {
   offset: 200,
 };
 
-async function getObjectByImdbId(mojoBoxOfficeArray, imdbId) {
+async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
   const foundItem = mojoBoxOfficeArray.find((item) => item.imdbId === imdbId);
 
-  return foundItem ? foundItem : null;
+  return foundItem && item_type === "movie" ? foundItem : null;
 }
 
 async function fetchTableData(offset) {

@@ -4,6 +4,7 @@ const { config } = require("../src/config");
 const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
 const { getAllocinePopularity } = require("../src/getAllocinePopularity");
 const { getImdbPopularity } = require("../src/getImdbPopularity");
+const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
 
 /**
  * Compares the users rating of a movie or TV show from Allocine with the rating
@@ -18,10 +19,11 @@ const { getImdbPopularity } = require("../src/getImdbPopularity");
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
-const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, isActive, item_type, theMoviedbId) => {
+const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId) => {
   const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId)).allocineUsersRating;
   const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
   const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;
+  const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
 
   const isEqualObj = {
     isEqual: false,
@@ -39,14 +41,25 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
       return isEqualObj;
     }
 
+    const mojoObj =
+      mojoValues !== null
+        ? {
+            rank: mojoValues.rank,
+            url: mojoValues.url,
+            lifetime_gross: mojoValues.lifetimeGross,
+          }
+        : null;
+
     if (response && response.data) {
       const { _id, ...dataWithoutId } = response.data;
       dataWithoutId.is_active = isActive;
       dataWithoutId.allocine.popularity = allocinePopularity;
       dataWithoutId.imdb.popularity = imdbPopularity;
+      dataWithoutId.mojo = mojoObj;
 
       console.log(`users_rating fetched from the db: ${dataWithoutId.allocine.users_rating}`);
       console.log(`imdb_rating fetched from the db: ${dataWithoutId.imdb.users_rating}`);
+      console.log(dataWithoutId.imdb.users_rating);
 
       if (dataWithoutId.allocine.users_rating !== null && dataWithoutId.imdb.users_rating === null) {
         return isEqualObj;
