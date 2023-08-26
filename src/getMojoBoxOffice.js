@@ -5,7 +5,7 @@ const config = {
   url: "https://www.boxofficemojo.com/chart/top_lifetime_gross",
   tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
 
-  maxIterations: 15,
+  maxIterations: 20,
   offset: 200,
 };
 
@@ -64,9 +64,11 @@ async function fetchTableData(offset) {
   }
 }
 
-const getMojoBoxOffice = async () => {
+const getMojoBoxOffice = async (item_type) => {
   let offset = 0;
   let allTableData = [];
+
+  if (item_type !== "movie") return allTableData;
 
   for (let i = 0; i < config.maxIterations; i++) {
     const tableData = await fetchTableData(offset);

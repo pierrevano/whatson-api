@@ -90,7 +90,7 @@ const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
 
     const force = getNodeVarsValues.force === "force";
 
-    const mojoBoxOfficeArray = await getMojoBoxOffice();
+    const mojoBoxOfficeArray = await getMojoBoxOffice(getNodeVarsValues.item_type);
 
     const { newOrUpdatedItems } = await loopItems(
       collectionData,
