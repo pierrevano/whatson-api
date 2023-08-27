@@ -17,7 +17,7 @@ const getMoviesIds = async (cinemaIdParam) => {
   const totalPages = data.pagination.totalPages;
 
   const allMoviesIds = [];
-  for (let index = page; index < totalPages; index++) {
+  for (let index = page; index <= totalPages; index++) {
     const complete_url = `${base_url}${cinemaIdParam}/p-${index}/`;
     const response = await fetch(complete_url);
     const data = await response.json();
