@@ -2,7 +2,8 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const config = {
-  url: "https://www.boxofficemojo.com/chart/top_lifetime_gross",
+  baseURL: "https://www.boxofficemojo.com",
+  urlToFetch: "/chart/ww_top_lifetime_gross",
   tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
 
   maxIterations: 20,
@@ -17,7 +18,7 @@ async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
 
 async function fetchTableData(offset) {
   try {
-    const response = await axios.get(`${config.url}?offset=${offset}`);
+    const response = await axios.get(`${config.baseURL}${config.urlToFetch}?offset=${offset}`);
     const html = response.data;
     const $ = cheerio.load(html);
 
@@ -41,7 +42,7 @@ async function fetchTableData(offset) {
             rowData.title = cellText;
             // Get the complete URL and IMDb ID
             const anchorTag = $(cell).find("a");
-            const rawUrl = `https://www.boxofficemojo.com${anchorTag.attr("href")}`;
+            const rawUrl = `${config.baseURL}${anchorTag.attr("href")}`;
 
             // Remove query parameters from the URL
             const urlObj = new URL(rawUrl);
