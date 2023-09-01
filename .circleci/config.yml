@@ -10,7 +10,7 @@ parameters:
 jobs:
   build:
     docker:
-      - image: circleci/node:16.13
+      - image: cimg/node:20.5.1
     steps:
       - checkout
       - run:
