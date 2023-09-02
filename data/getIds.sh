@@ -25,8 +25,6 @@ if [[ $TYPE == "movie" ]]; then
   JQ_COMMAND_RESULTS=".movie_results"
   PROPERTY=P1265
   METACRITIC_TYPE=movie
-  FALSE_NUMBER=2
-  TRUE_OR_FALSE_NUMBER=3
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_films.txt
 else
   BASE_URL=https://www.allocine.fr/series/top/
@@ -39,8 +37,6 @@ else
   JQ_COMMAND_RESULTS=".tv_results"
   PROPERTY=P1267
   METACRITIC_TYPE=tv
-  FALSE_NUMBER=2
-  TRUE_OR_FALSE_NUMBER=3
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_series.txt
 fi
 
@@ -371,11 +367,11 @@ done
 remove_files
 
 if [[ $SOURCE == "circleci" ]]; then
-  sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}|(,FALSE){$FALSE_NUMBER,}/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER,}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/,FALSE$/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/,TRUE$/,TRUE/g" $FILMS_IDS_FILE_PATH
 else
-  sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){$FALSE_NUMBER}|(,FALSE){$FALSE_NUMBER,}/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i '' -E "s/(,TRUE|,FALSE){$TRUE_OR_FALSE_NUMBER,}/,TRUE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/,FALSE$/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/,TRUE$/,TRUE/g" $FILMS_IDS_FILE_PATH
 fi
 
 node_modules/.bin/surge $FILMS_ASSETS_PATH $BASE_URL_SURGE
