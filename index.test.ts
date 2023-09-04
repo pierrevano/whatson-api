@@ -322,7 +322,7 @@ const params = {
     query: "?minimum_ratings=3.5",
     expectedResult: (items) =>
       items.every((item) => {
-        expect(item.ratings_average).toBeGreaterThanOrEqual(3.5);
+        expect(parseFloat(item.ratings_average).toFixed(1)).toBeGreaterThanOrEqual(3.5);
       }),
   },
 
