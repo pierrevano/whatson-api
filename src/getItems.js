@@ -51,7 +51,14 @@ const getItems = async (
   const addFields_popularity_and_ratings = {
     $addFields: {
       popularity_average: { $avg: popularity_filters },
-      ratings_average: { $avg: ratings_filters },
+      ratings_average: {
+        $round: [
+          {
+            $avg: ratings_filters,
+          },
+          1,
+        ],
+      },
       sortAvgField: {
         $cond: [{ $eq: [{ $avg: popularity_filters }, null] }, Infinity, { $avg: popularity_filters }],
       },
@@ -82,7 +89,7 @@ const getItems = async (
           .join(",")
       )
     : parseFloat(minimum_ratings);
-  const match_ratings_above_minimum = { $match: { ratings_average: { $gte: !isNaN(minimum_ratings_sorted) ? minimum_ratings_sorted.toFixed(1) : -Infinity } } };
+  const match_ratings_above_minimum = { $match: { ratings_average: { $gte: !isNaN(minimum_ratings_sorted) ? minimum_ratings_sorted : -Infinity } } };
 
   const limit_results = { $limit: limit };
   const skip_results = { $skip: (page - 1) * limit };
