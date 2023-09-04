@@ -319,10 +319,10 @@ const params = {
   },
 
   items_with_minimum_ratings: {
-    query: "?minimum_ratings=3.9",
+    query: "?minimum_ratings=3.5",
     expectedResult: (items) =>
       items.every((item) => {
-        expect(item.ratings_average).toBeGreaterThanOrEqual(4);
+        expect(item.ratings_average).toBeGreaterThanOrEqual(3.5);
       }),
   },
 

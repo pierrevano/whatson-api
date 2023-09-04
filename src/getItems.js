@@ -82,7 +82,7 @@ const getItems = async (
           .join(",")
       )
     : parseFloat(minimum_ratings);
-  const match_ratings_above_minimum = { $match: { ratings_average: { $gte: !isNaN(minimum_ratings_sorted) ? minimum_ratings_sorted : -Infinity } } };
+  const match_ratings_above_minimum = { $match: { ratings_average: { $gte: !isNaN(minimum_ratings_sorted.toFixed(1)) ? minimum_ratings_sorted : -Infinity } } };
 
   const limit_results = { $limit: limit };
   const skip_results = { $skip: (page - 1) * limit };
