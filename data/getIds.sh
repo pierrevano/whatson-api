@@ -367,11 +367,11 @@ done
 remove_files
 
 if [[ $SOURCE == "circleci" ]]; then
-  sed -i -E "s/,FALSE$/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i -E "s/,TRUE$/,TRUE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/(,TRUE|,FALSE){1}(,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/(,TRUE|,FALSE){1}(,TRUE){1,}/,TRUE/g" $FILMS_IDS_FILE_PATH
 else
-  sed -i '' -E "s/,FALSE$/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i '' -E "s/,TRUE$/,TRUE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/(,TRUE|,FALSE){1}(,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/(,TRUE|,FALSE){1}(,TRUE){1,}/,TRUE/g" $FILMS_IDS_FILE_PATH
 fi
 
 node_modules/.bin/surge $FILMS_ASSETS_PATH $BASE_URL_SURGE
