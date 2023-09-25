@@ -57,9 +57,13 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
       dataWithoutId.imdb.popularity = imdbPopularity;
       dataWithoutId.mojo = mojoObj;
 
+      console.log("dataWithoutId.is_active:", dataWithoutId.is_active);
+      console.log("dataWithoutId.allocine.popularity:", dataWithoutId.allocine.popularity);
+      console.log("dataWithoutId.imdb.popularity:", dataWithoutId.imdb.popularity);
+      console.log("dataWithoutId.mojo:", dataWithoutId.mojo);
+
       console.log(`users_rating fetched from the db: ${dataWithoutId.allocine.users_rating}`);
       console.log(`imdb_rating fetched from the db: ${dataWithoutId.imdb.users_rating}`);
-      console.log(dataWithoutId.imdb.users_rating);
 
       if (dataWithoutId.allocine.users_rating !== null && dataWithoutId.imdb.users_rating === null) {
         return isEqualObj;
