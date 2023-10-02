@@ -287,7 +287,7 @@ const params = {
         return acc + allocinePopularity;
       }, 0);
 
-      expect(firstThreePopularitySum).toBeLessThanOrEqual(20);
+      expect(firstThreePopularitySum).toEqual(6);
     },
   },
 

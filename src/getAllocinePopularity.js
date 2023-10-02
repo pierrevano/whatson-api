@@ -1,6 +1,15 @@
 const axios = require("axios");
 const { config } = require("./config");
 
+function firstFiveElementsHaveHtml(array) {
+  for (let i = 0; i < 5 && i < array.length; i++) {
+    if (!array[i].includes(".html")) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /**
  * Extracts the ID of a movie or TV show from a remote popularity file hosted on a server.
  * @param {string} allocineURL - The URL of the movie or TV show on Allocine.
@@ -12,13 +21,15 @@ const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
     const response = await axios.get(`${config.baseURLSurgeAssets}/${popularityPath}`);
     const lines = response.data.split("\n");
 
-    const lastLineWithAllocineURL = lines
-      .slice()
-      .reverse()
-      .find((line) => line.includes(allocineURL));
+    if (!firstFiveElementsHaveHtml(lines)) {
+      console.log("Something's wrong with the popularity, exiting.");
+      process.exit(1);
+    }
 
-    if (lastLineWithAllocineURL) {
-      const valueBeforeComma = lastLineWithAllocineURL.match(/^(.+?),/)[1];
+    const firstLineWithAllocineURL = lines.find((line) => line.includes(allocineURL));
+
+    if (firstLineWithAllocineURL) {
+      const valueBeforeComma = firstLineWithAllocineURL.match(/^(.+?),/)[1];
       return valueBeforeComma;
     }
   } catch (error) {
