@@ -29,8 +29,6 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
     isEqual: false,
   };
 
-  console.log(`users_rating fetched remotely: ${users_rating}`);
-
   const item_type_api = item_type === "movie" ? "movie" : "tv";
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
 
@@ -57,14 +55,6 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
       dataWithoutId.imdb.popularity = imdbPopularity;
       dataWithoutId.mojo = mojoObj;
 
-      console.log("dataWithoutId.is_active:", dataWithoutId.is_active);
-      console.log("dataWithoutId.allocine.popularity:", dataWithoutId.allocine.popularity);
-      console.log("dataWithoutId.imdb.popularity:", dataWithoutId.imdb.popularity);
-      console.log("dataWithoutId.mojo:", dataWithoutId.mojo);
-
-      console.log(`users_rating fetched from the db: ${dataWithoutId.allocine.users_rating}`);
-      console.log(`imdb_rating fetched from the db: ${dataWithoutId.imdb.users_rating}`);
-
       if (dataWithoutId.allocine.users_rating !== null && dataWithoutId.imdb.users_rating === null) {
         return isEqualObj;
       }
@@ -75,7 +65,6 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
           data: dataWithoutId,
         };
       } else {
-        console.log("The users_rating values are not equal.");
         return isEqualObj;
       }
     } else {

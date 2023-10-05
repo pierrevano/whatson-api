@@ -41,8 +41,6 @@ const createJSON = async (
   mojoBoxOfficeArray,
   theMoviedbId
 ) => {
-  console.log(`Updating all item info...`);
-
   const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const allocinePopularity = await getAllocinePopularity(allocineURL);

@@ -94,7 +94,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
             ));
 
       // Perform upsert operation on the database with the fetched data
-      await upsertToDatabase(data, collectionData);
+      await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
     } catch (error) {
       throw new Error(`Error processing item at index ${index}: ${error.message}`);
     }

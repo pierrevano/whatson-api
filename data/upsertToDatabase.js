@@ -6,8 +6,9 @@ const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
  * @param {object} collectionData - The collection to upsert the data to.
  * @returns {void}
  */
-const upsertToDatabase = async (data, collectionData) => {
+const upsertToDatabase = async (data, collectionData, isEqual) => {
   try {
+    console.log("Updating all item info:", !isEqual);
     console.log(data);
     console.log();
 
