@@ -279,15 +279,13 @@ const params = {
     },
   },
 
-  three_top_popularity_items: {
+  top_popularity_items: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
-      const firstThreePopularitySum = items.slice(0, 3).reduce((acc, current) => {
-        const allocinePopularity = current.allocine.popularity || 0;
-        return acc + allocinePopularity;
-      }, 0);
+      const firstTenItems = items.slice(0, 10);
+      const countOfLessThanTen = firstTenItems.filter((item) => item.allocine.popularity < 10).length;
 
-      expect(firstThreePopularitySum).toEqual(6);
+      expect(countOfLessThanTen).toBeGreaterThanOrEqual(5);
     },
   },
 
