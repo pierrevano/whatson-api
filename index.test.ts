@@ -283,6 +283,13 @@ const params = {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
       const firstTenItems = items.slice(0, 10);
+
+      firstTenItems.forEach((item) => {
+        if (item.allocine.popularity > 10) {
+          console.log(item.title);
+        }
+      });
+
       const countOfLessThanTen = firstTenItems.filter((item) => item.allocine.popularity < 10).length;
 
       expect(countOfLessThanTen).toBeGreaterThanOrEqual(5);
