@@ -142,6 +142,9 @@ fi
 # Loop through all AlloCiné pages
 for PAGES_INDEX_NUMBER in $( eval echo {$PAGES_MIN_NUMBER..$PAGES_NUMBER} )
 do
+  echo "Downloading from: $BASE_URL?page=$PAGES_INDEX_NUMBER"
+  echo "----------------------------------------------------------------------------------------------------"
+
   # Get AlloCiné first page
   if [[ $PAGES_INDEX_NUMBER -eq 1 ]]; then
     FILM_ID=1
