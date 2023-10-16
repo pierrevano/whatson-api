@@ -13,7 +13,7 @@ const { getSeasonsNumber } = require("./getSeasonsNumber");
  */
 const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
   try {
-    const options = { validateStatus: (status) => status < 500 };
+    const options = { validateStatus: (status) => status < 500 && status !== 404 };
     const $ = await getCheerioContent(allocineHomepage, options);
 
     const title = $('meta[property="og:title"]').attr("content");
