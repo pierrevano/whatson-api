@@ -42,6 +42,10 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     return allocineFirstInfo;
   } catch (error) {
     console.log(`getAllocineFirstInfo - ${allocineHomepage}: ${error}`);
+
+    return {
+      error: error,
+    };
   }
 };
 

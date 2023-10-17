@@ -12,11 +12,22 @@ const cheerio = require("cheerio");
  * @returns A function that returns a promise that resolves to a cheerio object.
  */
 const getCheerioContent = async (url, options) => {
-  axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
-  const response = await axios.get(url, options);
-  const $ = cheerio.load(response.data);
+  try {
+    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    const response = await axios.get(url, options);
 
-  return $;
+    if (response.status === 404) {
+      throw new Error("Page not found.");
+    }
+
+    const $ = cheerio.load(response.data);
+
+    return $;
+  } catch (error) {
+    return {
+      error: error,
+    };
+  }
 };
 
 module.exports = { getCheerioContent };

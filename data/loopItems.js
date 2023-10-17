@@ -4,6 +4,7 @@ const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
 const createJSON = require("./createJSON");
 const generateURLs = require("./generateURLs");
+const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
 
 /**
  * Loop through items in a collection, perform various operations on each item, and return an object containing the number of new or updated items.
@@ -70,31 +71,38 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       // Get The Movie Database ID
       const theMoviedbId = urls.themoviedb.id;
 
-      // Determine if user ratings are equal and fetch the data
-      const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId);
-      const data =
-        !force && getIsEqualValue.isEqual
-          ? getIsEqualValue.data
-          : (createJsonCounter++,
-            await createJSON(
-              allocineCriticsDetails,
-              allocineURL,
-              allocineHomepage,
-              allocineId,
-              betaseriesHomepage,
-              betaseriesId,
-              imdbHomepage,
-              imdbId,
-              isActive,
-              item_type,
-              metacriticHomepage,
-              metacriticId,
-              mojoBoxOfficeArray,
-              theMoviedbId
-            ));
+      // Check if page is existing before upsert to DB
+      const { error } = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
 
-      // Perform upsert operation on the database with the fetched data
-      await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
+      // Determine if user ratings are equal and fetch the data
+      if (!error) {
+        const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId);
+        const data =
+          !force && getIsEqualValue.isEqual
+            ? getIsEqualValue.data
+            : (createJsonCounter++,
+              await createJSON(
+                allocineCriticsDetails,
+                allocineURL,
+                allocineHomepage,
+                allocineId,
+                betaseriesHomepage,
+                betaseriesId,
+                imdbHomepage,
+                imdbId,
+                isActive,
+                item_type,
+                metacriticHomepage,
+                metacriticId,
+                mojoBoxOfficeArray,
+                theMoviedbId
+              ));
+
+        // Perform upsert operation on the database with the fetched data
+        await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
+      } else {
+        console.error(error);
+      }
     } catch (error) {
       throw new Error(`Error processing item at index ${index}: ${error.message}`);
     }
