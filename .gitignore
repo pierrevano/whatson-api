@@ -9,4 +9,5 @@ node_modules
 package-lock.json
 run.sh
 src/assets/.!*!films_ids.txt
+src/assets/.!*!series_ids.txt
 temp_*
