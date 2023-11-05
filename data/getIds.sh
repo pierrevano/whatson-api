@@ -341,8 +341,8 @@ do
           data_not_found
         else
           if [[ $IMDB_ID == "noImdbId" ]] && [[ $PROMPT == "prompt" ]]; then
-            open -a "/Applications/Brave Browser.app" "https://www.allocine.fr$URL"
-            open -a "/Applications/Brave Browser.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+            open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
+            open -a "/Applications/Arc.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
             echo "Enter the IMDb id:"
             read IMDB_ID
           fi
@@ -357,7 +357,13 @@ do
           echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
 
           if [[ -z $THEMOVIEDB_ID ]]; then
-            data_not_found
+            if [[ $PROMPT == "prompt" ]]; then
+              open -a "/Applications/Arc.app" "https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED"
+              echo "Enter the The Movie Database ID:"
+              read THEMOVIEDB_ID
+            else
+              data_not_found
+            fi
           elif [[ $BETASERIES_ID == "null" ]]; then
             betaseries_to_null
           else
