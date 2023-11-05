@@ -279,6 +279,13 @@ const params = {
     },
   },
 
+  at_least_50_percent_trailers: {
+    query: "?is_active=true&limit=200",
+    expectedResult: (items) => {
+      expect(items.filter((item) => item.trailer !== null).length).toBeGreaterThanOrEqual(100);
+    },
+  },
+
   top_popularity_items: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {

@@ -46,11 +46,11 @@ if [[ $SOURCE == "circleci" ]]; then
 
   sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
 
-  sed -i "/IS_ACTIVE_1$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i -E "s/(,TRUE|,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
 else
   sed -i '' "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
 
-  sed -i '' "/IS_ACTIVE_1$/! s/$/,FALSE/g" $FILMS_IDS_FILE_PATH
+  sed -i '' -E "s/(,TRUE|,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
 WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,5}$" | wc -l | awk '{print $1}')
@@ -120,7 +120,10 @@ remove_files
 rm -f $POPULARITY_ASSETS_PATH
 
 # Downloading base URL
-curl -s $BASE_URL > temp_baseurl
+USER_AGENT="$((RANDOM % 1000000000000))"
+echo "Downloading with random User-Agent: $USER_AGENT on $BASE_URL"
+
+curl -s -H "User-Agent: $USER_AGENT" $BASE_URL > temp_baseurl
 
 # Get AlloCiné baseUrl number
 FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
@@ -142,18 +145,23 @@ fi
 # Loop through all AlloCiné pages
 for PAGES_INDEX_NUMBER in $( eval echo {$PAGES_MIN_NUMBER..$PAGES_NUMBER} )
 do
-  echo "Downloading from: $BASE_URL?page=$PAGES_INDEX_NUMBER"
-  echo "----------------------------------------------------------------------------------------------------"
-
   # Get AlloCiné first page
   if [[ $PAGES_INDEX_NUMBER -eq 1 ]]; then
     FILM_ID=1
+
+    echo "Downloading from: $BASE_URL"
+
   # Get AlloCiné second until second to last page
   elif [[ $PAGES_INDEX_NUMBER -lt $PAGES_NUMBER ]]; then
     curl -s $BASE_URL\?page\=$PAGES_INDEX_NUMBER > temp_baseurl
+
+    echo "Downloading from: $BASE_URL?page=$PAGES_INDEX_NUMBER"
+
   # Get AlloCiné last page
   elif [[ $PAGES_INDEX_NUMBER -eq $PAGES_NUMBER ]]; then
     curl -s $BASE_URL\?page\=$PAGES_INDEX_NUMBER > temp_baseurl
+
+    echo "Downloading from: $BASE_URL?page=$PAGES_INDEX_NUMBER"
 
     FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
     if [[ $FILMS_NUMBER -gt 15 ]]; then
@@ -368,14 +376,6 @@ do
 done
 
 remove_files
-
-if [[ $SOURCE == "circleci" ]]; then
-  sed -i -E "s/(,FALSE){1,}$/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i -E "s/(,TRUE|,FALSE){1}(,TRUE){1,}$/,TRUE/g" $FILMS_IDS_FILE_PATH
-else
-  sed -i '' -E "s/(,FALSE){1,}$/,FALSE/g" $FILMS_IDS_FILE_PATH
-  sed -i '' -E "s/(,TRUE|,FALSE){1}(,TRUE){1,}$/,TRUE/g" $FILMS_IDS_FILE_PATH
-fi
 
 node_modules/.bin/surge $FILMS_ASSETS_PATH $BASE_URL_SURGE
 echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_SURGE"
