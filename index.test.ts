@@ -79,6 +79,17 @@ const params = {
       }),
   },
 
+  both_movies_and_tvshows: {
+    query: "?item_type=movie,tvshow",
+    expectedResult: (items) => {
+      const movieItems = items.filter((item) => item.item_type === "movie");
+      const tvshowItems = items.filter((item) => item.item_type === "tvshow");
+
+      expect(movieItems.length).toBeGreaterThan(0);
+      expect(tvshowItems.length).toBeGreaterThan(0);
+    },
+  },
+
   both_active_and_non_active_items: {
     query: "?is_active=true,false",
     expectedResult: (items) =>
@@ -145,6 +156,13 @@ const params = {
         expect(item).toHaveProperty("status");
         expect(item.status).toBe(null);
       }),
+  },
+
+  custom_limit_value: {
+    query: "?limit=5",
+    expectedResult: (items) => {
+      expect(items.length).toBe(5);
+    },
   },
 
   ongoing_tvshows_with_1_and_2_seasons: {
