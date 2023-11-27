@@ -7,6 +7,7 @@ const { getImdbUsersRating } = require("../src/getImdbUsersRating");
 const { getMetacriticRating } = require("../src/getMetacriticRating");
 const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
 const { getPlatformsLinks } = require("../src/getPlatformsLinks");
+const { getRottenTomatoesRating } = require("../src/getRottenrottenTomatoesRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -22,6 +23,8 @@ const { getPlatformsLinks } = require("../src/getPlatformsLinks");
  * @param {string} item_type - The type of the item (e.g., movie, series)
  * @param {string} metacriticHomepage - The Metacritic homepage URL
  * @param {string} metacriticId - The Metacritic ID
+ * @param {string} rottenTomatoesHomepage - The Rotten Tomatoes homepage URL
+ * @param {string} rottenTomatoesId - The Rotten Tomatoes ID
  * @param {number} theMoviedbId - The MovieDB ID
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
  */
@@ -38,6 +41,8 @@ const createJSON = async (
   item_type,
   metacriticHomepage,
   metacriticId,
+  rottenTomatoesHomepage,
+  rottenTomatoesId,
   mojoBoxOfficeArray,
   theMoviedbId
 ) => {
@@ -50,6 +55,7 @@ const createJSON = async (
   const imdbPopularity = await getImdbPopularity(imdbHomepage);
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
   const metacriticRating = await getMetacriticRating(imdbHomepage, metacriticHomepage, metacriticId);
+  const rottenTomatoesRating = await getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId);
 
   /* Creating an object called allocineObj. */
   const allocineObj = {
@@ -93,6 +99,17 @@ const createJSON = async (
         }
       : null;
 
+  /* Creates a Rotten Tomatoes object if the rottenTomatoes rating is not null. */
+  const rottenTomatoesObj =
+    rottenTomatoesRating !== null
+      ? {
+          id: rottenTomatoesRating.id,
+          url: rottenTomatoesRating.url,
+          users_rating: rottenTomatoesRating.usersRating,
+          critics_rating: rottenTomatoesRating.criticsRating,
+        }
+      : null;
+
   const mojoObj =
     mojoValues !== null
       ? {
@@ -116,6 +133,7 @@ const createJSON = async (
     betaseries: betaseriesObj,
     imdb: imdbObj,
     metacritic: metacriticObj,
+    rottenTomatoes: rottenTomatoesObj,
     mojo: mojoObj,
   };
 

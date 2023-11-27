@@ -65,6 +65,10 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       const metacriticId = urls.metacritic.id;
       const metacriticHomepage = urls.metacritic.homepage;
 
+      /* Handle Rotten Tomatoes related data */
+      const rottenTomatoesId = urls.rottenTomatoes.id;
+      const rottenTomatoesHomepage = urls.rottenTomatoes.homepage;
+
       // Determine if the URL is active
       const isActive = urls.is_active;
 
@@ -94,6 +98,8 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
                 item_type,
                 metacriticHomepage,
                 metacriticId,
+                rottenTomatoesHomepage,
+                rottenTomatoesId,
                 mojoBoxOfficeArray,
                 theMoviedbId
               ));

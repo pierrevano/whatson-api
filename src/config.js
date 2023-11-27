@@ -13,6 +13,8 @@ const config = {
   baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
   baseURLMetacriticFilm: "https://www.metacritic.com/movie/",
   baseURLMetacriticSerie: "https://www.metacritic.com/tv/",
+  baseURLRottenTomatoesFilm: "https://www.rottentomatoes.com/m/",
+  baseURLRottenTomatoesSerie: "https://www.rottentomatoes.com/tv/",
   baseURLSurgeAssets: "https://whatson-assets.surge.sh",
 
   collectionName: "data",

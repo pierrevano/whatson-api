@@ -16,8 +16,10 @@ const getCheerioContent = async (url, options) => {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const response = await axios.get(url, options);
 
-    if (response.status === 404) {
-      throw new Error("Page not found.");
+    if (response.status !== 200) {
+      throw new Error("Failed to retrieve data.");
+    } else {
+      console.log(`${url}:`, response.status);
     }
 
     const $ = cheerio.load(response.data);

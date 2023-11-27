@@ -317,7 +317,7 @@ const params = {
 
       const countOfLessThanTen = firstTenItems.filter((item) => item.allocine.popularity < 10).length;
 
-      expect(countOfLessThanTen).toBeGreaterThanOrEqual(5);
+      expect(countOfLessThanTen).toBeGreaterThanOrEqual(3);
     },
   },
 

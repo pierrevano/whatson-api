@@ -33,6 +33,9 @@ const generateURLs = (item_type, config, json) => {
   const metacriticId = json.METACRITIC_ID;
   const metacriticHomepage = item_type === "movie" ? `${config.baseURLMetacriticFilm}${metacriticId}` : `${config.baseURLMetacriticSerie}${metacriticId}`;
 
+  const rottenTomatoesId = json.ROTTEN_TOMATOES_ID;
+  const rottenTomatoesHomepage = item_type === "movie" ? `${config.baseURLRottenTomatoesFilm}${rottenTomatoesId}` : `${config.baseURLRottenTomatoesSerie}${rottenTomatoesId}`;
+
   const isActive = json.IS_ACTIVE_1 === "TRUE";
 
   const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
@@ -47,6 +50,7 @@ const generateURLs = (item_type, config, json) => {
     imdb: { id: imdbId, homepage: imdbHomepage },
     betaseries: { id: betaseriesId, homepage: betaseriesHomepage },
     metacritic: { id: metacriticId, homepage: metacriticHomepage },
+    rottenTomatoes: { id: rottenTomatoesId, homepage: rottenTomatoesHomepage },
     themoviedb: { id: theMoviedbId },
     is_active: isActive,
   };
