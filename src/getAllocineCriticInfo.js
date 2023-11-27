@@ -14,6 +14,8 @@ const { convertTitleToNumber } = require("./utils/convertTitleToNumber");
  *   - criticRating: rating of the critic
  */
 const getAllocineCriticInfo = async (allocineCriticsDetails) => {
+  let allocineCriticInfo = null;
+
   try {
     const options = { validateStatus: (status) => status === 200 };
     const $ = await getCheerioContent(allocineCriticsDetails, options);
@@ -40,16 +42,16 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
     if (criticsRatingLength === 0) criticsRatingLength = null;
     criticsRating = criticsRatingLength === null ? null : parseFloat((sum / criticsRatingLength).toFixed(1));
 
-    const allocineCriticInfo = {
+    allocineCriticInfo = {
       criticsNumber: criticsRatingLength,
       criticsRating: criticsRating,
       criticsRatingDetails: criticsRatingDetails,
     };
-
-    return allocineCriticInfo;
   } catch (error) {
     console.log(`getAllocineCriticInfo - ${allocineCriticsDetails}: ${error}`);
   }
+
+  return allocineCriticInfo;
 };
 
 module.exports = { getAllocineCriticInfo };
