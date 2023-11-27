@@ -11,6 +11,7 @@ const { getCheerioContent } = require("./utils/getCheerioContent");
  */
 const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId) => {
   let rottenTomatoesObj = null;
+
   try {
     const options = {
       headers: {
@@ -33,12 +34,11 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
         criticsRating: criticsRating,
       };
     }
-
-    return rottenTomatoesObj;
   } catch (error) {
     console.log(`getRottenTomatoesRating - ${rottenTomatoesHomepage}: ${error}`);
-    return rottenTomatoesObj;
   }
+
+  return rottenTomatoesObj;
 };
 
 module.exports = { getRottenTomatoesRating };

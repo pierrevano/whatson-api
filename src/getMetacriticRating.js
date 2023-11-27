@@ -15,8 +15,9 @@ const { getCheerioContent } = require("./utils/getCheerioContent");
  * @throws {Error} - If there is an error retrieving the Metacritic rating.
  */
 const getMetacriticRating = async (imdbHomepage, metacriticHomepage, metacriticId) => {
+  let metacriticObj = null;
+
   try {
-    let metacriticObj = null;
     let metacriticLink;
     const options = {
       headers: {
@@ -103,11 +104,11 @@ const getMetacriticRating = async (imdbHomepage, metacriticHomepage, metacriticI
         criticsRatingDetails: criticsRatingDetails,
       };
     }
-
-    return metacriticObj;
   } catch (error) {
     console.log(`getMetacriticRating - ${imdbHomepage}: ${error}`);
   }
+
+  return metacriticObj;
 };
 
 module.exports = { getMetacriticRating };
