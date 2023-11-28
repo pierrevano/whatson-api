@@ -41,6 +41,14 @@ const getRatingsFilters = async (ratings_filters_query) => {
     if (ratings_filters_array.includes("metacritic_users")) {
       ratings_filters.push({ $divide: ["$metacritic.users_rating", 2] });
     }
+
+    if (ratings_filters_array.includes("rottenTomatoes_critics")) {
+      ratings_filters.push({ $divide: ["$rottenTomatoes.critics_rating", 20] });
+    }
+
+    if (ratings_filters_array.includes("rottenTomatoes_users")) {
+      ratings_filters.push({ $divide: ["$rottenTomatoes.users_rating", 20] });
+    }
   }
 
   return ratings_filters;
