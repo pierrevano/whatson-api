@@ -15,7 +15,9 @@ const getRatingsFilters = async (ratings_filters_query) => {
       { $divide: ["$betaseries.users_rating", 1] },
       { $divide: ["$imdb.users_rating", 2] },
       { $divide: ["$metacritic.critics_rating", 20] },
-      { $divide: ["$metacritic.users_rating", 2] }
+      { $divide: ["$metacritic.users_rating", 2] },
+      { $divide: ["$rottenTomatoes.critics_rating", 20] },
+      { $divide: ["$rottenTomatoes.users_rating", 20] }
     ];
   } else {
     if (ratings_filters_array.includes("allocine_critics")) {

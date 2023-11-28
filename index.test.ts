@@ -28,6 +28,27 @@ function countLines(filename) {
   return lines.length;
 }
 
+const ratingsConfig = {
+  allocine: {
+    users_rating: 1,
+    critics_rating: 1,
+  },
+  betaseries: {
+    users_rating: 1,
+  },
+  imdb: {
+    users_rating: 0.5,
+  },
+  metacritic: {
+    critics_rating: 0.05,
+    users_rating: 0.5,
+  },
+  rottenTomatoes: {
+    users_rating: 0.05,
+    critics_rating: 0.05,
+  },
+};
+
 /**
  * An object containing various query parameters and their expected results.
  * @param {object} params - An object containing various query parameters and their expected results.
@@ -397,6 +418,56 @@ const params = {
 
         item.critics_number && item.critics_rating_details ? expect(item.critics_number).toBe(item.critics_rating_details.length) : null;
       }),
+  },
+
+  correct_ratings_average_based_on_all_filters: {
+    query: "?item_type=movie,tvshow&rating_filters=all",
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        let ratingsSum = 0;
+        let totalRatingsCount = 0;
+
+        Object.keys(ratingsConfig).forEach((site) => {
+          if (item[site]) {
+            Object.keys(ratingsConfig[site]).forEach((ratingKey) => {
+              if (item[site][ratingKey]) {
+                ratingsSum += ratingsConfig[site][ratingKey] * parseFloat(item[site][ratingKey]);
+                totalRatingsCount += 1;
+              }
+            });
+          }
+        });
+
+        const averageRating = totalRatingsCount > 0 ? Number((ratingsSum / totalRatingsCount).toFixed(1)) : 0;
+
+        expect(averageRating).toBe(item.ratings_average);
+      });
+    },
+  },
+
+  correct_ratings_average_based_on_selected_filters: {
+    query: "?item_type=movie,tvshow&rating_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users",
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        let ratingsSum = 0;
+        let totalRatingsCount = 0;
+
+        Object.keys(ratingsConfig).forEach((site) => {
+          if (item[site]) {
+            Object.keys(ratingsConfig[site]).forEach((ratingKey) => {
+              if (item[site][ratingKey]) {
+                ratingsSum += ratingsConfig[site][ratingKey] * parseFloat(item[site][ratingKey]);
+                totalRatingsCount += 1;
+              }
+            });
+          }
+        });
+
+        const averageRating = totalRatingsCount > 0 ? Number((ratingsSum / totalRatingsCount).toFixed(1)) : 0;
+
+        expect(averageRating).toBe(item.ratings_average);
+      });
+    },
   },
 };
 
