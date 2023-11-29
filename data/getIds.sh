@@ -214,6 +214,9 @@ do
     # Add first line to URLs check file
     echo "first line" >> $TEMP_URLS_FILE_PATH
 
+    METACRITIC_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f5)
+    ROTTEN_TOMATOES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f6)
+
     if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "prompt" ]]; then
       URL_FILE=$TEMP_URLS_FILE_PATH
       while IFS= read -r TEMP_URLS <&3; do
@@ -226,6 +229,12 @@ do
       done 3<$URL_FILE
 
       echo $URL >> $TEMP_URLS_FILE_PATH
+
+      if [[ $PROMPT == "prompt" ]] && [[ $ALLOCINE_URL ]] && [[ $METACRITIC_CHECK != "null" ]] && [[ $ROTTEN_TOMATOES_CHECK != "null" ]]; then
+        DUPLICATE=1
+      else
+        echo "Found $URL to be rechecked."
+      fi
 
       if [[ $DUPLICATE -eq 0 ]]; then
         curl -s https://www.allocine.fr$URL > temp_allocine_url
@@ -384,8 +393,11 @@ do
         count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
         if [[ $count -gt 1 ]] && [[ $PROMPT == "prompt" ]]; then
           echo "Number of lines found for $URL: $count"
-          echo "Removing first line for: $URL"
-          sed -i '' '/^'"$URL"',/d' $FILMS_IDS_FILE_PATH
+          echo "Removing first line for: $URL with ID: $FILM_ID"
+          awk '!flag && /.*='"$FILM_ID"'\.html.*$/ {flag=1; next} 1' $FILMS_IDS_FILE_PATH > temp_sed && mv temp_sed $FILMS_IDS_FILE_PATH
+
+          new_count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
+          echo "Number of lines found for $URL: $new_count"
         fi
       fi
     fi
