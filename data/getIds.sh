@@ -92,6 +92,12 @@ remove_files () {
   sort_ids
 
   rm -f ./temp_*
+
+  if [[ $SOURCE == "circleci" ]]; then
+    sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
+  else
+    sed -i '' "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
+  fi
 }
 
 # A function that is called when the data is not found.
@@ -208,7 +214,7 @@ do
     # Add first line to URLs check file
     echo "first line" >> $TEMP_URLS_FILE_PATH
 
-    if [[ $FOUND -eq 0 ]]; then
+    if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "prompt" ]]; then
       URL_FILE=$TEMP_URLS_FILE_PATH
       while IFS= read -r TEMP_URLS <&3; do
         if [[ $URL == $TEMP_URLS ]]; then
@@ -374,6 +380,13 @@ do
         echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,TRUE" >> $FILMS_IDS_FILE_PATH
 
         echo "----------------------------------------------------------------------------------------------------"
+
+        count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
+        if [[ $count -gt 1 ]] && [[ $PROMPT == "prompt" ]]; then
+          echo "Number of lines found for $URL: $count"
+          echo "Removing first line for: $URL"
+          sed -i '' '/^'"$URL"',/d' $FILMS_IDS_FILE_PATH
+        fi
       fi
     fi
 

@@ -36,7 +36,7 @@ const generateURLs = (item_type, config, json) => {
   const rottenTomatoesId = json.ROTTEN_TOMATOES_ID;
   const rottenTomatoesHomepage = item_type === "movie" ? `${config.baseURLRottenTomatoesFilm}${rottenTomatoesId}` : `${config.baseURLRottenTomatoesSerie}${rottenTomatoesId}`;
 
-  const isActive = json.IS_ACTIVE_1 === "TRUE";
+  const isActive = json.IS_ACTIVE === "TRUE";
 
   const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
 

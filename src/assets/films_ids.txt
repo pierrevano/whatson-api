@@ -1,4 +1,4 @@
-URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTIVE_1
+URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTIVE
 /film/fichefilm_gen_cfilm=1.html,tt0082934,23117-the-postman-always-rings-twice,11027,null,1016592-postman_always_rings_twice,FALSE
 /film/fichefilm_gen_cfilm=2.html,tt0087233,4292-falling-in-love,52744,null,falling_in_love,FALSE
 /film/fichefilm_gen_cfilm=3.html,tt0044602,6314-fanfan-la-tulipe,62547,fan-fan-the-tulip,fanfan_la_tulipe_1953,FALSE
@@ -87,7 +87,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=134.html,tt0058888,9116-red-beard,3780,red-beard,red_beard,FALSE
 /film/fichefilm_gen_cfilm=135.html,tt0072684,244-barry-lyndon,3175,barry-lyndon,barry_lyndon,FALSE
 /film/fichefilm_gen_cfilm=136.html,tt0050330,9217-the-lower-depths,26893,null,lower_depths,FALSE
-/film/fichefilm_gen_cfilm=139.html,tt0048280,3730-lady-and-the-tramp,10340,lady-and-the-tramp,lady_and_the_tramp,FALSE
+/film/fichefilm_gen_cfilm=139.html,tt0048280,3730-lady-and-the-tramp,10340,lady-and-the-tramp,lady_and_the_tramp,TRUE
 /film/fichefilm_gen_cfilm=140.html,tt0086969,3111-birdy,11296,null,birdy,FALSE
 /film/fichefilm_gen_cfilm=141.html,tt0086994,24285-boy-meets-girl,63418,null,1032409-boy_meets_girl,FALSE
 /film/fichefilm_gen_cfilm=142.html,tt0088846,3067-brazil,68,brazil,null,FALSE
@@ -121,7 +121,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=176.html,tt0087182,3698-dune,841,dune,1006364-dune,FALSE
 /film/fichefilm_gen_cfilm=178.html,tt0064276,4113-easy-rider,624,easy-rider,easy_rider,FALSE
 /film/fichefilm_gen_cfilm=179.html,tt0087280,8172-forbrydelsens-element,9063,null,element_of_crime,FALSE
-/film/fichefilm_gen_cfilm=180.html,tt0080678,263-the-elephant-man,1955,null,1006527-elephant_man,FALSE
+/film/fichefilm_gen_cfilm=180.html,tt0080678,263-the-elephant-man,1955,null,1006527-elephant_man,TRUE
 /film/fichefilm_gen_cfilm=181.html,tt0087205,22797-les-enfants,86096,null,771106530,FALSE
 /film/fichefilm_gen_cfilm=182.html,tt0037674,43-les-enfants-du-paradis,2457,children-of-paradise,children_of_paradise,FALSE
 /film/fichefilm_gen_cfilm=183.html,tt0074486,3392-eraserhead,985,eraserhead,eraserhead,FALSE
@@ -210,7 +210,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=297.html,tt0047478,4097-seven-samurai,346,seven-samurai,seven_samurai_1956,FALSE
 /film/fichefilm_gen_cfilm=298.html,tt0090015,3127-shoah,42044,shoah-1985,shoah,FALSE
 /film/fichefilm_gen_cfilm=299.html,tt0052311,7422-touch-of-evil,1480,touch-of-evil,1021749-touch_of_evil,FALSE
-/film/fichefilm_gen_cfilm=300.html,tt0070723,3275-soylent-green,12101,soylent-green,soylent_green,FALSE
+/film/fichefilm_gen_cfilm=300.html,tt0070723,3275-soylent-green,12101,soylent-green,soylent_green,TRUE
 /film/fichefilm_gen_cfilm=301.html,tt0088167,11563-les-specialistes,12111,null,771201648,FALSE
 /film/fichefilm_gen_cfilm=302.html,tt0088172,9692-starman,9663,starman,starman,FALSE
 /film/fichefilm_gen_cfilm=303.html,tt0090070,29663-steaming,132482,null,steaming,FALSE
@@ -240,10 +240,10 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=330.html,tt0070531,27424-phase-iv,59189,null,phase_iv_1974,FALSE
 /film/fichefilm_gen_cfilm=331.html,tt0047327,88378-pane-amore-e-gelosia,57991,null,null,FALSE
 /film/fichefilm_gen_cfilm=332.html,tt0061037,97798-le-streghe,36236,null,le-streghe-the-witches,FALSE
-/film/fichefilm_gen_cfilm=335.html,tt0029811,2344-young-and-innocent,2762,null,young_and_innocent,FALSE
+/film/fichefilm_gen_cfilm=335.html,tt0029811,2344-young-and-innocent,2762,null,young_and_innocent,TRUE
 /film/fichefilm_gen_cfilm=337.html,tt0056801,7399-8,422,-1963,8-12,FALSE
 /film/fichefilm_gen_cfilm=338.html,tt0028950,1193-la-grande-illusion,777,null,la_grande_illusion,FALSE
-/film/fichefilm_gen_cfilm=339.html,tt0087363,3106-gremlins,927,gremlins,gremlins,FALSE
+/film/fichefilm_gen_cfilm=339.html,tt0087363,3106-gremlins,927,gremlins,gremlins,TRUE
 /film/fichefilm_gen_cfilm=340.html,tt0022913,326-freaks,136,null,freaks,FALSE
 /film/fichefilm_gen_cfilm=344.html,tt0041931,8404-stromboli-terra-di-dio,4173,null,stromboli,FALSE
 /film/fichefilm_gen_cfilm=357.html,tt0119307,20884-lhomme-est-une-femme-comme-les-autres,60750,null,null,FALSE
@@ -308,7 +308,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=441.html,tt0027125,16194-top-hat,3080,null,top_hat,FALSE
 /film/fichefilm_gen_cfilm=442.html,tt0024025,70227-flying-down-to-rio,28293,null,flying_down_to_rio,FALSE
 /film/fichefilm_gen_cfilm=446.html,tt0067778,3319-le-souffle-au-coeur,42501,null,murmur_of_the_heart,FALSE
-/film/fichefilm_gen_cfilm=447.html,tt0071733,14973-lacombe-lucien,55368,null,lacombe_lucien,TRUE
+/film/fichefilm_gen_cfilm=447.html,tt0071733,14973-lacombe-lucien,55368,null,lacombe_lucien,FALSE
 /film/fichefilm_gen_cfilm=448.html,tt0088763,5-back-to-the-future,105,back-to-the-future,back_to_the_future,FALSE
 /film/fichefilm_gen_cfilm=449.html,tt0072709,66300-black-moon,27361,null,10008411-black_moon,FALSE
 /film/fichefilm_gen_cfilm=451.html,tt0077827,18111-lady-oscar,31551,null,lady-oscar,FALSE
@@ -317,7 +317,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=464.html,tt0056846,12693-la-baie-des-anges,60773,bay-of-angels,la_baie_des_anges,FALSE
 /film/fichefilm_gen_cfilm=467.html,tt0070034,4077-enter-the-dragon,9461,enter-the-dragon,enter_the_dragon,FALSE
 /film/fichefilm_gen_cfilm=469.html,tt0070960,68473-levenement-le-plus-important-depuis-que-lhomme-a-marche-sur-la-lune,121960,null,a_slightly_pregnant_man,FALSE
-/film/fichefilm_gen_cfilm=470.html,tt0102511,13893-naked-lunch,2742,naked-lunch,naked_lunch,FALSE
+/film/fichefilm_gen_cfilm=470.html,tt0102511,13893-naked-lunch,2742,naked-lunch,naked_lunch,TRUE
 /film/fichefilm_gen_cfilm=472.html,tt0064679,68542-model-shop,85942,null,model_shop,FALSE
 /film/fichefilm_gen_cfilm=474.html,tt0191760,93889-lacrobate,291099,null,lacrobate_2011,FALSE
 /film/fichefilm_gen_cfilm=478.html,tt0062952,896-faces,753,null,faces,FALSE
@@ -344,7 +344,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=510.html,tt0042436,35303-les-enfants-terribles,15390,null,les_enfants_terribles,FALSE
 /film/fichefilm_gen_cfilm=511.html,tt0078073,29748-perceval-le-gallois,75733,null,perceval,FALSE
 /film/fichefilm_gen_cfilm=512.html,tt0066065,14384-medea,26356,null,770811685,FALSE
-/film/fichefilm_gen_cfilm=513.html,tt0038669,6317-the-killers,14638,null,1080205-killers,TRUE
+/film/fichefilm_gen_cfilm=513.html,tt0038669,6317-the-killers,14638,null,1080205-killers,FALSE
 /film/fichefilm_gen_cfilm=514.html,tt0040525,869-the-lady-from-shanghai,3766,null,the_lady_from_shanghai,FALSE
 /film/fichefilm_gen_cfilm=515.html,tt0037075,51342-ministry-of-fear,21451,null,ministry_of_fear,FALSE
 /film/fichefilm_gen_cfilm=516.html,tt0053333,16680-i-tartassati,51912,null,null,FALSE
@@ -479,7 +479,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=741.html,tt0092842,65527-dead-of-winter,70199,null,dead_of_winter,FALSE
 /film/fichefilm_gen_cfilm=742.html,tt0089726,12503-on-ne-meurt-que-deux-fois,78538,null,on_ne_meurt_que_2_fois,FALSE
 /film/fichefilm_gen_cfilm=745.html,tt0035279,7431-saboteur,31997,saboteur,saboteur,FALSE
-/film/fichefilm_gen_cfilm=746.html,tt0032904,20134-the-philadelphia-story,981,null,philadelphia_story,FALSE
+/film/fichefilm_gen_cfilm=746.html,tt0032904,20134-the-philadelphia-story,981,null,philadelphia_story,TRUE
 /film/fichefilm_gen_cfilm=756.html,tt0082970,3191-ragtime,25566,null,ragtime,FALSE
 /film/fichefilm_gen_cfilm=757.html,tt0102592,24052-one-false-move,21128,one-false-move,one_false_move,FALSE
 /film/fichefilm_gen_cfilm=759.html,tt0123172,11836-michael-kael-contre-la-world-news-company,53919,null,michael_kael_contre_la_world_news_company,FALSE
@@ -531,7 +531,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=857.html,tt0033467,247-citizen-kane,15,citizen-kane,null,FALSE
 /film/fichefilm_gen_cfilm=859.html,tt0082892,45741-pelle-svanslos,47542,null,pelle_svanslos,FALSE
 /film/fichefilm_gen_cfilm=860.html,tt0041719,1447-orphee,4558,null,orpheus,FALSE
-/film/fichefilm_gen_cfilm=863.html,tt0081505,223-the-shining,694,the-shining,shining,TRUE
+/film/fichefilm_gen_cfilm=863.html,tt0081505,223-the-shining,694,the-shining,shining,FALSE
 /film/fichefilm_gen_cfilm=864.html,tt0045296,28221-viva-zapata,1810,null,viva_zapata,FALSE
 /film/fichefilm_gen_cfilm=870.html,tt0032484,29162-foreign-correspondent,25670,null,foreign_correspondent,FALSE
 /film/fichefilm_gen_cfilm=871.html,tt0107106,82317-hexagone,540498,null,hexagone_1994,FALSE
@@ -557,7 +557,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=899.html,tt0199175,31181-letrangleur,185843,null,null,FALSE
 /film/fichefilm_gen_cfilm=900.html,tt0086250,238-scarface,111,scarface,scarface,FALSE
 /film/fichefilm_gen_cfilm=903.html,tt0083678,96196-the-border,22023,null,1002907-border,FALSE
-/film/fichefilm_gen_cfilm=908.html,tt0070215,3286-il-mio-nome-e-nessuno,9474,my-name-is-nobody,my_name_is_nobody,FALSE
+/film/fichefilm_gen_cfilm=908.html,tt0070215,3286-il-mio-nome-e-nessuno,9474,my-name-is-nobody,my_name_is_nobody,TRUE
 /film/fichefilm_gen_cfilm=912.html,tt0079619,119912-oblomov,83446,null,oblomov,FALSE
 /film/fichefilm_gen_cfilm=915.html,tt0081573,6537-superman-ii,8536,superman-ii,superman_ii,FALSE
 /film/fichefilm_gen_cfilm=918.html,tt0054821,9204-le-doulos,20778,null,le_doulos,FALSE
@@ -577,7 +577,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=946.html,tt0076097,36488-koko-le-gorille-qui-parle,54194,null,koko_a_talking_gorilla,FALSE
 /film/fichefilm_gen_cfilm=947.html,tt0083922,3070-fanny-och-alexander,5961,fanny-and-alexander,fanny_and_alexander,FALSE
 /film/fichefilm_gen_cfilm=948.html,tt0060891,65244-la-religieuse,42722,null,la_religieuse_1971,FALSE
-/film/fichefilm_gen_cfilm=950.html,tt0081398,3063-raging-bull,1578,raging-bull,raging_bull,FALSE
+/film/fichefilm_gen_cfilm=950.html,tt0081398,3063-raging-bull,1578,raging-bull,raging_bull,TRUE
 /film/fichefilm_gen_cfilm=951.html,tt0088286,7699-top-secret,8764,top-secret!,1021699-top_secret,FALSE
 /film/fichefilm_gen_cfilm=952.html,tt0080957,56546-les-jeux-de-la-comtesse-dolingen-de-gratz,204411,null,games_of_countess_dolingen_of_gratz,FALSE
 /film/fichefilm_gen_cfilm=953.html,tt0091535,29491-les-mois-davril-sont-meurtriers,78284,null,770875524,FALSE
@@ -768,14 +768,14 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=1300.html,tt0077542,24063-la-femme-qui-pleure,63156,null,770805984,FALSE
 /film/fichefilm_gen_cfilm=1301.html,tt0087918,35493-la-pirate,63157,null,null,FALSE
 /film/fichefilm_gen_cfilm=1302.html,tt0179641,11554-lan-01,63172,null,lan-01-the-year-01,FALSE
-/film/fichefilm_gen_cfilm=1305.html,tt0087284,12512-fort-saganne,4274,null,fort_saganne,TRUE
+/film/fichefilm_gen_cfilm=1305.html,tt0087284,12512-fort-saganne,4274,null,fort_saganne,FALSE
 /film/fichefilm_gen_cfilm=1307.html,tt0068868,87788-la-cagna,63176,null,liza,FALSE
 /film/fichefilm_gen_cfilm=1312.html,tt0041452,25445-the-heiress,28571,null,heiress,FALSE
 /film/fichefilm_gen_cfilm=1313.html,tt0035432,13104-this-gun-for-hire,16703,null,1021269-this_gun_for_hire,FALSE
 /film/fichefilm_gen_cfilm=1315.html,tt0028445,8378-partie-de-campagne,43878,null,partie_de_campagne,FALSE
 /film/fichefilm_gen_cfilm=1316.html,tt0056945,31405-i-compagni,51092,null,the_organizer,FALSE
 /film/fichefilm_gen_cfilm=1318.html,tt0032701,25446-the-letter,17801,null,1012264-letter,FALSE
-/film/fichefilm_gen_cfilm=1323.html,tt0071910,760-il-portiere-di-notte,26648,null,night_porter,TRUE
+/film/fichefilm_gen_cfilm=1323.html,tt0071910,760-il-portiere-di-notte,26648,null,night_porter,FALSE
 /film/fichefilm_gen_cfilm=1325.html,tt0228786,3942-les-rivieres-pourpres,60670,the-crimson-rivers,the_crimson_rivers,FALSE
 /film/fichefilm_gen_cfilm=1326.html,tt0120776,39398-one-true-thing,53113,one-true-thing,one_true_thing,FALSE
 /film/fichefilm_gen_cfilm=1331.html,tt0054758,79391-le-combat-dans-lile,63212,null,le_combat_dans_lile,FALSE
@@ -863,7 +863,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=1487.html,tt0058985,64221-le-bonheur,53023,null,le_bonheur,FALSE
 /film/fichefilm_gen_cfilm=1489.html,tt0064591,null,63320,null,null,FALSE
 /film/fichefilm_gen_cfilm=1490.html,tt0088683,27023-agnes-of-god,24735,null,agnes_of_god,FALSE
-/film/fichefilm_gen_cfilm=1493.html,tt0058430,21407-onibaba,3763,null,onibaba,TRUE
+/film/fichefilm_gen_cfilm=1493.html,tt0058430,21407-onibaba,3763,null,onibaba,FALSE
 /film/fichefilm_gen_cfilm=1498.html,tt0015163,4558-the-navigator,32318,null,the-navigator,FALSE
 /film/fichefilm_gen_cfilm=1500.html,tt0093822,4175-raising-arizona,378,raising-arizona,raising_arizona,FALSE
 /film/fichefilm_gen_cfilm=1502.html,tt0091270,22599-inspecteur-lavardin,63322,null,inspecteur_lavardin,FALSE
@@ -896,7 +896,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=1551.html,tt0084654,3188-die-sehnsucht-der-veronika-voss,2262,null,veronika_voss,FALSE
 /film/fichefilm_gen_cfilm=1552.html,tt0080474,22964-brubaker,1623,brubaker,brubaker,FALSE
 /film/fichefilm_gen_cfilm=1553.html,tt0091344,7568-king-kong-lives,31947,null,king_kong_lives,FALSE
-/film/fichefilm_gen_cfilm=1554.html,tt0046183,6005-peter-pan,10693,peter-pan-1953,1016213-peter_pan,FALSE
+/film/fichefilm_gen_cfilm=1554.html,tt0046183,6005-peter-pan,10693,peter-pan-1953,1016213-peter_pan,TRUE
 /film/fichefilm_gen_cfilm=1555.html,tt0070820,72690-touki-bouki,77771,null,touki-bouki,FALSE
 /film/fichefilm_gen_cfilm=1556.html,tt0090735,27440-black-moon-rising,36349,null,black_moon_rising,FALSE
 /film/fichefilm_gen_cfilm=1557.html,tt0025316,2362-it-happened-one-night,3078,null,it_happened_one_night,FALSE
@@ -961,7 +961,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=1668.html,tt0049366,2709-invasion-of-the-body-snatchers,11549,null,1010678-invasion_of_the_body_snatchers,FALSE
 /film/fichefilm_gen_cfilm=1669.html,tt0107446,55199-louis-enfant-roi,198441,null,louis_enfant_roi_1994,FALSE
 /film/fichefilm_gen_cfilm=1675.html,tt0085240,30335-bianca,15014,null,770674289,FALSE
-/film/fichefilm_gen_cfilm=1676.html,tt0015863,73843-go-west,33015,null,null,FALSE
+/film/fichefilm_gen_cfilm=1676.html,tt0015863,73843-go-west,33015,null,null,TRUE
 /film/fichefilm_gen_cfilm=1677.html,tt0014538,61973-three-ages,32628,null,null,FALSE
 /film/fichefilm_gen_cfilm=1678.html,tt0080491,9284-caligola,9453,null,caligula,FALSE
 /film/fichefilm_gen_cfilm=1683.html,tt0064021,69967-lamour-cest-gai-lamour-cest-triste,63660,null,770797941,FALSE
@@ -1102,7 +1102,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=1941.html,tt0087843,174-once-upon-a-time-in-america,311,once-upon-a-time-in-america,once_upon_a_time_in_america,FALSE
 /film/fichefilm_gen_cfilm=1943.html,tt0058385,5486-my-fair-lady,11113,my-fair-lady,my_fair_lady,FALSE
 /film/fichefilm_gen_cfilm=1944.html,tt0048028,4164-east-of-eden,220,east-of-eden,1006416-east_of_eden,FALSE
-/film/fichefilm_gen_cfilm=1945.html,tt0048545,1203-rebel-without-a-cause,221,rebel-without-a-cause,rebel_without_a_cause,FALSE
+/film/fichefilm_gen_cfilm=1945.html,tt0048545,1203-rebel-without-a-cause,221,rebel-without-a-cause,rebel_without_a_cause,TRUE
 /film/fichefilm_gen_cfilm=1946.html,tt0055928,3763-dr-no,646,dr-no,dr_no,FALSE
 /film/fichefilm_gen_cfilm=1947.html,tt0119360,7588-in-out,10806,in-out,in_and_out,FALSE
 /film/fichefilm_gen_cfilm=1950.html,tt0044811,46065-kvinnors-vantan,69544,null,kvinnors-vantan-secrets-of-women-waiting-women,FALSE
@@ -1209,7 +1209,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=2153.html,tt0090336,1398-wohin-und-zuruck-welcome-in-vienna,155206,null,null,FALSE
 /film/fichefilm_gen_cfilm=2154.html,tt0032455,4206-fantasia,756,fantasia,fantasia,FALSE
 /film/fichefilm_gen_cfilm=2159.html,tt0068509,56988-drive-he-said,57215,null,drive_he_said,FALSE
-/film/fichefilm_gen_cfilm=2160.html,tt0030341,2366-the-lady-vanishes,940,the-lady-vanishes-1938,1011813-lady_vanishes,FALSE
+/film/fichefilm_gen_cfilm=2160.html,tt0030341,2366-the-lady-vanishes,940,the-lady-vanishes-1938,1011813-lady_vanishes,TRUE
 /film/fichefilm_gen_cfilm=2161.html,tt0026029,2335-the-39-steps,260,null,1000121-39_steps,TRUE
 /film/fichefilm_gen_cfilm=2162.html,tt0042994,7376-stage-fright,1978,null,1019777-stage_fright,FALSE
 /film/fichefilm_gen_cfilm=2163.html,tt0063152,18879-je-taime-je-taime,4798,null,je_taime_je_taime,FALSE
@@ -1267,7 +1267,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=2252.html,tt0053604,901-the-apartment,284,the-apartment,1001115-apartment,FALSE
 /film/fichefilm_gen_cfilm=2253.html,tt0032553,186-the-great-dictator,914,null,great_dictator,FALSE
 /film/fichefilm_gen_cfilm=2254.html,tt0044837,363-limelight,28971,null,limelight,FALSE
-/film/fichefilm_gen_cfilm=2255.html,tt0012349,234-the-kid,10098,null,1052609-kid,FALSE
+/film/fichefilm_gen_cfilm=2255.html,tt0012349,234-the-kid,10098,null,1052609-kid,TRUE
 /film/fichefilm_gen_cfilm=2256.html,tt0021749,226-city-lights,901,city-lights,city_lights,FALSE
 /film/fichefilm_gen_cfilm=2257.html,tt0039631,7162-monsieur-verdoux,30588,null,monsieur_verdoux,FALSE
 /film/fichefilm_gen_cfilm=2258.html,tt0014624,21091-a-woman-of-paris-a-drama-of-fate,28974,null,a_woman_of_paris_a_drama_of_fate,FALSE
@@ -1374,7 +1374,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=2457.html,tt0044165,57940-une-histoire-damour,64241,null,null,FALSE
 /film/fichefilm_gen_cfilm=2458.html,tt0028888,119738-forfaiture,64240,null,771304553,FALSE
 /film/fichefilm_gen_cfilm=2460.html,tt0091064,1274-the-fly,9426,the-fly,1007602-fly,FALSE
-/film/fichefilm_gen_cfilm=2461.html,tt0090756,3148-blue-velvet,793,blue-velvet,null,FALSE
+/film/fichefilm_gen_cfilm=2461.html,tt0090756,3148-blue-velvet,793,blue-velvet,null,TRUE
 /film/fichefilm_gen_cfilm=2463.html,tt0066207,6435-peau-dane,5590,donkey-skin,donkey_skin,FALSE
 /film/fichefilm_gen_cfilm=2464.html,tt0053279,61213-le-signe-du-lion,64414,null,the-sign-of-leo-le-signe-du-lion,FALSE
 /film/fichefilm_gen_cfilm=2465.html,tt0090917,25957-deadly-friend,33278,null,deadly_friend,FALSE
@@ -1447,7 +1447,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=2575.html,tt0091419,14445-little-shop-of-horrors,10776,little-shop-of-horrors,1012515-little_shop_of_horrors,FALSE
 /film/fichefilm_gen_cfilm=2576.html,tt0089791,664-pee-wees-big-adventure,5683,null,peewees_big_adventure,FALSE
 /film/fichefilm_gen_cfilm=2577.html,tt0080801,3879-the-gods-must-be-crazy,8393,the-gods-must-be-crazy,the-gods-must-be-crazy,FALSE
-/film/fichefilm_gen_cfilm=2580.html,tt0044081,4284-a-streetcar-named-desire,702,a-streetcar-named-desire,1020333-streetcar_named_desire,FALSE
+/film/fichefilm_gen_cfilm=2580.html,tt0044081,4284-a-streetcar-named-desire,702,a-streetcar-named-desire,1020333-streetcar_named_desire,TRUE
 /film/fichefilm_gen_cfilm=2582.html,tt0024184,18698-the-invisible-man,10787,the-invisible-man-1933,1010695-invisible_man,FALSE
 /film/fichefilm_gen_cfilm=2586.html,tt0093323,55720-le-jupon-rouge,64440,null,null,FALSE
 /film/fichefilm_gen_cfilm=2587.html,tt0094105,10277-tandem,56520,null,tandem-1987,FALSE
@@ -1494,7 +1494,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=2640.html,tt0031679,2173-mr-smith-goes-to-washington,3083,mr-smith-goes-to-washington,mr_smith_goes_to_washington,FALSE
 /film/fichefilm_gen_cfilm=2641.html,tt0092618,3118-barfly,10937,null,barfly,FALSE
 /film/fichefilm_gen_cfilm=2642.html,tt0094011,12511-sous-le-soleil-de-satan,31300,null,under_the_sun_of_satan,FALSE
-/film/fichefilm_gen_cfilm=2645.html,tt0034583,295-casablanca,289,casablanca,1003707-casablanca,FALSE
+/film/fichefilm_gen_cfilm=2645.html,tt0034583,295-casablanca,289,casablanca,1003707-casablanca,TRUE
 /film/fichefilm_gen_cfilm=2646.html,tt0093664,3177-dark-eyes,44658,null,dark_eyes_1987,FALSE
 /film/fichefilm_gen_cfilm=2647.html,tt0085615,75077-gorky-park,8289,null,gorky_park,FALSE
 /film/fichefilm_gen_cfilm=2648.html,tt0050397,77667-fire-down-below,56188,null,1007355-fire_down_below,FALSE
@@ -1915,7 +1915,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=3631.html,tt0053033,61524-maigret-et-laffaire-saint-fiacre,434966,null,maigret_et_laffaire_saint_fiacre_2014,FALSE
 /film/fichefilm_gen_cfilm=3632.html,tt0047401,58170-la-reine-margot,68383,null,null,FALSE
 /film/fichefilm_gen_cfilm=3634.html,tt0042619,29764-journal-dun-cure-de-campagne,43376,null,diary_of_a_country_priest,FALSE
-/film/fichefilm_gen_cfilm=3639.html,tt0058335,22126-matrimonio-allitaliana,49687,null,marriage_italian_style,TRUE
+/film/fichefilm_gen_cfilm=3639.html,tt0058335,22126-matrimonio-allitaliana,49687,null,marriage_italian_style,FALSE
 /film/fichefilm_gen_cfilm=3640.html,tt0039066,1371-undercurrent,44098,null,1099778-undercurrent,FALSE
 /film/fichefilm_gen_cfilm=3642.html,tt0059015,82125-casanova-70,3520,null,casanova-70,FALSE
 /film/fichefilm_gen_cfilm=3643.html,tt0043409,55668-circle-of-danger,49368,null,771321594,FALSE
@@ -2017,7 +2017,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=3854.html,tt0169173,56135-cetait-un-rendez-vous,1386,null,157949387,FALSE
 /film/fichefilm_gen_cfilm=3856.html,tt0080388,85214-atlantic-city,23954,atlantic-city,atlantic_city,FALSE
 /film/fichefilm_gen_cfilm=3857.html,tt0088222,35980-typhoon-club,108634,null,typhoon_club_1986,FALSE
-/film/fichefilm_gen_cfilm=3859.html,tt0208103,null,262884,null,my_last_mistress,FALSE
+/film/fichefilm_gen_cfilm=3859.html,tt0208103,null,262884,null,my_last_mistress,TRUE
 /film/fichefilm_gen_cfilm=3860.html,tt0053084,42990-the-mouse-that-roared,12649,null,mouse_that_roared,FALSE
 /film/fichefilm_gen_cfilm=3862.html,tt0057940,29763-cheyenne-autumn,40630,null,cheyenne_autumn,FALSE
 /film/fichefilm_gen_cfilm=3863.html,tt0080025,12395-time-after-time,24750,null,time_after_time,FALSE
@@ -2058,7 +2058,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=3942.html,tt0159097,452-the-virgin-suicides,1443,the-virgin-suicides,virgin_suicides,FALSE
 /film/fichefilm_gen_cfilm=3944.html,tt0095924,107067-pulse,32033,null,1016897-pulse,FALSE
 /film/fichefilm_gen_cfilm=3947.html,tt0036244,24289-the-ox-bow-incident,980,null,null,FALSE
-/film/fichefilm_gen_cfilm=3949.html,tt0095097,68595-encore,187602,null,null,TRUE
+/film/fichefilm_gen_cfilm=3949.html,tt0095097,68595-encore,187602,null,null,FALSE
 /film/fichefilm_gen_cfilm=3950.html,tt0033606,88055-the-flame-of-new-orleans,61109,null,flame_of_new_orleans,FALSE
 /film/fichefilm_gen_cfilm=3951.html,tt0051452,55327-carry-on-nurse,32107,null,464805061,FALSE
 /film/fichefilm_gen_cfilm=3956.html,tt0035737,85701-le-ciel-est-a-vous,110573,null,771041644,FALSE
@@ -2106,7 +2106,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=4072.html,tt0044409,30432-les-belles-de-nuit,65656,null,beauties_of_the_night,FALSE
 /film/fichefilm_gen_cfilm=4073.html,tt0036566,21922-leternel-retour,65646,null,eternal_return,FALSE
 /film/fichefilm_gen_cfilm=4074.html,tt0032888,63337-paradis-perdu,65645,null,771255876,FALSE
-/film/fichefilm_gen_cfilm=4075.html,tt0040288,61449-le-diable-boiteux,65644,null,the-lame-devil,FALSE
+/film/fichefilm_gen_cfilm=4075.html,tt0040288,61449-le-diable-boiteux,65644,null,the-lame-devil,TRUE
 /film/fichefilm_gen_cfilm=4076.html,tt0028201,7351-le-roman-dun-tricheur,65642,null,770909807,TRUE
 /film/fichefilm_gen_cfilm=4077.html,tt0045034,6425-le-plaisir,43360,null,le_plaisir,FALSE
 /film/fichefilm_gen_cfilm=4078.html,tt0030127,6614-la-femme-du-boulanger,43844,null,the_bakers_wife,FALSE
@@ -2320,7 +2320,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=4593.html,tt0094947,3095-dangerous-liaisons,859,dangerous-liaisons,1005199-dangerous_liaisons,FALSE
 /film/fichefilm_gen_cfilm=4594.html,tt0016847,8415-faust-eine-deutsche-volkssage,10728,null,faust,FALSE
 /film/fichefilm_gen_cfilm=4595.html,tt0042031,6225-flame-of-my-love,124994,null,770783987,FALSE
-/film/fichefilm_gen_cfilm=4597.html,tt0042762,null,55198,null,munekata-kyoudai,FALSE
+/film/fichefilm_gen_cfilm=4597.html,tt0042762,null,55198,null,munekata-kyoudai,TRUE
 /film/fichefilm_gen_cfilm=4598.html,tt0043892,71001-miss-oyu,46043,null,miss_oyu,FALSE
 /film/fichefilm_gen_cfilm=4599.html,tt0064106,21435-le-boucher,2912,null,le-boucher,FALSE
 /film/fichefilm_gen_cfilm=4600.html,tt0040980,51232-women-of-the-night,85844,null,770783986,FALSE
@@ -2350,7 +2350,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=4657.html,tt0056208,70506-madame-sans-gene,198570,null,madame,FALSE
 /film/fichefilm_gen_cfilm=4658.html,tt0022599,19958-a-nous-la-liberte,31514,null,a_nous_la_liberte,FALSE
 /film/fichefilm_gen_cfilm=4659.html,tt0038146,62497-sylvie-et-le-fantome,43486,null,771240446,FALSE
-/film/fichefilm_gen_cfilm=4660.html,tt0096256,10826-they-live,8337,they-live,they_live,FALSE
+/film/fichefilm_gen_cfilm=4660.html,tt0096256,10826-they-live,8337,they-live,they_live,TRUE
 /film/fichefilm_gen_cfilm=4661.html,tt0183779,23298-si-jetais-un-espion,57420,null,null,FALSE
 /film/fichefilm_gen_cfilm=4662.html,tt0188195,31462-le-septieme-jure,21070,null,770807174,FALSE
 /film/fichefilm_gen_cfilm=4664.html,tt0042911,25672-la-rue-sans-loi,172223,null,null,FALSE
@@ -2472,7 +2472,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=4930.html,tt0097733,3181-lethal-weapon-2,942,lethal-weapon-2,lethal_weapon_2,FALSE
 /film/fichefilm_gen_cfilm=4936.html,tt0069235,3240-lo-scopone-scientifico,56341,null,lo-scopone-scientifico,FALSE
 /film/fichefilm_gen_cfilm=4938.html,tt0048342,11242-the-man-from-laramie,18264,null,man_from_laramie,FALSE
-/film/fichefilm_gen_cfilm=4939.html,tt0064816,2082-la-piscine,4946,null,the_swimming_pool,FALSE
+/film/fichefilm_gen_cfilm=4939.html,tt0064816,2082-la-piscine,4946,null,the_swimming_pool,TRUE
 /film/fichefilm_gen_cfilm=4941.html,tt0047677,5136-the-wild-one,28696,null,wild_one,FALSE
 /film/fichefilm_gen_cfilm=4942.html,tt0046247,11970-the-robe,29912,null,robe,FALSE
 /film/fichefilm_gen_cfilm=4943.html,tt0024736,113720-viktor-und-viktoria,169377,null,771224391,FALSE
@@ -2486,7 +2486,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=4954.html,tt0056732,22648-el-angel-exterminador,29264,null,the_exterminating_angel,FALSE
 /film/fichefilm_gen_cfilm=4956.html,tt0041786,2436-the-reckless-moment,28007,null,reckless_moment,FALSE
 /film/fichefilm_gen_cfilm=4961.html,tt0094675,25805-ariel,2,null,770672181,FALSE
-/film/fichefilm_gen_cfilm=4963.html,tt0048424,229-the-night-of-the-hunter,3112,null,night_of_the_hunter,TRUE
+/film/fichefilm_gen_cfilm=4963.html,tt0048424,229-the-night-of-the-hunter,3112,null,night_of_the_hunter,FALSE
 /film/fichefilm_gen_cfilm=4964.html,tt0097940,3228-mystery-train,11305,mystery-train,1028711-mystery_train,FALSE
 /film/fichefilm_gen_cfilm=4965.html,tt0097351,3220-field-of-dreams,2323,field-of-dreams,field_of_dreams,FALSE
 /film/fichefilm_gen_cfilm=4966.html,tt0096895,3098-batman,268,batman,1001781-batman,FALSE
@@ -2534,7 +2534,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=5097.html,tt0017736,27281-casanova,66449,null,null,FALSE
 /film/fichefilm_gen_cfilm=5118.html,tt0097995,7116-noce-blanche,37533,null,noce-blanche,FALSE
 /film/fichefilm_gen_cfilm=5119.html,tt0097243,3164-a-dry-white-season,32075,a-dry-white-season,dry_white_season,FALSE
-/film/fichefilm_gen_cfilm=5120.html,tt0045152,360-singin-in-the-rain,872,singin-in-the-rain,singin_in_the_rain,FALSE
+/film/fichefilm_gen_cfilm=5120.html,tt0045152,360-singin-in-the-rain,872,singin-in-the-rain,singin_in_the_rain,TRUE
 /film/fichefilm_gen_cfilm=5129.html,tt0064609,84022-lucia,88591,null,lucia,FALSE
 /film/fichefilm_gen_cfilm=5130.html,tt0163716,24313-litan,66448,null,litan,FALSE
 /film/fichefilm_gen_cfilm=5131.html,tt0063291,22638-memorias-del-subdesarrollo,47576,null,memories_of_underdevelopment,FALSE
@@ -2614,7 +2614,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=5368.html,tt0067698,24769-sacco-e-vanzetti,48211,null,1018051-sacco_and_vanzetti,FALSE
 /film/fichefilm_gen_cfilm=5370.html,tt0054331,2867-spartacus,967,spartacus,1019544-spartacus,FALSE
 /film/fichefilm_gen_cfilm=5371.html,tt0063271,24346-manon-70,99419,null,manon-70,FALSE
-/film/fichefilm_gen_cfilm=5377.html,tt0070334,3369-the-long-goodbye,1847,the-long-goodbye,1031440-long_goodbye,TRUE
+/film/fichefilm_gen_cfilm=5377.html,tt0070334,3369-the-long-goodbye,1847,the-long-goodbye,1031440-long_goodbye,FALSE
 /film/fichefilm_gen_cfilm=5378.html,tt0096871,12282-baby-blood,40258,null,1166655-baby_blood,FALSE
 /film/fichefilm_gen_cfilm=5380.html,tt0124012,51390-morgiana,53186,null,morgiana_1971,FALSE
 /film/fichefilm_gen_cfilm=5391.html,tt0118523,75308-til-there-was-you,32872,null,til_there_was_you,FALSE
@@ -2783,7 +2783,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=5957.html,tt0080031,22968-tom-horn,5917,null,tom_horn,FALSE
 /film/fichefilm_gen_cfilm=5958.html,tt0099009,121605-alberto-express,106182,null,alberto_express,FALSE
 /film/fichefilm_gen_cfilm=5961.html,tt0070235,40397-jirai-comme-un-cheval-fou,104242,null,i_will_walk_like_a_crazy_horse,FALSE
-/film/fichefilm_gen_cfilm=5969.html,tt0099685,171-goodfellas,769,goodfellas,1032176-goodfellas,FALSE
+/film/fichefilm_gen_cfilm=5969.html,tt0099685,171-goodfellas,769,goodfellas,1032176-goodfellas,TRUE
 /film/fichefilm_gen_cfilm=5970.html,tt0079326,56149-il-y-a-longtemps-que-je-taime,341678,null,null,FALSE
 /film/fichefilm_gen_cfilm=5974.html,tt0062089,54188-our-mothers-house,2516,null,770728849,FALSE
 /film/fichefilm_gen_cfilm=5981.html,tt0100935,1686-wild-at-heart,483,wild-at-heart,wild_at_heart,FALSE
@@ -2884,7 +2884,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=6272.html,tt0099785,4012-home-alone,771,home-alone,home_alone,FALSE
 /film/fichefilm_gen_cfilm=6273.html,tt0066109,32570-the-music-lovers,72899,null,405588840,FALSE
 /film/fichefilm_gen_cfilm=6276.html,tt0073036,10680-un-genio-due-compari-un-pollo,10915,null,un-genio-due-compari-un-pollo-a-genius-two-friends-and-an-idiot-nobodys-the-greatest,FALSE
-/film/fichefilm_gen_cfilm=6287.html,tt0039651,27497-record-of-a-tenement-gentleman,74126,null,record_of_a_tenement_gentleman,FALSE
+/film/fichefilm_gen_cfilm=6287.html,tt0039651,27497-record-of-a-tenement-gentleman,74126,null,record_of_a_tenement_gentleman,TRUE
 /film/fichefilm_gen_cfilm=6289.html,tt0044982,8065-the-flavor-of-green-tea-over-rice,55197,null,262568669,FALSE
 /film/fichefilm_gen_cfilm=6290.html,tt0083113,69185-sphinx,47890,null,1019612-sphinx,FALSE
 /film/fichefilm_gen_cfilm=6295.html,tt0053134,6228-good-morning,28276,good-morning,good_morning,FALSE
@@ -2897,7 +2897,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=6318.html,tt0430224,5791-lenfer,17960,null,10005817-lenfer,FALSE
 /film/fichefilm_gen_cfilm=6319.html,tt0063032,7579-il-grande-silenzio,9028,null,the_great_silence_1968,FALSE
 /film/fichefilm_gen_cfilm=6327.html,tt0039118,40079-etoile-sans-lumiere,130654,null,null,FALSE
-/film/fichefilm_gen_cfilm=6328.html,tt0090647,31472-anna,45486,null,770807689,FALSE
+/film/fichefilm_gen_cfilm=6328.html,tt0090647,31472-anna,45486,null,770807689,TRUE
 /film/fichefilm_gen_cfilm=6330.html,tt0023027,8711-horse-feathers,13912,null,horse_feathers,FALSE
 /film/fichefilm_gen_cfilm=6338.html,tt0099528,22045-the-exorcist-iii,11587,null,exorcist_3,FALSE
 /film/fichefilm_gen_cfilm=6339.html,tt0100486,14951-reversal-of-fortune,38718,reversal-of-fortune,reversal_of_fortune,FALSE
@@ -2992,7 +2992,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=6641.html,tt0102926,187-the-silence-of-the-lambs,274,the-silence-of-the-lambs,silence_of_the_lambs,FALSE
 /film/fichefilm_gen_cfilm=6644.html,tt0013496,50559-phantom,28480,null,764948175,FALSE
 /film/fichefilm_gen_cfilm=6645.html,tt0040087,54097-all-my-sons,45166,null,1080874-all_my_sons,FALSE
-/film/fichefilm_gen_cfilm=6649.html,tt0101700,3057-delicatessen,892,delicatessen,delicatessen,FALSE
+/film/fichefilm_gen_cfilm=6649.html,tt0101700,3057-delicatessen,892,delicatessen,delicatessen,TRUE
 /film/fichefilm_gen_cfilm=6651.html,tt0051496,60270-cowboy,39435,null,1065298-cowboy,FALSE
 /film/fichefilm_gen_cfilm=6652.html,tt0056165,22987-landru,4195,null,bluebeard,FALSE
 /film/fichefilm_gen_cfilm=6658.html,tt0101354,31201-lannee-de-leveil,245520,null,null,FALSE
@@ -3326,7 +3326,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=7658.html,tt0006753,79876-the-half-breed,200324,null,the_half_breed,FALSE
 /film/fichefilm_gen_cfilm=7659.html,tt0054428,2482-the-unforgiven,6643,null,1022373-unforgiven,FALSE
 /film/fichefilm_gen_cfilm=7661.html,tt0101279,8770-the-stranger,41781,null,agantuk,FALSE
-/film/fichefilm_gen_cfilm=7663.html,tt0105695,284-unforgiven,33,unforgiven,1041911-unforgiven,FALSE
+/film/fichefilm_gen_cfilm=7663.html,tt0105695,284-unforgiven,33,unforgiven,1041911-unforgiven,TRUE
 /film/fichefilm_gen_cfilm=7665.html,tt0104389,15856-the-hand-that-rocks-the-cradle,11087,null,the_hand_that_rocks_the_cradle,FALSE
 /film/fichefilm_gen_cfilm=7666.html,tt0042395,31000-devils-doorway,34651,null,null,FALSE
 /film/fichefilm_gen_cfilm=7670.html,tt0105682,23721-un-coeur-en-hiver,48150,null,un_coeur_en_hiver,FALSE
@@ -3536,7 +3536,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=8634.html,tt0261287,63877-les-sept-peches-capitaux,534016,null,null,FALSE
 /film/fichefilm_gen_cfilm=8635.html,tt0126388,8365-legionnaire,3513,null,legionnaire,FALSE
 /film/fichefilm_gen_cfilm=8639.html,tt0107969,9225-rising-sun,7007,risingsun,rising_sun,FALSE
-/film/fichefilm_gen_cfilm=8640.html,tt0103639,237-aladdin,812,null,null,FALSE
+/film/fichefilm_gen_cfilm=8640.html,tt0103639,237-aladdin,812,null,null,TRUE
 /film/fichefilm_gen_cfilm=8649.html,tt0108160,5898-sleepless-in-seattle,858,sleepless-in-seattle,sleepless_in_seattle,FALSE
 /film/fichefilm_gen_cfilm=8651.html,tt0064577,66257-law-and-order,114116,null,771208468,FALSE
 /film/fichefilm_gen_cfilm=8656.html,tt0042803,67751-olivia,257862,null,olivia_2019,FALSE
@@ -3583,7 +3583,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=8974.html,tt0106327,34115-aux-petits-bonheurs,77149,null,null,FALSE
 /film/fichefilm_gen_cfilm=8976.html,tt0066511,43601-uomini-contro,78101,null,770790316,FALSE
 /film/fichefilm_gen_cfilm=8997.html,tt0104940,14039-the-muppet-christmas-carol,10437,the-muppet-christmas-carol,muppet_christmas_carol,FALSE
-/film/fichefilm_gen_cfilm=9015.html,tt0024120,118533-dragnet-girl,117472,dragnet-girl,dragnet_girl,FALSE
+/film/fichefilm_gen_cfilm=9015.html,tt0024120,118533-dragnet-girl,117472,dragnet-girl,dragnet_girl,TRUE
 /film/fichefilm_gen_cfilm=9016.html,tt0025214,46656-a-mother-should-be-loved,135335,null,a-mother-should-be-loved,FALSE
 /film/fichefilm_gen_cfilm=9017.html,tt0027118,22356-an-inn-in-tokyo,89462,null,an_inn_in_tokyo,FALSE
 /film/fichefilm_gen_cfilm=9018.html,tt0051093,6229-tokyo-twilight,55192,tokyo-twilight,tokyo_twilight,FALSE
@@ -3870,7 +3870,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=10251.html,tt0095327,205-grave-of-the-fireflies,12477,grave-of-the-fireflies,grave_of_the_fireflies,FALSE
 /film/fichefilm_gen_cfilm=10254.html,tt0108285,78513-tala-det-ar-sa-morkt,125925,null,speak_up_its_so_dark,FALSE
 /film/fichefilm_gen_cfilm=10255.html,tt0107384,12247-leningrad-cowboys-meet-moses,30366,null,leningrad-cowboys-meet-moses-leningrad-cowboys-treffen-moses-die,FALSE
-/film/fichefilm_gen_cfilm=10257.html,tt0104652,2908-porco-rosso,11621,porco-rosso,porco_rosso,FALSE
+/film/fichefilm_gen_cfilm=10257.html,tt0104652,2908-porco-rosso,11621,porco-rosso,porco_rosso,TRUE
 /film/fichefilm_gen_cfilm=10258.html,tt0110944,11972-rapa-nui,10448,null,rapanui,FALSE
 /film/fichefilm_gen_cfilm=10259.html,tt0111797,2983-eat-drink-man-woman,10451,eat-drink-man-woman,eat_drink_man_woman,FALSE
 /film/fichefilm_gen_cfilm=10263.html,tt0036249,66750-paracelsus,246939,null,null,FALSE
@@ -4016,7 +4016,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=10843.html,tt0052604,22372-la-battaglia-di-maratona,18696,null,giant_of_marathon,FALSE
 /film/fichefilm_gen_cfilm=10844.html,tt0055904,9516-le-diable-et-les-dix-commandements,53386,null,the_devil_and_the_ten_commandments,FALSE
 /film/fichefilm_gen_cfilm=10860.html,tt0111342,83444-la-separation,124475,null,280218542,FALSE
-/film/fichefilm_gen_cfilm=10862.html,tt0110357,160-the-lion-king,8587,the-lion-king,the_lion_king,FALSE
+/film/fichefilm_gen_cfilm=10862.html,tt0110357,160-the-lion-king,8587,the-lion-king,the_lion_king,TRUE
 /film/fichefilm_gen_cfilm=10877.html,tt0023942,31264-les-deux-orphelines,283177,null,null,FALSE
 /film/fichefilm_gen_cfilm=10879.html,tt2062690,30533-toussaint-louverture,243466,null,null,FALSE
 /film/fichefilm_gen_cfilm=10888.html,tt0073906,3419-the-wind-and-the-lion,14815,null,wind_and_the_lion,FALSE
@@ -4766,7 +4766,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=14773.html,tt0117544,21315-salut-cousin,60083,null,null,FALSE
 /film/fichefilm_gen_cfilm=14784.html,tt0116996,3700-mars-attacks,75,mars-attacks!,mars_attacks,FALSE
 /film/fichefilm_gen_cfilm=14788.html,tt0117951,348-trainspotting,627,trainspotting,trainspotting,FALSE
-/film/fichefilm_gen_cfilm=14790.html,tt0096283,313-my-neighbor-totoro,8392,my-neighbor-totoro,my_neighbor_totoro,FALSE
+/film/fichefilm_gen_cfilm=14790.html,tt0096283,313-my-neighbor-totoro,8392,my-neighbor-totoro,my_neighbor_totoro,TRUE
 /film/fichefilm_gen_cfilm=14791.html,tt0118001,7294-two-much,46029,null,two_much,FALSE
 /film/fichefilm_gen_cfilm=14795.html,tt0072637,1339-amici-miei,20914,null,amici-miei-my-friends,FALSE
 /film/fichefilm_gen_cfilm=14824.html,tt0118849,59537-children-of-heaven,21334,children-of-heaven,children_of_heaven,FALSE
@@ -4950,7 +4950,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=15678.html,tt0118976,4522-didier,37652,null,didier,FALSE
 /film/fichefilm_gen_cfilm=15680.html,tt0120813,14911-safe-men,16155,null,safe_men,FALSE
 /film/fichefilm_gen_cfilm=15681.html,tt0322082,10882-rencontre-avec-le-dragon,70408,null,rencontre_avec_le_dragon_2010,FALSE
-/film/fichefilm_gen_cfilm=15682.html,tt0116922,2965-lost-highway,638,lost-highway,lost_highway,TRUE
+/film/fichefilm_gen_cfilm=15682.html,tt0116922,2965-lost-highway,638,lost-highway,lost_highway,FALSE
 /film/fichefilm_gen_cfilm=15687.html,tt0074964,48775-nickelodeon,104364,null,nickelodeon_1976,FALSE
 /film/fichefilm_gen_cfilm=15691.html,tt0116654,7200-the-island-of-dr-moreau,9306,null,1072156-island_of_dr_moreau,FALSE
 /film/fichefilm_gen_cfilm=15692.html,tt0116313,14570-the-first-wives-club,2925,the-first-wives-club,first_wives_club,FALSE
@@ -5021,7 +5021,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=15903.html,tt0021666,111168-the-birthday-party,39304,null,null,FALSE
 /film/fichefilm_gen_cfilm=15907.html,tt0117143,70927-nach-funf-im-urwald,4285,null,770790478,FALSE
 /film/fichefilm_gen_cfilm=15910.html,tt0098360,8638-violent-cop,12622,null,violent-cop,FALSE
-/film/fichefilm_gen_cfilm=15911.html,tt0103704,15594-a-scene-at-the-sea,23606,null,null,TRUE
+/film/fichefilm_gen_cfilm=15911.html,tt0103704,15594-a-scene-at-the-sea,23606,null,null,FALSE
 /film/fichefilm_gen_cfilm=15913.html,tt0021794,111171-the-delivery-boy,162776,null,null,FALSE
 /film/fichefilm_gen_cfilm=15919.html,tt0020041,52226-the-jazz-fool,190365,null,null,FALSE
 /film/fichefilm_gen_cfilm=15921.html,tt0016583,98728-alice-rattled-by-rats,38587,null,null,FALSE
@@ -5129,7 +5129,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=16463.html,tt0118715,358-the-big-lebowski,115,the-big-lebowski,the_big_lebowski,FALSE
 /film/fichefilm_gen_cfilm=16464.html,tt0129893,7190-deja-mort,56351,null,null,FALSE
 /film/fichefilm_gen_cfilm=16465.html,tt0120665,35050-secret-defense,49559,null,null,FALSE
-/film/fichefilm_gen_cfilm=16467.html,tt0123923,27624-jeanne-et-le-garcon-formidable,25512,null,jeanne_and_the_perfect_guy_1999,FALSE
+/film/fichefilm_gen_cfilm=16467.html,tt0123923,27624-jeanne-et-le-garcon-formidable,25512,null,jeanne_and_the_perfect_guy_1999,TRUE
 /film/fichefilm_gen_cfilm=16468.html,tt0120639,71128-comme-elle-respire,80131,null,null,FALSE
 /film/fichefilm_gen_cfilm=16476.html,tt0118564,16217-affliction,31662,affliction,affliction,FALSE
 /film/fichefilm_gen_cfilm=16480.html,tt0181978,17766-bimboland,62009,null,bimbolandhttpiamediaimdbcomimagesmmv5bmtk0mzk4mju1nl5bml5banbnxkftztcwmde3njcymqv1sx8,FALSE
@@ -5201,7 +5201,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=17045.html,tt0118787,41589-buddy,15170,null,1078022-buddy,FALSE
 /film/fichefilm_gen_cfilm=17056.html,tt0057635,90114-vacances-portugaises,406406,null,null,FALSE
 /film/fichefilm_gen_cfilm=17074.html,tt0117938,118662-tonight-nobody-goes-home,255796,null,null,FALSE
-/film/fichefilm_gen_cfilm=17079.html,tt0119177,318-gattaca,782,null,gattaca,TRUE
+/film/fichefilm_gen_cfilm=17079.html,tt0119177,318-gattaca,782,null,gattaca,FALSE
 /film/fichefilm_gen_cfilm=17081.html,tt0118604,7690-an-american-werewolf-in-paris,9406,an-american-werewolf-in-paris,american_werewolf_in_paris,FALSE
 /film/fichefilm_gen_cfilm=17093.html,tt0156610,25141-the-hole,47060,null,the_hole_1998,FALSE
 /film/fichefilm_gen_cfilm=17106.html,tt0152930,4249-taxi,2330,null,taxi_2000,FALSE
@@ -5332,7 +5332,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=18102.html,tt0120082,3553-scream-2,4233,scream-2,scream_2,FALSE
 /film/fichefilm_gen_cfilm=18103.html,tt0123034,8259-dead-mans-curve,44625,null,curve,FALSE
 /film/fichefilm_gen_cfilm=18111.html,tt0104224,87581-the-fall-of-otrar,48683,gibel-otrara,null,FALSE
-/film/fichefilm_gen_cfilm=18115.html,tt0097757,3737-the-little-mermaid,10144,the-little-mermaid,the_little_mermaid_1989,FALSE
+/film/fichefilm_gen_cfilm=18115.html,tt0097757,3737-the-little-mermaid,10144,the-little-mermaid,the_little_mermaid_1989,TRUE
 /film/fichefilm_gen_cfilm=18119.html,tt0189027,73878-princesse-mandane,367320,null,null,FALSE
 /film/fichefilm_gen_cfilm=18140.html,tt0122529,64175-henry-fool,37410,null,henry_fool,FALSE
 /film/fichefilm_gen_cfilm=18163.html,tt0163923,44951-vivre-nu-a-la-recherche-du-paradis-perdu,137241,null,null,FALSE
@@ -6052,7 +6052,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=24733.html,tt0216605,84052-la-captive,47244,the-captive,la_captive_2003,FALSE
 /film/fichefilm_gen_cfilm=24736.html,tt0208993,33045-downtown-81,26571,downtown-81,downtown_81,FALSE
 /film/fichefilm_gen_cfilm=24739.html,tt0210075,6222-girlfight,19348,girlfight,girlfight,FALSE
-/film/fichefilm_gen_cfilm=24740.html,tt0249241,3500-werckmeister-harmoniak,23160,werckmeister-harmonies,werckmeister_harmonies,TRUE
+/film/fichefilm_gen_cfilm=24740.html,tt0249241,3500-werckmeister-harmoniak,23160,werckmeister-harmonies,werckmeister_harmonies,FALSE
 /film/fichefilm_gen_cfilm=24742.html,tt0246765,8180-lumumba,55551,lumumba,lumumba,FALSE
 /film/fichefilm_gen_cfilm=24746.html,tt0227458,8107-le-secret,1837,null,the-secret-le-secret2001,FALSE
 /film/fichefilm_gen_cfilm=24748.html,tt0246405,48463-27-missing-kisses,63607,null,27-missing-kisses,FALSE
@@ -6079,7 +6079,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=24932.html,tt0045003,58586-the-outcasts-of-poker-flat,26777,null,outcasts-of-poker-flats,FALSE
 /film/fichefilm_gen_cfilm=24936.html,tt1064980,27465-sans-etat-dame,16887,null,null,FALSE
 /film/fichefilm_gen_cfilm=24941.html,tt0185183,8476-battlefield-earth,5491,battlefield-earth-a-saga-of-the-year-3000,battlefield_earth,FALSE
-/film/fichefilm_gen_cfilm=24944.html,tt0172495,164-gladiator,98,gladiator,gladiator,FALSE
+/film/fichefilm_gen_cfilm=24944.html,tt0172495,164-gladiator,98,gladiator,gladiator,TRUE
 /film/fichefilm_gen_cfilm=24983.html,tt0076635,58158-le-roi-des-bricoleurs,326204,null,771254833,FALSE
 /film/fichefilm_gen_cfilm=24984.html,tt0068376,75279-chut,449051,null,chut_2012,FALSE
 /film/fichefilm_gen_cfilm=25004.html,tt0120613,52652-a-walk-on-the-moon,28029,a-walk-on-the-moon,walk_on_the_moon,FALSE
@@ -6609,8 +6609,8 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=27613.html,tt0028966,30840-gueule-damour,78537,null,771032756,FALSE
 /film/fichefilm_gen_cfilm=27614.html,tt0099430,93846-dimenticare-palermo,73954,null,770675453,FALSE
 /film/fichefilm_gen_cfilm=27618.html,tt0063759,32046-vargtimmen,18333,null,hour_of_the_wolf,FALSE
-/film/fichefilm_gen_cfilm=27624.html,tt0099487,178-edward-scissorhands,162,edward-scissorhands,edward_scissorhands,FALSE
-/film/fichefilm_gen_cfilm=27633.html,tt0107688,267-the-nightmare-before-christmas,9479,the-nightmare-before-christmas,nightmare_before_christmas,FALSE
+/film/fichefilm_gen_cfilm=27624.html,tt0099487,178-edward-scissorhands,162,edward-scissorhands,edward_scissorhands,TRUE
+/film/fichefilm_gen_cfilm=27633.html,tt0107688,267-the-nightmare-before-christmas,9479,the-nightmare-before-christmas,nightmare_before_christmas,TRUE
 /film/fichefilm_gen_cfilm=27638.html,tt0116329,17787-fly-away-home,11076,null,fly_away_home,FALSE
 /film/fichefilm_gen_cfilm=27641.html,tt0115895,73395-chronicle-of-a-disappearance,49104,null,chronicle_of_a_disappearance,FALSE
 /film/fichefilm_gen_cfilm=27645.html,tt0106546,89642-charachar,263242,null,null,FALSE
@@ -6950,7 +6950,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=28674.html,tt0462229,17769-code-name-the-cleaner,14396,code-name-the-cleaner,code_name_the_cleaner,FALSE
 /film/fichefilm_gen_cfilm=28677.html,tt0365659,8265-la-prophetie-des-grenouilles,22624,null,la_prophetie_des_grenouilles,FALSE
 /film/fichefilm_gen_cfilm=28680.html,tt0155626,103418-cheri,381810,null,null,FALSE
-/film/fichefilm_gen_cfilm=28682.html,tt0166924,490-mulholland-drive,1018,mulholland-dr,mulholland_dr,TRUE
+/film/fichefilm_gen_cfilm=28682.html,tt0166924,490-mulholland-drive,1018,mulholland-dr,mulholland_dr,FALSE
 /film/fichefilm_gen_cfilm=28685.html,tt0265349,9187-the-mothman-prophecies,2637,the-mothman-prophecies,mothman_prophecies,FALSE
 /film/fichefilm_gen_cfilm=28687.html,tt0264935,3960-murder-by-numbers,11892,murderbynumbers,1113638-murder_by_numbers,FALSE
 /film/fichefilm_gen_cfilm=28688.html,tt0120899,98627-my-life-so-far,48958,null,my_life_so_far,FALSE
@@ -7140,7 +7140,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=29140.html,tt0277296,6107-the-scorpion-king,9334,the-scorpion-king,scorpion_king,FALSE
 /film/fichefilm_gen_cfilm=29142.html,tt0220506,8018-halloween-resurrection,11442,halloween-resurrection,halloween_resurrection,FALSE
 /film/fichefilm_gen_cfilm=29143.html,tt0265307,104551-the-man-from-elysian-fields,15720,the-man-from-elysian-fields,man_from_elysian_fields,FALSE
-/film/fichefilm_gen_cfilm=29144.html,tt0338348,6415-the-polar-express,5255,the-polar-express,polar_express,FALSE
+/film/fichefilm_gen_cfilm=29144.html,tt0338348,6415-the-polar-express,5255,the-polar-express,polar_express,TRUE
 /film/fichefilm_gen_cfilm=29146.html,tt0253867,3934-the-sweetest-thing,11812,the-sweetest-thing,sweetest_thing,FALSE
 /film/fichefilm_gen_cfilm=29147.html,tt0084477,60516-partners,72340,null,1015966-partners,FALSE
 /film/fichefilm_gen_cfilm=29150.html,tt0289992,3480-the-life-of-david-gale,11615,the-life-of-david-gale,life_of_david_gale,FALSE
@@ -7342,7 +7342,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=29693.html,tt0075675,3287-der-amerikanische-freund,11222,the-american-friend,american_friend,FALSE
 /film/fichefilm_gen_cfilm=29694.html,tt0088462,15136-a-mort-larbitre,74401,null,null,FALSE
 /film/fichefilm_gen_cfilm=29695.html,tt0056919,23496-erny-petr,46982,null,764947052,FALSE
-/film/fichefilm_gen_cfilm=29696.html,tt0079820,3263-le-roi-et-loiseau,22504,the-king-and-the-mockingbird,the_king_and_the_mockingbird,FALSE
+/film/fichefilm_gen_cfilm=29696.html,tt0079820,3263-le-roi-et-loiseau,22504,the-king-and-the-mockingbird,the_king_and_the_mockingbird,TRUE
 /film/fichefilm_gen_cfilm=29697.html,tt0058715,7092-il-vangelo-secondo-matteo,24192,null,gospel_according_to_st_matthew,FALSE
 /film/fichefilm_gen_cfilm=29698.html,tt0048037,14250-ensayo-de-un-crimen,37628,null,null,FALSE
 /film/fichefilm_gen_cfilm=29699.html,tt0048347,23247-the-man-with-the-golden-arm,541,null,the_man_with_the_golden_arm,FALSE
@@ -7459,7 +7459,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=30300.html,tt0056081,37691-a-wanderers-notebook,117800,null,wanderers_notebook,FALSE
 /film/fichefilm_gen_cfilm=30301.html,tt0101798,2297-edward-ii,43654,null,1039515-edward_ii,FALSE
 /film/fichefilm_gen_cfilm=30303.html,tt0002381,111696-the-musketeers-of-pig-alley,42553,null,the_musketeers_of_pig_alley,FALSE
-/film/fichefilm_gen_cfilm=30316.html,tt0054144,30312-when-a-woman-ascends-the-stairs,36872,null,onna_ga_kaidan_wo_agaru_toki,TRUE
+/film/fichefilm_gen_cfilm=30316.html,tt0054144,30312-when-a-woman-ascends-the-stairs,36872,null,onna_ga_kaidan_wo_agaru_toki,FALSE
 /film/fichefilm_gen_cfilm=30318.html,tt0061971,86754-two-in-the-shadow,126432,null,414914924,FALSE
 /film/fichefilm_gen_cfilm=30329.html,tt0004008,103555-gertie-the-dinosaur,100246,null,null,FALSE
 /film/fichefilm_gen_cfilm=30340.html,tt0057244,111593-the-leather-boys,140008,null,the_leather_boys_1964,FALSE
@@ -8879,7 +8879,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=36760.html,tt0245574,3773-y-tu-mama-tambien,1391,y-tu-mama-tambien,y_tu_mama_tambien,FALSE
 /film/fichefilm_gen_cfilm=36761.html,tt0063005,3837-le-gendarme-se-marie,4729,null,le-gendarme-se-marie,FALSE
 /film/fichefilm_gen_cfilm=36762.html,tt0277909,33738-mutant-aliens,30863,null,null,FALSE
-/film/fichefilm_gen_cfilm=36763.html,tt0069747,3297-les-aventures-de-rabbi-jacob,760,null,mad_adventures_of_rabbi_jacob,TRUE
+/film/fichefilm_gen_cfilm=36763.html,tt0069747,3297-les-aventures-de-rabbi-jacob,760,null,mad_adventures_of_rabbi_jacob,FALSE
 /film/fichefilm_gen_cfilm=36766.html,tt0041635,120206-maneges,262454,null,maneges_2011,FALSE
 /film/fichefilm_gen_cfilm=36767.html,tt0063203,74612-black-lizard,42627,null,770783408,FALSE
 /film/fichefilm_gen_cfilm=36768.html,tt0086135,52582-i-predatori-di-atlantide,29173,null,null,FALSE
@@ -10121,7 +10121,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=44441.html,tt0110613,12487-my-girl-2,11317,null,null,FALSE
 /film/fichefilm_gen_cfilm=44442.html,tt0061819,6902-indomptable-angelique,44448,null,null,FALSE
 /film/fichefilm_gen_cfilm=44444.html,tt0061357,6903-angelique-et-le-sultan,44446,null,null,FALSE
-/film/fichefilm_gen_cfilm=44445.html,tt0314331,464-love-actually,508,null,null,FALSE
+/film/fichefilm_gen_cfilm=44445.html,tt0314331,464-love-actually,508,null,null,TRUE
 /film/fichefilm_gen_cfilm=44446.html,tt0094602,9158-above-the-law,9395,null,null,FALSE
 /film/fichefilm_gen_cfilm=44448.html,tt0313911,4096-agent-cody-banks,10923,null,null,FALSE
 /film/fichefilm_gen_cfilm=44449.html,tt0289879,289-the-butterfly-effect,1954,null,null,FALSE
@@ -10575,7 +10575,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=46141.html,tt0171698,103486-rites-of-passage,49221,null,null,FALSE
 /film/fichefilm_gen_cfilm=46175.html,tt0180301,89740-the-weekend,188962,null,null,FALSE
 /film/fichefilm_gen_cfilm=46207.html,tt0102015,3031-hearts-of-darkness-a-filmmakers-apocalypse,4539,null,null,FALSE
-/film/fichefilm_gen_cfilm=46211.html,tt0382932,219-ratatouille,2062,null,null,FALSE
+/film/fichefilm_gen_cfilm=46211.html,tt0382932,219-ratatouille,2062,null,null,TRUE
 /film/fichefilm_gen_cfilm=46231.html,tt0082379,51992-the-final-terror,4288,null,null,FALSE
 /film/fichefilm_gen_cfilm=46317.html,tt0339291,4149-lemony-snickets-a-series-of-unfortunate-events,11774,null,null,FALSE
 /film/fichefilm_gen_cfilm=46324.html,tt0094006,23414-some-kind-of-wonderful,15143,null,null,FALSE
@@ -11526,7 +11526,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=50369.html,tt0396752,733-nanny-mcphee,11283,null,null,FALSE
 /film/fichefilm_gen_cfilm=50375.html,tt0165626,58095-archipel-des-amours,365248,null,null,FALSE
 /film/fichefilm_gen_cfilm=50393.html,tt0378793,249-speak,15058,null,null,FALSE
-/film/fichefilm_gen_cfilm=50409.html,tt0347149,283-howls-moving-castle,4935,null,null,FALSE
+/film/fichefilm_gen_cfilm=50409.html,tt0347149,283-howls-moving-castle,4935,null,null,TRUE
 /film/fichefilm_gen_cfilm=50410.html,tt0348121,12945-steamboy,8953,null,null,FALSE
 /film/fichefilm_gen_cfilm=50411.html,tt0347246,4973-ghost-in-the-shell-2-innocence,12140,null,null,FALSE
 /film/fichefilm_gen_cfilm=50413.html,tt0375553,96513-lennemi-naturel,60607,null,null,FALSE
@@ -11789,7 +11789,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=51767.html,tt0070083,26879-un-homme-est-mort,48153,null,null,FALSE
 /film/fichefilm_gen_cfilm=51768.html,tt0358273,3459-walk-the-line,69,null,null,FALSE
 /film/fichefilm_gen_cfilm=51769.html,tt0362059,31303-le-ptit-curieux,79045,null,null,FALSE
-/film/fichefilm_gen_cfilm=51784.html,tt0189163,49524-le-tresor-de-cantenac,80057,null,null,FALSE
+/film/fichefilm_gen_cfilm=51784.html,tt0189163,49524-le-tresor-de-cantenac,80057,null,null,TRUE
 /film/fichefilm_gen_cfilm=51793.html,tt0285682,94819-alchemy,41709,null,null,FALSE
 /film/fichefilm_gen_cfilm=51836.html,tt0075965,23810-droles-de-zebres,192317,null,null,FALSE
 /film/fichefilm_gen_cfilm=51838.html,tt0094336,17500-withnail-i,13446,null,null,FALSE
@@ -13724,7 +13724,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=60210.html,tt0096522,38121-etoile,28892,null,null,FALSE
 /film/fichefilm_gen_cfilm=60211.html,tt0411195,6299-breakfast-on-pluto,1420,null,null,FALSE
 /film/fichefilm_gen_cfilm=60214.html,tt0074351,58008-couleur-chair,415588,null,null,FALSE
-/film/fichefilm_gen_cfilm=60216.html,tt0034591,16635-there-was-a-father,27372,null,null,FALSE
+/film/fichefilm_gen_cfilm=60216.html,tt0034591,16635-there-was-a-father,27372,null,null,TRUE
 /film/fichefilm_gen_cfilm=60218.html,tt0050389,56047-premier-mai,79206,null,null,FALSE
 /film/fichefilm_gen_cfilm=60225.html,tt0063715,27304-histoires-extraordinaires,41225,null,null,FALSE
 /film/fichefilm_gen_cfilm=60230.html,tt0192056,91418-galia,121208,null,null,FALSE
@@ -14307,7 +14307,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=73094.html,tt0063456,58127-pretty-poison,32969,null,null,FALSE
 /film/fichefilm_gen_cfilm=73113.html,tt0249893,30275-the-price-of-milk,21620,null,null,FALSE
 /film/fichefilm_gen_cfilm=73154.html,tt0029440,67128-the-prince-and-the-pauper,37025,null,null,FALSE
-/film/fichefilm_gen_cfilm=73176.html,tt0119698,232-princess-mononoke,128,null,null,FALSE
+/film/fichefilm_gen_cfilm=73176.html,tt0119698,232-princess-mononoke,128,null,null,TRUE
 /film/fichefilm_gen_cfilm=73191.html,tt0216982,22560-prison-song,26478,null,null,FALSE
 /film/fichefilm_gen_cfilm=73195.html,tt0093304,29587-prison-on-fire,53653,null,null,FALSE
 /film/fichefilm_gen_cfilm=73267.html,tt0060862,24655-the-professionals,22383,null,null,FALSE
@@ -14638,7 +14638,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=91737.html,tt0221838,32554-borstal-boy,24309,null,null,FALSE
 /film/fichefilm_gen_cfilm=91878.html,tt0085533,34842-the-boys-from-fengkuei,105703,null,null,FALSE
 /film/fichefilm_gen_cfilm=91886.html,tt0055809,107594-boys-night-out,35057,null,null,FALSE
-/film/fichefilm_gen_cfilm=91955.html,tt0046159,890-pane-amore-e-fantasia,56402,null,null,FALSE
+/film/fichefilm_gen_cfilm=91955.html,tt0046159,890-pane-amore-e-fantasia,56402,null,null,TRUE
 /film/fichefilm_gen_cfilm=92113.html,tt0052017,1401-nara-livet,60899,null,null,FALSE
 /film/fichefilm_gen_cfilm=92174.html,tt0019729,23309-the-broadway-melody,65203,null,null,FALSE
 /film/fichefilm_gen_cfilm=92189.html,tt0477392,19809-broken-bridges,13842,null,null,FALSE
@@ -14651,7 +14651,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=92536.html,tt0082122,17004-butterfly,34697,null,null,FALSE
 /film/fichefilm_gen_cfilm=92581.html,tt0080482,29464-bye-bye-brasil,42167,null,null,FALSE
 /film/fichefilm_gen_cfilm=92582.html,tt0112606,93482-bye-bye-love,30528,null,null,FALSE
-/film/fichefilm_gen_cfilm=92604.html,tt0401085,3499-crazy,11421,null,null,FALSE
+/film/fichefilm_gen_cfilm=92604.html,tt0401085,3499-crazy,11421,null,null,TRUE
 /film/fichefilm_gen_cfilm=92632.html,tt0109361,73148-cabin-boy,26391,null,null,FALSE
 /film/fichefilm_gen_cfilm=92644.html,tt0080487,51705-caddyshack,11977,null,null,FALSE
 /film/fichefilm_gen_cfilm=92645.html,tt0094824,113257-caddyshack-ii,18509,null,null,FALSE
@@ -14929,7 +14929,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=107965.html,tt0428870,3424-a-moment-to-remember,15859,null,null,FALSE
 /film/fichefilm_gen_cfilm=107985.html,tt0450426,64070-gelibolu,18063,null,null,FALSE
 /film/fichefilm_gen_cfilm=107993.html,tt0081318,21436-paura-nella-citta-dei-morti-viventi,24920,null,null,FALSE
-/film/fichefilm_gen_cfilm=108016.html,tt0017925,362-the-general,961,null,null,TRUE
+/film/fichefilm_gen_cfilm=108016.html,tt0017925,362-the-general,961,null,null,FALSE
 /film/fichefilm_gen_cfilm=108060.html,tt0088740,65941-artie-shaw-time-is-all-youve-got,114521,null,null,FALSE
 /film/fichefilm_gen_cfilm=108101.html,tt0400370,11729-dogora-ouvrons-les-yeux,87394,null,null,FALSE
 /film/fichefilm_gen_cfilm=108103.html,tt1138481,94891-sonny-boy,59424,null,null,FALSE
@@ -15512,7 +15512,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=110201.html,tt0460989,3819-the-wind-that-shakes-the-barley,1116,null,null,FALSE
 /film/fichefilm_gen_cfilm=110202.html,tt0417385,17994-12-and-holding,18164,null,null,FALSE
 /film/fichefilm_gen_cfilm=110203.html,tt0792986,31343-peurs-du-noir,16137,null,null,FALSE
-/film/fichefilm_gen_cfilm=110204.html,tt0808417,3450-persepolis,2011,null,null,FALSE
+/film/fichefilm_gen_cfilm=110204.html,tt0808417,3450-persepolis,2011,null,null,TRUE
 /film/fichefilm_gen_cfilm=110207.html,tt0765476,4128-meet-dave,11260,null,null,FALSE
 /film/fichefilm_gen_cfilm=110213.html,tt0062205,36627-little-rita-nel-west,46568,null,null,FALSE
 /film/fichefilm_gen_cfilm=110215.html,tt0105526,24649-the-taking-of-beverly-hills,32045,null,null,FALSE
@@ -15535,7 +15535,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=110239.html,tt0792948,8754-les-anges-exterminateurs,19976,null,null,FALSE
 /film/fichefilm_gen_cfilm=110242.html,tt0486946,9139-wild-hogs,11199,null,null,FALSE
 /film/fichefilm_gen_cfilm=110248.html,tt0478209,22018-metal-a-headbangers-journey,20604,null,null,FALSE
-/film/fichefilm_gen_cfilm=110254.html,tt0485601,3467-the-secret-of-kells,26963,null,null,TRUE
+/film/fichefilm_gen_cfilm=110254.html,tt0485601,3467-the-secret-of-kells,26963,null,null,FALSE
 /film/fichefilm_gen_cfilm=110257.html,tt0984083,56267-ou-avais-je-la-tete,79227,null,null,FALSE
 /film/fichefilm_gen_cfilm=110258.html,tt1038904,8755-calle-santa-fe,49765,null,null,FALSE
 /film/fichefilm_gen_cfilm=110259.html,tt0498103,22138-le-dernier-des-fous,108887,null,null,FALSE
@@ -17292,7 +17292,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=127187.html,tt0216746,7612-bad-girls-from-valley-high,47541,null,null,FALSE
 /film/fichefilm_gen_cfilm=127189.html,tt0988595,4383-27-dresses,6557,null,null,FALSE
 /film/fichefilm_gen_cfilm=127190.html,tt1381112,9543-soeur-sourire,17486,null,null,FALSE
-/film/fichefilm_gen_cfilm=127194.html,tt0876563,3434-ponyo,12429,ponyo,ponyo,FALSE
+/film/fichefilm_gen_cfilm=127194.html,tt0876563,3434-ponyo,12429,ponyo,ponyo,TRUE
 /film/fichefilm_gen_cfilm=127197.html,tt0822858,17785-sublime,9783,null,null,FALSE
 /film/fichefilm_gen_cfilm=127198.html,tt0778611,39584-les-amants-du-flore,142023,null,null,FALSE
 /film/fichefilm_gen_cfilm=127199.html,tt0009611,7169-shoulder-arms,53423,null,null,FALSE
@@ -18006,7 +18006,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=131132.html,tt0047171,8698-les-lettres-de-mon-moulin,82039,null,null,FALSE
 /film/fichefilm_gen_cfilm=131133.html,tt0841032,15321-the-perfect-holiday,26990,null,null,FALSE
 /film/fichefilm_gen_cfilm=131134.html,tt0462295,58331-flakes,13021,null,null,FALSE
-/film/fichefilm_gen_cfilm=131136.html,tt0200524,null,80049,null,ceux_de_chez_nous_1952,TRUE
+/film/fichefilm_gen_cfilm=131136.html,tt0200524,null,80049,null,ceux_de_chez_nous_1952,FALSE
 /film/fichefilm_gen_cfilm=131138.html,tt0149603,119913-lagonie-des-aigles,474189,null,null,FALSE
 /film/fichefilm_gen_cfilm=131141.html,tt0129871,10819-desperation,10004,null,null,FALSE
 /film/fichefilm_gen_cfilm=131142.html,tt0121755,86814-a-single-spark,123997,null,null,FALSE
@@ -19749,7 +19749,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=141529.html,tt1228987,580-let-me-in,41402,null,null,FALSE
 /film/fichefilm_gen_cfilm=141538.html,tt1336608,910-rock-of-ages,80585,null,null,FALSE
 /film/fichefilm_gen_cfilm=141553.html,tt1334585,4885-burne,13413,null,null,FALSE
-/film/fichefilm_gen_cfilm=141564.html,tt1446714,473-prometheus,70981,null,null,TRUE
+/film/fichefilm_gen_cfilm=141564.html,tt1446714,473-prometheus,70981,null,null,FALSE
 /film/fichefilm_gen_cfilm=141573.html,tt0076944,24258-young-lady-chatterley,77756,null,null,FALSE
 /film/fichefilm_gen_cfilm=141574.html,tt1107809,18467-cutlass,4633,null,null,FALSE
 /film/fichefilm_gen_cfilm=141576.html,tt1183923,1999-welcome-to-the-rileys,31007,null,null,FALSE
@@ -20200,7 +20200,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=145068.html,tt1741542,1392-les-lyonnais,56415,null,null,FALSE
 /film/fichefilm_gen_cfilm=145069.html,tt1891968,1132-torpedo,124706,null,null,FALSE
 /film/fichefilm_gen_cfilm=145072.html,tt1116182,8979-affinity,14766,null,null,FALSE
-/film/fichefilm_gen_cfilm=145083.html,tt1392170,408-the-hunger-games,70160,null,null,FALSE
+/film/fichefilm_gen_cfilm=145083.html,tt1392170,408-the-hunger-games,70160,null,null,TRUE
 /film/fichefilm_gen_cfilm=145085.html,tt1288571,8519-shank,26630,null,null,FALSE
 /film/fichefilm_gen_cfilm=145089.html,tt1258134,21188-de-pere-en-flic,26566,null,null,FALSE
 /film/fichefilm_gen_cfilm=145098.html,tt1087451,58993-le-grand-depart,52170,null,null,FALSE
@@ -20302,6 +20302,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=145716.html,tt1261978,4100-wrong-turn-3-left-for-dead,23823,null,null,FALSE
 /film/fichefilm_gen_cfilm=145721.html,tt1418377,13638-i-frankenstein,100241,null,null,FALSE
 /film/fichefilm_gen_cfilm=145724.html,tt1421051,614-somewhere,39210,null,null,FALSE
+/film/fichefilm_gen_cfilm=145729.html,tt1448754,128620-thanksgiving,1071215,thanksgiving,thanksgiving_2023,TRUE
 /film/fichefilm_gen_cfilm=145730.html,tt1422122,2612-amintiri-din-epoca-de-aur,39376,null,null,FALSE
 /film/fichefilm_gen_cfilm=145736.html,tt1371630,2244-air-doll,25053,null,null,FALSE
 /film/fichefilm_gen_cfilm=145737.html,tt1124052,2211-city-of-life-and-death,21345,null,null,FALSE
@@ -21216,7 +21217,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=171220.html,tt1379228,87059-naan-kadavul,69499,null,null,FALSE
 /film/fichefilm_gen_cfilm=171221.html,tt0098352,67771-small-sacrifices,65575,null,null,FALSE
 /film/fichefilm_gen_cfilm=171222.html,tt1051910,77650-the-murder-of-princess-diana,110675,null,null,FALSE
-/film/fichefilm_gen_cfilm=171223.html,tt1305806,243-el-secreto-de-sus-ojos,25376,null,null,TRUE
+/film/fichefilm_gen_cfilm=171223.html,tt1305806,243-el-secreto-de-sus-ojos,25376,null,null,FALSE
 /film/fichefilm_gen_cfilm=171225.html,tt0438123,20868-mom-at-sixteen,64191,null,null,FALSE
 /film/fichefilm_gen_cfilm=171227.html,tt1489887,68337-booksmart,505600,null,null,FALSE
 /film/fichefilm_gen_cfilm=171229.html,tt1486190,2209-tamara-drewe,38961,null,null,FALSE
@@ -22463,7 +22464,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=179044.html,tt1621032,21629-to-shoot-an-elephant,81897,null,null,FALSE
 /film/fichefilm_gen_cfilm=179070.html,tt2082496,357-une-bouteille-a-la-mer,102292,null,null,FALSE
 /film/fichefilm_gen_cfilm=179071.html,tt1860152,1279-17-filles,87368,null,null,FALSE
-/film/fichefilm_gen_cfilm=179072.html,tt1827512,1677-le-gamin-au-velo,63831,null,null,TRUE
+/film/fichefilm_gen_cfilm=179072.html,tt1827512,1677-le-gamin-au-velo,63831,null,null,FALSE
 /film/fichefilm_gen_cfilm=179073.html,tt1852006,1356-les-neiges-du-kilimandjaro,91690,null,null,FALSE
 /film/fichefilm_gen_cfilm=179074.html,tt1592521,68588-primos,56647,null,null,FALSE
 /film/fichefilm_gen_cfilm=179075.html,tt1798194,1752-la-permission-de-minuit,58576,null,null,FALSE
@@ -24134,7 +24135,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=188826.html,tt0087303,22460-rage-fuoco-incrociato,140104,null,null,FALSE
 /film/fichefilm_gen_cfilm=188837.html,tt1802197,1395-the-lady,77878,null,null,FALSE
 /film/fichefilm_gen_cfilm=188838.html,tt1791614,5304-struck-by-lightning,87440,null,null,FALSE
-/film/fichefilm_gen_cfilm=188840.html,tt1847731,1733-tomboy,65229,null,null,TRUE
+/film/fichefilm_gen_cfilm=188840.html,tt1847731,1733-tomboy,65229,null,null,FALSE
 /film/fichefilm_gen_cfilm=188841.html,tt1865335,876-confession-of-a-child-of-the-century,58559,null,null,FALSE
 /film/fichefilm_gen_cfilm=188842.html,tt0119961,14291-the-protector,117874,null,null,FALSE
 /film/fichefilm_gen_cfilm=188844.html,tt0206075,48701-the-kings-guard,100801,null,null,FALSE
@@ -24543,7 +24544,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=191016.html,tt1441368,926-hahithalfut,99393,null,null,FALSE
 /film/fichefilm_gen_cfilm=191017.html,tt1855401,17577-tim-and-erics-billion-dollar-movie,79940,null,null,FALSE
 /film/fichefilm_gen_cfilm=191020.html,tt1790834,55110-simon-killer,84338,null,null,FALSE
-/film/fichefilm_gen_cfilm=191021.html,tt1925421,1098-elena,78182,null,null,FALSE
+/film/fichefilm_gen_cfilm=191021.html,tt1925421,1098-elena,78182,null,null,TRUE
 /film/fichefilm_gen_cfilm=191024.html,tt1859446,31140-alps,81857,null,null,FALSE
 /film/fichefilm_gen_cfilm=191032.html,tt1371585,922-life-without-principle,90147,null,null,FALSE
 /film/fichefilm_gen_cfilm=191035.html,tt1854564,9654-percy-jackson-sea-of-monsters,76285,null,null,FALSE
@@ -25476,7 +25477,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=196946.html,tt2059211,42496-eylul,114550,null,null,FALSE
 /film/fichefilm_gen_cfilm=196954.html,tt2295034,14080-bangkok-assassins,85619,null,null,FALSE
 /film/fichefilm_gen_cfilm=196958.html,tt2293138,4653-vive-la-france,169020,null,null,FALSE
-/film/fichefilm_gen_cfilm=196960.html,tt2096673,15344-inside-out,150540,null,null,FALSE
+/film/fichefilm_gen_cfilm=196960.html,tt2096673,15344-inside-out,150540,null,null,TRUE
 /film/fichefilm_gen_cfilm=196964.html,tt1236389,97327-complici-del-silenzio,57995,null,null,FALSE
 /film/fichefilm_gen_cfilm=196965.html,tt2062700,29612-song-to-song,330947,null,null,FALSE
 /film/fichefilm_gen_cfilm=196973.html,tt0191075,56006-dernier-cri,407978,null,null,FALSE
@@ -25519,7 +25520,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=197168.html,tt2041321,58946-bunohan,99873,null,null,FALSE
 /film/fichefilm_gen_cfilm=197171.html,tt1733737,25037-honeymoon-for-one,217292,null,null,FALSE
 /film/fichefilm_gen_cfilm=197172.html,tt1709122,8837-die-vierte-macht,92484,null,null,FALSE
-/film/fichefilm_gen_cfilm=197176.html,tt2013293,10156-the-wind-rises,149870,null,null,TRUE
+/film/fichefilm_gen_cfilm=197176.html,tt2013293,10156-the-wind-rises,149870,null,null,FALSE
 /film/fichefilm_gen_cfilm=197185.html,tt1789091,1090-tote-mich,110182,null,null,FALSE
 /film/fichefilm_gen_cfilm=197186.html,tt2650054,8549-la-maison-de-la-radio,168360,null,null,FALSE
 /film/fichefilm_gen_cfilm=197187.html,tt1660302,864-a-perdre-la-raison,121210,null,null,FALSE
@@ -26191,7 +26192,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=202856.html,tt2199455,41214-les-anonymes-un-pienghjite-micca,180612,null,null,FALSE
 /film/fichefilm_gen_cfilm=202908.html,tt1511425,105355-losing-control,92277,null,null,FALSE
 /film/fichefilm_gen_cfilm=202915.html,tt2246953,25817-rent-a-cat,116303,null,null,FALSE
-/film/fichefilm_gen_cfilm=202924.html,tt1816518,93-ernest-et-celestine,126319,null,null,TRUE
+/film/fichefilm_gen_cfilm=202924.html,tt1816518,93-ernest-et-celestine,126319,null,null,FALSE
 /film/fichefilm_gen_cfilm=202925.html,tt2408734,21252-ritter-rost-eisenhart-voll-verbeult,160873,null,null,FALSE
 /film/fichefilm_gen_cfilm=202926.html,tt2235751,14289-the-convoy,140006,null,null,FALSE
 /film/fichefilm_gen_cfilm=202934.html,tt1907761,31160-stanley-ka-dabba,68256,null,null,FALSE
@@ -26315,7 +26316,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=203671.html,tt0088729,93406-the-annihilators,129302,null,null,FALSE
 /film/fichefilm_gen_cfilm=203673.html,tt0089271,82076-the-adventures-of-hercules,30577,null,null,FALSE
 /film/fichefilm_gen_cfilm=203686.html,tt1809318,29406-olivers-ghost,217087,null,null,FALSE
-/film/fichefilm_gen_cfilm=203691.html,tt2294629,9655-frozen,109445,null,null,FALSE
+/film/fichefilm_gen_cfilm=203691.html,tt2294629,9655-frozen,109445,null,null,TRUE
 /film/fichefilm_gen_cfilm=203693.html,tt0091969,51078-slaughter-high,27886,null,null,FALSE
 /film/fichefilm_gen_cfilm=203717.html,tt2262161,32421-sunset-song,277713,null,null,FALSE
 /film/fichefilm_gen_cfilm=203726.html,tt1951216,11722-the-look-of-love,158914,null,null,FALSE
@@ -26895,7 +26896,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=207616.html,tt2080374,27159-steve-jobs,321697,null,null,FALSE
 /film/fichefilm_gen_cfilm=207617.html,tt1082863,68086-perfect-child,143966,null,null,FALSE
 /film/fichefilm_gen_cfilm=207619.html,tt0476293,30938-love-thy-neighbor,113958,null,null,FALSE
-/film/fichefilm_gen_cfilm=207621.html,tt2258858,684-wadjda,129112,null,null,TRUE
+/film/fichefilm_gen_cfilm=207621.html,tt2258858,684-wadjda,129112,null,null,FALSE
 /film/fichefilm_gen_cfilm=207623.html,tt2402101,17815-dark-places,182560,null,null,FALSE
 /film/fichefilm_gen_cfilm=207625.html,tt2751390,18961-aimer-boire-et-chanter,255824,null,null,FALSE
 /film/fichefilm_gen_cfilm=207641.html,tt0123950,6642-the-land-before-time-v-the-mysterious-island,19165,null,null,FALSE
@@ -28385,7 +28386,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=220375.html,tt2250234,14228-saga-curse-of-the-shadow,198677,null,null,FALSE
 /film/fichefilm_gen_cfilm=220401.html,tt1711016,31045-caroline-and-jackie,183361,null,null,FALSE
 /film/fichefilm_gen_cfilm=220420.html,tt0129868,17660-dennis-the-menace-strikes-again,45242,null,null,FALSE
-/film/fichefilm_gen_cfilm=220424.html,tt3106846,12727-gabrielle,215031,null,null,TRUE
+/film/fichefilm_gen_cfilm=220424.html,tt3106846,12727-gabrielle,215031,null,null,FALSE
 /film/fichefilm_gen_cfilm=220429.html,tt1948563,14517-sengoku-basara-the-last-party,81531,null,null,FALSE
 /film/fichefilm_gen_cfilm=220430.html,tt0191810,58102-la-banque-nemo,169843,null,null,FALSE
 /film/fichefilm_gen_cfilm=220456.html,tt0024514,120300-sos-eisberg,122435,null,null,FALSE
@@ -28453,7 +28454,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=220880.html,tt2848070,12466-les-apaches,190851,null,null,FALSE
 /film/fichefilm_gen_cfilm=220884.html,tt2350496,13607-the-lunchbox,191714,null,null,FALSE
 /film/fichefilm_gen_cfilm=220886.html,tt2315628,20835-for-those-in-peril,187927,null,null,FALSE
-/film/fichefilm_gen_cfilm=220892.html,tt0079232,null,479657,null,le_demantelement,TRUE
+/film/fichefilm_gen_cfilm=220892.html,tt0079232,null,479657,null,le_demantelement,FALSE
 /film/fichefilm_gen_cfilm=220897.html,tt2594950,33328-the-major,191717,null,null,FALSE
 /film/fichefilm_gen_cfilm=220900.html,tt2876358,15358-nos-heros-sont-morts-ce-soir,190854,null,null,FALSE
 /film/fichefilm_gen_cfilm=220902.html,tt1869362,15449-deadly-descent,163008,null,null,FALSE
@@ -29366,7 +29367,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=225952.html,tt3488462,53538-honig-im-kopf,269258,null,null,FALSE
 /film/fichefilm_gen_cfilm=225953.html,tt2582802,18688-whiplash,244786,null,null,FALSE
 /film/fichefilm_gen_cfilm=225957.html,tt2112152,17568-for-no-good-reason,140456,null,null,FALSE
-/film/fichefilm_gen_cfilm=225958.html,tt3521164,24553-moana,277834,null,null,FALSE
+/film/fichefilm_gen_cfilm=225958.html,tt3521164,24553-moana,277834,null,null,TRUE
 /film/fichefilm_gen_cfilm=225966.html,tt2708254,16850-life-of-a-king,201550,null,null,FALSE
 /film/fichefilm_gen_cfilm=225976.html,tt0480008,24634-chasing-christmas,16412,null,null,FALSE
 /film/fichefilm_gen_cfilm=225981.html,tt2184095,18741-3-day-test,160647,null,null,FALSE
@@ -29377,7 +29378,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=225991.html,tt3886722,37530-dabbe-5-zehr-i-cin,292828,null,null,FALSE
 /film/fichefilm_gen_cfilm=225992.html,tt2994382,18738-window-wonderland,239180,null,null,FALSE
 /film/fichefilm_gen_cfilm=225997.html,tt3399042,25793-bebe-tigre,318373,null,null,FALSE
-/film/fichefilm_gen_cfilm=226004.html,tt1865505,24141-song-of-the-sea,110416,null,null,TRUE
+/film/fichefilm_gen_cfilm=226004.html,tt1865505,24141-song-of-the-sea,110416,null,null,FALSE
 /film/fichefilm_gen_cfilm=226005.html,tt3526408,25545-gus-petit-oiseau-grand-voyage,292795,null,null,FALSE
 /film/fichefilm_gen_cfilm=226007.html,tt2401181,28437-der-samurai,254007,null,null,FALSE
 /film/fichefilm_gen_cfilm=226010.html,tt0082425,112536-full-moon-high,107430,null,null,FALSE
@@ -29786,7 +29787,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=228238.html,tt3286560,33252-the-last-face,287904,null,null,FALSE
 /film/fichefilm_gen_cfilm=228241.html,tt3253624,27311-soaked-in-bleach,295595,null,null,FALSE
 /film/fichefilm_gen_cfilm=228246.html,tt2844798,23488-feher-isten,267999,null,null,FALSE
-/film/fichefilm_gen_cfilm=228247.html,tt2802154,22090-leviathan,265180,null,null,FALSE
+/film/fichefilm_gen_cfilm=228247.html,tt2802154,22090-leviathan,265180,null,null,TRUE
 /film/fichefilm_gen_cfilm=228249.html,tt4466336,27549-les-anarchistes,329682,null,null,FALSE
 /film/fichefilm_gen_cfilm=228250.html,tt3314376,32800-hermosa-juventud,266065,null,null,FALSE
 /film/fichefilm_gen_cfilm=228251.html,tt3003800,23266-amour-fou,266044,null,null,FALSE
@@ -30005,7 +30006,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=229479.html,tt2241750,102708-drown,287855,null,null,FALSE
 /film/fichefilm_gen_cfilm=229480.html,tt3715122,26692-lattesa,330348,null,null,FALSE
 /film/fichefilm_gen_cfilm=229488.html,tt2371399,26268-muumit-rivieralla,293271,null,null,FALSE
-/film/fichefilm_gen_cfilm=229490.html,tt3783958,27100-la-la-land,313369,null,null,TRUE
+/film/fichefilm_gen_cfilm=229490.html,tt3783958,27100-la-la-land,313369,null,null,FALSE
 /film/fichefilm_gen_cfilm=229493.html,tt3787590,26664-we-are-your-friends,301351,null,null,FALSE
 /film/fichefilm_gen_cfilm=229503.html,tt1899285,36189-11-settembre-1683,166452,null,null,FALSE
 /film/fichefilm_gen_cfilm=229511.html,tt7011436,51601-plonger,462146,null,null,FALSE
@@ -30870,7 +30871,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=235348.html,tt4451458,35944-poesia-sin-fin,325385,null,null,FALSE
 /film/fichefilm_gen_cfilm=235369.html,tt1178658,35370-this-is-the-life,97399,null,null,FALSE
 /film/fichefilm_gen_cfilm=235380.html,tt4699388,31761-un-homme-a-la-hauteur,366514,null,null,FALSE
-/film/fichefilm_gen_cfilm=235389.html,tt2474976,28924-the-hallow,312831,null,null,TRUE
+/film/fichefilm_gen_cfilm=235389.html,tt2474976,28924-the-hallow,312831,null,null,FALSE
 /film/fichefilm_gen_cfilm=235399.html,tt4838440,30627-pension-complete,373960,null,null,FALSE
 /film/fichefilm_gen_cfilm=235401.html,tt3688928,78732-compostelle-le-chemin-de-la-vie,393966,null,null,FALSE
 /film/fichefilm_gen_cfilm=235408.html,tt4438848,28179-neighbors-2-sorority-rising,325133,null,null,FALSE
@@ -31269,7 +31270,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=238194.html,tt4994736,58700-annemin-yaras,386591,null,null,FALSE
 /film/fichefilm_gen_cfilm=238215.html,tt1781058,35504-wilson,346681,null,null,FALSE
 /film/fichefilm_gen_cfilm=238242.html,tt3078296,27928-il-ragazzo-invisibile,303542,null,null,FALSE
-/film/fichefilm_gen_cfilm=238250.html,tt4392438,30924-la-passion-daugustine,331797,null,null,TRUE
+/film/fichefilm_gen_cfilm=238250.html,tt4392438,30924-la-passion-daugustine,331797,null,null,FALSE
 /film/fichefilm_gen_cfilm=238251.html,tt4675926,41688-de-standhaftige,348660,null,null,FALSE
 /film/fichefilm_gen_cfilm=238261.html,tt2279339,30320-love-the-coopers,333348,null,null,FALSE
 /film/fichefilm_gen_cfilm=238268.html,tt3895884,27442-7-days-in-hell,287689,null,null,FALSE
@@ -31526,7 +31527,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=240125.html,tt3638396,34090-closet-monster,353728,null,null,FALSE
 /film/fichefilm_gen_cfilm=240140.html,tt3254796,31082-big-stone-gap,353378,null,null,FALSE
 /film/fichefilm_gen_cfilm=240141.html,tt2556936,32693-no-men-beyond-this-point,318054,null,null,FALSE
-/film/fichefilm_gen_cfilm=240153.html,tt3901826,50711-the-breadwinner,435129,null,null,TRUE
+/film/fichefilm_gen_cfilm=240153.html,tt3901826,50711-the-breadwinner,435129,null,null,FALSE
 /film/fichefilm_gen_cfilm=240155.html,tt4939066,34697-operation-chromite,407887,null,null,FALSE
 /film/fichefilm_gen_cfilm=240156.html,tt4935418,32915-baskn-karabasan,334394,null,null,FALSE
 /film/fichefilm_gen_cfilm=240172.html,tt4935334,31084-southbound,354251,null,null,FALSE
@@ -33282,7 +33283,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=254021.html,tt6704898,69472-elisa-y-marcela,535356,null,null,FALSE
 /film/fichefilm_gen_cfilm=254025.html,tt6828390,71368-mr-jones,509598,null,null,FALSE
 /film/fichefilm_gen_cfilm=254032.html,tt5781798,47479-the-marine-5-battleground,445993,null,null,FALSE
-/film/fichefilm_gen_cfilm=254043.html,tt6017756,71542-radioactive,480857,null,null,TRUE
+/film/fichefilm_gen_cfilm=254043.html,tt6017756,71542-radioactive,480857,null,null,FALSE
 /film/fichefilm_gen_cfilm=254050.html,tt6230134,43789-occidental,440086,null,null,FALSE
 /film/fichefilm_gen_cfilm=254055.html,tt6574272,41005-phoenix-forgotten,443319,null,null,FALSE
 /film/fichefilm_gen_cfilm=254076.html,tt5707304,63770-madre,438463,null,null,FALSE
@@ -33578,7 +33579,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=256939.html,tt2766104,63679-ploey-you-never-fly-alone,506596,null,null,FALSE
 /film/fichefilm_gen_cfilm=256940.html,tt5509412,60338-que-le-diable-nous-emporte,474937,null,null,FALSE
 /film/fichefilm_gen_cfilm=256956.html,tt7026672,60241-every-day,465136,null,null,FALSE
-/film/fichefilm_gen_cfilm=256964.html,tt10453434,59166-revolting-rhymes,430162,null,null,TRUE
+/film/fichefilm_gen_cfilm=256964.html,tt10453434,59166-revolting-rhymes,430162,null,null,FALSE
 /film/fichefilm_gen_cfilm=256968.html,tt7201846,65659-edmond,544510,null,null,FALSE
 /film/fichefilm_gen_cfilm=256974.html,tt7410124,null,473368,null,null,FALSE
 /film/fichefilm_gen_cfilm=256975.html,tt5688932,62107-sorry-to-bother-you,424781,null,null,FALSE
@@ -33753,7 +33754,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=258358.html,tt6223806,64148-undir-trenu,472640,null,null,FALSE
 /film/fichefilm_gen_cfilm=258361.html,tt7362252,60779-un-adultere,497925,null,null,FALSE
 /film/fichefilm_gen_cfilm=258365.html,tt7280898,64410-22-july,474354,null,null,FALSE
-/film/fichefilm_gen_cfilm=258374.html,tt7286456,65205-joker,475557,null,null,TRUE
+/film/fichefilm_gen_cfilm=258374.html,tt7286456,65205-joker,475557,null,null,FALSE
 /film/fichefilm_gen_cfilm=258383.html,tt7313348,75112-them-that-follow,486832,null,null,FALSE
 /film/fichefilm_gen_cfilm=258398.html,tt7605442,59634-mention-particuliere,481817,null,null,FALSE
 /film/fichefilm_gen_cfilm=258399.html,tt6523752,60778-pretes-a-tout,497919,null,null,FALSE
@@ -34224,6 +34225,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=263697.html,tt2534642,64153-captain-morten-and-the-spider-queen,512916,null,null,FALSE
 /film/fichefilm_gen_cfilm=263711.html,tt8244784,70692-the-hunt,514847,null,null,FALSE
 /film/fichefilm_gen_cfilm=263725.html,tt6769508,60844-steel-rain,435841,null,null,FALSE
+/film/fichefilm_gen_cfilm=263739.html,tt19894774,126982-la-tresse,989596,null,null,TRUE
 /film/fichefilm_gen_cfilm=263740.html,tt10183616,70109-yves,570258,null,null,FALSE
 /film/fichefilm_gen_cfilm=263741.html,tt6256872,59001-tama-hetki-kaislikossa,467467,null,null,FALSE
 /film/fichefilm_gen_cfilm=263742.html,tt8206668,78225-bad-education,530723,null,null,FALSE
@@ -34947,7 +34949,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=271546.html,tt9731534,76930-the-night-house,547565,null,null,FALSE
 /film/fichefilm_gen_cfilm=271549.html,tt9731598,82626-bros,614939,null,null,FALSE
 /film/fichefilm_gen_cfilm=271550.html,tt2235372,80199-son-of-the-south,686548,null,null,FALSE
-/film/fichefilm_gen_cfilm=271567.html,tt9278264,72719-pat-mat-zimni-radovanky,555609,null,null,FALSE
+/film/fichefilm_gen_cfilm=271567.html,tt9278264,72719-pat-mat-zimni-radovanky,555609,null,null,TRUE
 /film/fichefilm_gen_cfilm=271574.html,tt9731682,87739-crisis,580532,null,null,FALSE
 /film/fichefilm_gen_cfilm=271576.html,tt20199226,114661-meine-chaosfee-ich,681303,null,null,FALSE
 /film/fichefilm_gen_cfilm=271587.html,tt9049280,74869-delphine-et-carole-insoumuses,580073,null,null,FALSE
@@ -35059,7 +35061,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=272862.html,tt10060094,71473-the-knight-before-christmas,611207,null,null,FALSE
 /film/fichefilm_gen_cfilm=272865.html,tt7129636,75124-hair-love,589739,null,null,FALSE
 /film/fichefilm_gen_cfilm=272912.html,tt8976772,77542-push,593029,null,null,FALSE
-/film/fichefilm_gen_cfilm=272929.html,tt10076440,70263-et-je-choisis-de-vivre,603142,null,null,TRUE
+/film/fichefilm_gen_cfilm=272929.html,tt10076440,70263-et-je-choisis-de-vivre,603142,null,null,FALSE
 /film/fichefilm_gen_cfilm=272970.html,tt10092752,78392-la-terre-et-le-sang,659067,null,null,FALSE
 /film/fichefilm_gen_cfilm=272971.html,tt12724622,80770-anelka-lincompris,726649,null,null,FALSE
 /film/fichefilm_gen_cfilm=272972.html,tt12982218,81242-gims-on-the-record,739246,null,null,FALSE
@@ -35204,7 +35206,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=274143.html,tt9893250,86831-i-care-a-lot,601666,null,null,FALSE
 /film/fichefilm_gen_cfilm=274156.html,tt4136456,88718-the-virtuoso,808023,null,null,FALSE
 /film/fichefilm_gen_cfilm=274158.html,tt1918734,82974-2067,528085,null,null,FALSE
-/film/fichefilm_gen_cfilm=274164.html,tt10150684,90769-bigger-than-us,842349,null,null,TRUE
+/film/fichefilm_gen_cfilm=274164.html,tt10150684,90769-bigger-than-us,842349,null,null,FALSE
 /film/fichefilm_gen_cfilm=274173.html,tt10136680,84754-after-maria,600700,null,null,FALSE
 /film/fichefilm_gen_cfilm=274174.html,tt10311018,106251-okul-tra,776659,null,null,FALSE
 /film/fichefilm_gen_cfilm=274175.html,tt10323676,92205-the-contractor,628900,null,null,FALSE
@@ -35283,7 +35285,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=275130.html,tt8594376,88725-luomo-del-labirinto,602545,null,null,FALSE
 /film/fichefilm_gen_cfilm=275131.html,tt10515988,93378-paranormal-activity-next-of-kin,609972,null,null,FALSE
 /film/fichefilm_gen_cfilm=275138.html,tt10590506,83967-profession-du-pere,749087,null,null,FALSE
-/film/fichefilm_gen_cfilm=275141.html,tt13846442,121573-tout-le-monde-mappelle-mike,661926,null,null,TRUE
+/film/fichefilm_gen_cfilm=275141.html,tt13846442,121573-tout-le-monde-mappelle-mike,661926,null,null,FALSE
 /film/fichefilm_gen_cfilm=275143.html,tt10514222,83885-ma-raineys-black-bottom,615667,null,null,FALSE
 /film/fichefilm_gen_cfilm=275148.html,tt10940414,71265-jamais-sans-toi-louna,627429,null,null,FALSE
 /film/fichefilm_gen_cfilm=275149.html,tt10545076,77711-bring-the-soul-the-movie,611291,null,null,FALSE
@@ -35300,7 +35302,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=275218.html,tt10805432,71337-detention,614017,null,null,FALSE
 /film/fichefilm_gen_cfilm=275220.html,tt10539608,80454-the-midnight-sky,614911,null,null,FALSE
 /film/fichefilm_gen_cfilm=275223.html,tt5693182,102682-creation-stories,624793,null,null,FALSE
-/film/fichefilm_gen_cfilm=275227.html,tt10880402,75422-de-gaulle,661804,null,null,TRUE
+/film/fichefilm_gen_cfilm=275227.html,tt10880402,75422-de-gaulle,661804,null,null,FALSE
 /film/fichefilm_gen_cfilm=275230.html,tt10161886,73167-the-prom,611213,null,null,FALSE
 /film/fichefilm_gen_cfilm=275258.html,tt10937004,98260-the-way-of-the-wind,607394,null,null,FALSE
 /film/fichefilm_gen_cfilm=275263.html,tt10551904,77774-lorigine-du-monde,615684,null,null,FALSE
@@ -35311,7 +35313,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=275355.html,tt11206302,79640-30-jours-max,613377,null,null,FALSE
 /film/fichefilm_gen_cfilm=275360.html,tt12633744,80308-tas-pecho,711321,null,null,FALSE
 /film/fichefilm_gen_cfilm=275361.html,tt8760670,98996-mona-lisa-and-the-blood-moon,522526,null,null,FALSE
-/film/fichefilm_gen_cfilm=275366.html,tt8359846,78956-gogo,676615,null,null,TRUE
+/film/fichefilm_gen_cfilm=275366.html,tt8359846,78956-gogo,676615,null,null,FALSE
 /film/fichefilm_gen_cfilm=275419.html,tt11032810,84058-5eme-set,742391,null,null,FALSE
 /film/fichefilm_gen_cfilm=275426.html,tt10589738,105139-libertad,655181,null,null,FALSE
 /film/fichefilm_gen_cfilm=275430.html,tt10409554,84902-the-father,605503,null,null,FALSE
@@ -35343,7 +35345,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=275793.html,tt10665342,70580-halloween-ends,616820,null,null,FALSE
 /film/fichefilm_gen_cfilm=275805.html,tt10375632,88075-cest-magnifique,783570,null,null,FALSE
 /film/fichefilm_gen_cfilm=275832.html,tt10065694,73134-antebellum,627290,null,null,FALSE
-/film/fichefilm_gen_cfilm=275839.html,tt12444424,83752-gagarine,712178,null,null,FALSE
+/film/fichefilm_gen_cfilm=275839.html,tt12444424,83752-gagarine,712178,null,null,TRUE
 /film/fichefilm_gen_cfilm=275851.html,tt7737734,79842-the-other-lamb,617786,null,null,FALSE
 /film/fichefilm_gen_cfilm=275852.html,tt10687168,76599-no-7-cherry-lane,616020,null,null,FALSE
 /film/fichefilm_gen_cfilm=275861.html,tt9612982,76011-the-assent,632309,null,null,FALSE
@@ -35380,7 +35382,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=276311.html,tt9067182,77475-rocks,575773,null,null,FALSE
 /film/fichefilm_gen_cfilm=276329.html,tt12322986,96895-petite-nature,661925,null,null,FALSE
 /film/fichefilm_gen_cfilm=276392.html,tt10749760,78352-a-son,618224,null,null,FALSE
-/film/fichefilm_gen_cfilm=276406.html,tt14131780,122647-a-pas-aveugles,795897,from-where-they-stood,from_where_they_stood,TRUE
+/film/fichefilm_gen_cfilm=276406.html,tt14131780,122647-a-pas-aveugles,795897,from-where-they-stood,from_where_they_stood,FALSE
 /film/fichefilm_gen_cfilm=276447.html,tt10785310,78341-tres-veroes,622971,null,null,FALSE
 /film/fichefilm_gen_cfilm=276448.html,tt10203842,79011-state-funeral,618362,null,null,FALSE
 /film/fichefilm_gen_cfilm=276486.html,tt10855768,119925-missing,768362,null,null,FALSE
@@ -35503,7 +35505,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=278085.html,tt11133494,81133-trop-jeune-pour-moi,736527,null,null,FALSE
 /film/fichefilm_gen_cfilm=278089.html,tt10196108,87374-eugenie-grandet,749386,null,null,FALSE
 /film/fichefilm_gen_cfilm=278094.html,tt12000428,96316-selon-la-police,862856,null,null,FALSE
-/film/fichefilm_gen_cfilm=278096.html,tt10174998,71318-sans-frapper,594058,null,null,TRUE
+/film/fichefilm_gen_cfilm=278096.html,tt10174998,71318-sans-frapper,594058,null,null,FALSE
 /film/fichefilm_gen_cfilm=278102.html,tt8615732,77453-leaving-afghanistan,512954,null,null,FALSE
 /film/fichefilm_gen_cfilm=278105.html,tt11121664,90738-blue-bayou,644089,null,null,FALSE
 /film/fichefilm_gen_cfilm=278109.html,tt11348980,94433-animal,842354,null,null,FALSE
@@ -35573,6 +35575,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=279097.html,tt9733388,92616-sublet,680635,null,null,FALSE
 /film/fichefilm_gen_cfilm=279104.html,tt15791034,108307-barbarian,913290,null,null,FALSE
 /film/fichefilm_gen_cfilm=279115.html,tt15789038,105971-elemental,976573,null,null,TRUE
+/film/fichefilm_gen_cfilm=279124.html,tt11304740,115384-wish,1022796,wish,wish_2023,TRUE
 /film/fichefilm_gen_cfilm=279139.html,tt11541872,77008-bigbug,665828,null,null,FALSE
 /film/fichefilm_gen_cfilm=279149.html,tt12444432,79877-9-jours-a-raqqa,712146,null,null,FALSE
 /film/fichefilm_gen_cfilm=279211.html,tt13846526,95886-la-place-dune-autre,820712,null,null,FALSE
@@ -35609,7 +35612,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=279629.html,tt11388406,76923-horse-girl,653601,null,null,FALSE
 /film/fichefilm_gen_cfilm=279630.html,tt11327514,76936-uncle-frank,634544,null,null,FALSE
 /film/fichefilm_gen_cfilm=279636.html,tt18550220,123269-chien-de-la-casse,957608,null,null,FALSE
-/film/fichefilm_gen_cfilm=279640.html,tt12826598,109018-interdit-aux-chiens-et-aux-italiens,715385,null,null,TRUE
+/film/fichefilm_gen_cfilm=279640.html,tt12826598,109018-interdit-aux-chiens-et-aux-italiens,715385,null,null,FALSE
 /film/fichefilm_gen_cfilm=279642.html,tt22804502,109701-heureux-les-feles,998272,null,null,FALSE
 /film/fichefilm_gen_cfilm=279646.html,tt11394282,92638-sin-senas-particulares,653658,null,null,FALSE
 /film/fichefilm_gen_cfilm=279664.html,tt11703710,88557-downton-abbey-a-new-era,820446,null,null,FALSE
@@ -35659,6 +35662,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=280185.html,tt11564570,88153-glass-onion-a-knives-out-mystery,661374,null,null,FALSE
 /film/fichefilm_gen_cfilm=280192.html,tt10579952,86484-master,626392,null,null,FALSE
 /film/fichefilm_gen_cfilm=280196.html,tt11324534,72895-the-thing-about-harry,647325,null,null,FALSE
+/film/fichefilm_gen_cfilm=280197.html,tt16969006,127913-le-temps-daimer,820696,null,null,TRUE
 /film/fichefilm_gen_cfilm=280198.html,tt10940736,103357-petite-fleur,660327,null,null,FALSE
 /film/fichefilm_gen_cfilm=280200.html,tt13086492,102516-la-ligne,926332,null,null,FALSE
 /film/fichefilm_gen_cfilm=280201.html,tt14055038,95912-twist-a-bamako,788935,null,null,FALSE
@@ -35748,7 +35752,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=280956.html,tt11778272,85598-crock-of-gold-a-few-rounds-with-shane-macgowan,730506,null,null,FALSE
 /film/fichefilm_gen_cfilm=280964.html,tt15091284,78296-pil,676705,null,null,FALSE
 /film/fichefilm_gen_cfilm=280978.html,tt8060328,80207-invasion,514207,null,null,FALSE
-/film/fichefilm_gen_cfilm=280993.html,tt11858890,124256-the-creator,670292,the-creator,the_creator_2023,TRUE
+/film/fichefilm_gen_cfilm=280993.html,tt11858890,124256-the-creator,670292,the-creator,the_creator_2023,FALSE
 /film/fichefilm_gen_cfilm=281000.html,tt10451312,93490-marco-effekten,659940,null,null,FALSE
 /film/fichefilm_gen_cfilm=281021.html,tt13387444,91731-pour-te-retrouver,845671,null,null,FALSE
 /film/fichefilm_gen_cfilm=281035.html,tt11753696,84865-petite-fille,656274,null,null,FALSE
@@ -35813,7 +35817,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=281668.html,tt11252440,86202-psycho-goreman,670428,null,null,FALSE
 /film/fichefilm_gen_cfilm=281679.html,tt12989690,82185-le-cygne-des-heros,737552,null,null,FALSE
 /film/fichefilm_gen_cfilm=281688.html,tt12003946,109380-violent-night,899112,null,null,FALSE
-/film/fichefilm_gen_cfilm=281709.html,tt13269580,93479-a-plein-temps,833417,null,null,TRUE
+/film/fichefilm_gen_cfilm=281709.html,tt13269580,93479-a-plein-temps,833417,null,null,FALSE
 /film/fichefilm_gen_cfilm=281719.html,tt13391708,108309-les-cinq-diables,820697,null,null,FALSE
 /film/fichefilm_gen_cfilm=281737.html,tt9049042,82927-tunnelen,606154,null,null,FALSE
 /film/fichefilm_gen_cfilm=281740.html,tt12728214,90510-linstant-present,824413,null,null,FALSE
@@ -35946,7 +35950,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=283737.html,tt12443726,81100-last-words,712110,null,null,FALSE
 /film/fichefilm_gen_cfilm=283738.html,tt12443662,82302-heaven-to-the-land-of-happiness,593050,null,null,FALSE
 /film/fichefilm_gen_cfilm=283743.html,tt11385336,90184-el-olvido-que-seremos,660943,null,null,FALSE
-/film/fichefilm_gen_cfilm=283746.html,tt9138170,86616-limbo,554371,null,null,TRUE
+/film/fichefilm_gen_cfilm=283746.html,tt9138170,86616-limbo,554371,null,null,FALSE
 /film/fichefilm_gen_cfilm=283748.html,tt12439508,82548-nadia-butterfly,702654,null,null,FALSE
 /film/fichefilm_gen_cfilm=283750.html,tt8135564,95924-here-we-are,712117,null,null,FALSE
 /film/fichefilm_gen_cfilm=283751.html,tt12443946,80260-sweat,712121,null,null,FALSE
@@ -36003,7 +36007,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=284863.html,tt14783042,102505-drii-winter,728499,null,null,FALSE
 /film/fichefilm_gen_cfilm=284864.html,tt12264966,93477-notre-dame-brule,811596,null,null,FALSE
 /film/fichefilm_gen_cfilm=284868.html,tt17066764,101750-une-fleur-a-la-bouche,749154,null,null,FALSE
-/film/fichefilm_gen_cfilm=284877.html,tt27307501,128517-perdidos-en-la-noche,605542,null,null,TRUE
+/film/fichefilm_gen_cfilm=284877.html,tt27307501,128517-perdidos-en-la-noche,605542,null,null,FALSE
 /film/fichefilm_gen_cfilm=284879.html,tt13145186,92933-olga,749142,null,null,FALSE
 /film/fichefilm_gen_cfilm=284881.html,tt11409736,102490-unrueh,749136,null,null,FALSE
 /film/fichefilm_gen_cfilm=284906.html,tt12229370,85317-mothering-sunday,718838,null,null,FALSE
@@ -36036,7 +36040,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=285219.html,tt11272898,83822-let-it-snow,720395,null,null,FALSE
 /film/fichefilm_gen_cfilm=285265.html,tt13729232,95083-lorigine-du-mal,786977,null,null,FALSE
 /film/fichefilm_gen_cfilm=285266.html,tt14646488,123274-normale,964917,null,null,FALSE
-/film/fichefilm_gen_cfilm=285269.html,tt27502426,124232-les-filles-dolfa,1069193,null,null,TRUE
+/film/fichefilm_gen_cfilm=285269.html,tt27502426,124232-les-filles-dolfa,1069193,null,null,FALSE
 /film/fichefilm_gen_cfilm=285270.html,tt14994254,121384-les-rascals,936374,null,null,FALSE
 /film/fichefilm_gen_cfilm=285271.html,tt21431680,108531-trois-nuits-par-semaine,849755,null,null,FALSE
 /film/fichefilm_gen_cfilm=285272.html,tt18036574,125858-tropic,958197,null,null,FALSE
@@ -36077,7 +36081,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=285575.html,tt12730310,80834-the-magic-school-bus-rides-again-kids-in-space,726661,null,null,FALSE
 /film/fichefilm_gen_cfilm=285584.html,tt12801262,77313-luca,508943,null,null,FALSE
 /film/fichefilm_gen_cfilm=285618.html,tt14534992,92093-peterchens-mondfahrt,809717,null,null,FALSE
-/film/fichefilm_gen_cfilm=285619.html,tt25675602,122039-droit-dans-les-yeux,1070558,null,null,TRUE
+/film/fichefilm_gen_cfilm=285619.html,tt25675602,122039-droit-dans-les-yeux,1070558,null,null,FALSE
 /film/fichefilm_gen_cfilm=285620.html,tt14686256,105994-birds-of-america,816357,null,null,FALSE
 /film/fichefilm_gen_cfilm=285621.html,tt12800524,92028-encounter,728526,null,null,FALSE
 /film/fichefilm_gen_cfilm=285624.html,tt8132778,81298-la-nuit-des-rois,660958,null,null,FALSE
@@ -36226,7 +36230,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=287114.html,tt18145598,97886-chevrotine,926615,null,null,FALSE
 /film/fichefilm_gen_cfilm=287116.html,tt12477480,95996-decision-to-leave,705996,null,null,FALSE
 /film/fichefilm_gen_cfilm=287124.html,tt27851639,121202-second-tour,962309,null,null,TRUE
-/film/fichefilm_gen_cfilm=287126.html,tt13287846,84147-napoleon,753342,null,null,TRUE
+/film/fichefilm_gen_cfilm=287126.html,tt13287846,84147-napoleon,753342,napoleon-2023,napoleon_2023,TRUE
 /film/fichefilm_gen_cfilm=287142.html,tt14103734,122645-comme-une-actrice,845084,null,null,FALSE
 /film/fichefilm_gen_cfilm=287149.html,tt6794504,84188-last-three-days,754219,null,null,FALSE
 /film/fichefilm_gen_cfilm=287156.html,tt13235822,91590-umma,751237,null,null,FALSE
@@ -36331,7 +36335,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=288281.html,tt0318069,105020-chess-of-the-wind,194088,null,null,FALSE
 /film/fichefilm_gen_cfilm=288371.html,tt13483866,102220-linoleum,765904,null,null,FALSE
 /film/fichefilm_gen_cfilm=288401.html,tt12672620,94748-les-trois-mousquetaires-milady,845111,null,null,FALSE
-/film/fichefilm_gen_cfilm=288402.html,tt12672536,94747-les-trois-mousquetaires-dartagnan,796185,null,the_three_musketeers_dartagnan,FALSE
+/film/fichefilm_gen_cfilm=288402.html,tt12672536,94747-les-trois-mousquetaires-dartagnan,796185,null,the_three_musketeers_dartagnan,TRUE
 /film/fichefilm_gen_cfilm=288420.html,tt21877348,124741-fifi,1007685,null,null,FALSE
 /film/fichefilm_gen_cfilm=288439.html,tt11866324,93693-prey,766507,null,null,FALSE
 /film/fichefilm_gen_cfilm=288451.html,tt13640696,96961-see-how-they-run,766475,null,null,FALSE
@@ -36403,7 +36407,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=289235.html,tt20413946,108185-tout-fout-le-camp,977010,null,null,FALSE
 /film/fichefilm_gen_cfilm=289236.html,tt14860210,106014-tirailleurs,967874,null,null,FALSE
 /film/fichefilm_gen_cfilm=289237.html,tt14644048,122638-goutte-dor,928200,null,null,FALSE
-/film/fichefilm_gen_cfilm=289240.html,tt26448811,123256-sur-ladamant,1070449,on-the-adamant,on_the_adamant,FALSE
+/film/fichefilm_gen_cfilm=289240.html,tt26448811,123256-sur-ladamant,1070449,on-the-adamant,on_the_adamant,TRUE
 /film/fichefilm_gen_cfilm=289255.html,tt11092594,86513-my-name-is-pauli-murray,776589,null,null,FALSE
 /film/fichefilm_gen_cfilm=289261.html,tt8610436,90288-the-sparks-brothers,776485,null,null,FALSE
 /film/fichefilm_gen_cfilm=289262.html,tt10329614,90626-censor,663866,null,null,FALSE
@@ -36438,7 +36442,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=289666.html,tt9308390,93926-margrete-den-forste,659370,null,null,FALSE
 /film/fichefilm_gen_cfilm=289677.html,tt10050968,114615-da-yie,600816,null,null,FALSE
 /film/fichefilm_gen_cfilm=289682.html,tt13873302,96960-against-the-ice,836009,null,null,FALSE
-/film/fichefilm_gen_cfilm=289685.html,tt13874422,114425-the-eternal-daughter,790867,the-eternal-daughter,the_eternal_daughter,TRUE
+/film/fichefilm_gen_cfilm=289685.html,tt13874422,114425-the-eternal-daughter,790867,the-eternal-daughter,the_eternal_daughter,FALSE
 /film/fichefilm_gen_cfilm=289721.html,tt19768016,111794-dalva,958244,null,null,FALSE
 /film/fichefilm_gen_cfilm=289724.html,tt14407336,119245-la-bete,914206,null,null,FALSE
 /film/fichefilm_gen_cfilm=289725.html,tt25750424,123259-voyages-en-italie,1000559,null,null,FALSE
@@ -36451,14 +36455,15 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=289899.html,tt21188044,123898-la-fille-dalbino-rodrigue,960380,null,null,FALSE
 /film/fichefilm_gen_cfilm=289903.html,tt12789212,91313-final-account,728125,null,null,FALSE
 /film/fichefilm_gen_cfilm=289946.html,tt14200930,104448-une-mere,893904,null,null,FALSE
-/film/fichefilm_gen_cfilm=289988.html,tt11448830,107933-falcon-lake,946127,null,null,FALSE
+/film/fichefilm_gen_cfilm=289988.html,tt11448830,107933-falcon-lake,946127,null,null,TRUE
 /film/fichefilm_gen_cfilm=289989.html,tt14821328,90778-mi-iubita-mon-amour,835970,null,null,FALSE
-/film/fichefilm_gen_cfilm=289992.html,tt22039496,107770-la-guerre-des-lulus,961725,null,null,FALSE
+/film/fichefilm_gen_cfilm=289992.html,tt22039496,107770-la-guerre-des-lulus,961725,null,null,TRUE
+/film/fichefilm_gen_cfilm=290002.html,tt13957560,124223-dumb-money,792293,dumb-money,dumb_money,TRUE
 /film/fichefilm_gen_cfilm=290004.html,tt13975458,92200-cube,792678,null,null,FALSE
 /film/fichefilm_gen_cfilm=290023.html,tt14060232,104523-infinite-storm,811631,null,null,FALSE
 /film/fichefilm_gen_cfilm=290045.html,tt10525672,76618-silver-skates,576920,null,null,FALSE
 /film/fichefilm_gen_cfilm=290065.html,tt14230458,121468-poor-things,792307,null,null,FALSE
-/film/fichefilm_gen_cfilm=290068.html,tt18317064,106183-tori-et-lokita,914203,null,null,TRUE
+/film/fichefilm_gen_cfilm=290068.html,tt18317064,106183-tori-et-lokita,914203,null,null,FALSE
 /film/fichefilm_gen_cfilm=290070.html,tt6013920,95944-chinas-van-goghs,426619,null,null,FALSE
 /film/fichefilm_gen_cfilm=290077.html,tt18550270,123308-le-jeune-imam,957606,null,null,FALSE
 /film/fichefilm_gen_cfilm=290149.html,tt3313864,87132-irl,257250,null,null,FALSE
@@ -36490,7 +36495,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=290397.html,tt14077794,97647-la-mif,794782,null,null,FALSE
 /film/fichefilm_gen_cfilm=290398.html,tt12423052,87125-namaste-wahala,796649,null,null,FALSE
 /film/fichefilm_gen_cfilm=290417.html,tt10515720,105095-champagne,928204,null,null,FALSE
-/film/fichefilm_gen_cfilm=290424.html,tt14097206,122695-the-unlikely-pilgrimage-of-harold-fry,844409,null,null,TRUE
+/film/fichefilm_gen_cfilm=290424.html,tt14097206,122695-the-unlikely-pilgrimage-of-harold-fry,844409,null,null,FALSE
 /film/fichefilm_gen_cfilm=290426.html,tt14058484,86821-biggie-i-got-a-story-to-tell,797309,null,null,FALSE
 /film/fichefilm_gen_cfilm=290428.html,tt13821562,105811-ninjababy,654074,null,null,FALSE
 /film/fichefilm_gen_cfilm=290429.html,tt14028890,91739-stop-zemlia,794785,null,null,FALSE
@@ -36559,7 +36564,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=291134.html,tt19713112,105333-yuku-et-la-fleur-de-lhimalaya,947704,null,null,FALSE
 /film/fichefilm_gen_cfilm=291135.html,tt11225756,99209-the-lost-leonardo,822099,null,null,FALSE
 /film/fichefilm_gen_cfilm=291142.html,tt9098454,112412-the-girl-who-believes-in-miracles,805195,null,null,FALSE
-/film/fichefilm_gen_cfilm=291154.html,tt14328348,126806-last-dance,943165,null,null,TRUE
+/film/fichefilm_gen_cfilm=291154.html,tt14328348,126806-last-dance,943165,null,null,FALSE
 /film/fichefilm_gen_cfilm=291159.html,tt15097144,123279-mon-chat-et-moi-la-grande-aventure-de-rrou,977337,null,null,FALSE
 /film/fichefilm_gen_cfilm=291247.html,tt14458442,90719-the-son,806368,the-son-2022,the_son,FALSE
 /film/fichefilm_gen_cfilm=291269.html,tt11643154,88751-colette,741845,null,null,FALSE
@@ -36607,7 +36612,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=291870.html,tt9013182,89057-i-am-all-girls,823855,null,null,FALSE
 /film/fichefilm_gen_cfilm=291879.html,tt21807222,111817-saw-x,951491,saw-x,saw_x,TRUE
 /film/fichefilm_gen_cfilm=291914.html,tt14371878,121814-lift,955916,null,null,FALSE
-/film/fichefilm_gen_cfilm=291920.html,tt14589916,125970-il-colibri,807986,null,the_hummingbird,TRUE
+/film/fichefilm_gen_cfilm=291920.html,tt14589916,125970-il-colibri,807986,null,the_hummingbird,FALSE
 /film/fichefilm_gen_cfilm=291944.html,tt8479910,109734-my-name-is-gulpilil,541879,null,null,FALSE
 /film/fichefilm_gen_cfilm=291945.html,tt14877816,107961-petaouchnok,442617,null,null,FALSE
 /film/fichefilm_gen_cfilm=291946.html,tt26597966,111618-une-histoire-damour,1009116,null,null,FALSE
@@ -36664,7 +36669,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=292922.html,tt5012504,92035-injustice,831405,null,null,FALSE
 /film/fichefilm_gen_cfilm=292926.html,tt13276012,82184-poupelle-of-chimney-town,655437,null,null,FALSE
 /film/fichefilm_gen_cfilm=292928.html,tt11417856,76508-the-deer-king,633844,null,null,FALSE
-/film/fichefilm_gen_cfilm=292929.html,tt14749948,105650-my-sunny-maad,831738,null,null,TRUE
+/film/fichefilm_gen_cfilm=292929.html,tt14749948,105650-my-sunny-maad,831738,null,null,FALSE
 /film/fichefilm_gen_cfilm=292941.html,tt14866692,92536-une-autre-idee-du-monde,873396,null,null,FALSE
 /film/fichefilm_gen_cfilm=292953.html,tt11991748,77780-rurouni-kenshin-the-beginning,672322,null,null,FALSE
 /film/fichefilm_gen_cfilm=292966.html,tt13968794,101662-elizabeth-a-portrait-in-parts,896639,null,null,FALSE
@@ -36674,7 +36679,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=292992.html,tt13446168,90938-the-medium,745881,null,null,FALSE
 /film/fichefilm_gen_cfilm=292997.html,tt15153914,94455-rosy,894431,null,null,FALSE
 /film/fichefilm_gen_cfilm=293001.html,tt14775666,90746-unclenching-the-fists,583198,null,null,FALSE
-/film/fichefilm_gen_cfilm=293004.html,tt12544762,90762-marx-puo-aspettare,777726,null,null,FALSE
+/film/fichefilm_gen_cfilm=293004.html,tt12544762,90762-marx-puo-aspettare,777726,null,null,TRUE
 /film/fichefilm_gen_cfilm=293005.html,tt10984580,102871-utama,913820,null,null,FALSE
 /film/fichefilm_gen_cfilm=293011.html,tt13967368,83615-the-great-yokai-war-guardians,746808,null,null,FALSE
 /film/fichefilm_gen_cfilm=293039.html,tt10485250,93943-laurent-garnier-off-the-record,809301,null,null,FALSE
@@ -36708,7 +36713,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=293306.html,tt14851374,90764-jane-par-charlotte,836485,null,null,FALSE
 /film/fichefilm_gen_cfilm=293307.html,tt14323258,101933-house-arrest,768058,null,null,FALSE
 /film/fichefilm_gen_cfilm=293308.html,tt11173544,90763-jfk-revisited-through-the-looking-glass,836486,null,null,FALSE
-/film/fichefilm_gen_cfilm=293309.html,tt14775496,90740-freda,836489,null,null,TRUE
+/film/fichefilm_gen_cfilm=293309.html,tt14775496,90740-freda,836489,null,null,FALSE
 /film/fichefilm_gen_cfilm=293310.html,tt13649034,90737-ballk-hasan,835963,null,null,FALSE
 /film/fichefilm_gen_cfilm=293313.html,tt17974446,123439-la-marginale,996637,null,null,FALSE
 /film/fichefilm_gen_cfilm=293353.html,tt14124268,93955-ray-donovan-the-movie,800425,null,null,FALSE
@@ -36741,7 +36746,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=293673.html,tt2287851,91213-last-flight-to-abuja,126284,null,null,FALSE
 /film/fichefilm_gen_cfilm=293708.html,tt23790924,124466-vincent-doit-mourir,965890,null,null,TRUE
 /film/fichefilm_gen_cfilm=293754.html,tt14867006,93032-vhs94,753453,null,null,FALSE
-/film/fichefilm_gen_cfilm=293756.html,tt22352776,106327-ernest-et-celestine-le-voyage-en-charabie,947219,null,null,TRUE
+/film/fichefilm_gen_cfilm=293756.html,tt22352776,106327-ernest-et-celestine-le-voyage-en-charabie,947219,null,null,FALSE
 /film/fichefilm_gen_cfilm=293760.html,tt10302826,91299-la-metaphysique-du-berger,845965,null,null,FALSE
 /film/fichefilm_gen_cfilm=293817.html,tt14921614,90771-im-so-sorry,842363,null,null,FALSE
 /film/fichefilm_gen_cfilm=293820.html,tt14927320,90772-invisible-demons,842361,null,null,FALSE
@@ -36765,7 +36770,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=294192.html,tt15090124,91409-mad-god,846867,null,null,FALSE
 /film/fichefilm_gen_cfilm=294197.html,tt12664618,90914-sinkhole,623135,null,null,FALSE
 /film/fichefilm_gen_cfilm=294230.html,tt18235146,128475-club-zero,938250,null,null,FALSE
-/film/fichefilm_gen_cfilm=294287.html,tt15399372,123257-los-reyes-del-mundo,848112,null,null,TRUE
+/film/fichefilm_gen_cfilm=294287.html,tt15399372,123257-los-reyes-del-mundo,848112,null,null,FALSE
 /film/fichefilm_gen_cfilm=294298.html,tt7126114,108166-les-lendemains-de-veille,923372,null,null,FALSE
 /film/fichefilm_gen_cfilm=294306.html,tt14967958,94756-goodbye-don-glees,846993,null,null,FALSE
 /film/fichefilm_gen_cfilm=294308.html,tt15385664,122553-en-plein-feu,944306,null,the_blaze,FALSE
@@ -36775,7 +36780,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=294337.html,tt6718170,76117-the-super-mario-bros-movie,502356,null,null,FALSE
 /film/fichefilm_gen_cfilm=294342.html,tt3008014,18826-the-face-reader,220176,null,null,FALSE
 /film/fichefilm_gen_cfilm=294352.html,tt14998742,96184-rebel-moon,848326,null,null,FALSE
-/film/fichefilm_gen_cfilm=294353.html,tt15257818,128525-kobieta-na-dachu,965037,null,null,TRUE
+/film/fichefilm_gen_cfilm=294353.html,tt15257818,128525-kobieta-na-dachu,965037,null,null,FALSE
 /film/fichefilm_gen_cfilm=294372.html,tt9660502,105810-close,901563,null,null,FALSE
 /film/fichefilm_gen_cfilm=294401.html,tt15167162,106886-les-volets-verts,892503,null,null,FALSE
 /film/fichefilm_gen_cfilm=294414.html,tt15009428,104695-argylle,848538,null,null,FALSE
@@ -36828,6 +36833,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=295576.html,tt11209212,96108-see-for-me,825808,null,null,FALSE
 /film/fichefilm_gen_cfilm=295616.html,tt27372066,125975-la-voie-royale,989593,null,null,FALSE
 /film/fichefilm_gen_cfilm=295626.html,tt15441522,121811-sur-les-chemins-noirs,888082,null,null,FALSE
+/film/fichefilm_gen_cfilm=295634.html,tt16090596,82845-conann,724846,null,null,TRUE
 /film/fichefilm_gen_cfilm=295635.html,tt16953666,107977-la-nuit-du-12,925102,null,the_night_of_the_12th,FALSE
 /film/fichefilm_gen_cfilm=295637.html,tt26256406,124468-banel-e-adama,995806,null,null,FALSE
 /film/fichefilm_gen_cfilm=295668.html,tt14079374,94228-14-peaks-nothing-is-impossible,890825,null,null,FALSE
@@ -36858,14 +36864,14 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=296113.html,tt12359080,92181-zero-contact,872170,null,null,FALSE
 /film/fichefilm_gen_cfilm=296128.html,tt15471560,104932-fumer-fait-tousser,872709,null,null,FALSE
 /film/fichefilm_gen_cfilm=296150.html,tt14042038,104870-matar-a-la-bestia,856245,null,null,FALSE
-/film/fichefilm_gen_cfilm=296168.html,tt15398776,92959-oppenheimer,872585,null,null,TRUE
+/film/fichefilm_gen_cfilm=296168.html,tt15398776,92959-oppenheimer,872585,null,null,FALSE
 /film/fichefilm_gen_cfilm=296254.html,tt15422240,106015-eraser-reborn,923597,null,null,FALSE
 /film/fichefilm_gen_cfilm=296285.html,tt15411636,123920-la-fille-et-le-garcon,892499,null,null,FALSE
 /film/fichefilm_gen_cfilm=296289.html,tt8493972,98804-lempire-du-silence,891965,null,null,FALSE
 /film/fichefilm_gen_cfilm=296290.html,tt19726450,106237-boum-boum,940386,null,null,FALSE
 /film/fichefilm_gen_cfilm=296393.html,tt19858178,108183-les-vieux-fourneaux-2-bons-pour-lasile,884453,null,null,FALSE
-/film/fichefilm_gen_cfilm=296411.html,tt11053130,107957-icare-ou-la-mesure-des-choses,913313,null,null,FALSE
-/film/fichefilm_gen_cfilm=296455.html,tt27789218,126804-deserts,958285,null,null,TRUE
+/film/fichefilm_gen_cfilm=296411.html,tt11053130,107957-icare-ou-la-mesure-des-choses,913313,null,null,TRUE
+/film/fichefilm_gen_cfilm=296455.html,tt27789218,126804-deserts,958285,null,null,FALSE
 /film/fichefilm_gen_cfilm=296483.html,tt14849038,108433-vendetta,894169,null,null,FALSE
 /film/fichefilm_gen_cfilm=296490.html,tt14995258,114413-sous-emprise,911129,null,null,FALSE
 /film/fichefilm_gen_cfilm=296493.html,tt7228576,95917-songs-of-the-water-spirits,895677,null,null,FALSE
@@ -36880,7 +36886,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=296611.html,tt23177868,94039-momias,816904,null,null,FALSE
 /film/fichefilm_gen_cfilm=296688.html,tt15486810,92397-teen-wolf-the-movie,877703,null,null,FALSE
 /film/fichefilm_gen_cfilm=296746.html,tt15943258,110184-pipa,798223,null,null,FALSE
-/film/fichefilm_gen_cfilm=296811.html,tt15531718,122642-le-grand-chariot,920767,null,the_plough,TRUE
+/film/fichefilm_gen_cfilm=296811.html,tt15531718,122642-le-grand-chariot,920767,null,the_plough,FALSE
 /film/fichefilm_gen_cfilm=296813.html,tt14766636,96932-teneis-que-venir-a-verla,837602,null,null,FALSE
 /film/fichefilm_gen_cfilm=296850.html,tt18298524,122119-les-complices,984307,null,null,FALSE
 /film/fichefilm_gen_cfilm=296855.html,tt13612556,92355-une-jeune-fille-disparait,1027645,null,null,FALSE
@@ -36889,7 +36895,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=296960.html,tt9471828,102420-errante-corazon,743048,null,null,FALSE
 /film/fichefilm_gen_cfilm=296963.html,tt13051724,118901-limmensita,770724,null,null,FALSE
 /film/fichefilm_gen_cfilm=296970.html,tt10368758,96847-le-chene,916387,null,null,FALSE
-/film/fichefilm_gen_cfilm=296971.html,tt8010354,111681-the-tiger-who-came-to-tea,644120,null,the_tiger_who_came_to_tea,TRUE
+/film/fichefilm_gen_cfilm=296971.html,tt8010354,111681-the-tiger-who-came-to-tea,644120,null,the_tiger_who_came_to_tea,FALSE
 /film/fichefilm_gen_cfilm=296976.html,tt13558022,99591-icare,921253,null,null,FALSE
 /film/fichefilm_gen_cfilm=296988.html,tt15488838,105272-vanishing,680071,null,null,FALSE
 /film/fichefilm_gen_cfilm=297001.html,tt15385142,123916-cadejo-blanco,865367,null,null,FALSE
@@ -36918,19 +36924,19 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=297441.html,tt13064272,83550-sing-a-bit-of-harmony,741335,null,null,FALSE
 /film/fichefilm_gen_cfilm=297442.html,tt26660615,120535-la-vie-pour-de-vrai,967370,null,null,FALSE
 /film/fichefilm_gen_cfilm=297448.html,tt20673642,105209-la-traversee,947962,null,null,FALSE
-/film/fichefilm_gen_cfilm=297464.html,tt19725816,106206-nos-frangins,962541,null,null,TRUE
+/film/fichefilm_gen_cfilm=297464.html,tt19725816,106206-nos-frangins,962541,null,null,FALSE
 /film/fichefilm_gen_cfilm=297465.html,tt28335337,126429-anti-squat,936360,null,null,FALSE
 /film/fichefilm_gen_cfilm=297553.html,tt8309900,125420-ademokas-education,886429,null,null,FALSE
-/film/fichefilm_gen_cfilm=297560.html,tt15732890,124848-le-livre-des-solutions,888003,null,null,TRUE
+/film/fichefilm_gen_cfilm=297560.html,tt15732890,124848-le-livre-des-solutions,888003,null,null,FALSE
 /film/fichefilm_gen_cfilm=297596.html,tt7469828,109833-paradise-highway,939979,null,null,FALSE
 /film/fichefilm_gen_cfilm=297648.html,tt11772516,95915-red,705862,null,null,FALSE
 /film/fichefilm_gen_cfilm=297662.html,tt0176411,54838-we-were-young,390294,null,null,FALSE
-/film/fichefilm_gen_cfilm=297685.html,tt26744610,124679-lautre-laurens,889816,null,null,TRUE
+/film/fichefilm_gen_cfilm=297685.html,tt26744610,124679-lautre-laurens,889816,null,null,FALSE
 /film/fichefilm_gen_cfilm=297707.html,tt15768848,125672-the-pod-generation,889675,the-pod-generation,the_pod_generation,TRUE
 /film/fichefilm_gen_cfilm=297751.html,tt11797376,122285-objetos,946706,null,objetos,FALSE
 /film/fichefilm_gen_cfilm=297798.html,tt15713012,118998-overdose,896485,null,null,FALSE
 /film/fichefilm_gen_cfilm=297799.html,tt2316411,17234-enemy,181886,null,null,FALSE
-/film/fichefilm_gen_cfilm=297807.html,tt26440619,123194-roter-himmel,900379,afire,afire,TRUE
+/film/fichefilm_gen_cfilm=297807.html,tt26440619,123194-roter-himmel,900379,afire,afire,FALSE
 /film/fichefilm_gen_cfilm=297810.html,tt0456396,14055-lenfant,11490,null,null,FALSE
 /film/fichefilm_gen_cfilm=297895.html,tt17679584,106091-le-bleu-du-caftan,958279,null,null,FALSE
 /film/fichefilm_gen_cfilm=297982.html,tt23831726,128913-comme-par-magie,1001403,null,null,TRUE
@@ -36951,6 +36957,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=298668.html,tt18240922,121816-la-plus-belle-pour-aller-danser,983017,null,null,FALSE
 /film/fichefilm_gen_cfilm=298674.html,tt16183464,93875-one-piece-film-red,900667,null,null,FALSE
 /film/fichefilm_gen_cfilm=298698.html,tt9883832,111498-moonage-daydream,957457,null,null,FALSE
+/film/fichefilm_gen_cfilm=298732.html,tt14748950,null,966488,null,null,TRUE
 /film/fichefilm_gen_cfilm=298733.html,tt17374820,119815-toi-non-plus-tu-nas-rien-vu,964890,null,null,FALSE
 /film/fichefilm_gen_cfilm=298735.html,tt18224752,116998-completement-crame,792614,null,null,TRUE
 /film/fichefilm_gen_cfilm=298736.html,tt19719940,106386-rodeo,936378,null,null,FALSE
@@ -36998,12 +37005,12 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=299888.html,tt22897860,108305-le-monde-de-kaleb,944943,null,null,FALSE
 /film/fichefilm_gen_cfilm=299931.html,tt17044506,98223-le-village-de-bamboula,928440,null,null,FALSE
 /film/fichefilm_gen_cfilm=299937.html,tt16160622,124056-le-proces-goldman,972118,null,null,TRUE
-/film/fichefilm_gen_cfilm=299938.html,tt24070754,122108-je-verrai-toujours-vos-visages,1000492,null,null,FALSE
+/film/fichefilm_gen_cfilm=299938.html,tt24070754,122108-je-verrai-toujours-vos-visages,1000492,null,null,TRUE
 /film/fichefilm_gen_cfilm=300021.html,tt17501358,96704-yamabuki,924116,null,null,FALSE
 /film/fichefilm_gen_cfilm=300083.html,tt17009348,123957-dogman,944401,dogman-2023,dogman_2023,FALSE
 /film/fichefilm_gen_cfilm=300092.html,tt18549724,104460-des-mots-qui-restent,942181,null,null,FALSE
 /film/fichefilm_gen_cfilm=300105.html,tt6060964,104443-man-of-god,733209,null,null,FALSE
-/film/fichefilm_gen_cfilm=300107.html,tt17024450,106771-the-equalizer-3,926393,null,null,TRUE
+/film/fichefilm_gen_cfilm=300107.html,tt17024450,106771-the-equalizer-3,926393,null,null,FALSE
 /film/fichefilm_gen_cfilm=300178.html,tt17076046,105763-weird-the-al-yankovic-story,928344,null,null,FALSE
 /film/fichefilm_gen_cfilm=300207.html,tt12299608,98264-mickey-17,696506,null,null,FALSE
 /film/fichefilm_gen_cfilm=300245.html,tt15215918,102511-nana,859933,null,null,FALSE
@@ -37016,7 +37023,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=300262.html,tt17309864,124818-small-slow-but-steady,928730,null,null,FALSE
 /film/fichefilm_gen_cfilm=300268.html,tt15721828,101729-this-much-i-know-to-be-true,927025,null,null,FALSE
 /film/fichefilm_gen_cfilm=300270.html,tt17079314,102469-happiness,928353,null,null,FALSE
-/film/fichefilm_gen_cfilm=300273.html,tt26255180,126801-la-petite,962775,null,null,FALSE
+/film/fichefilm_gen_cfilm=300273.html,tt26255180,126801-la-petite,962775,null,null,TRUE
 /film/fichefilm_gen_cfilm=300279.html,tt23327624,108222-dounia-et-la-princesse-dalep,970867,null,null,FALSE
 /film/fichefilm_gen_cfilm=300359.html,tt17526514,100078-media-crash-qui-a-tue-le-debat-public,934368,null,null,FALSE
 /film/fichefilm_gen_cfilm=300369.html,tt14981626,123268-alma-viva,958192,null,null,FALSE
@@ -37031,7 +37038,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=300548.html,tt16114846,108310-shabu,893404,null,null,FALSE
 /film/fichefilm_gen_cfilm=300624.html,tt17663992,100346-scream-vi,934433,scream-vi,scream_vi,FALSE
 /film/fichefilm_gen_cfilm=300673.html,tt12916738,107944-revolution-sida,803686,null,null,FALSE
-/film/fichefilm_gen_cfilm=300674.html,tt21998510,126816-alam,947227,null,null,TRUE
+/film/fichefilm_gen_cfilm=300674.html,tt21998510,126816-alam,947227,null,null,FALSE
 /film/fichefilm_gen_cfilm=300675.html,tt22794344,107788-si-tu-es-un-homme,957401,null,null,FALSE
 /film/fichefilm_gen_cfilm=300678.html,tt16606592,121205-le-regne-animal,943134,null,null,TRUE
 /film/fichefilm_gen_cfilm=300701.html,tt17080096,101989-alis,927047,null,null,FALSE
@@ -37055,6 +37062,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=302220.html,tt18689984,105143-lheure-du-depart,948354,null,null,FALSE
 /film/fichefilm_gen_cfilm=302283.html,tt16529222,82284-special-delivery,606403,null,null,FALSE
 /film/fichefilm_gen_cfilm=302287.html,tt18549682,null,946770,null,null,FALSE
+/film/fichefilm_gen_cfilm=302291.html,tt28300011,null,999257,null,null,TRUE
 /film/fichefilm_gen_cfilm=302312.html,tt20574224,106229-lombre-des-peres,946787,null,null,FALSE
 /film/fichefilm_gen_cfilm=302334.html,tt18291508,105676-pas-de-quartier,947744,null,null,FALSE
 /film/fichefilm_gen_cfilm=302382.html,tt26699529,128354-le-theoreme-de-marguerite,960033,null,null,TRUE
@@ -37071,13 +37079,15 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=302590.html,tt18228534,106231-on-a-grandi-ensemble,949185,null,null,FALSE
 /film/fichefilm_gen_cfilm=302596.html,tt14915608,94774-captain-nova,881957,null,null,FALSE
 /film/fichefilm_gen_cfilm=302598.html,tt18563148,105635-silverton-siege,951470,null,null,FALSE
-/film/fichefilm_gen_cfilm=302614.html,tt19373366,123278-relaxe,940385,null,null,TRUE
+/film/fichefilm_gen_cfilm=302614.html,tt19373366,123278-relaxe,940385,null,null,FALSE
 /film/fichefilm_gen_cfilm=302630.html,tt18816170,116659-le-monde-dapres,1006232,null,null,FALSE
+/film/fichefilm_gen_cfilm=302640.html,tt23027202,128555-edouard-louis-ou-la-transformation,943375,null,null,TRUE
 /film/fichefilm_gen_cfilm=302679.html,tt18925334,111299-pearl,949423,null,null,FALSE
+/film/fichefilm_gen_cfilm=302694.html,tt17675266,null,934668,null,null,TRUE
 /film/fichefilm_gen_cfilm=302696.html,tt15189534,106613-la-ira-de-dios,880313,null,null,FALSE
 /film/fichefilm_gen_cfilm=302753.html,tt14402084,95387-entre-nous,828373,null,null,FALSE
 /film/fichefilm_gen_cfilm=302766.html,tt12844910,104531-pathaan,864692,null,null,FALSE
-/film/fichefilm_gen_cfilm=302768.html,tt18411490,107727-tiger-3,720557,null,null,TRUE
+/film/fichefilm_gen_cfilm=302768.html,tt18411490,107727-tiger-3,720557,null,null,FALSE
 /film/fichefilm_gen_cfilm=302772.html,tt18349514,111543-vaincre-ou-mourir,950792,null,null,FALSE
 /film/fichefilm_gen_cfilm=302824.html,tt15670314,120083-la-hija-de-todas-las-rabias,865585,null,null,FALSE
 /film/fichefilm_gen_cfilm=302829.html,tt21352380,121203-une-annee-difficile,965791,null,null,TRUE
@@ -37085,17 +37095,18 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=302967.html,tt23061470,111821-premieres-urgences,962266,null,null,FALSE
 /film/fichefilm_gen_cfilm=303019.html,tt21227238,122653-tengo-suenos-electricos,996427,null,null,FALSE
 /film/fichefilm_gen_cfilm=303037.html,tt20383014,106233-frate,960815,null,null,FALSE
+/film/fichefilm_gen_cfilm=303132.html,tt21086802,124750-augure,889818,null,null,TRUE
 /film/fichefilm_gen_cfilm=303281.html,tt10920574,105684-laissons-les-morts-engloutir-les-morts,958031,null,null,FALSE
 /film/fichefilm_gen_cfilm=303326.html,tt28182919,129259-et-la-fete-continue,960042,null,null,TRUE
 /film/fichefilm_gen_cfilm=303337.html,tt22184664,115472-chevalier-noir,958143,null,null,FALSE
-/film/fichefilm_gen_cfilm=303338.html,tt15307126,106331-under-the-fig-trees,958147,null,null,TRUE
+/film/fichefilm_gen_cfilm=303338.html,tt15307126,106331-under-the-fig-trees,958147,null,null,FALSE
 /film/fichefilm_gen_cfilm=303339.html,tt14034614,108122-nostalgia,541724,null,null,FALSE
 /film/fichefilm_gen_cfilm=303369.html,tt18350242,107985-i-love-greece,959007,null,null,FALSE
 /film/fichefilm_gen_cfilm=303426.html,tt8923444,111737-la-derive-des-continents-au-sud,958978,null,null,FALSE
 /film/fichefilm_gen_cfilm=303446.html,tt26440921,122621-bonne-conduite,974561,null,null,FALSE
 /film/fichefilm_gen_cfilm=303482.html,tt18397006,122639-the-dam,958296,null,the_dam,FALSE
 /film/fichefilm_gen_cfilm=303483.html,tt19758012,119823-1976,957461,null,null,FALSE
-/film/fichefilm_gen_cfilm=303505.html,tt19747800,120080-how-to-save-a-dead-friend,951164,null,how_to_save_a_dead_friend,TRUE
+/film/fichefilm_gen_cfilm=303505.html,tt19747800,120080-how-to-save-a-dead-friend,951164,null,how_to_save_a_dead_friend,FALSE
 /film/fichefilm_gen_cfilm=303545.html,tt6931658,94383-hunt,727340,null,null,FALSE
 /film/fichefilm_gen_cfilm=303572.html,tt19652910,106162-io,785398,null,null,FALSE
 /film/fichefilm_gen_cfilm=303601.html,tt21909950,120531-hawa,961707,null,null,FALSE
@@ -37108,7 +37119,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=303733.html,tt18238200,95605-noemie-dit-oui,916352,null,null,FALSE
 /film/fichefilm_gen_cfilm=303748.html,tt12298140,96851-virus-32,893370,null,null,FALSE
 /film/fichefilm_gen_cfilm=303758.html,tt19711858,106205-un-varon,865587,null,null,FALSE
-/film/fichefilm_gen_cfilm=303759.html,tt20226766,122075-atlantic-bar,964808,null,null,TRUE
+/film/fichefilm_gen_cfilm=303759.html,tt20226766,122075-atlantic-bar,964808,null,null,FALSE
 /film/fichefilm_gen_cfilm=303760.html,tt19758084,107926-les-annees-super-8,964681,null,null,FALSE
 /film/fichefilm_gen_cfilm=303761.html,tt11460816,106159-fogo-fatuo,964704,null,null,FALSE
 /film/fichefilm_gen_cfilm=303762.html,tt20226662,123265-la-colline,964826,null,null,FALSE
@@ -37149,11 +37160,11 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=304632.html,tt16731908,123559-il-sol-dellavvenire,925263,null,null,FALSE
 /film/fichefilm_gen_cfilm=304635.html,tt14137416,124509-rapito,801112,kidnapped-2023,kidnapped_2023,TRUE
 /film/fichefilm_gen_cfilm=304685.html,tt20330434,121380-mon-crime,977506,null,null,FALSE
-/film/fichefilm_gen_cfilm=304753.html,tt27729122,null,978261,null,null,TRUE
+/film/fichefilm_gen_cfilm=304753.html,tt27729122,null,978261,null,null,FALSE
 /film/fichefilm_gen_cfilm=304799.html,tt20222606,106513-la-fabrique-des-pandemies,976457,null,null,FALSE
 /film/fichefilm_gen_cfilm=304854.html,tt27711968,122114-yo-mama,998582,null,null,FALSE
 /film/fichefilm_gen_cfilm=304872.html,tt11552344,121351-murder-at-yellowstone-city,974961,null,null,FALSE
-/film/fichefilm_gen_cfilm=304908.html,tt20465746,123382-lultima-notte-di-amore,978870,null,last_night_of_amore,TRUE
+/film/fichefilm_gen_cfilm=304908.html,tt20465746,123382-lultima-notte-di-amore,978870,null,last_night_of_amore,FALSE
 /film/fichefilm_gen_cfilm=304914.html,tt29198923,128454-monsieur-le-maire,1000088,null,null,TRUE
 /film/fichefilm_gen_cfilm=304935.html,tt6685538,76713-mavka-the-forest-song,459003,null,null,FALSE
 /film/fichefilm_gen_cfilm=304960.html,tt15399286,122084-lynchoz,965400,null,null,FALSE
@@ -37172,7 +37183,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=305364.html,tt22171194,114372-la-combattante,1006084,null,null,FALSE
 /film/fichefilm_gen_cfilm=305373.html,tt18968540,96859-incantation,864370,null,null,FALSE
 /film/fichefilm_gen_cfilm=305389.html,tt21027780,124518-kuolleet-lehdet,986280,null,fallen_leaves,TRUE
-/film/fichefilm_gen_cfilm=305392.html,tt24068064,124147-reality,985617,reality-2023,reality_2023,FALSE
+/film/fichefilm_gen_cfilm=305392.html,tt24068064,124147-reality,985617,reality-2023,reality_2023,TRUE
 /film/fichefilm_gen_cfilm=305407.html,tt14785272,107990-quitte-pour-la-peur,987535,null,null,FALSE
 /film/fichefilm_gen_cfilm=305422.html,tt19896206,119762-przytul-mnie-poszukiwacze-miodu,1040342,null,null,TRUE
 /film/fichefilm_gen_cfilm=305423.html,tt26770652,124583-katak-le-brave-beluga,1052152,null,null,TRUE
@@ -37180,7 +37191,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=305530.html,tt0066514,87050-uski-roti,112053,null,null,FALSE
 /film/fichefilm_gen_cfilm=305550.html,tt24156250,121326-le-clan,1000094,null,null,FALSE
 /film/fichefilm_gen_cfilm=305613.html,tt21956982,116634-reste-un-peu,998783,null,null,FALSE
-/film/fichefilm_gen_cfilm=305625.html,tt14250484,74443-nina-et-le-secret-du-herisson,588524,null,null,FALSE
+/film/fichefilm_gen_cfilm=305625.html,tt14250484,74443-nina-et-le-secret-du-herisson,588524,null,null,TRUE
 /film/fichefilm_gen_cfilm=305683.html,tt14522892,123906-ramona,953661,null,null,FALSE
 /film/fichefilm_gen_cfilm=305686.html,tt25969960,121204-marie-line-et-son-juge,995408,null,null,TRUE
 /film/fichefilm_gen_cfilm=305766.html,tt21445908,121385-etugen,1043951,null,null,FALSE
@@ -37189,7 +37200,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=305883.html,tt21230186,124726-une-nuit,1000409,null,null,FALSE
 /film/fichefilm_gen_cfilm=305979.html,tt21197740,105201-batman-and-superman-battle-of-the-super-sons,886396,null,null,FALSE
 /film/fichefilm_gen_cfilm=306000.html,tt22301442,114373-alegria-sefarade,1011536,null,null,FALSE
-/film/fichefilm_gen_cfilm=306013.html,tt15140278,124885-coup-de-chance,859235,coup-de-chance,coup_de_chance,TRUE
+/film/fichefilm_gen_cfilm=306013.html,tt15140278,124885-coup-de-chance,859235,coup-de-chance,coup_de_chance,FALSE
 /film/fichefilm_gen_cfilm=306087.html,tt21163400,122042-astrakan,984294,null,null,FALSE
 /film/fichefilm_gen_cfilm=306096.html,tt21227108,123899-fairytale,963047,null,null,FALSE
 /film/fichefilm_gen_cfilm=306133.html,tt15242330,92414-the-first-slam-dunk,783675,the-first-slam-dunk,the_first_slam_dunk,FALSE
@@ -37212,6 +37223,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=306604.html,tt16449354,124743-a-noiva,1005309,null,null,FALSE
 /film/fichefilm_gen_cfilm=306616.html,tt21374850,122125-all-the-beauty-and-the-bloodshed,1004663,all-the-beauty-and-the-bloodshed,all_the_beauty_and_the_bloodshed,FALSE
 /film/fichefilm_gen_cfilm=306621.html,tt21374930,120137-in-viaggio,1004682,null,null,FALSE
+/film/fichefilm_gen_cfilm=306650.html,tt21342370,129073-las-chicas-estan-bien,1002711,null,null,TRUE
 /film/fichefilm_gen_cfilm=306653.html,tt21378968,120320-trenque-lauquen,715742,null,null,FALSE
 /film/fichefilm_gen_cfilm=306731.html,tt27736473,null,944387,null,null,FALSE
 /film/fichefilm_gen_cfilm=306743.html,tt8649344,123205-blue-jean,971699,null,null,FALSE
@@ -37222,7 +37234,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=306843.html,tt18395238,108189-a-hundred-flowers,936490,null,null,FALSE
 /film/fichefilm_gen_cfilm=306844.html,tt14888898,126815-great-yarmouth-provisional-figures,1007637,null,null,FALSE
 /film/fichefilm_gen_cfilm=306883.html,tt27128451,123438-pour-lhonneur,1000073,null,null,FALSE
-/film/fichefilm_gen_cfilm=306921.html,tt13920920,120636-subtraction,1008043,null,null,TRUE
+/film/fichefilm_gen_cfilm=306921.html,tt13920920,120636-subtraction,1008043,null,null,FALSE
 /film/fichefilm_gen_cfilm=306923.html,tt21440780,123544-how-to-blow-up-a-pipeline,1008048,null,null,FALSE
 /film/fichefilm_gen_cfilm=306924.html,tt21440560,122460-viking,911345,null,viking_2022,FALSE
 /film/fichefilm_gen_cfilm=306937.html,tt21454134,111547-the-bikeriders,1008409,null,null,FALSE
@@ -37234,10 +37246,11 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=307491.html,tt0221322,123095-kisapmata,217434,null,null,FALSE
 /film/fichefilm_gen_cfilm=307537.html,tt0260731,82294-bayaning-3rd-world,253808,null,null,FALSE
 /film/fichefilm_gen_cfilm=307592.html,tt13103732,117081-the-offering,955991,null,null,FALSE
-/film/fichefilm_gen_cfilm=307774.html,tt22492554,126802-comme-une-louve,1019349,null,null,FALSE
+/film/fichefilm_gen_cfilm=307774.html,tt22492554,126802-comme-une-louve,1019349,null,null,TRUE
+/film/fichefilm_gen_cfilm=307791.html,tt21401972,108218-louise-et-la-legende-du-serpent-a-plumes,947909,null,null,TRUE
 /film/fichefilm_gen_cfilm=307807.html,tt19817288,128303-je-vous-salue-salope-la-misogynie-au-temps-du-numerique,1008062,null,null,TRUE
-/film/fichefilm_gen_cfilm=307826.html,tt15621370,108392-just-remembering,878976,null,null,TRUE
-/film/fichefilm_gen_cfilm=307856.html,tt21957904,null,1096751,null,null,TRUE
+/film/fichefilm_gen_cfilm=307826.html,tt15621370,108392-just-remembering,878976,null,null,FALSE
+/film/fichefilm_gen_cfilm=307856.html,tt21957904,null,1096751,null,null,FALSE
 /film/fichefilm_gen_cfilm=307863.html,tt22498242,119373-wo-ist-meine-schwester,1035593,null,null,FALSE
 /film/fichefilm_gen_cfilm=307879.html,tt19383190,117417-the-fire-within-requiem-for-katia-and-maurice-krafft,977341,null,null,FALSE
 /film/fichefilm_gen_cfilm=307967.html,tt26445719,null,1089540,null,null,FALSE
@@ -37245,7 +37258,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=308180.html,tt21435436,116611-detective-knight-rogue,1024546,null,null,FALSE
 /film/fichefilm_gen_cfilm=308227.html,tt20101986,114458-bring-it-on-cheer-or-die,831410,null,null,FALSE
 /film/fichefilm_gen_cfilm=308236.html,tt22889064,null,1053119,null,null,FALSE
-/film/fichefilm_gen_cfilm=308285.html,tt22397870,126062-nouveau-depart,998642,null,null,TRUE
+/film/fichefilm_gen_cfilm=308285.html,tt22397870,126062-nouveau-depart,998642,null,null,FALSE
 /film/fichefilm_gen_cfilm=308295.html,tt19319352,119910-farang,959092,null,null,FALSE
 /film/fichefilm_gen_cfilm=308393.html,tt6430442,128509-sramota,999147,null,null,TRUE
 /film/fichefilm_gen_cfilm=308581.html,tt13858936,87847-mon-vieux,781479,null,null,FALSE
@@ -37254,29 +37267,30 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=308737.html,tt26680456,127555-le-petit-blond-de-la-casbah,1000108,null,null,TRUE
 /film/fichefilm_gen_cfilm=308764.html,tt27417408,123283-a-vol-doiseaux,1094497,null,null,FALSE
 /film/fichefilm_gen_cfilm=308777.html,tt20864716,82706-folk-og-rovere-i-kardemomme-by,645992,null,null,FALSE
+/film/fichefilm_gen_cfilm=308778.html,tt15857304,94273-shaun-the-sheep-the-flight-before-christmas,785545,null,null,TRUE
 /film/fichefilm_gen_cfilm=308779.html,tt27898900,null,1000614,null,null,FALSE
 /film/fichefilm_gen_cfilm=308881.html,tt21919270,112840-trick-or-treat-scooby-doo,1015724,null,null,FALSE
 /film/fichefilm_gen_cfilm=308923.html,tt0107736,null,115784,null,ohikkoshi_2012,TRUE
 /film/fichefilm_gen_cfilm=308943.html,tt20221460,null,1059264,null,null,FALSE
 /film/fichefilm_gen_cfilm=308951.html,tt16402818,102314-the-civil-dead,913417,null,null,FALSE
 /film/fichefilm_gen_cfilm=309055.html,tt25971180,121956-les-choses-simples,1000572,null,null,FALSE
-/film/fichefilm_gen_cfilm=309058.html,tt21810762,120280-les-as-de-la-jungle-2-operation-tour-du-monde,1034055,null,null,FALSE
+/film/fichefilm_gen_cfilm=309058.html,tt21810762,120280-les-as-de-la-jungle-2-operation-tour-du-monde,1034055,null,null,TRUE
 /film/fichefilm_gen_cfilm=309255.html,tt26704133,122046-un-portrait-darmande-altai,1036651,null,null,FALSE
 /film/fichefilm_gen_cfilm=309330.html,tt26007776,121389-ma-ville-demain,1063262,null,null,FALSE
 /film/fichefilm_gen_cfilm=309444.html,tt23656676,120157-tous-resistants-dans-lame,1039500,null,null,FALSE
 /film/fichefilm_gen_cfilm=309446.html,tt21992080,null,989475,null,null,FALSE
 /film/fichefilm_gen_cfilm=309494.html,tt21276180,121355-des-garcons-de-province,993558,null,null,FALSE
-/film/fichefilm_gen_cfilm=309586.html,tt21967006,125807-les-secrets-de-la-princesse-de-cadignan,1039516,null,null,TRUE
+/film/fichefilm_gen_cfilm=309586.html,tt21967006,125807-les-secrets-de-la-princesse-de-cadignan,1039516,null,null,FALSE
 /film/fichefilm_gen_cfilm=309777.html,tt22897838,122664-we-are-coming-chronique-dune-revolution-feministe,1035000,null,null,FALSE
 /film/fichefilm_gen_cfilm=309867.html,tt23781128,120023-service-public,1047993,null,null,FALSE
-/film/fichefilm_gen_cfilm=309888.html,tt14007288,128524-mal-viver,1092099,null,bad_living,TRUE
+/film/fichefilm_gen_cfilm=309888.html,tt14007288,128524-mal-viver,1092099,null,bad_living,FALSE
 /film/fichefilm_gen_cfilm=309904.html,tt23664106,120149-la-promesse-de-laidant,1048792,null,null,FALSE
 /film/fichefilm_gen_cfilm=309996.html,tt19757204,112109-new-gods-yang-jian,844075,null,null,FALSE
-/film/fichefilm_gen_cfilm=310388.html,tt23710508,124998-poisson-rouge,1071561,null,null,TRUE
+/film/fichefilm_gen_cfilm=310388.html,tt23710508,124998-poisson-rouge,1071561,null,null,FALSE
 /film/fichefilm_gen_cfilm=310409.html,tt21997914,103432-scent-of-wind,933225,null,null,FALSE
 /film/fichefilm_gen_cfilm=310462.html,tt13623880,85284-night-at-the-museum-kahmunrah-rises-again,751741,null,null,FALSE
 /film/fichefilm_gen_cfilm=310521.html,tt24328976,128356-testament,1058155,null,null,TRUE
-/film/fichefilm_gen_cfilm=310736.html,tt27128855,122660-bienveillance-paysanne,1086147,null,null,TRUE
+/film/fichefilm_gen_cfilm=310736.html,tt27128855,122660-bienveillance-paysanne,1086147,null,null,FALSE
 /film/fichefilm_gen_cfilm=310793.html,tt15163652,115546-thunivu,904557,null,null,FALSE
 /film/fichefilm_gen_cfilm=310828.html,tt28313478,128805-le-vourdalak,1047223,null,null,FALSE
 /film/fichefilm_gen_cfilm=310862.html,tt8699536,121249-monsieur-constant,1064998,null,null,FALSE
@@ -37289,7 +37303,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=311228.html,tt15281402,107743-waltair-veerayya,989017,null,null,FALSE
 /film/fichefilm_gen_cfilm=311432.html,tt26676672,122518-slava-ukraini,1083310,null,null,FALSE
 /film/fichefilm_gen_cfilm=311433.html,tt24799686,124735-wahou,1063872,null,null,FALSE
-/film/fichefilm_gen_cfilm=311491.html,tt24577296,null,1061651,null,null,TRUE
+/film/fichefilm_gen_cfilm=311491.html,tt24577296,null,1061651,null,null,FALSE
 /film/fichefilm_gen_cfilm=311559.html,tt22868842,109652-lonely-castle-in-the-mirror,942881,null,lonely_castle_in_the_mirror,FALSE
 /film/fichefilm_gen_cfilm=311867.html,tt3679040,null,966719,null,null,FALSE
 /film/fichefilm_gen_cfilm=311949.html,tt22488024,116666-sakra,990140,null,null,FALSE
@@ -37298,9 +37312,10 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=312176.html,tt22797370,null,1032250,null,null,FALSE
 /film/fichefilm_gen_cfilm=312221.html,tt27641091,122656-paysans-du-ciel-a-la-terre,1084751,null,null,FALSE
 /film/fichefilm_gen_cfilm=312435.html,tt9362722,68252-spider-man-across-the-spider-verse,569094,null,null,FALSE
-/film/fichefilm_gen_cfilm=312581.html,tt14007288,128524-mal-viver,1092099,null,null,TRUE
+/film/fichefilm_gen_cfilm=312581.html,tt14007288,128524-mal-viver,1092099,null,null,FALSE
 /film/fichefilm_gen_cfilm=312858.html,tt15441054,null,885331,null,null,FALSE
 /film/fichefilm_gen_cfilm=312941.html,tt15302222,null,965606,null,null,FALSE
+/film/fichefilm_gen_cfilm=313072.html,tt30014525,null,1095168,null,null,TRUE
 /film/fichefilm_gen_cfilm=313127.html,tt15683734,124053-it-lives-inside,1024773,null,null,FALSE
 /film/fichefilm_gen_cfilm=313339.html,tt11732164,123252-pathu-thala,882392,null,null,FALSE
 /film/fichefilm_gen_cfilm=313408.html,tt22444570,94655-ponniyin-selvan-part-ii,858082,null,null,FALSE
@@ -37309,10 +37324,10 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=313706.html,tt27155038,122910-ruby-gillman-teenage-kraken,1040148,ruby-gillman-teenage-kraken,ruby_gillman_teenage_kraken,FALSE
 /film/fichefilm_gen_cfilm=313750.html,tt22487338,124259-simple-comme-sylvain,912520,null,null,TRUE
 /film/fichefilm_gen_cfilm=313771.html,tt15415924,108179-agilan,937702,null,null,FALSE
-/film/fichefilm_gen_cfilm=313772.html,tt27434317,null,1122562,null,null,TRUE
+/film/fichefilm_gen_cfilm=313772.html,tt27434317,null,1122562,null,null,FALSE
 /film/fichefilm_gen_cfilm=313829.html,tt21272600,120086-de-la-conquete,993561,null,null,FALSE
 /film/fichefilm_gen_cfilm=313994.html,tt21308888,125206-paradise,1140066,null,null,FALSE
-/film/fichefilm_gen_cfilm=314000.html,tt20603054,129060-mmxx,985895,null,null,TRUE
+/film/fichefilm_gen_cfilm=314000.html,tt20603054,129060-mmxx,985895,null,null,FALSE
 /film/fichefilm_gen_cfilm=314001.html,tt18162096,128515-nu-atepta-prea-mult-de-la-sfaritul-lumii,937085,null,null,TRUE
 /film/fichefilm_gen_cfilm=314019.html,tt27757500,125423-sous-le-tapis,995396,null,null,FALSE
 /film/fichefilm_gen_cfilm=314039.html,tt22890246,124431-how-to-have-sex,1075175,how-to-have-sex,how_to_have_sex,TRUE
@@ -37323,15 +37338,16 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=314430.html,tt27148303,123930-le-vrai-du-faux,1091356,null,null,FALSE
 /film/fichefilm_gen_cfilm=314751.html,tt27843232,124732-de-leau-jaillit-le-feu,1119684,null,null,TRUE
 /film/fichefilm_gen_cfilm=314823.html,tt26443006,null,889769,null,null,FALSE
+/film/fichefilm_gen_cfilm=314885.html,tt27503384,123560-perfect-days,976893,null,perfect_days_2023,TRUE
 /film/fichefilm_gen_cfilm=314980.html,tt1490005,null,630170,null,null,TRUE
 /film/fichefilm_gen_cfilm=315057.html,tt27502250,128510-anselm-das-rauschen-der-zeit,1112547,null,null,TRUE
 /film/fichefilm_gen_cfilm=315119.html,tt28236368,125400-yannick,1110358,null,null,TRUE
 /film/fichefilm_gen_cfilm=315217.html,tt14330672,129061-goodbye-julia,1111750,null,null,TRUE
 /film/fichefilm_gen_cfilm=315221.html,tt27502227,129066-retratos-fantasmas,1112548,null,null,TRUE
 /film/fichefilm_gen_cfilm=315224.html,tt17052842,129051-the-breaking-ice,923150,null,null,TRUE
-/film/fichefilm_gen_cfilm=315386.html,tt27420880,123890-caiti-blues,1108372,null,null,TRUE
+/film/fichefilm_gen_cfilm=315386.html,tt27420880,123890-caiti-blues,1108372,null,null,FALSE
 /film/fichefilm_gen_cfilm=315390.html,tt27531514,129067-skd-dokd,1114911,null,null,TRUE
-/film/fichefilm_gen_cfilm=315394.html,tt10399622,124903-ben-trong-v-ken-vang,1114816,null,inside_the_yellow_cocoon_shell,FALSE
+/film/fichefilm_gen_cfilm=315394.html,tt10399622,124903-ben-trong-v-ken-vang,1114816,null,inside_the_yellow_cocoon_shell,TRUE
 /film/fichefilm_gen_cfilm=315402.html,tt27706804,128512-un-prince,1110135,null,null,TRUE
 /film/fichefilm_gen_cfilm=315404.html,tt27541074,125424-in-our-day,1114775,null,null,FALSE
 /film/fichefilm_gen_cfilm=315467.html,tt27171776,123413-yaathisai,1109203,null,null,FALSE
@@ -37345,6 +37361,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=316692.html,tt14993250,93989-rocky-aur-rani-kii-prem-kahaani,848116,null,null,FALSE
 /film/fichefilm_gen_cfilm=316739.html,tt29198701,128190-inestimable,1100474,null,null,TRUE
 /film/fichefilm_gen_cfilm=316761.html,tt14914988,125426-satyaprem-ki-katha,1020376,null,null,FALSE
+/film/fichefilm_gen_cfilm=317133.html,tt30068606,null,1137635,null,null,TRUE
 /film/fichefilm_gen_cfilm=317313.html,tt20242416,125425-maamannan,906223,null,null,FALSE
 /film/fichefilm_gen_cfilm=317561.html,tt20255306,121294-the-smeds-and-the-smoos,1058054,null,null,TRUE
 /film/fichefilm_gen_cfilm=317601.html,tt22543326,null,987895,null,null,FALSE
@@ -37359,4 +37376,4 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=320174.html,tt26316907,null,990787,null,null,FALSE
 /film/fichefilm_gen_cfilm=320233.html,tt27540185,null,1115253,null,null,FALSE
 /film/fichefilm_gen_cfilm=320713.html,tt23026970,129071-les-voies-jaunes,950648,null,null,TRUE
-/film/fichefilm_gen_cfilm=320869.html,tt22871576,null,943379,null,null,FALSE
+/film/fichefilm_gen_cfilm=320869.html,tt22871576,null,943379,null,null,TRUE
