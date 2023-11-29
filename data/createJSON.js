@@ -54,7 +54,7 @@ const createJSON = async (
   const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(imdbHomepage);
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
-  const metacriticRating = await getMetacriticRating(imdbHomepage, metacriticHomepage, metacriticId);
+  const metacriticRating = await getMetacriticRating(metacriticHomepage, metacriticId);
   const rottenTomatoesRating = await getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId);
 
   /* Creating an object called allocineObj. */
@@ -94,8 +94,6 @@ const createJSON = async (
           url: metacriticRating.url,
           users_rating: metacriticRating.usersRating,
           critics_rating: metacriticRating.criticsRating,
-          critics_number: metacriticRating.criticsNumber,
-          critics_rating_details: metacriticRating.criticsRatingDetails,
         }
       : null;
 

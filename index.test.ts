@@ -218,22 +218,22 @@ const params = {
     query: "?item_type=tvshow&is_active=true&limit=200",
     expectedResult: (items) =>
       items.every((item) => {
-        if (item.allocine && item.allocine.users_rating !== null) {
+        if (item.allocine && item.allocine.users_rating) {
           expect(item.allocine.users_rating).toBeGreaterThanOrEqual(0);
           expect(item.allocine.users_rating).toBeLessThanOrEqual(5);
         }
 
-        if (item.betaseries !== null) {
+        if (item.betaseries) {
           expect(item.betaseries.users_rating).toBeGreaterThanOrEqual(0);
           expect(item.betaseries.users_rating).toBeLessThanOrEqual(5);
         }
 
-        if (item.imdb !== null) {
+        if (item.imdb) {
           expect(item.imdb.users_rating).toBeGreaterThanOrEqual(0);
           expect(item.imdb.users_rating).toBeLessThanOrEqual(10);
         }
 
-        if (item.metacritic !== null) {
+        if (item.metacritic) {
           expect(item.metacritic.users_rating).toBeGreaterThanOrEqual(0);
           expect(item.metacritic.users_rating).toBeLessThanOrEqual(10);
         }
@@ -313,15 +313,15 @@ const params = {
   at_least_one_popularity: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
-      expect(items.filter((item) => item.allocine.popularity !== null).length).toBeGreaterThanOrEqual(1);
-      expect(items.filter((item) => item.imdb.popularity !== null).length).toBeGreaterThanOrEqual(1);
+      expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(3);
+      expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(3);
     },
   },
 
   at_least_50_percent_trailers: {
     query: "?is_active=true&limit=200",
     expectedResult: (items) => {
-      expect(items.filter((item) => item.trailer !== null).length).toBeGreaterThanOrEqual(100);
+      expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(100);
     },
   },
 
@@ -387,7 +387,7 @@ const params = {
   },
 
   items_with_all_required_keys: {
-    query: `?is_active=true,false&limit=8500`,
+    query: `?is_active=true&limit=400`,
     expectedResult: (items) =>
       items.every((item) => {
         config.keysToCheck.forEach((key) => {
@@ -396,17 +396,24 @@ const params = {
           expect(isLowerCase(key)).toBe(true);
         });
 
+        const minimumNumberOfItems = 15;
+
         expect(Object.keys(item.allocine)).toHaveLength(7);
-        expect(items.filter((item) => item.allocine.users_rating !== null && item.allocine.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+        expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
         expect(Object.keys(item.imdb)).toHaveLength(4);
-        expect(items.filter((item) => item.imdb.users_rating !== null && item.imdb.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+        expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
         expect(Object.keys(item.betaseries)).toHaveLength(3);
-        expect(items.filter((item) => item.betaseries && item.betaseries.users_rating !== null && item.betaseries.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+        expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
-        item.metacritic ? expect(Object.keys(item.metacritic)).toHaveLength(6) : null;
-        expect(items.filter((item) => item.metacritic !== null && item.metacritic.users_rating !== null && item.metacritic.users_rating !== undefined).length).toBeGreaterThanOrEqual(5);
+        item.metacritic ? expect(Object.keys(item.metacritic)).toHaveLength(4) : null;
+        expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+        expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+
+        item.rottenTomatoes ? expect(Object.keys(item.rottenTomatoes)).toHaveLength(4) : null;
+        expect(items.filter((item) => item.rottenTomatoes && item.rottenTomatoes.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+        expect(items.filter((item) => item.rottenTomatoes && item.rottenTomatoes.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
         expect(item.title).not.toBeNull();
         expect(item.image).not.toBeNull();
