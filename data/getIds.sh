@@ -342,22 +342,22 @@ do
           fi
         fi
 
-        if [[ $METACRITIC_ID == "noImdbId" ]] && [[ $PROMPT == "prompt" ]]; then
+        if [[ $METACRITIC_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
           open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
           open -a "/Applications/Arc.app" "https://www.metacritic.com"
           echo "Enter the Metacritic id:"
           read METACRITIC_ID
         fi
 
-        if [[ $ROTTEN_TOMATOES_ID == "noImdbId" ]] && [[ $PROMPT == "prompt" ]]; then
+        if [[ -z $ROTTEN_TOMATOES_ID ]]; then
+          ROTTEN_TOMATOES_ID=null
+        fi
+
+        if [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
           open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
           open -a "/Applications/Arc.app" "https://www.rottentomatoes.com"
           echo "Enter the Rotten Tomatoes id:"
           read ROTTEN_TOMATOES_ID
-        fi
-
-        if [[ -z $ROTTEN_TOMATOES_ID ]]; then
-          ROTTEN_TOMATOES_ID=null
         fi
 
         if [[ $IMDB_ID == "noImdbId" ]] && [[ -z $PROMPT ]]; then
