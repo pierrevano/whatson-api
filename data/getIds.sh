@@ -230,9 +230,8 @@ do
 
       echo $URL >> $TEMP_URLS_FILE_PATH
 
-      if [[ $PROMPT == "prompt" ]] && [[ $ALLOCINE_URL ]] && [[ $METACRITIC_CHECK != "null" ]] && [[ $ROTTEN_TOMATOES_CHECK != "null" ]]; then
-        DUPLICATE=1
-      else
+      if [[ $METACRITIC_CHECK == "null" ]] && [[ $ROTTEN_TOMATOES_CHECK == "null" ]] && [[ $PROMPT == "prompt" ]]; then
+        DUPLICATE=0
         echo "Found $URL to be rechecked."
       fi
 
@@ -341,6 +340,20 @@ do
           if [[ -z $METACRITIC_ID ]]; then
             METACRITIC_ID=null
           fi
+        fi
+
+        if [[ $METACRITIC_ID == "noImdbId" ]] && [[ $PROMPT == "prompt" ]]; then
+          open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
+          open -a "/Applications/Arc.app" "https://www.metacritic.com"
+          echo "Enter the Metacritic id:"
+          read METACRITIC_ID
+        fi
+
+        if [[ $ROTTEN_TOMATOES_ID == "noImdbId" ]] && [[ $PROMPT == "prompt" ]]; then
+          open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
+          open -a "/Applications/Arc.app" "https://www.rottentomatoes.com"
+          echo "Enter the Rotten Tomatoes id:"
+          read ROTTEN_TOMATOES_ID
         fi
 
         if [[ -z $ROTTEN_TOMATOES_ID ]]; then
