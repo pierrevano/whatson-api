@@ -1,4 +1,4 @@
-# Defining the variables used in the script.
+# Define the main variables
 BASE_URL_SURGE=https://whatson-assets.surge.sh
 FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
@@ -13,7 +13,7 @@ TEMP_URLS_FILE_PATH=./temp_urls
 TYPE=$2
 URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
 
-# Defining alternative base variables
+# Define alternative base variables
 if [[ $TYPE == "movie" ]]; then
   BASE_URL=https://www.allocine.fr/film/aucinema/
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
@@ -102,8 +102,8 @@ remove_files () {
 
 # A function that is called when the data is not found.
 data_not_found () {
-  IMDB_ID="noImdbId"
-  BETASERIES_ID="noBetaseriesId"
+  IMDB_ID=null
+  BETASERIES_ID=null
   THEMOVIEDB_ID="noTheMovieDBId"
 
   echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID"
@@ -214,6 +214,8 @@ do
     # Add first line to URLs check file
     echo "first line" >> $TEMP_URLS_FILE_PATH
 
+    IMDB_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f2)
+    BETASERIES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f3)
     METACRITIC_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f5)
     ROTTEN_TOMATOES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f6)
 
@@ -230,9 +232,11 @@ do
 
       echo $URL >> $TEMP_URLS_FILE_PATH
 
-      if [[ $METACRITIC_CHECK == "null" ]] && [[ $ROTTEN_TOMATOES_CHECK == "null" ]] && [[ $PROMPT == "prompt" ]]; then
-        DUPLICATE=0
-        echo "Found $URL to be rechecked."
+      if [[ $PROMPT == "prompt" ]]; then
+        if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]]; then
+          DUPLICATE=0
+          echo "Found $URL to be rechecked."
+        fi
       fi
 
       if [[ $DUPLICATE -eq 0 ]]; then
@@ -308,12 +312,12 @@ do
             else
               echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
 
-              IMDB_ID="noImdbId"
+              IMDB_ID=null
             fi
           else
             echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
 
-            IMDB_ID="noImdbId"
+            IMDB_ID=null
           fi
         else
           echo "wikiUrl: $WIKI_URL"
@@ -329,7 +333,7 @@ do
         fi
 
         if [[ -z $IMDB_ID ]]; then
-          IMDB_ID="noImdbId"
+          IMDB_ID=null
         fi
 
         if [[ -z $METACRITIC_ID ]]; then
@@ -345,7 +349,7 @@ do
         if [[ $METACRITIC_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
           open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
           open -a "/Applications/Arc.app" "https://www.metacritic.com"
-          echo "Enter the Metacritic id:"
+          echo "Enter the Metacritic ID:"
           read METACRITIC_ID
         fi
 
@@ -356,11 +360,11 @@ do
         if [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
           open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
           open -a "/Applications/Arc.app" "https://www.rottentomatoes.com"
-          echo "Enter the Rotten Tomatoes id:"
+          echo "Enter the Rotten Tomatoes ID:"
           read ROTTEN_TOMATOES_ID
         fi
 
-        if [[ $IMDB_ID == "noImdbId" ]] && [[ -z $PROMPT ]]; then
+        if [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; then
           echo "IMDb ID not found: $IMDB_ID"
           echo "https://www.allocine.fr$URL" >> $IMDB_NOT_FOUND_PATH
           echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE" >> $IMDB_NOT_FOUND_PATH
@@ -368,10 +372,10 @@ do
 
           data_not_found
         else
-          if [[ $IMDB_ID == "noImdbId" ]] && [[ $PROMPT == "prompt" ]]; then
+          if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
             open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
             open -a "/Applications/Arc.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-            echo "Enter the IMDb id:"
+            echo "Enter the IMDb ID:"
             read IMDB_ID
           fi
 
@@ -380,6 +384,13 @@ do
           BETASERIES_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE" | cut -d'/' -f5 | sed 's/"//g')
           echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
           echo "Betaseries ID: $BETASERIES_ID"
+
+          if [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
+            open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
+            open -a "/Applications/Arc.app" "https://betaseries.com"
+            echo "Enter the Betaseries ID:"
+            read BETASERIES_ID
+          fi
 
           THEMOVIEDB_ID=$(curl -s https://api.themoviedb.org/3/find/$IMDB_ID\?api_key=$THEMOVIEDB_API_KEY\&external_source=imdb_id | jq "$JQ_COMMAND_RESULTS" | jq '.[] .id')
           echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
