@@ -50,7 +50,7 @@ const generateURLs = (item_type, config, json) => {
     imdb: { id: imdbId, homepage: imdbHomepage },
     betaseries: { id: betaseriesId, homepage: betaseriesHomepage },
     metacritic: { id: metacriticId, homepage: metacriticHomepage },
-    rottenTomatoes: { id: rottenTomatoesId, homepage: rottenTomatoesHomepage },
+    rotten_tomatoes: { id: rottenTomatoesId, homepage: rottenTomatoesHomepage },
     themoviedb: { id: theMoviedbId },
     is_active: isActive,
   };

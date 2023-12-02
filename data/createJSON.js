@@ -97,7 +97,7 @@ const createJSON = async (
         }
       : null;
 
-  /* Creates a Rotten Tomatoes object if the rottenTomatoes rating is not null. */
+  /* Creates a Rotten Tomatoes object if the rotten_tomatoes rating is not null. */
   const rottenTomatoesObj =
     rottenTomatoesRating !== null
       ? {
@@ -131,7 +131,7 @@ const createJSON = async (
     betaseries: betaseriesObj,
     imdb: imdbObj,
     metacritic: metacriticObj,
-    rottenTomatoes: rottenTomatoesObj,
+    rotten_tomatoes: rottenTomatoesObj,
     mojo: mojoObj,
   };
 

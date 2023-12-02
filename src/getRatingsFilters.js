@@ -16,8 +16,8 @@ const getRatingsFilters = async (ratings_filters_query) => {
       { $divide: ["$imdb.users_rating", 2] },
       { $divide: ["$metacritic.critics_rating", 20] },
       { $divide: ["$metacritic.users_rating", 2] },
-      { $divide: ["$rottenTomatoes.critics_rating", 20] },
-      { $divide: ["$rottenTomatoes.users_rating", 20] }
+      { $divide: ["$rotten_tomatoes.critics_rating", 20] },
+      { $divide: ["$rotten_tomatoes.users_rating", 20] }
     ];
   } else {
     if (ratings_filters_array.includes("allocine_critics")) {
@@ -45,11 +45,11 @@ const getRatingsFilters = async (ratings_filters_query) => {
     }
 
     if (ratings_filters_array.includes("rottenTomatoes_critics")) {
-      ratings_filters.push({ $divide: ["$rottenTomatoes.critics_rating", 20] });
+      ratings_filters.push({ $divide: ["$rotten_tomatoes.critics_rating", 20] });
     }
 
     if (ratings_filters_array.includes("rottenTomatoes_users")) {
-      ratings_filters.push({ $divide: ["$rottenTomatoes.users_rating", 20] });
+      ratings_filters.push({ $divide: ["$rotten_tomatoes.users_rating", 20] });
     }
   }
 

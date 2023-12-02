@@ -43,7 +43,7 @@ const ratingsConfig = {
     critics_rating: 0.05,
     users_rating: 0.5,
   },
-  rottenTomatoes: {
+  rotten_tomatoes: {
     users_rating: 0.05,
     critics_rating: 0.05,
   },
@@ -411,9 +411,9 @@ const params = {
         expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
         expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
-        item.rottenTomatoes ? expect(Object.keys(item.rottenTomatoes)).toHaveLength(4) : null;
-        expect(items.filter((item) => item.rottenTomatoes && item.rottenTomatoes.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-        expect(items.filter((item) => item.rottenTomatoes && item.rottenTomatoes.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+        item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes)).toHaveLength(4) : null;
+        expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+        expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
         expect(item.title).not.toBeNull();
         expect(item.image).not.toBeNull();
@@ -475,6 +475,16 @@ const params = {
         expect(averageRating).toBe(item.ratings_average);
       });
     },
+  },
+
+  all_keys_are_lowercase: {
+    query: `?is_active=true&limit=400`,
+    expectedResult: (items) =>
+      items.every((item) => {
+        for (let key in item) {
+          expect(key).toEqual(key.toLowerCase());
+        }
+      }),
   },
 };
 
