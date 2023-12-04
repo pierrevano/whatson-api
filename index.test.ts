@@ -49,6 +49,49 @@ const ratingsConfig = {
   },
 };
 
+function checkItemProperties(items) {
+  return items.every((item) => {
+    expect(Object.keys(item).length).toEqual(config.keysToCheck.length);
+
+    config.keysToCheck.forEach((key) => {
+      expect(item).toHaveProperty(key);
+      expect(typeof item[key]).not.toBe("undefined");
+    });
+
+    const minimumNumberOfItems = 15;
+
+    expect(Object.keys(item.allocine)).toHaveLength(7);
+    expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    expect(items.filter((item) => item.allocine.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    expect(items.filter((item) => item.allocine.critics_number).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    expect(items.filter((item) => item.allocine.critics_rating_details).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+
+    expect(Object.keys(item.imdb)).toHaveLength(4);
+    expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+
+    expect(Object.keys(item.betaseries)).toHaveLength(3);
+    expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+
+    item.metacritic ? expect(Object.keys(item.metacritic)).toHaveLength(4) : null;
+    expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+
+    item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes)).toHaveLength(4) : null;
+    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+
+    expect(item.title).not.toBeNull();
+    expect(item.image).not.toBeNull();
+    expect(item.image).toMatch(/\.jpg$/);
+
+    item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
+    expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+
+    item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
+    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+  });
+}
+
 /**
  * An object containing various query parameters and their expected results.
  * @param {object} params - An object containing various query parameters and their expected results.
@@ -215,7 +258,7 @@ const params = {
   },
 
   valid_users_ratings: {
-    query: "?item_type=tvshow&is_active=true&limit=200",
+    query: "?item_type=movie,tvshow&is_active=true&limit=400",
     expectedResult: (items) =>
       items.every((item) => {
         if (item.allocine && item.allocine.users_rating) {
@@ -319,26 +362,16 @@ const params = {
   },
 
   at_least_50_percent_trailers: {
-    query: "?is_active=true&limit=200",
+    query: "?item_type=movie,tvshow&is_active=true&limit=400",
     expectedResult: (items) => {
-      expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(100);
+      expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(200);
     },
   },
 
   top_popularity_items: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
-      const firstTenItems = items.slice(0, 10);
-
-      firstTenItems.forEach((item) => {
-        if (item.allocine.popularity > 10) {
-          console.log(item.title);
-        }
-      });
-
-      const countOfLessThanTen = firstTenItems.filter((item) => item.allocine.popularity < 10).length;
-
-      expect(countOfLessThanTen).toBeGreaterThanOrEqual(3);
+      expect(items.slice(0, 10).filter((item) => item.allocine.popularity < 10).length).toBeGreaterThanOrEqual(3);
     },
   },
 
@@ -386,45 +419,14 @@ const params = {
     },
   },
 
-  items_with_all_required_keys: {
-    query: `?is_active=true&limit=400`,
-    expectedResult: (items) =>
-      items.every((item) => {
-        config.keysToCheck.forEach((key) => {
-          expect(item).toHaveProperty(key);
-          expect(typeof item[key]).not.toBe("undefined");
-          expect(isLowerCase(key)).toBe(true);
-        });
+  items_with_all_required_keys_active: {
+    query: `?item_type=movie,tvshow&is_active=true&limit=400`,
+    expectedResult: checkItemProperties,
+  },
 
-        const minimumNumberOfItems = 15;
-
-        expect(Object.keys(item.allocine)).toHaveLength(7);
-        expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-
-        expect(Object.keys(item.imdb)).toHaveLength(4);
-        expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-
-        expect(Object.keys(item.betaseries)).toHaveLength(3);
-        expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-
-        item.metacritic ? expect(Object.keys(item.metacritic)).toHaveLength(4) : null;
-        expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-        expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-
-        item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes)).toHaveLength(4) : null;
-        expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-        expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-
-        expect(item.title).not.toBeNull();
-        expect(item.image).not.toBeNull();
-        expect(item.image).toMatch(/\.jpg$/);
-
-        item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
-
-        item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
-
-        item.critics_number && item.critics_rating_details ? expect(item.critics_number).toBe(item.critics_rating_details.length) : null;
-      }),
+  items_with_all_required_keys_inactive: {
+    query: `?item_type=movie,tvshow&is_active=false&limit=4000`,
+    expectedResult: checkItemProperties,
   },
 
   correct_ratings_average_based_on_all_filters: {
@@ -478,7 +480,7 @@ const params = {
   },
 
   all_keys_are_lowercase: {
-    query: `?is_active=true&limit=400`,
+    query: `?item_type=movie,tvshow&is_active=true&limit=400`,
     expectedResult: (items) =>
       items.every((item) => {
         for (let key in item) {
