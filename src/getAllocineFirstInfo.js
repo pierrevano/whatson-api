@@ -4,6 +4,8 @@ const { getTrailer } = require("./getTrailer");
 const { getStatus } = require("./getStatus");
 const { getSeasonsNumber } = require("./getSeasonsNumber");
 
+let errorCounter = 0;
+
 /**
  * Retrieves information about a movie or TV show from Allocine.
  * @param {string} allocineHomepage - The URL of the Allocine page for the movie or TV show.
@@ -39,9 +41,15 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
       trailer: trailer,
     };
 
+    errorCounter = 0;
     return allocineFirstInfo;
   } catch (error) {
     console.log(`getAllocineFirstInfo - ${allocineHomepage}: ${error}`);
+    errorCounter++;
+    if (errorCounter > 5) {
+      console.log("An error on `getAllocineFirstInfo` has been returned more than 5 times, exiting the script.");
+      process.exit(1);
+    }
 
     return {
       error: error,
