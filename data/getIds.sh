@@ -416,12 +416,17 @@ do
 
         count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
         if [[ $count -gt 1 ]] && [[ $PROMPT == "prompt" ]]; then
-          echo "Number of lines found for $URL: $count"
-          echo "Removing first line for: $URL with ID: $FILM_ID"
-          awk '!flag && /.*='"$FILM_ID"'\.html.*$/ {flag=1; next} 1' $FILMS_IDS_FILE_PATH > temp_sed && mv temp_sed $FILMS_IDS_FILE_PATH
+            echo "Number of lines found for $URL: $count"
+            echo "Removing first line for: $URL with ID: $FILM_ID"
 
-          new_count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
-          echo "Number of lines found for $URL: $new_count"
+            # Get the line which has maximum 'null'
+            max_null_line=$(awk -F'null' '{if (NF-1 > max) {max = NF-1; maxline = $0}} END{print maxline}' $FILMS_IDS_FILE_PATH)
+
+            # Remove that line
+            awk -v maxline="$max_null_line" '{if ($0 != maxline){print}}' $FILMS_IDS_FILE_PATH > temp_sed && mv temp_sed $FILMS_IDS_FILE_PATH 
+
+            new_count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
+            echo "Number of lines found for $URL: $new_count"
         fi
       fi
     fi
