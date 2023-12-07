@@ -89,6 +89,11 @@ function checkItemProperties(items) {
 
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
     expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+
+    item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(minimumNumberOfItems) : null;
+    item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(minimumNumberOfItems) : null;
+
+    item.is_active === true ? expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(200) : null;
   });
 }
 
@@ -353,21 +358,6 @@ const params = {
     },
   },
 
-  at_least_one_popularity: {
-    query: "?item_type=tvshow&limit=200",
-    expectedResult: (items) => {
-      expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(3);
-      expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(3);
-    },
-  },
-
-  at_least_50_percent_trailers: {
-    query: "?item_type=movie,tvshow&is_active=true&limit=400",
-    expectedResult: (items) => {
-      expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(200);
-    },
-  },
-
   top_popularity_items: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
@@ -425,7 +415,7 @@ const params = {
   },
 
   items_with_all_required_keys_inactive: {
-    query: `?item_type=movie,tvshow&is_active=false&limit=4000`,
+    query: `?item_type=movie,tvshow&is_active=false&limit=9000`,
     expectedResult: checkItemProperties,
   },
 
@@ -487,6 +477,24 @@ const params = {
           expect(key).toEqual(key.toLowerCase());
         }
       }),
+  },
+
+  unique_allocine_ids_movie: {
+    query: "?item_type=movie&is_active=true,false&limit=9000`,",
+    expectedResult: (items) => {
+      const ids = items.map((item) => item.allocine.id);
+      const uniqueIds = [...new Set(ids)];
+      expect(uniqueIds.length).toEqual(ids.length);
+    },
+  },
+
+  unique_allocine_ids_tvshow: {
+    query: "?item_type=tvshow&is_active=true,false&limit=9000`,",
+    expectedResult: (items) => {
+      const ids = items.map((item) => item.allocine.id);
+      const uniqueIds = [...new Set(ids)];
+      expect(uniqueIds.length).toEqual(ids.length);
+    },
   },
 };
 
