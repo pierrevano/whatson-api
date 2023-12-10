@@ -48,3 +48,7 @@ Provides detailed information about specific item (movie or tv show) by its uniq
 #### Responses:
 
 - `200` A successful response
+
+---
+
+Postman collection: https://documenter.getpostman.com/view/18186487/2s9Ykhg4MB
