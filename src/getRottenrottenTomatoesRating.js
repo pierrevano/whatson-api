@@ -1,6 +1,9 @@
-/* Importing the function `getCheerioContent` from the file `getCheerioContent.js` in the folder
-`utils`. */
+const path = require("path");
+
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { config } = require("./config");
+
+let errorCounter = 0;
 
 /**
  * Retrieves the Rotten Tomatoes rating for a given movie or TV show.
@@ -35,7 +38,15 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
       };
     }
   } catch (error) {
-    console.log(`getRottenTomatoesRating - ${rottenTomatoesHomepage}: ${error}`);
+    const fileName = path.basename(__filename);
+
+    console.log(`${fileName} - ${rottenTomatoesHomepage}: ${error}`);
+
+    errorCounter++;
+    if (errorCounter > config.maxErrorCounter.rotten_tomatoes) {
+      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.rotten_tomatoes} times, exiting the script.`);
+      process.exit(1);
+    }
   }
 
   return rottenTomatoesObj;

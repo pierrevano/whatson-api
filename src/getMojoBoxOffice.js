@@ -1,14 +1,10 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
+const path = require("path");
 
-const config = {
-  baseURL: "https://www.boxofficemojo.com",
-  urlToFetch: "/chart/ww_top_lifetime_gross",
-  tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
+const { config } = require("./config");
 
-  maxIterations: 20,
-  offset: 200,
-};
+let errorCounter = 0;
 
 async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
   const foundItem = mojoBoxOfficeArray.find((item) => item.imdbId === imdbId);
@@ -18,11 +14,11 @@ async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
 
 async function fetchTableData(offset) {
   try {
-    const response = await axios.get(`${config.baseURL}${config.urlToFetch}?offset=${offset}`);
+    const response = await axios.get(`${config.mojo.baseURL}${config.mojo.urlToFetch}?offset=${offset}`);
     const html = response.data;
     const $ = cheerio.load(html);
 
-    const tableRows = $("tr", config.tableRowsClasses);
+    const tableRows = $("tr", config.mojo.tableRowsClasses);
     let tableData = [];
 
     if (tableRows.length === 0) return null;
@@ -42,7 +38,7 @@ async function fetchTableData(offset) {
             rowData.title = cellText;
             // Get the complete URL and IMDb ID
             const anchorTag = $(cell).find("a");
-            const rawUrl = `${config.baseURL}${anchorTag.attr("href")}`;
+            const rawUrl = `${config.mojo.baseURL}${anchorTag.attr("href")}`;
 
             // Remove query parameters from the URL
             const urlObj = new URL(rawUrl);
@@ -61,7 +57,15 @@ async function fetchTableData(offset) {
 
     return tableData;
   } catch (error) {
-    console.error(`Error fetching data from URL: ${error}`);
+    const fileName = path.basename(__filename);
+
+    console.log(`Error fetching data from URL: ${error}`);
+
+    errorCounter++;
+    if (errorCounter > config.maxErrorCounter.default) {
+      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
+      process.exit(1);
+    }
   }
 }
 
@@ -71,18 +75,18 @@ const getMojoBoxOffice = async (item_type) => {
 
   if (item_type !== "movie") return allTableData;
 
-  for (let i = 0; i < config.maxIterations; i++) {
+  for (let i = 0; i < config.mojo.maxIterations; i++) {
     const tableData = await fetchTableData(offset);
 
     if (!tableData || tableData.length === 0) break;
 
     allTableData = allTableData.concat(tableData);
 
-    const progressPercentage = ((i + 1) / config.maxIterations) * 100;
+    const progressPercentage = ((i + 1) / config.mojo.maxIterations) * 100;
 
     console.log(`Fetched ${offset} to ${offset + 199}: ${parseInt(progressPercentage)}% complete.`);
 
-    offset += config.offset;
+    offset += config.mojo.offset;
   }
 
   return allTableData;

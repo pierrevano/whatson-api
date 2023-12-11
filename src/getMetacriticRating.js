@@ -1,6 +1,9 @@
-/* Importing the function `getCheerioContent` from the file `getCheerioContent.js` in the folder
-`utils`. */
+const path = require("path");
+
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { config } = require("./config");
+
+let errorCounter = 0;
 
 /**
  * Retrieves the Metacritic rating for a given movie or TV show.
@@ -36,7 +39,15 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
       };
     }
   } catch (error) {
-    console.log(`getMetacriticRating - ${metacriticHomepage}: ${error}`);
+    const fileName = path.basename(__filename);
+
+    console.log(`${fileName} - ${metacriticHomepage}: ${error}`);
+
+    errorCounter++;
+    if (errorCounter > config.maxErrorCounter.default) {
+      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
+      process.exit(1);
+    }
   }
 
   return metacriticObj;

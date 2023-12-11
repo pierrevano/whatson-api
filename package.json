@@ -25,6 +25,7 @@
     "fs": "^0.0.1-security",
     "mongodb": "^4.13.0",
     "node-fetch": "^2.6.8",
+    "path": "^0.12.7",
     "prettier": "^2.8.1",
     "shelljs": "^0.8.5",
     "surge": "^0.23.1"

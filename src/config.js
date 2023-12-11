@@ -54,6 +54,20 @@ const config = {
   maxSeasonsNumber: 5,
   page: 1,
 
+  maxErrorCounter: {
+    default: 5,
+    rotten_tomatoes: 150,
+  },
+
+  mojo: {
+    baseURL: "https://www.boxofficemojo.com",
+    urlToFetch: "/chart/ww_top_lifetime_gross",
+    tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
+
+    maxIterations: 20,
+    offset: 200,
+  },
+
   /* Tests config */
   baseURL: "http://localhost:8081",
   baseURLRemote: "https://whatson-api.onrender.com",

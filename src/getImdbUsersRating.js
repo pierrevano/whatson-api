@@ -1,10 +1,11 @@
-/* Importing the libraries that are needed for the script to work. */
 const axiosRetry = require("axios-retry");
 const axios = require("axios");
+const path = require("path");
 
-/* Importing the function `getCheerioContent` from the file `getCheerioContent.js` in the folder
-`utils`. */
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { config } = require("./config");
+
+let errorCounter = 0;
 
 /**
  * It takes the IMDb homepage of a movie as an argument, and returns the IMDb users rating of the movie
@@ -26,7 +27,15 @@ const getImdbUsersRating = async (imdbHomepage) => {
 
     return criticsRating;
   } catch (error) {
-    console.log(`getImdbUsersRating - ${imdbHomepage}: ${error}`);
+    const fileName = path.basename(__filename);
+
+    console.log(`${fileName} - ${imdbHomepage}: ${error}`);
+
+    errorCounter++;
+    if (errorCounter > config.maxErrorCounter.default) {
+      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
+      process.exit(1);
+    }
   }
 };
 

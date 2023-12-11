@@ -1,5 +1,5 @@
 const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
-const { controlData } = require("./controlData");
+// const { controlData } = require("./controlData");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
 const createJSON = require("./createJSON");
@@ -47,7 +47,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
         const isDocumentHasInfo = isDocumentExisting.length > 0;
         const document = isDocumentExisting[0];
 
-        await controlData(allocineHomepage, config.keysToCheck, isDocumentHasInfo, document, item_type);
+        // await controlData(allocineHomepage, config.keysToCheck, isDocumentHasInfo, document, item_type);
 
         // If the document already exists, skip processing this item
         if (isDocumentHasInfo) continue;

@@ -1,3 +1,28 @@
+const maximum_threshold = {
+  default: 30,
+  metacritic_or_rotten_tomatoes: 95,
+  allocine_critics: 80,
+};
+
+/**
+ * Verifies that the number of null results for a specific rate source in a collection doesn't exceed a specified threshold.
+ * If the percentage of null values is higher than the threshold, an error is thrown.
+ *
+ * @param {Object} query - The MongoDB query to execute.
+ * @param {String} rateSource - The rate source to find null values for.
+ * @param {String} thresholdKey - The key to retrieve the threshold from the 'maximum_threshold' object.
+ * @returns {void}
+ * @throws {Error} if the percentage of null results is higher than the threshold.
+ */
+const checkDocumentThreshold = async (collectionData, documents, query, rateSource, thresholdKey) => {
+  const countNull = await collectionData.countDocuments(query);
+  console.log(`Number of null for ${rateSource}: ${countNull}`);
+
+  if ((countNull * 100) / documents > maximum_threshold[thresholdKey]) {
+    throw new Error(`Something went wrong, at least ${maximum_threshold[thresholdKey]}% of ${rateSource} ratings are set to null`);
+  }
+};
+
 /**
  * Counts the number of null elements in various fields of a collection and checks if the percentage of null values exceeds a certain threshold.
  * @param {Object} collectionData - The collection to search for null values.
@@ -8,53 +33,23 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
   try {
     console.log(`Number of new or updated items: ${newOrUpdatedItems}`);
 
-    /* Counting the number of documents in the collection. */
     const documents = await collectionData.estimatedDocumentCount();
     console.log(`Number of documents in the collection: ${documents}`);
 
-    /* The above code is counting the number of null values for the allocine.users_rating field. */
-    const query_allocine = { "allocine.users_rating": null };
-    const countAllocineNull = await collectionData.countDocuments(query_allocine);
-    console.log(`Number of null for allocine.users_rating: ${countAllocineNull}`);
+    const queriesAndThresholdKeys = [
+      { query: { "allocine.users_rating": null }, rateSource: "allocine.users_rating", thresholdKey: "default" },
+      { query: { "allocine.critics_rating": null }, rateSource: "allocine.critics_rating", thresholdKey: "allocine_critics" },
+      { query: { "betaseries.users_rating": null }, rateSource: "betaseries.users_rating", thresholdKey: "default" },
+      { query: { "imdb.users_rating": null }, rateSource: "imdb.users_rating", thresholdKey: "default" },
+      { query: { metacritic: null }, rateSource: "metacritic", thresholdKey: "metacritic_or_rotten_tomatoes" },
+      { query: { rotten_tomatoes: null }, rateSource: "rotten_tomatoes", thresholdKey: "metacritic_or_rotten_tomatoes" },
+    ];
 
-    if ((countAllocineNull * 100) / documents > 30) {
-      throw new Error("Something went wrong, at least 30% of Allociné ratings are set to null");
-    }
-
-    const query_allocine_critics = { "allocine.critics_rating": null };
-    const countAllocineCriticsNull = await collectionData.countDocuments(query_allocine_critics);
-    console.log(`Number of null for allocine.critics_rating: ${countAllocineCriticsNull}`);
-
-    if ((countAllocineCriticsNull * 100) / documents > 80) {
-      throw new Error("Something went wrong, at least 80% of Allociné critics ratings are set to null");
-    }
-
-    /* The above code is counting the number of null values for the betaseries.users_rating field. */
-    const query_betaseries = { "betaseries.users_rating": null };
-    const countBetaseriesNull = await collectionData.countDocuments(query_betaseries);
-    console.log(`Number of null for betaseries.users_rating: ${countBetaseriesNull}`);
-
-    if ((countBetaseriesNull * 100) / documents > 30) {
-      throw new Error("Something went wrong, at least 30% of Betaseries ratings are set to null");
-    }
-
-    /* The above code is counting the number of documents in the collection that have a null value
-      for the imdb.users_rating field. */
-    const query_imdb = { "imdb.users_rating": null };
-    const countIMDbNull = await collectionData.countDocuments(query_imdb);
-    console.log(`Number of null for imdb.users_rating: ${countIMDbNull}`);
-
-    if ((countIMDbNull * 100) / documents > 30) {
-      throw new Error("Something went wrong, at least 30% of IMDb ratings are set to null");
-    }
-
-    const query_metacritic = { metacritic: null };
-    const countMetacriticNull = await collectionData.countDocuments(query_metacritic);
-    console.log(`Number of null for metacritic: ${countMetacriticNull}`);
-
-    if ((countMetacriticNull * 100) / documents > 70) {
-      throw new Error("Something went wrong, at least 70% of Metacritic ratings are set to null");
-    }
+    await Promise.all(
+      queriesAndThresholdKeys.map(({ query, rateSource, thresholdKey }) => {
+        return checkDocumentThreshold(collectionData, documents, query, rateSource, thresholdKey);
+      })
+    );
   } catch (error) {
     throw new Error(`countNullElements: ${error}`);
   }

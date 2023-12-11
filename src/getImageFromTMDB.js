@@ -1,4 +1,9 @@
+const path = require("path");
+
 const { getTMDBResponse } = require("./utils/getTMDBResponse");
+const { config } = require("./config");
+
+let errorCounter = 0;
 
 /**
  * Retrieves the image path for a movie or TV show from The Movie Database (TMDB) API.
@@ -14,7 +19,15 @@ const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {
 
     return image_path;
   } catch (error) {
-    console.log(`getImageFromTMDB - ${allocineHomepage}: ${error}`);
+    const fileName = path.basename(__filename);
+
+    console.log(`${fileName} - ${allocineHomepage}: ${error}`);
+
+    errorCounter++;
+    if (errorCounter > config.maxErrorCounter.default) {
+      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
+      process.exit(1);
+    }
   }
 };
 

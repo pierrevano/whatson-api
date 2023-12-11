@@ -1,8 +1,11 @@
+const path = require("path");
+
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { getImageFromTMDB } = require("./getImageFromTMDB");
 const { getTrailer } = require("./getTrailer");
 const { getStatus } = require("./getStatus");
 const { getSeasonsNumber } = require("./getSeasonsNumber");
+const { config } = require("./config");
 
 let errorCounter = 0;
 
@@ -44,10 +47,13 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     errorCounter = 0;
     return allocineFirstInfo;
   } catch (error) {
-    console.log(`getAllocineFirstInfo - ${allocineHomepage}: ${error}`);
+    const fileName = path.basename(__filename);
+
+    console.log(`${fileName} - ${allocineHomepage}: ${error}`);
+
     errorCounter++;
-    if (errorCounter > 5) {
-      console.log("An error on `getAllocineFirstInfo` has been returned more than 5 times, exiting the script.");
+    if (errorCounter > config.maxErrorCounter.default) {
+      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
       process.exit(1);
     }
 

@@ -1,6 +1,10 @@
-/* Importing the functions from the files getCheerioContent.js and convertTitleToNumber.js. */
+const path = require("path");
+
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { convertTitleToNumber } = require("./utils/convertTitleToNumber");
+const { config } = require("./config");
+
+let errorCounter = 0;
 
 /**
  * It takes the URL of a movie's critics page on Allocine, scrapes the page, and returns an object
@@ -48,7 +52,15 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
       criticsRatingDetails: criticsRatingDetails,
     };
   } catch (error) {
-    console.log(`getAllocineCriticInfo - ${allocineCriticsDetails}: ${error}`);
+    const fileName = path.basename(__filename);
+
+    console.log(`${fileName} - ${allocineCriticsDetails}: ${error}`);
+
+    errorCounter++;
+    if (errorCounter > config.maxErrorCounter.default) {
+      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
+      process.exit(1);
+    }
   }
 
   return allocineCriticInfo;

@@ -1,6 +1,9 @@
-/* Importing the function `getCheerioContent` from the file `getCheerioContent.js` in the folder
-`utils`. */
+const path = require("path");
+
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { config } = require("./config");
+
+let errorCounter = 0;
 
 /**
  * It takes a betaseriesHomepage as an argument, and returns the criticsRating of the show
@@ -22,7 +25,15 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
 
     return criticsRating;
   } catch (error) {
-    console.log(`getBetaseriesUsersRating - ${betaseriesHomepage}: ${error}`);
+    const fileName = path.basename(__filename);
+
+    console.log(`${fileName} - ${betaseriesHomepage}: ${error}`);
+
+    errorCounter++;
+    if (errorCounter > config.maxErrorCounter.default) {
+      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
+      process.exit(1);
+    }
   }
 };
 
