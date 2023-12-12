@@ -4,8 +4,6 @@ const path = require("path");
 
 const { config } = require("./config");
 
-let errorCounter = 0;
-
 async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
   const foundItem = mojoBoxOfficeArray.find((item) => item.imdbId === imdbId);
 
@@ -13,13 +11,15 @@ async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
 }
 
 async function fetchTableData(offset) {
+  let tableData = [];
+  let errorCounter = 0;
+
   try {
     const response = await axios.get(`${config.mojo.baseURL}${config.mojo.urlToFetch}?offset=${offset}`);
     const html = response.data;
     const $ = cheerio.load(html);
 
     const tableRows = $("tr", config.mojo.tableRowsClasses);
-    let tableData = [];
 
     if (tableRows.length === 0) return null;
 
@@ -55,11 +55,11 @@ async function fetchTableData(offset) {
       tableData.push(rowData);
     });
 
-    return tableData;
+    errorCounter = 0;
   } catch (error) {
     const fileName = path.basename(__filename);
 
-    console.log(`Error fetching data from URL: ${error}`);
+    console.log(`errorCounter: ${errorCounter} - Error fetching data from URL: ${error}`);
 
     errorCounter++;
     if (errorCounter > config.maxErrorCounter.default) {
@@ -67,6 +67,8 @@ async function fetchTableData(offset) {
       process.exit(1);
     }
   }
+
+  return tableData;
 }
 
 const getMojoBoxOffice = async (item_type) => {

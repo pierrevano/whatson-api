@@ -3,17 +3,16 @@ const path = require("path");
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { config } = require("./config");
 
-let errorCounter = 0;
-
 /**
- * Retrieves the Metacritic rating for a given movie or TV show.
+ * Retrieves the Metacritic rating for a given movie or tv show.
  * @param {string} metacriticHomepage - The Metacritic homepage URL.
- * @param {string} metacriticId - The Metacritic ID for the movie or TV show.
+ * @param {string} metacriticId - The Metacritic ID for the movie or tv show.
  * @returns {Promise<Object>} - An object containing the Metacritic rating information.
  * @throws {Error} - If there is an error retrieving the Metacritic rating.
  */
 const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
   let metacriticObj = null;
+  let errorCounter = 0;
 
   try {
     const options = {
@@ -38,10 +37,12 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
         criticsRating: criticsRating,
       };
     }
+
+    errorCounter = 0;
   } catch (error) {
     const fileName = path.basename(__filename);
 
-    console.log(`${fileName} - ${metacriticHomepage}: ${error}`);
+    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${metacriticHomepage}: ${error}`);
 
     errorCounter++;
     if (errorCounter > config.maxErrorCounter.default) {

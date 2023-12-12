@@ -7,15 +7,15 @@ const { getImdbPopularity } = require("../src/getImdbPopularity");
 const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
 
 /**
- * Compares the users rating of a movie or TV show from Allocine with the rating
+ * Compares the users rating of a movie or tv show from Allocine with the rating
  * fetched from a remote API.
  * @param {string} allocineHomepage - The Allocine homepage URL.
  * @param {string} allocineURL - The Allocine URL specific to the item.
  * @param {string} betaseriesHomepage - The Betaseries homepage URL.
  * @param {string} imdbHomepage - The IMDB homepage URL.
  * @param {boolean} isActive - Active status of the item.
- * @param {string} item_type - The type of item (movie or TV show).
- * @param {string} theMoviedbId - The ID of the movie or TV show on The Movie Database.
+ * @param {string} item_type - The type of item (movie or tv show).
+ * @param {string} theMoviedbId - The ID of the movie or tv show on The Movie Database.
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */

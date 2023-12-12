@@ -2,9 +2,9 @@ const axios = require("axios");
 const { config } = require("./config");
 
 /**
- * Extracts the ID of a movie or TV show from a remote popularity file hosted on a server.
- * @param {string} allocineURL - The URL of the movie or TV show on Allocine.
- * @returns {Promise<string | undefined>} - The ID of the movie or TV show, or undefined if it cannot be found.
+ * Extracts the ID of a movie or tv show from a remote popularity file hosted on a server.
+ * @param {string} allocineURL - The URL of the movie or tv show on Allocine.
+ * @returns {Promise<string | undefined>} - The ID of the movie or tv show, or undefined if it cannot be found.
  */
 const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
   try {

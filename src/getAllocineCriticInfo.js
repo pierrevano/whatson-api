@@ -4,8 +4,6 @@ const { getCheerioContent } = require("./utils/getCheerioContent");
 const { convertTitleToNumber } = require("./utils/convertTitleToNumber");
 const { config } = require("./config");
 
-let errorCounter = 0;
-
 /**
  * It takes the URL of a movie's critics page on Allocine, scrapes the page, and returns an object
  * containing the number of critics, the average rating, and the details of each critic's rating
@@ -19,6 +17,7 @@ let errorCounter = 0;
  */
 const getAllocineCriticInfo = async (allocineCriticsDetails) => {
   let allocineCriticInfo = null;
+  let errorCounter = 0;
 
   try {
     const options = { validateStatus: (status) => status === 200 };
@@ -51,10 +50,12 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
       criticsRating: criticsRating,
       criticsRatingDetails: criticsRatingDetails,
     };
+
+    errorCounter = 0;
   } catch (error) {
     const fileName = path.basename(__filename);
 
-    console.log(`${fileName} - ${allocineCriticsDetails}: ${error}`);
+    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${allocineCriticsDetails}: ${error}`);
 
     errorCounter++;
     if (errorCounter > config.maxErrorCounter.default) {

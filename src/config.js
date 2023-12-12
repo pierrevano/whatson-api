@@ -56,7 +56,7 @@ const config = {
 
   maxErrorCounter: {
     default: 5,
-    rotten_tomatoes: 150,
+    rotten_tomatoes: 10,
   },
 
   mojo: {

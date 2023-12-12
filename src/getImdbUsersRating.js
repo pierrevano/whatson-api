@@ -5,14 +5,15 @@ const path = require("path");
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { config } = require("./config");
 
-let errorCounter = 0;
-
 /**
  * It takes the IMDb homepage of a movie as an argument, and returns the IMDb users rating of the movie
  * @param imdbHomepage - The IMDb homepage of the movie.
  * @returns The critics rating for the movie.
  */
 const getImdbUsersRating = async (imdbHomepage) => {
+  let criticsRating = null;
+  let errorCounter = 0;
+
   try {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = {
@@ -22,14 +23,14 @@ const getImdbUsersRating = async (imdbHomepage) => {
     };
     const $ = await getCheerioContent(imdbHomepage, options);
 
-    let criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
+    criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
     if (isNaN(criticsRating)) criticsRating = null;
 
-    return criticsRating;
+    errorCounter = 0;
   } catch (error) {
     const fileName = path.basename(__filename);
 
-    console.log(`${fileName} - ${imdbHomepage}: ${error}`);
+    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${imdbHomepage}: ${error}`);
 
     errorCounter++;
     if (errorCounter > config.maxErrorCounter.default) {
@@ -37,6 +38,8 @@ const getImdbUsersRating = async (imdbHomepage) => {
       process.exit(1);
     }
   }
+
+  return criticsRating;
 };
 
 module.exports = { getImdbUsersRating };

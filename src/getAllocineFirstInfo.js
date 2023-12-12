@@ -7,16 +7,17 @@ const { getStatus } = require("./getStatus");
 const { getSeasonsNumber } = require("./getSeasonsNumber");
 const { config } = require("./config");
 
-let errorCounter = 0;
-
 /**
- * Retrieves information about a movie or TV show from Allocine.
- * @param {string} allocineHomepage - The URL of the Allocine page for the movie or TV show.
- * @param {string} betaseriesHomepage - The URL of the Betaseries page for the movie or TV show.
- * @param {number} theMoviedbId - The ID of the movie or TV show on The Movie Database.
- * @returns An object containing information about the movie or TV show, including its title, image, user rating, number of seasons, status, and trailer.
+ * Retrieves information about a movie or tv show from Allocine.
+ * @param {string} allocineHomepage - The URL of the Allocine page for the movie or tv show.
+ * @param {string} betaseriesHomepage - The URL of the Betaseries page for the movie or tv show.
+ * @param {number} theMoviedbId - The ID of the movie or tv show on The Movie Database.
+ * @returns An object containing information about the movie or tv show, including its title, image, user rating, number of seasons, status, and trailer.
  */
 const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
+  let allocineFirstInfo = null;
+  let errorCounter = 0;
+
   try {
     const options = { validateStatus: (status) => status < 500 && status !== 404 };
     const $ = await getCheerioContent(allocineHomepage, options);
@@ -35,7 +36,7 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     const status = await getStatus($(".thumbnail .label-status").text());
     const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
 
-    let allocineFirstInfo = {
+    allocineFirstInfo = {
       allocineTitle: title,
       allocineImage: image,
       allocineUsersRating: allocineUsersRating,
@@ -45,11 +46,10 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     };
 
     errorCounter = 0;
-    return allocineFirstInfo;
   } catch (error) {
     const fileName = path.basename(__filename);
 
-    console.log(`${fileName} - ${allocineHomepage}: ${error}`);
+    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${allocineHomepage}: ${error}`);
 
     errorCounter++;
     if (errorCounter > config.maxErrorCounter.default) {
@@ -61,6 +61,8 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
       error: error,
     };
   }
+
+  return allocineFirstInfo;
 };
 
 module.exports = { getAllocineFirstInfo };

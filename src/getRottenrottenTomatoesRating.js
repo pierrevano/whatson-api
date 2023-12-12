@@ -3,17 +3,16 @@ const path = require("path");
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { config } = require("./config");
 
-let errorCounter = 0;
-
 /**
- * Retrieves the Rotten Tomatoes rating for a given movie or TV show.
+ * Retrieves the Rotten Tomatoes rating for a given movie or tv show.
  * @param {string} rottenTomatoesHomepage - The Rotten Tomatoes homepage URL.
- * @param {string} rottenTomatoesId - The Rotten Tomatoes ID for the movie or TV show.
+ * @param {string} rottenTomatoesId - The Rotten Tomatoes ID for the movie or tv show.
  * @returns {Promise<Object>} - An object containing the Rotten Tomatoes rating information.
  * @throws {Error} - If there is an error retrieving the Rotten Tomatoes rating.
  */
 const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId) => {
   let rottenTomatoesObj = null;
+  let errorCounter = 0;
 
   try {
     const options = {
@@ -37,10 +36,12 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
         criticsRating: criticsRating,
       };
     }
+
+    errorCounter = 0;
   } catch (error) {
     const fileName = path.basename(__filename);
 
-    console.log(`${fileName} - ${rottenTomatoesHomepage}: ${error}`);
+    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${rottenTomatoesHomepage}: ${error}`);
 
     errorCounter++;
     if (errorCounter > config.maxErrorCounter.rotten_tomatoes) {
