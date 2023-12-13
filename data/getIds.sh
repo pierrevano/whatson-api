@@ -7,6 +7,7 @@ IMDB_NOT_FOUND_PATH=temp_not_found
 PAGES_MAX_NUMBER=15
 PAGES_MIN_NUMBER=1
 PROMPT=$3
+PROMPT_FIRST_OR_ALL=$4
 SECONDS=0
 SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
@@ -233,9 +234,16 @@ do
       echo $URL >> $TEMP_URLS_FILE_PATH
 
       if [[ $PROMPT == "prompt" ]]; then
-        if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]]; then
+        if [[ $PROMPT_FIRST_OR_ALL == "first" ]] && [[ $METACRITIC_CHECK == "null" ]] && [[ $ROTTEN_TOMATOES_CHECK != "null" ]]; then
           DUPLICATE=0
           echo "Found $URL to be rechecked."
+        elif [[ $PROMPT_FIRST_OR_ALL == "all" ]]; then
+          if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]]; then
+            DUPLICATE=0
+            echo "Found $URL to be rechecked."
+          else
+            DUPLICATE=1
+          fi
         else
           DUPLICATE=1
         fi
