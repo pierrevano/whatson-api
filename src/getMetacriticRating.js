@@ -27,7 +27,7 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
       if (isNaN(usersRating)) usersRating = null;
 
       $ = await getCheerioContent(`${metacriticHomepage}/critic-reviews`, options);
-      let criticsRating = parseInt($(".c-siteReviewScore span").text());
+      let criticsRating = parseInt($(".c-siteReviewScore span").first().text());
       if (isNaN(criticsRating)) criticsRating = null;
 
       metacriticObj = {
