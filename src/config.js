@@ -15,7 +15,7 @@ const config = {
   baseURLMetacriticSerie: "https://www.metacritic.com/tv/",
   baseURLRottenTomatoesFilm: "https://www.rottentomatoes.com/m/",
   baseURLRottenTomatoesSerie: "https://www.rottentomatoes.com/tv/",
-  baseURLSurgeAssets: "https://whatson-assets.surge.sh",
+  baseURLSurgeAssets: "https://whatson-assets.vercel.app",
 
   collectionName: "data",
   dbName: "whatson",

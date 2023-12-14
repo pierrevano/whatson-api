@@ -1,5 +1,5 @@
 # Define the main variables
-BASE_URL_SURGE=https://whatson-assets.surge.sh
+BASE_URL_ASSETS=https://whatson-assets.vercel.app
 FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
@@ -42,8 +42,8 @@ else
 fi
 
 if [[ $SOURCE == "circleci" ]]; then
-  curl -s "$BASE_URL_SURGE/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
-  echo "Downloading $BASE_URL_SURGE/$FILMS_FILE_NAME to $FILMS_IDS_FILE_PATH"
+  curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
+  echo "Downloading $BASE_URL_ASSETS/$FILMS_FILE_NAME to $FILMS_IDS_FILE_PATH"
 
   sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
 
@@ -451,8 +451,12 @@ done
 
 remove_files
 
-node_modules/.bin/surge $FILMS_ASSETS_PATH $BASE_URL_SURGE
-echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_SURGE"
+if [[ $SOURCE == "circleci" ]]; then
+  vercel --cwd $FILMS_ASSETS_PATH --token=$VERCEL_TOKEN
+else
+  vercel --cwd $FILMS_ASSETS_PATH
+fi
+echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
 
 # Add ending message with duration
 DATA_DURATION=$SECONDS

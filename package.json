@@ -28,7 +28,7 @@
     "path": "^0.12.7",
     "prettier": "^2.8.1",
     "shelljs": "^0.8.5",
-    "surge": "^0.23.1"
+    "vercel": "^32.7.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.1",

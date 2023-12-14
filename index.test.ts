@@ -245,9 +245,12 @@ const params = {
     query: "?item_type=movie,tvshow&is_active=true&limit=400",
     expectedResult: (items) =>
       items.every((item) => {
-        if (item.allocine && item.allocine.users_rating) {
-          expect(item.allocine.users_rating).toBeGreaterThanOrEqual(0);
-          expect(item.allocine.users_rating).toBeLessThanOrEqual(5);
+        if (item.allocine) {
+          item.allocine.users_rating ? expect(item.allocine.users_rating).toBeGreaterThanOrEqual(0) : null;
+          item.allocine.users_rating ? expect(item.allocine.users_rating).toBeLessThanOrEqual(5) : null;
+
+          item.allocine.critics_rating ? expect(item.allocine.critics_rating).toBeGreaterThanOrEqual(0) : null;
+          item.allocine.critics_rating ? expect(item.allocine.critics_rating).toBeLessThanOrEqual(5) : null;
         }
 
         if (item.betaseries) {
@@ -261,8 +264,19 @@ const params = {
         }
 
         if (item.metacritic) {
-          expect(item.metacritic.users_rating).toBeGreaterThanOrEqual(0);
-          expect(item.metacritic.users_rating).toBeLessThanOrEqual(10);
+          item.metacritic.users_rating ? expect(item.metacritic.users_rating).toBeGreaterThanOrEqual(0) : null;
+          item.metacritic.users_rating ? expect(item.metacritic.users_rating).toBeLessThanOrEqual(10) : null;
+
+          item.metacritic.critics_rating ? expect(item.metacritic.critics_rating).toBeGreaterThanOrEqual(0) : null;
+          item.metacritic.critics_rating ? expect(item.metacritic.critics_rating).toBeLessThanOrEqual(100) : null;
+        }
+
+        if (item.rotten_tomatoes) {
+          item.rotten_tomatoes.users_rating ? expect(item.rotten_tomatoes.users_rating).toBeGreaterThanOrEqual(0) : null;
+          item.rotten_tomatoes.users_rating ? expect(item.rotten_tomatoes.users_rating).toBeLessThanOrEqual(100) : null;
+
+          item.rotten_tomatoes.critics_rating ? expect(item.rotten_tomatoes.critics_rating).toBeGreaterThanOrEqual(0) : null;
+          item.rotten_tomatoes.critics_rating ? expect(item.rotten_tomatoes.critics_rating).toBeLessThanOrEqual(100) : null;
         }
       }),
   },

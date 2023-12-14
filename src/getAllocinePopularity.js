@@ -9,7 +9,11 @@ const { config } = require("./config");
 const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
   try {
     const popularityPath = item_type === "movie" ? config.filmsPopularityPath : config.seriesPopularityPath;
-    const response = await axios.get(`${config.baseURLSurgeAssets}/${popularityPath}`);
+    const url = `${config.baseURLSurgeAssets}/${popularityPath}`;
+
+    console.log("Getting popularity from:", url);
+
+    const response = await axios.get(url);
     const lines = response.data.split("\n");
 
     const firstLineWithAllocineURL = lines.find((line) => line.includes(allocineURL));
