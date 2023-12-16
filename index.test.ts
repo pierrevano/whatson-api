@@ -39,6 +39,8 @@ function checkItemProperties(items) {
 
     const minimumNumberOfItems = 15;
 
+    expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(370);
+
     expect(Object.keys(item.allocine)).toHaveLength(7);
     expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
     expect(items.filter((item) => item.allocine.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
@@ -267,15 +269,15 @@ const params = {
           item.metacritic.users_rating ? expect(item.metacritic.users_rating).toBeGreaterThanOrEqual(0) : null;
           item.metacritic.users_rating ? expect(item.metacritic.users_rating).toBeLessThanOrEqual(10) : null;
 
-          item.metacritic.critics_rating ? expect(item.metacritic.critics_rating).toBeGreaterThanOrEqual(0) : null;
+          item.metacritic.critics_rating ? expect(item.metacritic.critics_rating).toBeGreaterThanOrEqual(10) : null;
           item.metacritic.critics_rating ? expect(item.metacritic.critics_rating).toBeLessThanOrEqual(100) : null;
         }
 
         if (item.rotten_tomatoes) {
-          item.rotten_tomatoes.users_rating ? expect(item.rotten_tomatoes.users_rating).toBeGreaterThanOrEqual(0) : null;
+          item.rotten_tomatoes.users_rating ? expect(item.rotten_tomatoes.users_rating).toBeGreaterThanOrEqual(10) : null;
           item.rotten_tomatoes.users_rating ? expect(item.rotten_tomatoes.users_rating).toBeLessThanOrEqual(100) : null;
 
-          item.rotten_tomatoes.critics_rating ? expect(item.rotten_tomatoes.critics_rating).toBeGreaterThanOrEqual(0) : null;
+          item.rotten_tomatoes.critics_rating ? expect(item.rotten_tomatoes.critics_rating).toBeGreaterThanOrEqual(10) : null;
           item.rotten_tomatoes.critics_rating ? expect(item.rotten_tomatoes.critics_rating).toBeLessThanOrEqual(100) : null;
         }
       }),

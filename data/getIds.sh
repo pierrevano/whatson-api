@@ -73,10 +73,13 @@ fi
 # Loading the env variables
 if [[ $SOURCE != "circleci" ]]; then
   source .env
+  echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
+  echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
+  echo "VERCEL_ORG_ID: $VERCEL_ORG_ID"
+  echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
+  echo "VERCEL_TOKEN: $VERCEL_TOKEN"
 fi
 echo "SOURCE: $SOURCE"
-echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
-echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
 echo "----------------------------------------------------------------------------------------------------"
 if [[ -z $BETASERIES_API_KEY ]]; then
   exit
@@ -452,9 +455,11 @@ done
 remove_files
 
 if [[ $SOURCE == "circleci" ]]; then
-  vercel --cwd $FILMS_ASSETS_PATH --token=$VERCEL_TOKEN
+  cd $FILMS_ASSETS_PATH
+  node_modules/.bin/vercel --prod --token=$VERCEL_TOKEN
 else
-  vercel --cwd $FILMS_ASSETS_PATH
+  cd $FILMS_ASSETS_PATH
+  vercel --prod --token=$VERCEL_TOKEN
 fi
 echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
 
