@@ -1,8 +1,6 @@
-const path = require("path");
-
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { convertTitleToNumber } = require("./utils/convertTitleToNumber");
-const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 /**
  * It takes the URL of a movie's critics page on Allocine, scrapes the page, and returns an object
@@ -53,15 +51,7 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
 
     errorCounter = 0;
   } catch (error) {
-    const fileName = path.basename(__filename);
-
-    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${allocineCriticsDetails}: ${error}`);
-
-    errorCounter++;
-    if (errorCounter > config.maxErrorCounter.default) {
-      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
-      process.exit(1);
-    }
+    logErrors(errorCounter, error, allocineCriticsDetails);
   }
 
   return allocineCriticInfo;

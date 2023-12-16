@@ -1,7 +1,5 @@
-/* Importing the libraries that are needed for the script to work. */
 const shell = require("shelljs");
 
-/* Importing the environment and item_type variables from the getNodeVarsValues.js file. */
 const { getNodeVarsValues } = require("./getNodeVarsValues");
 
 const environment = getNodeVarsValues.environment;

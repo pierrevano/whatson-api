@@ -1,9 +1,6 @@
-/* Importing the libraries that are needed for the script to work. */
 const axiosRetry = require("axios-retry");
 const axios = require("axios");
 
-/* Importing the function `getCheerioContent` from the file `getCheerioContent.js` in the folder
-`utils`. */
 const { getCheerioContent } = require("./utils/getCheerioContent");
 
 /**

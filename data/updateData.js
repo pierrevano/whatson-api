@@ -5,6 +5,7 @@
 require("dotenv").config();
 
 const csv = require("csvtojson");
+const fs = require("fs");
 
 /* Connecting to the MongoDB database. */
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -30,6 +31,14 @@ const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
   } else {
     console.log("Render's status is not OK. Aborting.");
     process.exit(0);
+  }
+
+  if (fs.existsSync("errors.log")) {
+    try {
+      fs.unlinkSync("errors.log");
+    } catch (err) {
+      console.error("There was an error:", err);
+    }
   }
 
   if (getNodeVarsValues.get_ids === "update_ids") updateIds();

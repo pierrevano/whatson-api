@@ -1,7 +1,5 @@
-const path = require("path");
-
 const { getCheerioContent } = require("./utils/getCheerioContent");
-const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 /**
  * Retrieves the Rotten Tomatoes rating for a given movie or tv show.
@@ -39,15 +37,7 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
 
     errorCounter = 0;
   } catch (error) {
-    const fileName = path.basename(__filename);
-
-    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${rottenTomatoesHomepage}: ${error}`);
-
-    errorCounter++;
-    if (errorCounter > config.maxErrorCounter.rotten_tomatoes) {
-      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.rotten_tomatoes} times, exiting the script.`);
-      process.exit(1);
-    }
+    logErrors(errorCounter, error, rottenTomatoesHomepage);
   }
 
   return rottenTomatoesObj;

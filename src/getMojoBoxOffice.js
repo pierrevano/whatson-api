@@ -1,8 +1,8 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
-const path = require("path");
 
 const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
   const foundItem = mojoBoxOfficeArray.find((item) => item.imdbId === imdbId);
@@ -57,15 +57,7 @@ async function fetchTableData(offset) {
 
     errorCounter = 0;
   } catch (error) {
-    const fileName = path.basename(__filename);
-
-    console.log(`errorCounter: ${errorCounter} - Error fetching data from URL: ${error}`);
-
-    errorCounter++;
-    if (errorCounter > config.maxErrorCounter.default) {
-      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
-      process.exit(1);
-    }
+    logErrors(errorCounter, error);
   }
 
   return tableData;

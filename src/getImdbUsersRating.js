@@ -1,9 +1,8 @@
 const axiosRetry = require("axios-retry");
 const axios = require("axios");
-const path = require("path");
 
 const { getCheerioContent } = require("./utils/getCheerioContent");
-const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 /**
  * It takes the IMDb homepage of a movie as an argument, and returns the IMDb users rating of the movie
@@ -28,15 +27,7 @@ const getImdbUsersRating = async (imdbHomepage) => {
 
     errorCounter = 0;
   } catch (error) {
-    const fileName = path.basename(__filename);
-
-    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${imdbHomepage}: ${error}`);
-
-    errorCounter++;
-    if (errorCounter > config.maxErrorCounter.default) {
-      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
-      process.exit(1);
-    }
+    logErrors(errorCounter, error, imdbHomepage);
   }
 
   return criticsRating;

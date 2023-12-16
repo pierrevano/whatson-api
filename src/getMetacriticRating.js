@@ -1,7 +1,5 @@
-const path = require("path");
-
 const { getCheerioContent } = require("./utils/getCheerioContent");
-const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 /**
  * Retrieves the Metacritic rating for a given movie or tv show.
@@ -40,15 +38,7 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
 
     errorCounter = 0;
   } catch (error) {
-    const fileName = path.basename(__filename);
-
-    console.log(`errorCounter: ${errorCounter} - ${fileName} - ${metacriticHomepage}: ${error}`);
-
-    errorCounter++;
-    if (errorCounter > config.maxErrorCounter.default) {
-      console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
-      process.exit(1);
-    }
+    logErrors(errorCounter, error, metacriticHomepage);
   }
 
   return metacriticObj;
