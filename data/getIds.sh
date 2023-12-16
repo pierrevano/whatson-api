@@ -454,13 +454,8 @@ done
 
 remove_files
 
-if [[ $SOURCE == "circleci" ]]; then
-  cd $FILMS_ASSETS_PATH
-  node_modules/.bin/vercel --prod --token=$VERCEL_TOKEN
-else
-  cd $FILMS_ASSETS_PATH
-  vercel --prod --token=$VERCEL_TOKEN
-fi
+cd $FILMS_ASSETS_PATH
+vercel --prod --token=$VERCEL_TOKEN
 echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
 
 # Add ending message with duration
