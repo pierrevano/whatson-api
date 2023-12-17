@@ -11,10 +11,6 @@ jobs:
   build:
     docker:
       - image: cimg/node:20.5.1
-    environment:
-      VERCEL_ORG_ID: $VERCEL_ORG_ID
-      VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID
-      VERCEL_TOKEN: $VERCEL_TOKEN
     steps:
       - checkout
       - run:
