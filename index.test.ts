@@ -31,7 +31,7 @@ function countLines(filename) {
 function checkItemProperties(items) {
   return items.forEach((item) => {
     console.log(item);
-    
+
     item.is_active === true ? expect(Object.keys(item).length).toEqual(config.keysToCheck.length) : null;
 
     config.keysToCheck.forEach((key) => {
