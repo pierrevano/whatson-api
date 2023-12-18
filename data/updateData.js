@@ -21,23 +21,33 @@ const { countNullElements } = require("./countNullElements");
 const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
 const loopItems = require("./loopItems");
-const isRenderStatusOK = require("../src/utils/renderStatus");
+const isThirdPartyServiceOK = require("../src/utils/thirdPartyStatus");
 const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
 
-(async () => {
-  if (await isRenderStatusOK()) {
-    console.log("Render's status is OK, continuing...");
+async function checkStatus(service) {
+  if (await isThirdPartyServiceOK(service.url)) {
+    console.log(`${service.name}'s status is OK, continuing...`);
     console.log("----------------------------------------------------------------------------------------------------");
   } else {
-    console.log("Render's status is not OK. Aborting.");
-    process.exit(0);
+    console.error(`${service.name}'s status is not OK. Aborting.`);
+    process.exit(1);
+  }
+}
+
+(async () => {
+  for (let service of config.services) {
+    await checkStatus(service);
   }
 
-  if (fs.existsSync("errors.log")) {
-    try {
-      fs.unlinkSync("errors.log");
-    } catch (err) {
-      console.error("There was an error:", err);
+  if (getNodeVarsValues.item_type === "movie") {
+    if (fs.existsSync("errors.log")) {
+      try {
+        fs.unlinkSync("errors.log");
+        console.log("Errors log has been removed.");
+        console.log("----------------------------------------------------------------------------------------------------");
+      } catch (err) {
+        console.error("There was an error:", err);
+      }
     }
   }
 

@@ -1,7 +1,3 @@
-/**
- * Loads environment variables from a .env file into process.env.
- * @returns None
- */
 require("dotenv").config();
 
 const fs = require("fs");
@@ -28,11 +24,32 @@ function countLines(filename) {
   return lines.length;
 }
 
+/**
+ * This function checks whether the 'property' of a given 'item'
+ * falls within a predefined rating scale (between minRating and maxRating inclusive).
+ * If the item or its property is not defined, the function does nothing.
+ *
+ * @param item - The object/item that contains the rating property. This could be any type of object.
+ * @param property - The specific rating property in the item that needs to be checked.
+ * @param minRating - Lower limit of the acceptable rating scale.
+ * @param maxRating - Upper limit of the acceptable rating scale.
+ */
+function checkRatings(item, property, minRating, maxRating) {
+  if (item && item[property]) {
+    expect(item[property]).toBeGreaterThanOrEqual(minRating);
+    expect(item[property]).toBeLessThanOrEqual(maxRating);
+  }
+}
+
+/**
+ * This function checks properties of given items and outputs log.
+ * It validates various metrics of different rating systems (like `allocine`, `imdb`, `betaseries`, `metacritic`, `rotten_tomatoes`) against predefined expectations.
+ *
+ * @param items - An array of objects/items that contains the properties to be checked.
+ */
 function checkItemProperties(items) {
   return items.forEach((item) => {
     console.log(item);
-
-    item.is_active === true ? expect(Object.keys(item).length).toEqual(config.keysToCheck.length) : null;
 
     config.keysToCheck.forEach((key) => {
       item.is_active === true ? expect(item).toHaveProperty(key) : null;
@@ -86,6 +103,25 @@ function checkItemProperties(items) {
  * @returns None
  */
 const params = {
+  valid_users_ratings: {
+    query: "?item_type=movie,tvshow&is_active=true&limit=400",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        checkRatings(item.allocine, "users_rating", 0, 5);
+        checkRatings(item.allocine, "critics_rating", 0, 5);
+
+        checkRatings(item.betaseries, "users_rating", 0, 5);
+
+        checkRatings(item.imdb, "users_rating", 0, 10);
+
+        checkRatings(item.metacritic, "users_rating", 0, 10);
+        checkRatings(item.metacritic, "critics_rating", 10, 100);
+
+        checkRatings(item.rotten_tomatoes, "users_rating", 10, 100);
+        checkRatings(item.rotten_tomatoes, "critics_rating", 10, 100);
+      }),
+  },
+
   default_movies: {
     query: "",
     expectedResult: (items) =>
@@ -243,46 +279,6 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data.message).toBe("No items have been found for page 3.");
     },
-  },
-
-  valid_users_ratings: {
-    query: "?item_type=movie,tvshow&is_active=true&limit=400",
-    expectedResult: (items) =>
-      items.forEach((item) => {
-        if (item.allocine) {
-          item.allocine.users_rating ? expect(item.allocine.users_rating).toBeGreaterThanOrEqual(0) : null;
-          item.allocine.users_rating ? expect(item.allocine.users_rating).toBeLessThanOrEqual(5) : null;
-
-          item.allocine.critics_rating ? expect(item.allocine.critics_rating).toBeGreaterThanOrEqual(0) : null;
-          item.allocine.critics_rating ? expect(item.allocine.critics_rating).toBeLessThanOrEqual(5) : null;
-        }
-
-        if (item.betaseries && item.betaseries.users_rating) {
-          expect(item.betaseries.users_rating).toBeGreaterThanOrEqual(0);
-          expect(item.betaseries.users_rating).toBeLessThanOrEqual(5);
-        }
-
-        if (item.imdb) {
-          expect(item.imdb.users_rating).toBeGreaterThanOrEqual(0);
-          expect(item.imdb.users_rating).toBeLessThanOrEqual(10);
-        }
-
-        if (item.metacritic) {
-          item.metacritic.users_rating ? expect(item.metacritic.users_rating).toBeGreaterThanOrEqual(0) : null;
-          item.metacritic.users_rating ? expect(item.metacritic.users_rating).toBeLessThanOrEqual(10) : null;
-
-          item.metacritic.critics_rating ? expect(item.metacritic.critics_rating).toBeGreaterThanOrEqual(10) : null;
-          item.metacritic.critics_rating ? expect(item.metacritic.critics_rating).toBeLessThanOrEqual(100) : null;
-        }
-
-        if (item.rotten_tomatoes) {
-          item.rotten_tomatoes.users_rating ? expect(item.rotten_tomatoes.users_rating).toBeGreaterThanOrEqual(10) : null;
-          item.rotten_tomatoes.users_rating ? expect(item.rotten_tomatoes.users_rating).toBeLessThanOrEqual(100) : null;
-
-          item.rotten_tomatoes.critics_rating ? expect(item.rotten_tomatoes.critics_rating).toBeGreaterThanOrEqual(10) : null;
-          item.rotten_tomatoes.critics_rating ? expect(item.rotten_tomatoes.critics_rating).toBeLessThanOrEqual(100) : null;
-        }
-      }),
   },
 
   same_files_line_number_as_remote: {

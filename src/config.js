@@ -68,6 +68,11 @@ const config = {
     offset: 200,
   },
 
+  services: [
+    { name: "Render", url: "https://status.render.com" },
+    { name: "Vercel", url: "https://www.vercel-status.com" },
+  ],
+
   /* Tests config */
   baseURL: "http://localhost:8081",
   baseURLRemote: "https://whatson-api.onrender.com",
