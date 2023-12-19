@@ -14,6 +14,11 @@ const logErrors = (errorCounter, error, item) => {
     if (err) throw err;
   });
 
+  if (error instanceof RangeError) {
+    console.log("First item not updated:", item);
+    process.exit(1);
+  }
+
   errorCounter++;
   if (errorCounter > config.maxErrorCounter.default) {
     console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);

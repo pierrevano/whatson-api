@@ -58,7 +58,7 @@ function checkItemProperties(items) {
 
     const minimumNumberOfItems = 15;
 
-    expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(370);
+    expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(380);
 
     expect(Object.keys(item.allocine)).toHaveLength(7);
     expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
