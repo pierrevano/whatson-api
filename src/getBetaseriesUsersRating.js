@@ -15,7 +15,14 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
       const options = { validateStatus: (status) => status === 200 };
       const $ = await getCheerioContent(betaseriesHomepage, options);
 
-      criticsRating = parseFloat($(".js-render-stars")[0].attribs.title.replace(" / 5", "").replace(",", "."));
+      const numberOfStars = $(".js-render-stars")[0];
+      criticsRating = numberOfStars ? parseFloat(numberOfStars.attribs.title.replace(" / 5", "").replace(",", ".")) : null;
+
+      /**
+       * The value `criticsRating` received as `0` doesn't necessarily signify a rating of zero.
+       * It could also indicate that no ratings have been given.
+       * Therefore, it is not considered.
+       */
       if (criticsRating === 0) criticsRating = null;
     } else {
       criticsRating = null;
