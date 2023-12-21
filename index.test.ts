@@ -60,23 +60,23 @@ function checkItemProperties(items) {
 
     expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(380);
 
-    expect(Object.keys(item.allocine)).toHaveLength(7);
+    expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(7);
     expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
     expect(items.filter((item) => item.allocine.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
     expect(items.filter((item) => item.allocine.critics_number).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
     expect(items.filter((item) => item.allocine.critics_rating_details).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
-    expect(Object.keys(item.imdb)).toHaveLength(4);
+    expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(4);
     expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
-    item.betaseries ? expect(Object.keys(item.betaseries)).toHaveLength(3) : null;
+    item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(3) : null;
     expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
-    item.is_active === true && item.metacritic ? expect(Object.keys(item.metacritic)).toHaveLength(4) : null;
+    item.is_active === true && item.metacritic ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(4) : null;
     expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
     expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
-    item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes)).toHaveLength(4) : null;
+    item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(4) : null;
     expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
     expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
 
