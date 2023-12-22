@@ -20,11 +20,14 @@ jobs:
           name: Install dependencies
           command: npm install
       - run:
-          name: Update all tvshow data
-          command: node -e "let d = new Date(); let day = d.getDate() + 1; console.log(day * 1000);" | xargs -I {} node data/updateData.js tvshow no_update_ids update_db no_local no_active no_check {} no_skip force
+          name: Install vercel globally
+          command: sudo npm install -g vercel
       - run:
-          name: Update all movie data
-          command: node -e "let d = new Date(); let day = d.getDate() + 1; console.log(day * 1000);" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip force
+          name: Update movie data
+          command: node data/updateData.js movie update_ids update_db
+      - run:
+          name: Update tvshow data
+          command: node data/updateData.js tvshow update_ids update_db
       - run:
           name: Run tests
           command: npm run test_remote
