@@ -4,11 +4,12 @@ parameters:
   run:
     type: boolean
     default: false
+  all:
+    type: boolean
+    default: false
 
-jobs:
-  build:
-    docker:
-      - image: cimg/node:20.5.1
+commands:
+  setup_env:
     steps:
       - checkout
       - run:
@@ -20,6 +21,13 @@ jobs:
       - run:
           name: Install vercel globally
           command: sudo npm install -g vercel
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:20.5.1
+    steps:
+      - setup_env
       - run:
           name: Update movie data
           command: node data/updateData.js movie update_ids update_db
@@ -33,13 +41,7 @@ jobs:
     docker:
       - image: cimg/node:20.5.1
     steps:
-      - checkout
-      - run:
-          name: Install npm to the latest version
-          command: sudo npm install -g npm@latest
-      - run:
-          name: Install dependencies
-          command: npm install
+      - setup_env
       - run:
           name: Update all movie data
           command: node -e "let d = new Date(); let day = d.getDate(); console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip force
@@ -47,7 +49,6 @@ jobs:
           name: Update all tvshow data
           command: node -e "let d = new Date(); let day = d.getDate(); if (day >= 25) {day = day - 24}; console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js tvshow no_update_ids update_db no_local no_active no_check {} no_skip force
 
-# Run the build job
 workflows:
   build:
     when: << pipeline.parameters.run >>
