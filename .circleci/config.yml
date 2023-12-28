@@ -7,6 +7,9 @@ parameters:
   all:
     type: boolean
     default: false
+  all_second:
+    type: boolean
+    default: false
 
 commands:
   setup_env:
@@ -45,9 +48,17 @@ jobs:
       - run:
           name: Update all movie data
           command: node -e "let d = new Date(); let day = d.getDate(); console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip force
+  build_all_second:
+    docker:
+      - image: cimg/node:20.5.1
+    steps:
+      - setup_env
+      - run:
+          name: Update all movie data
+          command: node -e "let d = new Date(); let day = d.getDate(); if (day > 15) {day = day - 15}; console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip force
       - run:
           name: Update all tvshow data
-          command: node -e "let d = new Date(); let day = d.getDate(); if (day >= 25) {day = day - 24}; console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js tvshow no_update_ids update_db no_local no_active no_check {} no_skip force
+          command: node -e "let d = new Date(); let day = d.getDate(); if (day > 15) {day = day - 15}; console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js tvshow no_update_ids update_db no_local no_active no_check {} no_skip force
 
 workflows:
   build:
@@ -58,3 +69,7 @@ workflows:
     when: << pipeline.parameters.all >>
     jobs:
       - build_all
+  build_all_second:
+    when: << pipeline.parameters.all_second >>
+    jobs:
+      - build_all_second

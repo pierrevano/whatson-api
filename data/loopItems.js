@@ -20,7 +20,7 @@ const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
  * @returns {Object} Returns an object containing the number of new or updated items.
  */
 const loopItems = async (collectionData, config, force, index_to_start, item_type, jsonArray, mojoBoxOfficeArray, skip_already_added_documents) => {
-  let createJsonCounter = 0;
+  let createJsonCounter = (itemCounter = 0);
 
   // Loop through jsonArray with the given start index
   for (let index = index_to_start; index < jsonArray.length; index++) {
@@ -106,6 +106,12 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
 
         // Perform upsert operation on the database with the fetched data
         await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
+
+        itemCounter++;
+
+        if (itemCounter === 1500) {
+          process.exit(0);
+        }
       } else {
         console.error(error);
       }
