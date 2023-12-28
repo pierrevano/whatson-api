@@ -24,16 +24,6 @@ commands:
       - run:
           name: Install vercel globally
           command: sudo npm install -g vercel
-  all_movie_data:
-    steps:
-      - run:
-          name: Update all movie data
-          command: node -e "let d = new Date(); let day = d.getDate(); if (day > 15) {day = day + 15}; console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip force
-  all_tvshow_data:
-    steps:
-      - run:
-          name: Update all tvshow data
-          command: node -e "let d = new Date(); let day = d.getDate(); if (day > 15) {day = day - 15}; console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js tvshow no_update_ids update_db no_local no_active no_check {} no_skip force
   run_tests:
     steps:
       - run:
@@ -58,15 +48,21 @@ jobs:
       - image: cimg/node:20.5.1
     steps:
       - setup_env
-      - all_movie_data
+      - run:
+          name: Update all movie data
+          command: node -e "let d = new Date(); let day = d.getDate(); if (day > 15) {day = day + 15}; console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip force
       - run_tests
   build_all_second:
     docker:
       - image: cimg/node:20.5.1
     steps:
       - setup_env
-      - all_movie_data
-      - all_tvshow_data
+      - run:
+          name: Update all movie data
+          command: node -e "let d = new Date(); let day = d.getDate(); console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip force
+      - run:
+          name: Update all tvshow data
+          command: node -e "let d = new Date(); let day = d.getDate(); if (day > 15) {day = day - 15}; console.log((day - 1) * 1500);" | xargs -I {} node data/updateData.js tvshow no_update_ids update_db no_local no_active no_check {} no_skip force
       - run_tests
 
 workflows:
