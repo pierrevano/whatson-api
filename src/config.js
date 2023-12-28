@@ -73,6 +73,8 @@ const config = {
     { name: "Vercel", url: "https://www.vercel-status.com" },
   ],
 
+  maxNumberOfItems: 46500,
+
   /* Tests config */
   baseURL: "http://localhost:8081",
   baseURLRemote: "https://whatson-api.onrender.com",

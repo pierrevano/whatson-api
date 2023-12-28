@@ -1,3 +1,5 @@
+const { config } = require("../src/config");
+
 const maximum_threshold = {
   default: 30,
   metacritic_or_rotten_tomatoes: 95,
@@ -18,8 +20,10 @@ const checkDocumentThreshold = async (collectionData, documents, query, rateSour
   const countNull = await collectionData.countDocuments(query);
   console.log(`Number of null for ${rateSource}: ${countNull}`);
 
-  if ((countNull * 100) / documents > maximum_threshold[thresholdKey]) {
-    throw new Error(`Something went wrong, at least ${maximum_threshold[thresholdKey]}% of ${rateSource} ratings are set to null`);
+  if (thresholdKey) {
+    if ((countNull * 100) / documents > maximum_threshold[thresholdKey]) {
+      throw new Error(`Something went wrong, at least ${maximum_threshold[thresholdKey]}% of ${rateSource} ratings are set to null`);
+    }
   }
 };
 
@@ -36,7 +40,14 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     const documents = await collectionData.estimatedDocumentCount();
     console.log(`Number of documents in the collection: ${documents}`);
 
+    if (documents > config.maxNumberOfItems) {
+      console.log("Maximum number of items reached!");
+      process.exit(1);
+    }
+
     const queriesAndThresholdKeys = [
+      { query: { item_type: "movie" }, rateSource: "item_type.movie", thresholdKey: null },
+      { query: { item_type: "tvshow" }, rateSource: "item_type.tvshow", thresholdKey: null },
       { query: { "allocine.users_rating": null }, rateSource: "allocine.users_rating", thresholdKey: "default" },
       { query: { "allocine.critics_rating": null }, rateSource: "allocine.critics_rating", thresholdKey: "allocine_critics" },
       { query: { "betaseries.users_rating": null }, rateSource: "betaseries.users_rating", thresholdKey: "default" },
