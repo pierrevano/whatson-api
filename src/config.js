@@ -73,7 +73,13 @@ const config = {
     { name: "Vercel", url: "https://www.vercel-status.com" },
   ],
 
-  maxNumberOfItems: 46500,
+  maximumThreshold: {
+    default: 30,
+    metacritic_or_rotten_tomatoes: 95,
+    allocine_critics: 80,
+  },
+
+  maximumNumberOfItems: 46500,
 
   /* Tests config */
   baseURL: "http://localhost:8081",

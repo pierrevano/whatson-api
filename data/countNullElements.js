@@ -1,28 +1,22 @@
 const { config } = require("../src/config");
 
-const maximum_threshold = {
-  default: 30,
-  metacritic_or_rotten_tomatoes: 95,
-  allocine_critics: 80,
-};
-
 /**
  * Verifies that the number of null results for a specific rate source in a collection doesn't exceed a specified threshold.
  * If the percentage of null values is higher than the threshold, an error is thrown.
  *
  * @param {Object} query - The MongoDB query to execute.
  * @param {String} rateSource - The rate source to find null values for.
- * @param {String} thresholdKey - The key to retrieve the threshold from the 'maximum_threshold' object.
+ * @param {String} thresholdKey - The key to retrieve the threshold from the 'maximumThreshold' object.
  * @returns {void}
  * @throws {Error} if the percentage of null results is higher than the threshold.
  */
 const checkDocumentThreshold = async (collectionData, documents, query, rateSource, thresholdKey) => {
   const countNull = await collectionData.countDocuments(query);
-  console.log(`Number of null for ${rateSource}: ${countNull}`);
 
   if (thresholdKey) {
-    if ((countNull * 100) / documents > maximum_threshold[thresholdKey]) {
-      throw new Error(`Something went wrong, at least ${maximum_threshold[thresholdKey]}% of ${rateSource} ratings are set to null`);
+    if ((countNull * 100) / documents > config.maximumThreshold[thresholdKey]) {
+      console.log(`Number of null for ${rateSource}: ${countNull}`);
+      throw new Error(`Something went wrong, at least ${config.maximumThreshold[thresholdKey]}% of ${rateSource} ratings are set to null`);
     }
   }
 };
@@ -40,7 +34,7 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     const documents = await collectionData.estimatedDocumentCount();
     console.log(`Number of documents in the collection: ${documents}`);
 
-    if (documents > config.maxNumberOfItems) {
+    if (documents > config.maximumNumberOfItems) {
       console.log("Maximum number of items reached!");
       process.exit(1);
     }
