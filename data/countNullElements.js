@@ -18,6 +18,8 @@ const checkDocumentThreshold = async (collectionData, documents, query, rateSour
       console.log(`Number of null for ${rateSource}: ${countNull}`);
       throw new Error(`Something went wrong, at least ${config.maximumThreshold[thresholdKey]}% of ${rateSource} ratings are set to null`);
     }
+  } else {
+    console.log(`Number of items for ${rateSource}: ${countNull}`);
   }
 };
 
