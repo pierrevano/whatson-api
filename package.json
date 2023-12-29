@@ -11,12 +11,12 @@
     "push": "npm run prettier && npm run test && git add . && git cz && git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main"
   },
   "prettier": {
-    "printWidth": 195
+    "printWidth": 200
   },
   "author": "Pierre Vanoverschelde",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.6.2",
+    "axios": "^1.6.3",
     "axios-retry": "^3.9.1",
     "cheerio": "^1.0.0-rc.12",
     "csvtojson": "^2.0.10",
