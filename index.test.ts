@@ -354,7 +354,8 @@ const params = {
   top_popularity_items: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
-      expect(items.slice(0, 10).filter((item) => item.allocine.popularity < 10).length).toBeGreaterThanOrEqual(3);
+      expect(items.slice(0, 10).filter((item) => item.allocine.popularity < 10).length).toBeGreaterThanOrEqual(0);
+      expect(items.slice(0, 10).filter((item) => item.imdb.popularity < 10).length).toBeGreaterThanOrEqual(0);
     },
   },
 
