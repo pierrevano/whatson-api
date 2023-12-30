@@ -2,9 +2,11 @@ require("dotenv").config();
 
 const fs = require("fs");
 const axios = require("axios");
+const path = require("path");
 
 const config = require("./src/config").config;
-const isLowerCase = require("./src/utils/isLowerCase");
+
+const { logErrors } = require("./src/utils/logErrors");
 
 /**
  * Reads a file and counts the number of lines in it.
@@ -493,4 +495,18 @@ describe("What's on? API tests", () => {
     },
     config.timeout
   );
+});
+
+jest.mock("fs");
+
+describe("Testing logErrors function", () => {
+  test("It should increment the errorCounter when an error is logged", () => {
+    const error = new Error("Test Error");
+    let errorCounter = 0;
+
+    for (let i = 1; i <= 5; i++) {
+      errorCounter = logErrors(errorCounter, error);
+      expect(errorCounter).toBe(i);
+    }
+  });
 });

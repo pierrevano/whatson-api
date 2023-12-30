@@ -71,6 +71,13 @@ const config = {
   services: [
     { name: "Render", url: "https://status.render.com" },
     { name: "Vercel", url: "https://www.vercel-status.com" },
+
+    { name: "AlloCiné", url: "https://www.allocine.fr" },
+    { name: "BetaSeries", url: "https://www.betaseries.com" },
+    { name: "IMDb", url: "https://www.imdb.com" },
+    { name: "Metacritic", url: "https://www.metacritic.com" },
+    { name: "Rotten Tomatoes", url: "https://www.rottentomatoes.com" },
+    { name: "Mojo", url: "https://www.boxofficemojo.com" },
   ],
 
   maximumThreshold: {

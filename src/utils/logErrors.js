@@ -24,6 +24,8 @@ const logErrors = (errorCounter, error, item) => {
     console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
     process.exit(1);
   }
+
+  return errorCounter;
 };
 
 module.exports = { logErrors };

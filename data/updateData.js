@@ -27,7 +27,6 @@ const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
 async function checkStatus(service) {
   if (await isThirdPartyServiceOK(service.url)) {
     console.log(`${service.name}'s status is OK, continuing...`);
-    console.log("----------------------------------------------------------------------------------------------------");
   } else {
     console.error(`${service.name}'s status is not OK. Aborting.`);
     process.exit(1);
@@ -38,6 +37,7 @@ async function checkStatus(service) {
   for (let service of config.services) {
     await checkStatus(service);
   }
+  console.log("----------------------------------------------------------------------------------------------------");
 
   if (getNodeVarsValues.item_type === "movie") {
     if (fs.existsSync("errors.log")) {
@@ -64,17 +64,22 @@ async function checkStatus(service) {
   const jsonArray = !getNodeVarsValues.is_not_active || getNodeVarsValues.is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
   const allTheMovieDbIds = jsonArray.map((item) => parseInt(item.THEMOVIEDB_ID));
 
+  /**
+   * If we are in the `update_ids` mode, we proceed to reset the `is_active` and `popularity`
+   * fields for all documents in the collectionData that do not match the currently active items IDs.
+   * Once the operation is complete, we log the number of documents that have been affected by this operation.
+   *
+   * The fields `is_active` and `popularity` for the active items are updated afterwards.
+   */
   if (getNodeVarsValues.get_ids === "update_ids") {
     const resetIsActive = { $set: { is_active: false } };
     const resetPopularity = { $set: { "allocine.popularity": null, "imdb.popularity": null, mojo: null } };
+
     const filterQueryIsActive = { item_type: getNodeVarsValues.item_type, id: { $nin: allTheMovieDbIds } };
-    const filterQueryPopularity = { item_type: getNodeVarsValues.item_type };
 
     await collectionData.updateMany(filterQueryIsActive, resetIsActive);
-    console.log(`${allTheMovieDbIds.length} documents have been excluded from the is_active reset.`);
-
-    await collectionData.updateMany(filterQueryPopularity, resetPopularity);
-    console.log("All documents popularity have been reset.");
+    await collectionData.updateMany(filterQueryIsActive, resetPopularity);
+    console.log(`${allTheMovieDbIds.length} documents have been excluded from the is_active and popularity reset.`);
   }
 
   const index_to_start = getNodeVarsValues.index_to_start || 0;
