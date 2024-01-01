@@ -45,6 +45,7 @@ const config = {
     "mojo",
     "popularity_average",
     "ratings_average",
+    "updated_at",
   ],
 
   baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",

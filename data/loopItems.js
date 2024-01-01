@@ -104,6 +104,9 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
                 theMoviedbId
               ));
 
+        // Adding item last `updated_at` date
+        data.updated_at = new Date().toISOString();
+
         // Perform upsert operation on the database with the fetched data
         await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
 
