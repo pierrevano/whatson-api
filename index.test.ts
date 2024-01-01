@@ -26,6 +26,16 @@ function countLines(filename) {
   return lines.length;
 }
 
+function isNumberWithDecimals(input) {
+  const num = Number(input);
+
+  if (isNaN(num)) {
+    return false;
+  }
+
+  return Number.isInteger(num * 100);
+}
+
 /**
  * This function checks whether the 'property' of a given 'item'
  * falls within a predefined rating scale (between minRating and maxRating inclusive).
@@ -40,6 +50,7 @@ function checkRatings(item, property, minRating, maxRating) {
   if (item && item[property]) {
     expect(item[property]).toBeGreaterThanOrEqual(minRating);
     expect(item[property]).toBeLessThanOrEqual(maxRating);
+    expect(isNumberWithDecimals(item[property])).toBeTruthy;
   }
 }
 
