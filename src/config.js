@@ -89,6 +89,8 @@ const config = {
 
   maximumNumberOfItems: 46500,
 
+  itemCounter: 501,
+
   /* Tests config */
   baseURL: "http://localhost:8081",
   baseURLRemote: "https://whatson-api.onrender.com",

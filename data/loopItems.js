@@ -112,7 +112,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
 
         itemCounter++;
 
-        if (itemCounter === 1500) {
+        if (itemCounter === config.itemCounter) {
           process.exit(0);
         }
       } else {
