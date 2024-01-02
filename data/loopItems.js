@@ -5,6 +5,7 @@ const compareUsersRating = require("./compareUsersRating");
 const createJSON = require("./createJSON");
 const generateURLs = require("./generateURLs");
 const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
+const { getNodeVarsValues } = require("../src/getNodeVarsValues");
 
 /**
  * Loop through items in a collection, perform various operations on each item, and return an object containing the number of new or updated items.
@@ -112,7 +113,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
 
         itemCounter++;
 
-        if (itemCounter === config.itemCounter) {
+        if (itemCounter === config.itemCounter && getNodeVarsValues.environment === "no_local") {
           process.exit(0);
         }
       } else {

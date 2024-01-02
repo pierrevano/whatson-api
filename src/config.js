@@ -89,7 +89,7 @@ const config = {
 
   maximumNumberOfItems: 46500,
 
-  itemCounter: 501,
+  itemCounter: 301,
 
   /* Tests config */
   baseURL: "http://localhost:8081",

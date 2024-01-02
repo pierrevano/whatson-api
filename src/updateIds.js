@@ -2,17 +2,14 @@ const shell = require("shelljs");
 
 const { getNodeVarsValues } = require("./getNodeVarsValues");
 
-const environment = getNodeVarsValues.environment;
-const item_type = getNodeVarsValues.item_type;
-
 /**
  * It updates the ids of the movies and tv shows in the database
  */
 const updateIds = () => {
   shell.exec("chmod +x ./data/getIds.sh");
 
-  if (!environment) {
-    if (item_type === "movie") {
+  if (!getNodeVarsValues.environment) {
+    if (getNodeVarsValues.item_type === "movie") {
       shell.exec("bash ./data/getIds.sh circleci movie");
       shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
     } else {
@@ -20,7 +17,7 @@ const updateIds = () => {
       shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
     }
   } else {
-    if (item_type === "movie") {
+    if (getNodeVarsValues.item_type === "movie") {
       shell.exec("bash ./data/getIds.sh local movie");
       shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
     } else {
