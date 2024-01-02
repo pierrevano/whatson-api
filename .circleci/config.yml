@@ -34,7 +34,6 @@ jobs:
   build:
     docker:
       - image: cimg/node:20.5.1
-    resource_class: xlarge
     steps:
       - setup_env
       - run:
@@ -49,7 +48,6 @@ jobs:
     docker:
       - image: cimg/node:20.5.1
     parallelism: 3
-    resource_class: xlarge
     steps:
       - setup_env
       - run:
@@ -60,7 +58,6 @@ jobs:
     docker:
       - image: cimg/node:20.5.1
     parallelism: 3
-    resource_class: xlarge
     steps:
       - setup_env
       - run:
