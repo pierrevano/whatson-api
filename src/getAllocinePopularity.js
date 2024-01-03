@@ -9,7 +9,7 @@ const { config } = require("./config");
 const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
   try {
     const popularityPath = item_type === "movie" ? config.filmsPopularityPath : config.seriesPopularityPath;
-    const url = `${config.baseURLSurgeAssets}/${popularityPath}`;
+    const url = `${config.baseURLAssets}/${popularityPath}`;
 
     console.log("Getting popularity from:", url);
 

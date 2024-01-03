@@ -29,8 +29,11 @@ commands:
       - run:
           name: Run tests
           command: npm run test_remote
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/
+            JEST_JUNIT_ADD_FILE_ATTRIBUTE: "true"
       - store_test_results:
-          path: results.xml
+          path: ./reports/
 
 jobs:
   build:

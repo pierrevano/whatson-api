@@ -1,4 +1,4 @@
-/* A configuration file for the project. */
+/* A configuration file for the API. */
 const config = {
   /* Prod config */
   baseURLAllocine: "https://www.allocine.fr",
@@ -15,7 +15,7 @@ const config = {
   baseURLMetacriticSerie: "https://www.metacritic.com/tv/",
   baseURLRottenTomatoesFilm: "https://www.rottentomatoes.com/m/",
   baseURLRottenTomatoesSerie: "https://www.rottentomatoes.com/tv/",
-  baseURLSurgeAssets: "https://whatson-assets.vercel.app",
+  baseURLAssets: "https://whatson-assets.vercel.app",
 
   collectionName: "data",
   dbName: "whatson",
@@ -25,6 +25,40 @@ const config = {
   seriesIdsFilePath: "./src/assets/series_ids.txt",
   filmsPopularityPath: "popularity_ids_films.txt",
   seriesPopularityPath: "popularity_ids_series.txt",
+
+  baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
+  corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
+
+  keysToCheckForSearch: ["allocineId", "betaseriesId", "imdbId", "metacriticId", "rottentomatoesId", "themoviedbId", "title"],
+
+  limit: 20,
+  maxSeasonsNumber: 5,
+  page: 1,
+
+  mojo: {
+    baseURL: "https://www.boxofficemojo.com",
+    urlToFetch: "/chart/ww_top_lifetime_gross",
+    tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
+
+    maxIterations: 20,
+    offset: 200,
+  },
+
+  maxErrorCounter: {
+    default: 5,
+    rotten_tomatoes: 10,
+  },
+
+  /* Tests config */
+  baseURL: "http://localhost:8081",
+  baseURLRemote: "https://whatson-api.onrender.com",
+  maxResponseTime: 5000,
+  timeout: 500000,
+
+  films_ids_path: "./src/assets/films_ids.txt",
+  series_ids_path: "./src/assets/series_ids.txt",
+
+  checkItemsNumber: false,
 
   keysToCheck: [
     "_id",
@@ -48,27 +82,6 @@ const config = {
     "updated_at",
   ],
 
-  baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
-  corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
-
-  limit: 20,
-  maxSeasonsNumber: 5,
-  page: 1,
-
-  maxErrorCounter: {
-    default: 5,
-    rotten_tomatoes: 10,
-  },
-
-  mojo: {
-    baseURL: "https://www.boxofficemojo.com",
-    urlToFetch: "/chart/ww_top_lifetime_gross",
-    tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
-
-    maxIterations: 20,
-    offset: 200,
-  },
-
   services: [
     { name: "Render", url: "https://status.render.com" },
     { name: "Vercel", url: "https://www.vercel-status.com" },
@@ -81,29 +94,16 @@ const config = {
     { name: "Mojo", url: "https://www.boxofficemojo.com" },
   ],
 
+  maximumNumberOfItems: 46500,
+
+  circleLimitPerDay: 1500,
+  circleLimitPerInstance: 300,
+
   maximumThreshold: {
     default: 30,
     metacritic_or_rotten_tomatoes: 95,
     allocine_critics: 80,
   },
-
-  maximumNumberOfItems: 46500,
-
-  itemCounter: 301,
-
-  circleLimitPerDay: 1500,
-  circleLimitPerInstance: 300,
-
-  /* Tests config */
-  baseURL: "http://localhost:8081",
-  baseURLRemote: "https://whatson-api.onrender.com",
-  maxResponseTime: 3000,
-  timeout: 500000,
-
-  films_ids_path: "./src/assets/films_ids.txt",
-  series_ids_path: "./src/assets/series_ids.txt",
-
-  checkItemsNumber: false,
 };
 
 module.exports = { config };

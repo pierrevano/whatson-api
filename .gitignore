@@ -9,6 +9,7 @@ data/massActionsOnItems.js
 errors.log
 node_modules
 package-lock.json
+reports/*
 run.sh
 src/assets/.!*!films_ids.txt
 src/assets/.!*!series_ids.txt
