@@ -8,7 +8,10 @@
     "test_remote": "SOURCE=remote jest",
     "prettier": "prettier --write .",
     "update": "rm -rf node_modules package-lock.json && npm install",
-    "push": "npm run prettier && npm run test && git add . && git cz && git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main"
+    "push": "npm run prettier && npm run test && git add . && git cz && git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main",
+    "update-movie-data-first-half": "node -e \"const day = (new Date()).getDate() <= 15 ? (new Date()).getDate() : null; if(day != null) {const index = parseInt(process.env.CIRCLE_NODE_INDEX) + 1; console.log((day - 1) * 1500 + (index * 300));}\" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip",
+    "update-movie-data-second-half": "node -e \"const day = (new Date()).getDate() > 15 ? (new Date()).getDate() : null; if(day != null) {const index = parseInt(process.env.CIRCLE_NODE_INDEX) + 1; console.log((day - 1) * 1500 + (index * 300));}\" | xargs -I {} node data/updateData.js movie no_update_ids update_db no_local no_active no_check {} no_skip",
+    "update-tvshow-data-all": "node -e \"const day = (new Date()).getDate() <= 15 ? (new Date()).getDate() : null; if(day != null) {const index = parseInt(process.env.CIRCLE_NODE_INDEX) + 1; console.log((day - 1) * 1500 + (index * 300));}\" | xargs -I {} node data/updateData.js tvshow no_update_ids update_db no_local no_active no_check {} no_skip"
   },
   "prettier": {
     "printWidth": 200

@@ -242,7 +242,7 @@ const params = {
   },
 
   ongoing_and_canceled_tvshows: {
-    query: "?item_type=tvshow&status=canceled,soon",
+    query: "?item_type=tvshow&is_active=true,false&status=canceled,soon",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("status");
