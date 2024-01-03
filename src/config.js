@@ -91,6 +91,9 @@ const config = {
 
   itemCounter: 301,
 
+  circleLimitPerDay: 1500,
+  circleLimitPerInstance: 300,
+
   /* Tests config */
   baseURL: "http://localhost:8081",
   baseURLRemote: "https://whatson-api.onrender.com",
