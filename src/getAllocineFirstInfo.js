@@ -31,7 +31,7 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     if (isNaN(allocineUsersRating)) allocineUsersRating = null;
 
     const seasonsNumber = await getSeasonsNumber(allocineHomepage, theMoviedbId);
-    const status = await getStatus($(".thumbnail .label-status").text());
+    const status = await getStatus(allocineHomepage, $(".thumbnail .label-status").text());
     const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
 
     allocineFirstInfo = {
