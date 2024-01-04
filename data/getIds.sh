@@ -377,6 +377,13 @@ do
           read ROTTEN_TOMATOES_ID
         fi
 
+        if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "force" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
+          open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
+          open -a "/Applications/Arc.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+          echo "Enter the IMDb ID:"
+          read IMDB_ID
+        fi
+
         if [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; then
           echo "IMDb ID not found: $IMDB_ID"
           echo "https://www.allocine.fr$URL" >> $IMDB_NOT_FOUND_PATH
