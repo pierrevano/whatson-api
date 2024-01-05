@@ -240,6 +240,9 @@ do
         if [[ $PROMPT_FIRST_OR_ALL == "first" ]] && [[ $METACRITIC_CHECK == "null" ]] && [[ $ROTTEN_TOMATOES_CHECK != "null" ]]; then
           DUPLICATE=0
           echo "Found $URL to be rechecked."
+        elif [[ $PROMPT_FIRST_OR_ALL == "first" ]] && [[ $METACRITIC_CHECK != "null" ]] && [[ $ROTTEN_TOMATOES_CHECK == "null" ]]; then
+          DUPLICATE=0
+          echo "Found $URL to be rechecked."
         elif [[ $PROMPT_FIRST_OR_ALL == "all" ]]; then
           if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]]; then
             DUPLICATE=0
@@ -349,6 +352,13 @@ do
           IMDB_ID=null
         fi
 
+        if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "force" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
+          open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
+          open -a "/Applications/Arc.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+          echo "Enter the IMDb ID:"
+          read IMDB_ID
+        fi
+
         if [[ -z $METACRITIC_ID ]]; then
           DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           FIRST_THREE_LETTERS_TITLE=$(echo "$TITLE_URL_ENCODED" | cut -c1-3)
@@ -375,13 +385,6 @@ do
           open -a "/Applications/Arc.app" "https://www.rottentomatoes.com"
           echo "Enter the Rotten Tomatoes ID:"
           read ROTTEN_TOMATOES_ID
-        fi
-
-        if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "force" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
-          open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
-          open -a "/Applications/Arc.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-          echo "Enter the IMDb ID:"
-          read IMDB_ID
         fi
 
         if [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; then
@@ -441,7 +444,7 @@ do
             grep '^'"$URL"',*' $FILMS_IDS_FILE_PATH
             echo "Which line to remove?"
             read numberOfLine
-            if [[ $numberOfLine == "1" ]]; then
+            if [[ $numberOfLine == "1" ]] || [[ $numberOfLine == "first" ]]; then
               awk '!flag && /.*='"$FILM_ID"'\.html.*$/ {flag=1; next} 1' $FILMS_IDS_FILE_PATH > temp_sed && mv temp_sed $FILMS_IDS_FILE_PATH
               echo "First match removed."
             else
