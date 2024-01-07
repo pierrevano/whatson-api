@@ -1,9 +1,9 @@
 # Define the main variables
 BASE_URL_ASSETS=https://whatson-assets.vercel.app
+BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
-IMDB_NOT_FOUND_PATH=temp_not_found
 PAGES_MAX_NUMBER=15
 PAGES_MIN_NUMBER=1
 PROMPT=$3
@@ -223,7 +223,7 @@ do
     METACRITIC_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f5)
     ROTTEN_TOMATOES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f6)
 
-    if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "prompt" ]]; then
+    if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "recheck" ]]; then
       URL_FILE=$TEMP_URLS_FILE_PATH
       while IFS= read -r TEMP_URLS <&3; do
         if [[ $URL == $TEMP_URLS ]]; then
@@ -236,7 +236,7 @@ do
 
       echo $URL >> $TEMP_URLS_FILE_PATH
 
-      if [[ $PROMPT == "prompt" ]]; then
+      if [[ $PROMPT == "recheck" ]]; then
         if [[ $PROMPT_FIRST_OR_ALL == "first" ]] && [[ $METACRITIC_CHECK == "null" ]] && [[ $ROTTEN_TOMATOES_CHECK != "null" ]]; then
           DUPLICATE=0
           echo "Found $URL to be rechecked."
@@ -277,127 +277,60 @@ do
         # Get title encoded characters URL
         TITLE_URL_ENCODED=$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -f $URL_ESCAPE_FILE_PATH)
 
-        METACRITIC_ID=""
-        ROTTEN_TOMATOES_ID=""
-
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22.%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
-          echo "No wiki URL!"
-
-          for itemIndex in 1 2 3
-          do
-            if [[ $TYPE == "movie" ]]; then
-              # Get release date
-              CREATION_YEAR=$(cat temp_allocine_url | grep -A6 "date blue-link" | grep "[0-9][0-9][0-9][0-9]" | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | cut -d' ' -f3)
-              # Get IMDb release date
-              IMDB_YEAR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m$itemIndex "([0-9][0-9][0-9][0-9])</span>" | tail -1 | cut -d'<' -f2 | grep -Eo "([0-9]+)")
-              echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-            else
-              CREATION_YEAR=$(cat temp_allocine_url | grep -A6 "meta-body-item meta-body-info" | grep -Eo "[0-9][0-9][0-9][0-9]" | head -1 | tail -1)
-              IMDB_YEAR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m$itemIndex "([0-9][0-9][0-9][0-9]" | tail -1 | cut -d'<' -f2 | grep -Eo "[0-9]+" | head -1)
-            fi
-            IMDB_YEAR_P1=$((IMDB_YEAR + 1))
-            echo "IMDb year +1: $IMDB_YEAR_P1"
-
-            if [[ $CREATION_YEAR == $IMDB_YEAR ]] || [[ $CREATION_YEAR == $IMDB_YEAR_P1 ]]; then
-              break
-            fi
-          done
-
-          echo "Creation year: $CREATION_YEAR - IMDb year: $IMDB_YEAR"
-          echo "Creation year: $CREATION_YEAR - IMDb year +1: $IMDB_YEAR_P1"
-          if [[ $CREATION_YEAR == $IMDB_YEAR ]]; then
-            if [[ $TYPE == "movie" ]]; then
-              echo "itemIndex: $itemIndex"
-              IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m$itemIndex -B5 "([0-9][0-9][0-9][0-9])" | tail -3 | grep "/title/tt" | cut -d'/' -f3)
-              echo "IMDb ID: $IMDB_ID"
-            else
-              IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m$itemIndex -B5 "([0-9][0-9][0-9][0-9]" | tail -3 | grep "/title/tt" | cut -d'/' -f3)
-            fi
-          elif [[ $CREATION_YEAR == $IMDB_YEAR_P1 ]]; then
-            ALLOCINE_DIRECTOR=$(cat temp_allocine_url | grep -A1 "light\">De</span>" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1)
-            IMDB_DIRECTOR=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m$itemIndex -A2 "Director" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1)
-
-            echo "Allocine director: $ALLOCINE_DIRECTOR - IMDb director: $IMDB_DIRECTOR"
-            if [[ $ALLOCINE_DIRECTOR == $IMDB_DIRECTOR ]]; then
-              if [[ $TYPE == "movie" ]]; then
-                IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m$itemIndex -B5 "([0-9][0-9][0-9][0-9])" | tail -3 | grep "/title/tt" | cut -d'/' -f3)
-              else
-                IMDB_ID=$(curl -s https://www.imdb.com/search/title/\?title\=$TITLE_URL_ENCODED\&title_type\=$TITLE_TYPE | grep -m$itemIndex -B5 "([0-9][0-9][0-9][0-9]" | tail -3 | grep "/title/tt" | cut -d'/' -f3)
-              fi
-            else
-              echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-
-              IMDB_ID=null
-            fi
-          else
-            echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-
-            IMDB_ID=null
-          fi
+          IMDB_ID=null
+          METACRITIC_ID=null
+          ROTTEN_TOMATOES_ID=null
         else
           echo "wikiUrl: $WIKI_URL"
 
           IMDB_ID=$(curl -s $WIKI_URL | grep "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -Eo "tt[0-9]+" | head -1)
+          if [[ -z $IMDB_ID ]]; then
+            IMDB_ID=null
+          fi
           echo "IMDb ID: $IMDB_ID"
 
           METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+          if [[ -z $METACRITIC_ID ]]; then
+            METACRITIC_ID=null
+          fi
           echo "Metacritic ID: $METACRITIC_ID"
 
           ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+          if [[ -z $ROTTEN_TOMATOES_ID ]]; then
+            ROTTEN_TOMATOES_ID=null
+          fi
           echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
         fi
 
-        if [[ -z $IMDB_ID ]]; then
-          IMDB_ID=null
-        fi
-
-        if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "force" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
-          open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
-          open -a "/Applications/Arc.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+        if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
+          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+          open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
           echo "Enter the IMDb ID:"
           read IMDB_ID
         fi
 
-        if [[ -z $METACRITIC_ID ]]; then
-          DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          FIRST_THREE_LETTERS_TITLE=$(echo "$TITLE_URL_ENCODED" | cut -c1-3)
-          METACRITIC_ID=$(curl -s "https://www.metacritic.com/search/all/$TITLE_URL_ENCODED/results?cats%5B$METACRITIC_TYPE%5D=1&search_type=advanced&sort=relevancy" -H "$DATE" | grep "<a href=\"/$METACRITIC_TYPE/$FIRST_THREE_LETTERS_TITLE" | head -1 | cut -d'/' -f3 | cut -d'"' -f1)
-
-          if [[ -z $METACRITIC_ID ]]; then
-            METACRITIC_ID=null
-          fi
-        fi
-
-        if [[ $METACRITIC_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
-          open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
-          open -a "/Applications/Arc.app" "https://www.metacritic.com"
+        if [[ $METACRITIC_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
+          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+          open -a $BROWSER_PATH "https://www.metacritic.com"
           echo "Enter the Metacritic ID:"
           read METACRITIC_ID
         fi
 
-        if [[ -z $ROTTEN_TOMATOES_ID ]]; then
-          ROTTEN_TOMATOES_ID=null
-        fi
-
-        if [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
-          open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
-          open -a "/Applications/Arc.app" "https://www.rottentomatoes.com"
+        if [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
+          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+          open -a $BROWSER_PATH "https://www.rottentomatoes.com"
           echo "Enter the Rotten Tomatoes ID:"
           read ROTTEN_TOMATOES_ID
         fi
 
         if [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; then
-          echo "IMDb ID not found: $IMDB_ID"
-          echo "https://www.allocine.fr$URL" >> $IMDB_NOT_FOUND_PATH
-          echo "Downloading from: https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE" >> $IMDB_NOT_FOUND_PATH
-          echo "----------------------------------------------------------------------------------------------------"
-
           data_not_found
         else
-          if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
-            open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
-            open -a "/Applications/Arc.app" "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+          if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
+            open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+            open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
             echo "Enter the IMDb ID:"
             read IMDB_ID
           fi
@@ -408,9 +341,9 @@ do
           echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
           echo "Betaseries ID: $BETASERIES_ID"
 
-          if [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "prompt" ]]; then
-            open -a "/Applications/Arc.app" "https://www.allocine.fr$URL"
-            open -a "/Applications/Arc.app" "https://betaseries.com"
+          if [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
+            open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+            open -a $BROWSER_PATH "https://betaseries.com"
             echo "Enter the Betaseries ID:"
             read BETASERIES_ID
           fi
@@ -419,8 +352,8 @@ do
           echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
 
           if [[ -z $THEMOVIEDB_ID ]]; then
-            if [[ $PROMPT == "prompt" ]]; then
-              open -a "/Applications/Arc.app" "https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED"
+            if [[ $PROMPT == "recheck" ]]; then
+              open -a $BROWSER_PATH "https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED"
               echo "Enter the The Movie Database ID:"
               read THEMOVIEDB_ID
             else
@@ -438,7 +371,7 @@ do
         echo "----------------------------------------------------------------------------------------------------"
 
         count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
-        if [[ $count -gt 1 ]] && [[ $PROMPT == "prompt" ]]; then
+        if [[ $count -gt 1 ]] && [[ $PROMPT == "recheck" ]]; then
             echo "Number of lines found for $URL: $count"
 
             grep '^'"$URL"',*' $FILMS_IDS_FILE_PATH
