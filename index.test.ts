@@ -71,13 +71,16 @@ function checkItemProperties(items) {
 
     expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(config.maximumIsActiveItems);
 
+    expect(item.allocine).not.toBeNull();
     expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.allocine);
     expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.allocine.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.allocine.critics_number).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.allocine.critics_rating_details).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
+    expect(item.imdb).not.toBeNull();
     expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.imdb);
+    expect(item.imdb.id.startsWith("tt")).toBe(true);
     expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.betaseries) : null;
@@ -91,6 +94,13 @@ function checkItemProperties(items) {
     expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
+    expect(
+      items.filter(
+        (item) =>
+          item.allocine.critics_rating_details && typeof item.allocine.critics_rating_details[0].critic_name === "string" && typeof item.allocine.critics_rating_details[0].critic_rating === "number"
+      ).length
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+
     expect(item.title).not.toBeNull();
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
@@ -99,12 +109,13 @@ function checkItemProperties(items) {
     expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
-    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);
 
     item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
     item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
 
-    item.is_active === true ? expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer) : null;
+    expect(items.filter((item) => item.mojo && item.mojo.lifetime_gross.charAt(0) === "$").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.mojo && Number.isInteger(item.mojo.rank)).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
   });
 }
 
