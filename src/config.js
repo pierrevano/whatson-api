@@ -104,6 +104,39 @@ const config = {
     metacritic_or_rotten_tomatoes: 95,
     allocine_critics: 80,
   },
+
+  minimumNumberOfItems: {
+    default: 15,
+    trailer: 200,
+
+    allocine: 7,
+    imdb: 4,
+    betaseries: 3,
+    metacritic: 4,
+    rottenTomatoes: 4,
+  },
+
+  maximumIsActiveItems: 400,
+
+  ratingsValues: {
+    minimum: {
+      allocine: 0,
+      betaseries: 0,
+      imdb: 0,
+      metacriticUsers: 0,
+      metacriticCritics: 10,
+      rottenTomatoes: 10,
+    },
+
+    maximum: {
+      allocine: 5,
+      betaseries: 5,
+      imdb: 10,
+      metacriticUsers: 10,
+      metacriticCritics: 100,
+      rottenTomatoes: 100,
+    },
+  },
 };
 
 module.exports = { config };

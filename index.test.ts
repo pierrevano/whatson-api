@@ -69,44 +69,42 @@ function checkItemProperties(items) {
       item.is_active === true ? expect(typeof item[key]).not.toBe("undefined") : null;
     });
 
-    const minimumNumberOfItems = 15;
+    expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(config.maximumIsActiveItems);
 
-    expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(380);
+    expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.allocine);
+    expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.allocine.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.allocine.critics_number).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.allocine.critics_rating_details).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(7);
-    expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-    expect(items.filter((item) => item.allocine.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-    expect(items.filter((item) => item.allocine.critics_number).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-    expect(items.filter((item) => item.allocine.critics_rating_details).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.imdb);
+    expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(4);
-    expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.betaseries) : null;
+    expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(3) : null;
-    expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    item.is_active === true && item.metacritic ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.metacritic) : null;
+    expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    item.is_active === true && item.metacritic ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(4) : null;
-    expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-    expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-
-    item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(4) : null;
-    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
-    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.rottenTomatoes) : null;
+    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     expect(item.title).not.toBeNull();
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
 
     item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
-    expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
-    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(minimumNumberOfItems);
+    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(minimumNumberOfItems) : null;
-    item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(minimumNumberOfItems) : null;
+    item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
+    item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
 
-    item.is_active === true ? expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(200) : null;
+    item.is_active === true ? expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer) : null;
   });
 }
 
@@ -120,18 +118,20 @@ const params = {
     query: "?item_type=movie,tvshow&is_active=true&limit=400",
     expectedResult: (items) =>
       items.forEach((item) => {
-        checkRatings(item.allocine, "users_rating", 0, 5);
-        checkRatings(item.allocine, "critics_rating", 0, 5);
+        const ratingItems = [
+          { source: item.allocine, ratingType: "users_rating", min: config.ratingsValues.minimum.allocine, max: config.ratingsValues.maximum.allocine },
+          { source: item.allocine, ratingType: "critics_rating", min: config.ratingsValues.minimum.allocine, max: config.ratingsValues.maximum.allocine },
+          { source: item.betaseries, ratingType: "users_rating", min: config.ratingsValues.minimum.betaseries, max: config.ratingsValues.maximum.betaseries },
+          { source: item.imdb, ratingType: "users_rating", min: config.ratingsValues.minimum.imdb, max: config.ratingsValues.maximum.imdb },
+          { source: item.metacritic, ratingType: "users_rating", min: config.ratingsValues.minimum.metacriticUsers, max: config.ratingsValues.maximum.metacriticUsers },
+          { source: item.metacritic, ratingType: "critics_rating", min: config.ratingsValues.minimum.metacriticCritics, max: config.ratingsValues.maximum.metacriticCritics },
+          { source: item.rotten_tomatoes, ratingType: "users_rating", min: config.ratingsValues.minimum.rottenTomatoes, max: config.ratingsValues.maximum.rottenTomatoes },
+          { source: item.rotten_tomatoes, ratingType: "critics_rating", min: config.ratingsValues.minimum.rottenTomatoes, max: config.ratingsValues.maximum.rottenTomatoes },
+        ];
 
-        checkRatings(item.betaseries, "users_rating", 0, 5);
-
-        checkRatings(item.imdb, "users_rating", 0, 10);
-
-        checkRatings(item.metacritic, "users_rating", 0, 10);
-        checkRatings(item.metacritic, "critics_rating", 10, 100);
-
-        checkRatings(item.rotten_tomatoes, "users_rating", 10, 100);
-        checkRatings(item.rotten_tomatoes, "critics_rating", 10, 100);
+        for (let ratingItem of ratingItems) {
+          checkRatings(ratingItem.source, ratingItem.ratingType, ratingItem.min, ratingItem.max);
+        }
       }),
   },
 
