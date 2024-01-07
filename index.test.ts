@@ -80,7 +80,7 @@ function checkItemProperties(items) {
 
     expect(item.imdb).not.toBeNull();
     expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.imdb);
-    expect(item.imdb.id.startsWith("tt")).toBe(true);
+    expect(item.imdb.id.startsWith("tt")).toBeTruthy();
     expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.betaseries) : null;
