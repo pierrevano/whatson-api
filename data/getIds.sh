@@ -23,6 +23,7 @@ if [[ $TYPE == "movie" ]]; then
   TITLE_TYPE=feature,tv_movie,tv_special,documentary,short
   BETASERIES_TYPE=movies/movie
   JQ_COMMAND_TYPE=".movie.resource_url"
+  JQ_COMMAND_TYPE_TMDB=".movie.themoviedb_id"
   JQ_COMMAND_RESULTS=".movie_results"
   PROPERTY=P1265
   METACRITIC_TYPE=movie
@@ -35,6 +36,7 @@ else
   TITLE_TYPE=tv_series,tv_episode,tv_special,tv_miniseries,documentary,tv_short
   BETASERIES_TYPE=shows/display
   JQ_COMMAND_TYPE=".show.resource_url"
+  JQ_COMMAND_TYPE_TMDB=".show.themoviedb_id"
   JQ_COMMAND_RESULTS=".tv_results"
   PROPERTY=P1267
   METACRITIC_TYPE=tv
@@ -352,6 +354,12 @@ do
           echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
 
           if [[ -z $THEMOVIEDB_ID ]]; then
+            THEMOVIEDB_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE_TMDB")
+            echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
+            echo "The Movie Database ID: $THEMOVIEDB_ID"
+          fi
+
+          if [[ -z $THEMOVIEDB_ID ]] || [[ $THEMOVIEDB_ID == "null" ]]; then
             if [[ $PROMPT == "recheck" ]]; then
               open -a $BROWSER_PATH "https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED"
               echo "Enter the The Movie Database ID:"
