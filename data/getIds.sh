@@ -28,6 +28,7 @@ if [[ $TYPE == "movie" ]]; then
   PROPERTY=P1265
   METACRITIC_TYPE=movie
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_films.txt
+  SKIP_IDS_FILE_PATH=./src/assets/skip_ids_films.txt
 else
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
@@ -41,6 +42,7 @@ else
   PROPERTY=P1267
   METACRITIC_TYPE=tv
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_series.txt
+  SKIP_IDS_FILE_PATH=./src/assets/skip_ids_series.txt
 fi
 
 if [[ $SOURCE == "circleci" ]]; then
@@ -307,10 +309,27 @@ do
         fi
 
         if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
-          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-          open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-          echo "Enter the IMDb ID:"
-          read IMDB_ID
+          MATCH_SKIP_NUMBER=$(cat $SKIP_IDS_FILE_PATH | grep ".*=$FILM_ID\.html" | wc -l | awk '{print $1}')
+          if [[ $MATCH_SKIP_NUMBER -eq 1 ]]; then
+            echo "ID: $FILM_ID skipped."
+            SKIP=1
+          else
+            SKIP=0
+          fi
+
+          if [[ $SKIP -eq 0 ]]; then
+            open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+            open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+            echo "Enter the IMDb ID:"
+            read IMDB_ID
+
+            if [[ $IMDB_ID == "skip" ]]; then
+              echo $URL >> $SKIP_IDS_FILE_PATH
+              IMDB_ID=null
+            fi
+          else
+            IMDB_ID=null
+          fi
         fi
 
         if [[ $METACRITIC_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then

@@ -13,4 +13,5 @@ reports/*
 run.sh
 src/assets/.!*!films_ids.txt
 src/assets/.!*!series_ids.txt
+src/assets/skip_ids_*.txt
 temp_*
