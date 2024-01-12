@@ -115,10 +115,10 @@ function checkItemProperties(items) {
     item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
 
     item.is_active === true && item.item_type === "movie"
-      ? expect(items.filter((item) => item.mojo && item.mojo.lifetime_gross.charAt(0) === "$").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      ? expect(items.filter((item) => item.mojo && item.mojo.lifetime_gross.charAt(0) === "$").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
       : null;
     item.is_active === true && item.item_type === "movie"
-      ? expect(items.filter((item) => item.mojo && Number.isInteger(item.mojo.rank)).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      ? expect(items.filter((item) => item.mojo && Number.isInteger(item.mojo.rank)).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
       : null;
   });
 }
