@@ -1,30 +1,20 @@
 const shell = require("shelljs");
 
+const { config } = require("./config");
 const { getNodeVarsValues } = require("./getNodeVarsValues");
 
 /**
- * It updates the ids of the movies and tv shows in the database
+ * It updates the IDs of the movies and tv shows in the database
  */
 const updateIds = () => {
-  shell.exec("chmod +x ./data/getIds.sh");
+  // Set permission for script file
+  shell.exec(`chmod +x ${config.getIdsFilePath}`);
 
-  if (!getNodeVarsValues.environment) {
-    if (getNodeVarsValues.item_type === "movie") {
-      shell.exec("bash ./data/getIds.sh circleci movie");
-      shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
-    } else {
-      shell.exec("bash ./data/getIds.sh circleci tvshow");
-      shell.exec(`sed -i "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
-    }
-  } else {
-    if (getNodeVarsValues.item_type === "movie") {
-      shell.exec("bash ./data/getIds.sh local movie");
-      shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/films_ids.txt`);
-    } else {
-      shell.exec("bash ./data/getIds.sh local tvshow");
-      shell.exec(`sed -i '' "/noTheMovieDBId/d" ./src/assets/series_ids.txt`);
-    }
-  }
+  let environment = getNodeVarsValues.environment || "circleci";
+  let item_type = getNodeVarsValues.item_type === "movie" ? "movie" : "tvshow";
+
+  // Execute shell script
+  shell.exec(`bash ${config.getIdsFilePath} ${environment} ${item_type}`);
 };
 
 module.exports = { updateIds };

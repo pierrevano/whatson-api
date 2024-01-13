@@ -26,6 +26,8 @@ const config = {
   filmsPopularityPath: "popularity_ids_films.txt",
   seriesPopularityPath: "popularity_ids_series.txt",
 
+  getIdsFilePath: "./data/getIds.sh",
+
   baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
   corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
 

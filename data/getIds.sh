@@ -13,6 +13,7 @@ SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
 TYPE=$2
 URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
+UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 
 # Define alternative base variables
 if [[ $TYPE == "movie" ]]; then
@@ -427,6 +428,10 @@ remove_files
 cd $FILMS_ASSETS_PATH
 vercel --prod --token=$VERCEL_TOKEN
 echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
+
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+echo "Last update was on: $DATE"
+echo $DATE > $UPDATED_AT_FILE_PATH
 
 # Add ending message with duration
 DATA_DURATION=$SECONDS
