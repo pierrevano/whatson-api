@@ -425,13 +425,13 @@ done
 
 remove_files
 
-cd $FILMS_ASSETS_PATH
-vercel --prod --token=$VERCEL_TOKEN
-echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
-
 DATE=$(date '+%Y-%m-%d %H:%M:%S')
 echo "Last update was on: $DATE"
 echo $DATE > $UPDATED_AT_FILE_PATH
+
+cd $FILMS_ASSETS_PATH
+vercel --prod --token=$VERCEL_TOKEN
+echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
 
 # Add ending message with duration
 DATA_DURATION=$SECONDS
