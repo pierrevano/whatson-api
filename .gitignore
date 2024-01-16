@@ -1,6 +1,7 @@
 .env
 .jshintrc
 .prettierignore
+data/checkIds.sh
 data/controlAllTheIds.sh
 data/controlData.js
 data/findDuplicates.js
