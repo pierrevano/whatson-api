@@ -59,12 +59,12 @@ else
   sed -i '' -E "s/(,TRUE|,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
-WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,5}$" | wc -l | awk '{print $1}')
+WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1}$" | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
   echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
-  cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1,5}$"
-  exit
+  cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1}$"
+  exit 1
 fi
 
 DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | sort | uniq -cd | awk '$1 > 3')
@@ -72,7 +72,7 @@ if [[ $DUPLICATES_LINES_NB ]]; then
   echo "DUPLICATES_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
   echo $DUPLICATES_LINES_NB
-  exit
+  exit 1
 fi
 
 # Loading the env variables
@@ -87,7 +87,7 @@ echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
 echo "VERCEL_TOKEN: $VERCEL_TOKEN"
 echo "----------------------------------------------------------------------------------------------------"
 if [[ -z $BETASERIES_API_KEY ]]; then
-  exit
+  exit 1
 fi
 
 # Sorting the ids in the file and removing duplicates.
@@ -101,6 +101,8 @@ remove_files () {
   sort_ids
 
   rm -f ./temp_*
+  rm -f src/assets/.!*!films_ids.txt
+  rm -f src/assets/.!*!series_ids.txt
 
   if [[ $SOURCE == "circleci" ]]; then
     sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
@@ -206,7 +208,7 @@ do
 
       MATCH_NUMBER=$(cat $FILMS_IDS_FILE_PATH | grep ".*=$FILM_ID\.html" | wc -l | awk '{print $1}')
       if [[ $MATCH_NUMBER != 1 ]]; then
-        exit
+        exit 1
       fi
 
       FOUND=1
@@ -265,7 +267,7 @@ do
         echo "Downloading from: https://www.allocine.fr$URL"
         if [[ -z $URL ]]; then
           echo "No URL has been found! Script aborded."
-          exit
+          exit 1
         fi
 
         # Get title
@@ -282,7 +284,7 @@ do
         # Get title encoded characters URL
         TITLE_URL_ENCODED=$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -f $URL_ESCAPE_FILE_PATH)
 
-        WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22.%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
+        WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
           IMDB_ID=null
           METACRITIC_ID=null
@@ -309,6 +311,21 @@ do
           echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
         fi
 
+        if [[ $METACRITIC_ID == "null" ]] && [[ $ROTTEN_TOMATOES_ID == "null" ]]; then
+          WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
+          if [[ $WIKI_URL ]]; then
+            METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+            if [[ -z $METACRITIC_ID ]]; then
+              METACRITIC_ID=null
+            fi
+
+            ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+            if [[ -z $ROTTEN_TOMATOES_ID ]]; then
+              ROTTEN_TOMATOES_ID=null
+            fi
+          fi
+        fi
+
         if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
           MATCH_SKIP_NUMBER=$(cat $SKIP_IDS_FILE_PATH | grep ".*=$FILM_ID\.html" | wc -l | awk '{print $1}')
           if [[ $MATCH_SKIP_NUMBER -eq 1 ]]; then
@@ -327,6 +344,19 @@ do
             if [[ $IMDB_ID == "skip" ]]; then
               echo $URL >> $SKIP_IDS_FILE_PATH
               IMDB_ID=null
+            else
+              WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
+              if [[ $WIKI_URL ]]; then
+                METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+                if [[ -z $METACRITIC_ID ]]; then
+                  METACRITIC_ID=null
+                fi
+
+                ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+                if [[ -z $ROTTEN_TOMATOES_ID ]]; then
+                  ROTTEN_TOMATOES_ID=null
+                fi
+              fi
             fi
           else
             IMDB_ID=null
