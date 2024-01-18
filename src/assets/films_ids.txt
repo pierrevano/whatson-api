@@ -842,7 +842,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=1436.html,tt0131369,8916-edtv,11374,edtv,edtv,FALSE
 /film/fichefilm_gen_cfilm=1446.html,tt0050458,4693-il-grido,41054,null,grido,FALSE
 /film/fichefilm_gen_cfilm=1447.html,tt0086992,81079-the-bostonians,40775,the-bostonians,bostonians,FALSE
-/film/fichefilm_gen_cfilm=1453.html,tt0071877,6516-murder-on-the-orient-express,4176,null,murder_on_the_orient_express,FALSE
+/film/fichefilm_gen_cfilm=1453.html,tt0071877,6516-murder-on-the-orient-express,4176,murder-on-the-orient-express-1974,murder_on_the_orient_express,FALSE
 /film/fichefilm_gen_cfilm=1455.html,tt0063198,86399-death-by-hanging,98193,null,770800347,FALSE
 /film/fichefilm_gen_cfilm=1456.html,tt0006206,15687-les-vampires,29082,null,les_vampires,FALSE
 /film/fichefilm_gen_cfilm=1458.html,tt0028597,20129-the-awful-truth,14675,the-awful-truth,awful_truth,FALSE
@@ -4756,7 +4756,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=14773.html,tt0117544,21315-salut-cousin,60083,null,null,FALSE
 /film/fichefilm_gen_cfilm=14784.html,tt0116996,3700-mars-attacks,75,mars-attacks!,mars_attacks,FALSE
 /film/fichefilm_gen_cfilm=14788.html,tt0117951,348-trainspotting,627,trainspotting,trainspotting,FALSE
-/film/fichefilm_gen_cfilm=14790.html,tt0096283,313-my-neighbor-totoro,8392,my-neighbor-totoro,my_neighbor_totoro,FALSE
+/film/fichefilm_gen_cfilm=14790.html,tt0096283,313-my-neighbor-totoro,8392,my-neighbor-totoro,my_neighbor_totoro,TRUE
 /film/fichefilm_gen_cfilm=14791.html,tt0118001,7294-two-much,46029,null,two_much,FALSE
 /film/fichefilm_gen_cfilm=14795.html,tt0072637,1339-amici-miei,20914,null,amici-miei-my-friends,FALSE
 /film/fichefilm_gen_cfilm=14824.html,tt0118849,59537-children-of-heaven,21334,children-of-heaven,children_of_heaven,FALSE
@@ -29206,7 +29206,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=225286.html,tt3004492,28675-une-histoire-banale,298408,null,une_histoire_banale,FALSE
 /film/fichefilm_gen_cfilm=225288.html,tt3331512,23834-castello-cavalcanti,236028,null,null,FALSE
 /film/fichefilm_gen_cfilm=225316.html,tt2123342,25288-underdogs,230015,underdogs,underdogs,FALSE
-/film/fichefilm_gen_cfilm=225329.html,tt3211400,62369-a-cambio-de-nada,326198,null,null,FALSE
+/film/fichefilm_gen_cfilm=225329.html,tt3211400,62369-a-cambio-de-nada,326198,null,nothing_in_return_2015,FALSE
 /film/fichefilm_gen_cfilm=225338.html,tt2787824,20338-goal-of-the-dead,273467,null,null,FALSE
 /film/fichefilm_gen_cfilm=225349.html,tt3074694,17216-flowers-in-the-attic,236399,flowers-in-the-attic,null,FALSE
 /film/fichefilm_gen_cfilm=225354.html,tt3500544,26694-perdiendo-el-norte,264729,null,perdiendo_el_norte,FALSE
@@ -37195,7 +37195,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=306000.html,tt22301442,114373-alegria-sefarade,1011536,null,null,FALSE
 /film/fichefilm_gen_cfilm=306013.html,tt15140278,124885-coup-de-chance,859235,coup-de-chance,coup_de_chance,FALSE
 /film/fichefilm_gen_cfilm=306087.html,tt21163400,122042-astrakan,984294,null,astrakan,FALSE
-/film/fichefilm_gen_cfilm=306094.html,tt21962812,129243-lenfant-du-paradis,1013975,null,null,FALSE
+/film/fichefilm_gen_cfilm=306094.html,tt21962812,129243-lenfant-du-paradis,1013975,null,null,TRUE
 /film/fichefilm_gen_cfilm=306096.html,tt21227108,123899-fairytale,963047,null,fairytale_2022,FALSE
 /film/fichefilm_gen_cfilm=306133.html,tt15242330,92414-the-first-slam-dunk,783675,the-first-slam-dunk,the_first_slam_dunk,FALSE
 /film/fichefilm_gen_cfilm=306156.html,tt22463404,125418-le-retour,1000058,null,homecoming_2023,FALSE
@@ -37269,7 +37269,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,IS_ACTI
 /film/fichefilm_gen_cfilm=308779.html,tt27898900,null,1000614,null,null,FALSE
 /film/fichefilm_gen_cfilm=308881.html,tt21919270,112840-trick-or-treat-scooby-doo,1015724,null,trick_or_treat_scooby_doo,FALSE
 /film/fichefilm_gen_cfilm=308923.html,tt0107736,129077-moving,115784,null,ohikkoshi_2012,TRUE
-/film/fichefilm_gen_cfilm=308943.html,tt20221460,null,1059264,null,null,TRUE
+/film/fichefilm_gen_cfilm=308943.html,tt20221460,null,1059264,null,null,FALSE
 /film/fichefilm_gen_cfilm=308951.html,tt16402818,102314-the-civil-dead,913417,the-civil-dead,the_civil_dead,FALSE
 /film/fichefilm_gen_cfilm=309050.html,tt28487662,129238-comme-un-prince,1019864,null,null,TRUE
 /film/fichefilm_gen_cfilm=309055.html,tt25971180,121956-les-choses-simples,1000572,null,les_choses_simples,FALSE
