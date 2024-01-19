@@ -14,6 +14,7 @@ TEMP_URLS_FILE_PATH=./temp_urls
 TYPE=$2
 URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
+USER_AGENT="$((RANDOM % 1000000000000))"
 
 # Define alternative base variables
 if [[ $TYPE == "movie" ]]; then
@@ -44,6 +45,12 @@ else
   METACRITIC_TYPE=tv
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_series.txt
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_series.txt
+fi
+
+FILMS_NUMBER=$(curl -s -H "User-Agent: $USER_AGENT" $BASE_URL | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
+if ! [[ $FILMS_NUMBER -gt 0 ]]; then
+  echo "No items found, something must be wrong on AlloCiné. Abording."
+  exit 1
 fi
 
 if [[ $SOURCE == "circleci" ]]; then
@@ -135,10 +142,6 @@ data_found () {
 remove_files
 
 rm -f $POPULARITY_ASSETS_PATH
-
-# Downloading base URL
-USER_AGENT="$((RANDOM % 1000000000000))"
-echo "Downloading with random User-Agent: $USER_AGENT on $BASE_URL"
 
 curl -s -H "User-Agent: $USER_AGENT" $BASE_URL > temp_baseurl
 
