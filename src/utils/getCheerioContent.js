@@ -22,9 +22,6 @@ const getCheerioContent = async (url, options) => {
 
     if (response.status !== 200) {
       throw new Error("Failed to retrieve data.");
-    } else if (response.status === 500) {
-      console.error(`Internal server error for ${url}, abording.`);
-      process.exit(1);
     } else {
       console.log(`${url}:`, response.status);
     }
