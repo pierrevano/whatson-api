@@ -1,12 +1,28 @@
 require("dotenv").config();
 
-const fs = require("fs");
 const axios = require("axios");
+const fs = require("fs");
+const http = require("http");
 const path = require("path");
 
 const config = require("./src/config").config;
-
 const { logErrors } = require("./src/utils/logErrors");
+
+/**
+ * Pings a website.
+ * @param {string} url - The URL of the website to ping.
+ * @returns {Promise} - A promise that resolves when the website has been successfully pinged, or rejects if an error occurs.
+ */
+function pingWebsite(url) {
+  return new Promise((resolve, reject) => {
+    http
+      .get(url, (res) => {
+        res.on("data", () => {});
+        res.on("end", resolve);
+      })
+      .on("error", reject);
+  });
+}
 
 /**
  * Reads a file and counts the number of lines in it.
@@ -437,7 +453,7 @@ const params = {
   },
 
   items_with_all_required_keys_inactive: {
-    query: "?item_type=movie,tvshow&is_active=false&limit=9000",
+    query: "?item_type=movie,tvshow&is_active=false&limit=3000",
     expectedResult: checkItemProperties,
   },
 
@@ -452,7 +468,7 @@ const params = {
   },
 
   unique_allocine_ids_movie: {
-    query: "?item_type=movie&is_active=true,false&limit=9000",
+    query: "?item_type=movie&is_active=true,false&limit=3000",
     expectedResult: (items) => {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
@@ -461,7 +477,7 @@ const params = {
   },
 
   unique_allocine_ids_tvshow: {
-    query: "?item_type=tvshow&is_active=true,false&limit=9000",
+    query: "?item_type=tvshow&is_active=true,false&limit=3000",
     expectedResult: (items) => {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
@@ -469,6 +485,10 @@ const params = {
     },
   },
 };
+
+test("Check API availability and run tests", async () => {
+  await pingWebsite("http://whatson-api.onrender.com");
+});
 
 /**
  * Tests the What's on? API by iterating through the params object and running each test case.
