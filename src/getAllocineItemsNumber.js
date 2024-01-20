@@ -9,7 +9,7 @@ const fetchAndCheckItemCount = async (index) => {
 
   const countItems = await getAllocineItemsNumber(baseURLAllocineType, baseURLType, index);
 
-  if (countItems <= 5) {
+  if (countItems < 15) {
     console.error(`Found ${countItems} items. Something is wrong on AlloCiné, aborting.`);
     process.exit(1);
   }
@@ -32,11 +32,9 @@ const getAllocineItemsNumber = async (baseURLAllocineType, baseURLType, index) =
     links.each((_i, link) => {
       const href = $(link).attr("href");
 
-      if (!href.includes(baseURLType)) {
-        return false;
+      if (href.includes(baseURLType)) {
+        countItems++;
       }
-
-      countItems++;
     });
 
     errorCounter = 0;

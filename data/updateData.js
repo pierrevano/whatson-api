@@ -35,6 +35,9 @@ async function checkStatus(service) {
 }
 
 (async () => {
+  await Promise.all([fetchAndCheckItemCount(1), fetchAndCheckItemCount(2), fetchAndCheckItemCount(3)]);
+  console.log("----------------------------------------------------------------------------------------------------");
+
   for (let service of config.services) {
     await checkStatus(service);
   }
@@ -51,9 +54,6 @@ async function checkStatus(service) {
       }
     }
   }
-
-  await Promise.all([fetchAndCheckItemCount(1), fetchAndCheckItemCount(2)]);
-  console.log("----------------------------------------------------------------------------------------------------");
 
   if (getNodeVarsValues.get_ids === "update_ids") updateIds();
   if (getNodeVarsValues.get_db === "no_update_db") process.exit(0);
