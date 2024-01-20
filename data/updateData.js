@@ -23,6 +23,7 @@ const { updateIds } = require("../src/updateIds");
 const loopItems = require("./loopItems");
 const isThirdPartyServiceOK = require("../src/utils/thirdPartyStatus");
 const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
+const { fetchAndCheckItemCount } = require("../src/getAllocineItemsNumber");
 
 async function checkStatus(service) {
   if (await isThirdPartyServiceOK(service.url)) {
@@ -50,6 +51,9 @@ async function checkStatus(service) {
       }
     }
   }
+
+  await Promise.all([fetchAndCheckItemCount(1), fetchAndCheckItemCount(2)]);
+  console.log("----------------------------------------------------------------------------------------------------");
 
   if (getNodeVarsValues.get_ids === "update_ids") updateIds();
   if (getNodeVarsValues.get_db === "no_update_db") process.exit(0);

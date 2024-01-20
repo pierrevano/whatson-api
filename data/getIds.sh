@@ -47,12 +47,6 @@ else
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_series.txt
 fi
 
-FILMS_NUMBER=$(curl -s -H "User-Agent: $USER_AGENT" $BASE_URL | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
-if ! [[ $FILMS_NUMBER -gt 0 ]]; then
-  echo "No items found, something must be wrong on AlloCiné. Abording."
-  exit 1
-fi
-
 if [[ $SOURCE == "circleci" ]]; then
   curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
   echo "Downloading $BASE_URL_ASSETS/$FILMS_FILE_NAME to $FILMS_IDS_FILE_PATH"

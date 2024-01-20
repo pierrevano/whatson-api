@@ -2,6 +2,8 @@
 const config = {
   /* Prod config */
   baseURLAllocine: "https://www.allocine.fr",
+  baseURLAllocineFilms: "https://www.allocine.fr/film/aucinema",
+  baseURLAllocineSeries: "https://www.allocine.fr/series/top",
   baseURLBetaseriesAPI: "https://api.betaseries.com/shows/display",
   baseURLBetaseriesFilm: "https://www.betaseries.com/film/",
   baseURLBetaseriesSerie: "https://www.betaseries.com/serie/",
