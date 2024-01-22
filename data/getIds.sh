@@ -324,9 +324,15 @@ do
         fi
 
         if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
+          TRUES=$(cat $SKIP_IDS_FILE_PATH | grep "TRUE,TRUE,TRUE," | wc -l | awk '{print $1}')
+          if [ $TRUES -gt 0 ]; then
+              sed -i '' '/TRUE/!d' $SKIP_IDS_FILE_PATH
+          fi
+
           MATCH_SKIP_NUMBER=$(cat $SKIP_IDS_FILE_PATH | grep ".*=$FILM_ID\.html" | wc -l | awk '{print $1}')
           if [[ $MATCH_SKIP_NUMBER -eq 1 ]]; then
             echo "ID: $FILM_ID skipped."
+            sed -i '' "/.*=$FILM_ID\.html.*/ s/$/TRUE,/" $SKIP_IDS_FILE_PATH
             SKIP=1
           else
             SKIP=0
@@ -339,7 +345,7 @@ do
             read IMDB_ID
 
             if [[ $IMDB_ID == "skip" ]]; then
-              echo $URL >> $SKIP_IDS_FILE_PATH
+              echo $URL, >> $SKIP_IDS_FILE_PATH
               IMDB_ID=null
             else
               WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
