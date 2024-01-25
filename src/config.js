@@ -111,7 +111,7 @@ const config = {
   },
 
   minimumNumberOfItems: {
-    default: 25,
+    default: 20,
     mojo: 15,
     trailer: 200,
 
