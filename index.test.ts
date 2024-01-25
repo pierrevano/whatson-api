@@ -127,8 +127,8 @@ function checkItemProperties(items) {
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
     expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);
 
-    item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
-    item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
+    item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;
+    item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;
 
     item.is_active === true && item.item_type === "movie"
       ? expect(items.filter((item) => item.mojo && item.mojo.lifetime_gross.charAt(0) === "$").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)

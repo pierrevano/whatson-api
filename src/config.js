@@ -111,8 +111,9 @@ const config = {
   },
 
   minimumNumberOfItems: {
-    default: 20,
+    default: 25,
     mojo: 15,
+    popularity: 15,
     trailer: 200,
 
     allocine: 7,
