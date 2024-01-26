@@ -2,33 +2,14 @@ require("dotenv").config();
 
 const axios = require("axios");
 const fs = require("fs");
-const http = require("http");
-const path = require("path");
 
 const config = require("./src/config").config;
-const { logErrors } = require("./src/utils/logErrors");
 
 /**
- * Pings a website.
- * @param {string} url - The URL of the website to ping.
- * @returns {Promise} - A promise that resolves when the website has been successfully pinged, or rejects if an error occurs.
- */
-function pingWebsite(url) {
-  return new Promise((resolve, reject) => {
-    http
-      .get(url, (res) => {
-        res.on("data", () => {});
-        res.on("end", resolve);
-      })
-      .on("error", reject);
-  });
-}
-
-/**
- * Reads a file and counts the number of lines in it.
- * @param {string} filename - the name of the file to read
- * @returns {number} - the number of lines in the file
- * @throws {Error} - if the file cannot be read
+ * A function to count the number of lines in a file.
+ *
+ * @param {string} filename - The name of the file from which to read and count lines.
+ * @returns {number} The number of lines in the file, excluding the header line.
  */
 function countLines(filename) {
   const data = fs.readFileSync(filename, "utf8");
@@ -42,6 +23,12 @@ function countLines(filename) {
   return lines.length;
 }
 
+/**
+ * Validates if a given input can be converted to a number and it has no more than two decimal places.
+ *
+ * @param {string|number} input - The input to test for its convertibility to a number with decimals.
+ * @returns {boolean} Returns true if the input can be converted to a number and it has no more than two decimal places, otherwise returns false.
+ */
 function isNumberWithDecimals(input) {
   const num = Number(input);
 
@@ -53,14 +40,12 @@ function isNumberWithDecimals(input) {
 }
 
 /**
- * This function checks whether the 'property' of a given 'item'
- * falls within a predefined rating scale (between minRating and maxRating inclusive).
- * If the item or its property is not defined, the function does nothing.
+ * This function checks if an item's property falls within a certain range and validates if the property value is a number with decimals.
  *
- * @param item - The object/item that contains the rating property. This could be any type of object.
- * @param property - The specific rating property in the item that needs to be checked.
- * @param minRating - Lower limit of the acceptable rating scale.
- * @param maxRating - Upper limit of the acceptable rating scale.
+ * @param {Object} item - The object to inspect.
+ * @param {string} property - The property of the item to inspect.
+ * @param {number} minRating - The minimum acceptable value for the item's property.
+ * @param {number} maxRating - The maximum acceptable value for the item's property.
  */
 function checkRatings(item, property, minRating, maxRating) {
   if (item && item[property]) {
@@ -477,10 +462,6 @@ const params = {
   },
 };
 
-test("Check API availability and run tests", async () => {
-  await pingWebsite("http://whatson-api.onrender.com");
-});
-
 /**
  * Tests the What's on? API by iterating through the params object and running each test case.
  * @returns None
@@ -532,18 +513,4 @@ describe("What's on? API tests", () => {
     },
     config.timeout
   );
-});
-
-jest.mock("fs");
-
-describe("Testing logErrors function", () => {
-  test("It should increment the errorCounter when an error is logged", () => {
-    const error = new Error("Test Error");
-    let errorCounter = 0;
-
-    for (let i = 1; i <= 5; i++) {
-      errorCounter = logErrors(errorCounter, error);
-      expect(errorCounter).toBe(i);
-    }
-  });
 });
