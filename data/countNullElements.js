@@ -37,7 +37,7 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     console.log(`Number of documents in the collection: ${documents}`);
 
     if (documents > config.maximumNumberOfItems) {
-      console.log("Maximum number of items reached!");
+      console.log("Maximum number of items reached.");
       process.exit(1);
     }
 

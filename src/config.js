@@ -101,8 +101,8 @@ const config = {
 
   maximumNumberOfItems: 46500,
 
-  circleLimitPerDay: 1500,
-  circleLimitPerInstance: 300,
+  circleLimitPerDay: 3000,
+  circleLimitPerInstance: 600,
 
   maximumThreshold: {
     default: 30,

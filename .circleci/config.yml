@@ -51,7 +51,7 @@ jobs:
   build_all:
     docker:
       - image: cimg/node:20.5.1
-    parallelism: 5
+    parallelism: 10
     steps:
       - setup_env
       - run:
@@ -61,7 +61,7 @@ jobs:
   build_all_second:
     docker:
       - image: cimg/node:20.5.1
-    parallelism: 5
+    parallelism: 10
     steps:
       - setup_env
       - run:

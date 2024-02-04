@@ -5,6 +5,7 @@ const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
 const { getAllocinePopularity } = require("../src/getAllocinePopularity");
 const { getImdbPopularity } = require("../src/getImdbPopularity");
 const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
+const { getNodeVarsValues } = require("../src/getNodeVarsValues");
 
 /**
  * Compares the users rating of a movie or tv show from Allocine with the rating
@@ -54,6 +55,20 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
       dataWithoutId.allocine.popularity = allocinePopularity;
       dataWithoutId.imdb.popularity = imdbPopularity;
       dataWithoutId.mojo = mojoObj;
+
+      if (getNodeVarsValues.environment === "local") {
+        const updatedAtDate = new Date(dataWithoutId.updated_at);
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        if (updatedAtDate >= sevenDaysAgo) {
+          console.log("Skipping because updated less than 7 days ago.");
+
+          return {
+            isEqual: true,
+            data: dataWithoutId,
+          };
+        }
+      }
 
       if (dataWithoutId.allocine.users_rating !== null && dataWithoutId.imdb.users_rating === null) {
         return isEqualObj;

@@ -469,7 +469,7 @@ const params = {
 describe("What's on? API tests", () => {
   const param = process.env.SOURCE;
   const baseURL = param === "remote" ? config.baseURLRemote : config.baseURL;
-  console.log(`Testing on ${baseURL}.`);
+  console.log(`Testing on ${baseURL}`);
 
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     async function fetchItemsData() {
