@@ -83,6 +83,7 @@ async function checkStatus(service) {
 
     await collectionData.updateMany(filterQueryIsActive, resetIsActive);
     await collectionData.updateMany(filterQueryIsActive, resetPopularity);
+
     console.log(`${allTheMovieDbIds.length} documents have been excluded from the is_active and popularity reset.`);
   }
 

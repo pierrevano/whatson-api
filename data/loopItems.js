@@ -1,3 +1,5 @@
+const axios = require("axios");
+
 const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
 // const { controlData } = require("./controlData");
 const { upsertToDatabase } = require("./upsertToDatabase");
@@ -46,9 +48,8 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
         const allocineQuery = { _id: b64Encode(allocineHomepage) };
         const isDocumentExisting = await collectionData.find(allocineQuery).toArray();
         const isDocumentHasInfo = isDocumentExisting.length > 0;
-        const document = isDocumentExisting[0];
 
-        // await controlData(allocineHomepage, config.keysToCheck, isDocumentHasInfo, document, item_type);
+        // await controlData(allocineHomepage, config.keysToCheck, isDocumentHasInfo, isDocumentExisting[0], item_type);
 
         // If the document already exists, skip processing this item
         if (isDocumentHasInfo) continue;
@@ -75,6 +76,30 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
 
       // Get The Movie Database ID
       const theMoviedbId = urls.themoviedb.id;
+
+      if (getNodeVarsValues.environment === "local") {
+        const item_type_api = item_type === "movie" ? "movie" : "tv";
+        const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
+
+        try {
+          const response = await axios.get(apiUrl);
+
+          if (response && response.data && response.data.updated_at) {
+            const { updated_at } = response.data;
+            const updatedAtDate = new Date(updated_at);
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+            if (updatedAtDate >= sevenDaysAgo) {
+              console.log("Skipping because updated less than 7 days ago.");
+
+              continue;
+            }
+          }
+        } catch (error) {
+          throw new Error(`Error fetching data: ${error}`);
+        }
+      }
 
       // Check if page is existing before upsert to DB
       const { error } = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
