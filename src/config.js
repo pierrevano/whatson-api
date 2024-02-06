@@ -54,6 +54,8 @@ const config = {
     rotten_tomatoes: 10,
   },
 
+  numberOfDays: 7,
+
   /* Tests config */
   baseURL: "http://localhost:8081",
   baseURLRemote: "https://whatson-api.onrender.com",

@@ -77,7 +77,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       // Get The Movie Database ID
       const theMoviedbId = urls.themoviedb.id;
 
-      if (getNodeVarsValues.environment === "local") {
+      if (getNodeVarsValues.environment === "local" && !force) {
         const item_type_api = item_type === "movie" ? "movie" : "tv";
         const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
 
@@ -88,10 +88,10 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
             const { updated_at } = response.data;
             const updatedAtDate = new Date(updated_at);
             const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - config.numberOfDays);
 
             if (updatedAtDate >= sevenDaysAgo) {
-              console.log("Skipping because updated less than 7 days ago.");
+              console.log(`Skipping because updated less than ${config.numberOfDays} days ago.`);
 
               continue;
             }
