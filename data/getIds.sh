@@ -60,11 +60,12 @@ else
   sed -i '' -E "s/(,TRUE|,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
-WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1}$" | wc -l | awk '{print $1}')
+REGEX_IDS="^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1}$"
+WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
   echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
-  cat $FILMS_IDS_FILE_PATH | grep -E -v "^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+(,(TRUE|FALSE)){1}$"
+  cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS
   exit 1
 fi
 
@@ -118,18 +119,18 @@ data_not_found () {
   BETASERIES_ID=null
   THEMOVIEDB_ID="noTheMovieDBId"
 
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 betaseries_to_null () {
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 # A function that is called when the data is found.
 data_found () {
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
@@ -226,6 +227,7 @@ do
     BETASERIES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f3)
     METACRITIC_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f5)
     ROTTEN_TOMATOES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f6)
+    LETTERBOXD_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f7)
 
     if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "recheck" ]]; then
       URL_FILE=$TEMP_URLS_FILE_PATH
@@ -248,7 +250,7 @@ do
           DUPLICATE=0
           echo "Found $URL to be rechecked."
         elif [[ $PROMPT_FIRST_OR_ALL == "all" ]]; then
-          if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]]; then
+          if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]] || [[ $LETTERBOXD_CHECK == "null" ]]; then
             DUPLICATE=0
             echo "Found $URL to be rechecked."
           else
@@ -286,6 +288,7 @@ do
           IMDB_ID=null
           METACRITIC_ID=null
           ROTTEN_TOMATOES_ID=null
+          LETTERBOXD_ID=null
         else
           echo "wikiUrl: $WIKI_URL"
 
@@ -306,9 +309,15 @@ do
             ROTTEN_TOMATOES_ID=null
           fi
           echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
+
+          LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+          if [[ -z $LETTERBOXD_ID ]]; then
+            LETTERBOXD_ID=null
+          fi
+          echo "Letterboxd ID: $LETTERBOXD_ID"
         fi
 
-        if [[ $METACRITIC_ID == "null" ]] && [[ $ROTTEN_TOMATOES_ID == "null" ]]; then
+        if [[ $METACRITIC_ID == "null" ]] && [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $LETTERBOXD_ID == "null" ]]; then
           WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
           if [[ $WIKI_URL ]]; then
             METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
@@ -319,6 +328,11 @@ do
             ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
             if [[ -z $ROTTEN_TOMATOES_ID ]]; then
               ROTTEN_TOMATOES_ID=null
+            fi
+
+            LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+            if [[ -z $LETTERBOXD_ID ]]; then
+              LETTERBOXD_ID=null
             fi
           fi
         fi
@@ -359,6 +373,11 @@ do
                 if [[ -z $ROTTEN_TOMATOES_ID ]]; then
                   ROTTEN_TOMATOES_ID=null
                 fi
+
+                LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+                if [[ -z $LETTERBOXD_ID ]]; then
+                  LETTERBOXD_ID=null
+                fi
               fi
             fi
           else
@@ -378,6 +397,13 @@ do
           open -a $BROWSER_PATH "https://www.rottentomatoes.com"
           echo "Enter the Rotten Tomatoes ID:"
           read ROTTEN_TOMATOES_ID
+        fi
+
+        if [[ $LETTERBOXD_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
+          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+          open -a $BROWSER_PATH "https://letterboxd.com"
+          echo "Enter the Letterboxd ID:"
+          read LETTERBOXD_ID
         fi
 
         if [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; then
@@ -427,7 +453,7 @@ do
           fi
         fi
 
-        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,TRUE" >> $FILMS_IDS_FILE_PATH
+        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,TRUE" >> $FILMS_IDS_FILE_PATH
 
         echo "----------------------------------------------------------------------------------------------------"
 
