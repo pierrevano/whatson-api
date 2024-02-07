@@ -98,6 +98,7 @@ const config = {
     { name: "IMDb", url: "https://www.imdb.com" },
     { name: "Metacritic", url: "https://www.metacritic.com" },
     { name: "Rotten Tomatoes", url: "https://www.rottentomatoes.com" },
+    { name: "Letterboxd", url: "https://letterboxd.com" },
     { name: "Mojo", url: "https://www.boxofficemojo.com" },
   ],
 
