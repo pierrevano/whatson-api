@@ -43,6 +43,8 @@ const findId = async (json) => {
     query = { "metacritic.id": json.metacriticId };
   } else if (keys.includes("rottentomatoesId")) {
     query = { "rottentomatoes.id": json.rottentomatoesId };
+  } else if (keys.includes("letterboxdId")) {
+    query = { "letterboxd.id": json.letterboxdId };
   } else if (keys.includes("themoviedbId")) {
     query = { id: parseInt(json.themoviedbId) };
   } else {

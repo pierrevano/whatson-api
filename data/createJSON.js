@@ -8,6 +8,7 @@ const { getMetacriticRating } = require("../src/getMetacriticRating");
 const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
 const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 const { getRottenTomatoesRating } = require("../src/getRottenrottenTomatoesRating");
+const { getLetterboxdRating } = require("../src/getLetterboxdRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -25,6 +26,8 @@ const { getRottenTomatoesRating } = require("../src/getRottenrottenTomatoesRatin
  * @param {string} metacriticId - The Metacritic ID
  * @param {string} rottenTomatoesHomepage - The Rotten Tomatoes homepage URL
  * @param {string} rottenTomatoesId - The Rotten Tomatoes ID
+ * @param {string} letterboxdHomepage - The Letterboxd homepage URL
+ * @param {string} letterboxdId - The Letterboxd ID
  * @param {number} theMoviedbId - The MovieDB ID
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
  */
@@ -43,6 +46,8 @@ const createJSON = async (
   metacriticId,
   rottenTomatoesHomepage,
   rottenTomatoesId,
+  letterboxdHomepage,
+  letterboxdId,
   mojoBoxOfficeArray,
   theMoviedbId
 ) => {
@@ -56,6 +61,7 @@ const createJSON = async (
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
   const metacriticRating = await getMetacriticRating(metacriticHomepage, metacriticId);
   const rottenTomatoesRating = await getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId);
+  const letterboxdRating = await getLetterboxdRating(letterboxdHomepage, letterboxdId);
 
   /* Creating an object called allocineObj. */
   const allocineObj = {
@@ -108,6 +114,16 @@ const createJSON = async (
         }
       : null;
 
+  /* Creates a Letterboxd object if the letterboxd rating is not null. */
+  const letterboxdObj =
+    letterboxdRating !== null
+      ? {
+          id: letterboxdRating.id,
+          url: letterboxdRating.url,
+          users_rating: letterboxdRating.usersRating,
+        }
+      : null;
+
   const mojoObj =
     mojoValues !== null
       ? {
@@ -132,6 +148,7 @@ const createJSON = async (
     imdb: imdbObj,
     metacritic: metacriticObj,
     rotten_tomatoes: rottenTomatoesObj,
+    letterboxd: letterboxdObj,
     mojo: mojoObj,
   };
 

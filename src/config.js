@@ -17,6 +17,7 @@ const config = {
   baseURLMetacriticSerie: "https://www.metacritic.com/tv/",
   baseURLRottenTomatoesFilm: "https://www.rottentomatoes.com/m/",
   baseURLRottenTomatoesSerie: "https://www.rottentomatoes.com/tv/",
+  baseURLLetterboxdFilm: "https://letterboxd.com/film/",
   baseURLAssets: "https://whatson-assets.vercel.app",
 
   collectionName: "data",

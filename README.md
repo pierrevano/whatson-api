@@ -28,6 +28,7 @@ Retrieves detailed information about either a movie or a tv show based on the pr
 - **themoviedbId:** The Movie Database ID of the movie or tv show
 - **metacriticId:** Metacritic ID of the movie or tv show
 - **rottentomatoesId:** Rotten Tomatoes ID of the movie or tv show
+- **letterboxdId:** Letterboxd ID of the movie
 
 #### Responses:
 
