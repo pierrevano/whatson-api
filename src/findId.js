@@ -45,6 +45,8 @@ const findId = async (json) => {
     query = { "rottentomatoes.id": json.rottentomatoesId };
   } else if (keys.includes("letterboxdId")) {
     query = { "letterboxd.id": json.letterboxdId };
+  } else if (keys.includes("senscritiqueId")) {
+    query = { "senscritique.id": json.senscritiqueId };
   } else if (keys.includes("themoviedbId")) {
     query = { id: parseInt(json.themoviedbId) };
   } else {

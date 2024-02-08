@@ -18,6 +18,8 @@ const config = {
   baseURLRottenTomatoesFilm: "https://www.rottentomatoes.com/m/",
   baseURLRottenTomatoesSerie: "https://www.rottentomatoes.com/tv/",
   baseURLLetterboxdFilm: "https://letterboxd.com/film/",
+  baseURLSensCritiqueFilm: "https://www.senscritique.com/film/-/",
+  baseURLSensCritiqueSerie: "https://www.senscritique.com/serie/-/",
   baseURLAssets: "https://whatson-assets.vercel.app",
 
   collectionName: "data",
@@ -100,6 +102,7 @@ const config = {
     { name: "Metacritic", url: "https://www.metacritic.com" },
     { name: "Rotten Tomatoes", url: "https://www.rottentomatoes.com" },
     { name: "Letterboxd", url: "https://letterboxd.com" },
+    { name: "SensCritique", url: "https://www.senscritique.com" },
     { name: "Mojo", url: "https://www.boxofficemojo.com" },
   ],
 

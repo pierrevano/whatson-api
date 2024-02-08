@@ -7,8 +7,9 @@ const { getImdbUsersRating } = require("../src/getImdbUsersRating");
 const { getMetacriticRating } = require("../src/getMetacriticRating");
 const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
 const { getPlatformsLinks } = require("../src/getPlatformsLinks");
-const { getRottenTomatoesRating } = require("../src/getRottenrottenTomatoesRating");
+const { getRottenTomatoesRating } = require("../src/getRottenTomatoesRating");
 const { getLetterboxdRating } = require("../src/getLetterboxdRating");
+const { getSensCritiqueRating } = require("../src/getSensCritiqueRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -28,6 +29,8 @@ const { getLetterboxdRating } = require("../src/getLetterboxdRating");
  * @param {string} rottenTomatoesId - The Rotten Tomatoes ID
  * @param {string} letterboxdHomepage - The Letterboxd homepage URL
  * @param {string} letterboxdId - The Letterboxd ID
+ * @param {string} sensCritiqueHomepage - The SensCritique homepage URL
+ * @param {string} sensCritiqueId - The SensCritique ID
  * @param {number} theMoviedbId - The MovieDB ID
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
  */
@@ -48,6 +51,8 @@ const createJSON = async (
   rottenTomatoesId,
   letterboxdHomepage,
   letterboxdId,
+  sensCritiqueHomepage,
+  sensCritiqueId,
   mojoBoxOfficeArray,
   theMoviedbId
 ) => {
@@ -62,6 +67,7 @@ const createJSON = async (
   const metacriticRating = await getMetacriticRating(metacriticHomepage, metacriticId);
   const rottenTomatoesRating = await getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId);
   const letterboxdRating = await getLetterboxdRating(letterboxdHomepage, letterboxdId);
+  const sensCritiqueRating = await getSensCritiqueRating(sensCritiqueHomepage, sensCritiqueId);
 
   /* Creating an object called allocineObj. */
   const allocineObj = {
@@ -124,6 +130,16 @@ const createJSON = async (
         }
       : null;
 
+  /* Creates a SensCritique object if the sensCritique rating is not null. */
+  const sensCritiqueObj =
+    sensCritiqueRating !== null
+      ? {
+          id: sensCritiqueRating.id,
+          url: sensCritiqueRating.url,
+          users_rating: sensCritiqueRating.usersRating,
+        }
+      : null;
+
   const mojoObj =
     mojoValues !== null
       ? {
@@ -149,6 +165,7 @@ const createJSON = async (
     metacritic: metacriticObj,
     rotten_tomatoes: rottenTomatoesObj,
     letterboxd: letterboxdObj,
+    senscritique: sensCritiqueObj,
     mojo: mojoObj,
   };
 
