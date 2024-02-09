@@ -134,6 +134,36 @@ data_found () {
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
+get_other_ids () {
+  METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+  METACRITIC_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.metacritic.com" | grep "Q21441764" | wc -l | awk '{print $1}')
+  if [[ -z $METACRITIC_ID ]] || [[ $METACRITIC_ID_DEPRECATED -eq 1 ]]; then
+    METACRITIC_ID=null
+  fi
+  echo "Metacritic ID: $METACRITIC_ID"
+
+  ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+  ROTTEN_TOMATOES_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.rottentomatoes.com" | grep "Q21441764" | wc -l | awk '{print $1}')
+  if [[ -z $ROTTEN_TOMATOES_ID ]] || [[ $ROTTEN_TOMATOES_ID_DEPRECATED -eq 1 ]]; then
+    ROTTEN_TOMATOES_ID=null
+  fi
+  echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
+
+  LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+  LETTERBOXD_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://letterboxd.com" | grep "Q21441764" | wc -l | awk '{print $1}')
+  if [[ -z $LETTERBOXD_ID ]] || [[ $LETTERBOXD_ID_DEPRECATED -eq 1 ]]; then
+    LETTERBOXD_ID=null
+  fi
+  echo "Letterboxd ID: $LETTERBOXD_ID"
+
+  SENSCRITIQUE_ID=$(curl -s $WIKI_URL | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+  SENSCRITIQUE_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.senscritique.com" | grep "Q21441764" | wc -l | awk '{print $1}')
+  if [[ -z $SENSCRITIQUE_ID ]] || [[ $SENSCRITIQUE_ID_DEPRECATED -eq 1 ]]; then
+    SENSCRITIQUE_ID=null
+  fi
+  echo "SensCritique ID: $SENSCRITIQUE_ID"
+}
+
 remove_files
 
 rm -f $POPULARITY_ASSETS_PATH
@@ -300,53 +330,13 @@ do
           fi
           echo "IMDb ID: $IMDB_ID"
 
-          METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-          if [[ -z $METACRITIC_ID ]]; then
-            METACRITIC_ID=null
-          fi
-          echo "Metacritic ID: $METACRITIC_ID"
-
-          ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-          if [[ -z $ROTTEN_TOMATOES_ID ]]; then
-            ROTTEN_TOMATOES_ID=null
-          fi
-          echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
-
-          LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-          if [[ -z $LETTERBOXD_ID ]]; then
-            LETTERBOXD_ID=null
-          fi
-          echo "Letterboxd ID: $LETTERBOXD_ID"
-
-          SENSCRITIQUE_ID=$(curl -s $WIKI_URL | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-          if [[ -z $SENSCRITIQUE_ID ]]; then
-            SENSCRITIQUE_ID=null
-          fi
-          echo "SensCritique ID: $SENSCRITIQUE_ID"
+          get_other_ids
         fi
 
         if [[ $METACRITIC_ID == "null" ]] && [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $LETTERBOXD_ID == "null" ]] && [[ $SENSCRITIQUE_ID == "null" ]]; then
           WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
           if [[ $WIKI_URL ]]; then
-            METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-            if [[ -z $METACRITIC_ID ]]; then
-              METACRITIC_ID=null
-            fi
-
-            ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-            if [[ -z $ROTTEN_TOMATOES_ID ]]; then
-              ROTTEN_TOMATOES_ID=null
-            fi
-
-            LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-            if [[ -z $LETTERBOXD_ID ]]; then
-              LETTERBOXD_ID=null
-            fi
-
-            SENSCRITIQUE_ID=$(curl -s $WIKI_URL | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-            if [[ -z $SENSCRITIQUE_ID ]]; then
-              SENSCRITIQUE_ID=null
-            fi
+            get_other_ids
           fi
         fi
 
@@ -377,25 +367,7 @@ do
             else
               WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
               if [[ $WIKI_URL ]]; then
-                METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-                if [[ -z $METACRITIC_ID ]]; then
-                  METACRITIC_ID=null
-                fi
-
-                ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-                if [[ -z $ROTTEN_TOMATOES_ID ]]; then
-                  ROTTEN_TOMATOES_ID=null
-                fi
-
-                LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-                if [[ -z $LETTERBOXD_ID ]]; then
-                  LETTERBOXD_ID=null
-                fi
-
-                SENSCRITIQUE_ID=$(curl -s $WIKI_URL | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-                if [[ -z $SENSCRITIQUE_ID ]]; then
-                  SENSCRITIQUE_ID=null
-                fi
+                get_other_ids
               fi
             fi
           else

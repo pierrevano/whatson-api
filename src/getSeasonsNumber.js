@@ -18,8 +18,9 @@ const getSeasonsNumber = async (allocineHomepage, theMoviedbId) => {
       seasonsNumber = data.number_of_seasons;
     } else {
       if (allocineHomepage.includes(config.baseURLTypeSeries)) seasonsNumber = parseInt($(".stats-number").eq(0).text());
-      if (isNaN(seasonsNumber)) seasonsNumber = null;
     }
+
+    if (isNaN(seasonsNumber)) seasonsNumber = null;
 
     return seasonsNumber;
   } catch (error) {

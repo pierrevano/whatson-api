@@ -57,7 +57,7 @@ function checkRatings(item, property, minRating, maxRating) {
 
 /**
  * This function checks properties of given items and outputs log.
- * It validates various metrics of different rating systems (like `allocine`, `imdb`, `betaseries`, `metacritic`, `rotten_tomatoes`) against predefined expectations.
+ * It validates various metrics of different rating systems against predefined expectations.
  *
  * @param items - An array of objects/items that contains the properties to be checked.
  */
@@ -94,6 +94,14 @@ function checkItemProperties(items) {
     item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.rottenTomatoes) : null;
     expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+
+    item.letterboxd ? expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.letterboxd) : null;
+    item.is_active === true && item.item_type === "movie"
+      ? expect(items.filter((item) => item.letterboxd && item.letterboxd.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+
+    item.senscritique ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritique) : null;
+    item.is_active === true ? expect(items.filter((item) => item.senscritique && item.senscritique.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems) : null;
 
     expect(
       items.filter(
@@ -143,6 +151,8 @@ const params = {
           { source: item.metacritic, ratingType: "critics_rating", min: config.ratingsValues.minimum.metacriticCritics, max: config.ratingsValues.maximum.metacriticCritics },
           { source: item.rotten_tomatoes, ratingType: "users_rating", min: config.ratingsValues.minimum.rottenTomatoes, max: config.ratingsValues.maximum.rottenTomatoes },
           { source: item.rotten_tomatoes, ratingType: "critics_rating", min: config.ratingsValues.minimum.rottenTomatoes, max: config.ratingsValues.maximum.rottenTomatoes },
+          { source: item.letterboxd, ratingType: "users_rating", min: config.ratingsValues.minimum.letterboxd, max: config.ratingsValues.maximum.letterboxd },
+          { source: item.senscritique, ratingType: "users_rating", min: config.ratingsValues.minimum.senscritique, max: config.ratingsValues.maximum.senscritique },
         ];
 
         for (let ratingItem of ratingItems) {

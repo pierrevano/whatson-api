@@ -86,6 +86,8 @@ const config = {
     "imdb",
     "metacritic",
     "rotten_tomatoes",
+    "letterboxd",
+    "senscritique",
     "mojo",
     "popularity_average",
     "ratings_average",
@@ -122,12 +124,15 @@ const config = {
     mojo: 15,
     popularity: 15,
     trailer: 200,
+    senscritiqueItems: 15,
 
     allocine: 7,
     imdb: 4,
     betaseries: 3,
     metacritic: 4,
     rottenTomatoes: 4,
+    letterboxd: 3,
+    senscritique: 3,
   },
 
   maximumIsActiveItems: 400,
@@ -140,6 +145,8 @@ const config = {
       metacriticUsers: 0,
       metacriticCritics: 10,
       rottenTomatoes: 10,
+      letterboxd: 0,
+      senscritique: 0,
     },
 
     maximum: {
@@ -149,6 +156,8 @@ const config = {
       metacriticUsers: 10,
       metacriticCritics: 100,
       rottenTomatoes: 100,
+      letterboxd: 5,
+      senscritique: 10,
     },
   },
 };

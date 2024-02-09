@@ -56,6 +56,7 @@ async function checkStatus(service) {
   }
 
   if (getNodeVarsValues.get_ids === "update_ids") updateIds();
+
   if (getNodeVarsValues.get_db === "no_update_db") process.exit(0);
 
   const database = client.db(config.dbName);
