@@ -1,3 +1,4 @@
+const { config } = require("./config");
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { logErrors } = require("./utils/logErrors");
 
@@ -6,15 +7,19 @@ const { logErrors } = require("./utils/logErrors");
  * @param betaseriesHomepage - the URL of the show's page on betaseries.com
  * @returns The critics rating of the movie from betaseries.com
  */
-const getBetaseriesUsersRating = async (betaseriesHomepage) => {
+const getBetaseriesUsersRating = async (betaseriesHomepage, betaseriesId) => {
   let criticsRating = null;
   let errorCounter = 0;
 
   try {
-    if (!betaseriesHomepage.includes("null")) {
-      const options = { validateStatus: (status) => status === 200 };
-      const $ = await getCheerioContent(betaseriesHomepage, options);
+    const options = {
+      headers: {
+        "User-Agent": config.userAgent,
+      },
+    };
 
+    if (betaseriesId !== "null") {
+      $ = await getCheerioContent(`${betaseriesHomepage}`, options);
       const numberOfStars = $(".js-render-stars")[0];
       criticsRating = numberOfStars ? parseFloat(numberOfStars.attribs.title.replace(" / 5", "").replace(",", ".")) : null;
 
@@ -24,8 +29,6 @@ const getBetaseriesUsersRating = async (betaseriesHomepage) => {
        * Therefore, it is not considered.
        */
       if (criticsRating === 0) criticsRating = null;
-    } else {
-      criticsRating = null;
     }
 
     errorCounter = 0;

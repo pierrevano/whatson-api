@@ -17,7 +17,17 @@ const getCheerioContent = async (url, options) => {
   let errorCounter = 0;
 
   try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    console.time("Execution time");
+
+    axiosRetry(axios, {
+      retries: 3,
+      retryDelay: () => 3000,
+      onRetryAttempt: (error) => {
+        const cfg = axiosRetry.getConfig(error);
+        console.log(`Retrying request [${cfg.currentRetryAttempt}]: ${cfg.url}`);
+      },
+    });
+
     const response = await axios.get(url, options);
 
     if (response.status !== 200) {
@@ -30,10 +40,12 @@ const getCheerioContent = async (url, options) => {
 
     errorCounter = 0;
 
+    console.timeEnd("Execution time");
     return $;
   } catch (error) {
     logErrors(errorCounter, error, url);
 
+    console.timeEnd("Execution time");
     return {
       error: error,
     };

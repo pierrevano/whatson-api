@@ -35,7 +35,10 @@ async function checkStatus(service) {
 }
 
 (async () => {
-  await Promise.all([fetchAndCheckItemCount(1), fetchAndCheckItemCount(2), fetchAndCheckItemCount(3)]);
+  const ids = [1, 2, 3];
+  for (const id of ids) {
+    await fetchAndCheckItemCount(id);
+  }
   console.log("----------------------------------------------------------------------------------------------------");
 
   for (let service of config.services) {
