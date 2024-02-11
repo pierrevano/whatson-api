@@ -5,6 +5,7 @@ const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
 const { getAllocinePopularity } = require("../src/getAllocinePopularity");
 const { getImdbPopularity } = require("../src/getImdbPopularity");
 const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
+const { getImdbUsersRating } = require("../src/getImdbUsersRating");
 
 /**
  * Compares the users rating of a movie or tv show from Allocine with the rating
@@ -22,6 +23,7 @@ const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
 const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId, compare) => {
   const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId, compare)).allocineUsersRating;
   const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
+  const imdb_users_rating = await getImdbUsersRating(imdbHomepage);
   const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
 
@@ -59,7 +61,7 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
         return isEqualObj;
       }
 
-      if (dataWithoutId.allocine.users_rating === users_rating) {
+      if (dataWithoutId.allocine.users_rating === users_rating && dataWithoutId.imdb.users_rating === imdb_users_rating) {
         return {
           isEqual: true,
           data: dataWithoutId,

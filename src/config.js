@@ -57,8 +57,6 @@ const config = {
     rotten_tomatoes: 10,
   },
 
-  numberOfDays: 7,
-
   minimumActiveItems: 150,
 
   /* Tests config */

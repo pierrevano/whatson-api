@@ -85,30 +85,6 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       // Get The Movie Database ID
       const theMoviedbId = urls.themoviedb.id;
 
-      if (getNodeVarsValues.environment === "local" && !force) {
-        const item_type_api = item_type === "movie" ? "movie" : "tv";
-        const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
-
-        try {
-          const response = await axios.get(apiUrl);
-
-          if (response && response.data && response.data.updated_at) {
-            const { updated_at } = response.data;
-            const updatedAtDate = new Date(updated_at);
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - config.numberOfDays);
-
-            if (updatedAtDate >= sevenDaysAgo) {
-              console.log(`Skipping because updated less than ${config.numberOfDays} days ago.`);
-
-              continue;
-            }
-          }
-        } catch (error) {
-          throw new Error(`Error fetching data: ${error}`);
-        }
-      }
-
       // Check if page is existing before upsert to DB
       const { error } = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId, true);
 
