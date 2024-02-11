@@ -72,6 +72,11 @@ async function checkStatus(service) {
   const jsonArray = !getNodeVarsValues.is_not_active || getNodeVarsValues.is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
   const allTheMovieDbIds = jsonArray.map((item) => parseInt(item.THEMOVIEDB_ID));
 
+  if (allTheMovieDbIds.length < config.minimumActiveItems) {
+    console.log("Something went wrong when updating the IDs. Abording.");
+    process.exit(1);
+  }
+
   /**
    * If we are in the `update_ids` mode, we proceed to reset the `is_active` and `popularity`
    * fields for all documents in the collectionData that do not match the currently active items IDs.

@@ -59,6 +59,8 @@ const config = {
 
   numberOfDays: 7,
 
+  minimumActiveItems: 150,
+
   /* Tests config */
   baseURL: "http://localhost:8081",
   baseURLRemote: "https://whatson-api.onrender.com",
@@ -110,8 +112,8 @@ const config = {
 
   maximumNumberOfItems: 46500,
 
-  circleLimitPerDay: 3000,
-  circleLimitPerInstance: 600,
+  circleLimitPerDay: 1500,
+  circleLimitPerInstance: 50,
 
   maximumThreshold: {
     default: 30,

@@ -12,7 +12,7 @@ const { logErrors } = require("./utils/logErrors");
  * @param {number} theMoviedbId - The ID of the movie or tv show on The Movie Database.
  * @returns An object containing information about the movie or tv show, including its title, image, user rating, number of seasons, status, and trailer.
  */
-const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId) => {
+const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId, compare) => {
   let allocineFirstInfo = null;
   let errorCounter = 0;
 
@@ -30,9 +30,9 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
     if (isNaN(allocineUsersRating)) allocineUsersRating = parseFloat($(".stareval-note").eq(0).text().replace(",", "."));
     if (isNaN(allocineUsersRating)) allocineUsersRating = null;
 
-    const seasonsNumber = await getSeasonsNumber(allocineHomepage, theMoviedbId);
-    const status = await getStatus(allocineHomepage, $(".thumbnail .label-status").text());
-    const trailer = await getTrailer(allocineHomepage, betaseriesHomepage, options);
+    const seasonsNumber = !compare ? await getSeasonsNumber(allocineHomepage, theMoviedbId) : null;
+    const status = !compare ? await getStatus(allocineHomepage, $(".thumbnail .label-status").text()) : null;
+    const trailer = !compare ? await getTrailer(allocineHomepage, betaseriesHomepage, options) : null;
 
     allocineFirstInfo = {
       allocineTitle: title,

@@ -19,8 +19,8 @@ const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
-const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId) => {
-  const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId)).allocineUsersRating;
+const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId, compare) => {
+  const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId, compare)).allocineUsersRating;
   const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
   const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);

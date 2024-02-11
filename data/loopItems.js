@@ -110,11 +110,11 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       }
 
       // Check if page is existing before upsert to DB
-      const { error } = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId);
+      const { error } = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId, true);
 
       // Determine if user ratings are equal and fetch the data
       if (!error) {
-        const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId);
+        const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId, true);
         const data =
           !force && getIsEqualValue.isEqual
             ? getIsEqualValue.data
