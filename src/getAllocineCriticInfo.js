@@ -1,6 +1,7 @@
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { convertTitleToNumber } = require("./utils/convertTitleToNumber");
 const { logErrors } = require("./utils/logErrors");
+const { config } = require("./config");
 
 /**
  * It takes the URL of a movie's critics page on Allocine, scrapes the page, and returns an object
@@ -18,12 +19,12 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
   let errorCounter = 0;
 
   try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = {
       headers: {
         "User-Agent": config.userAgent,
       },
     };
+
     const $ = await getCheerioContent(allocineCriticsDetails, options);
 
     let criticsRatingDetails;
