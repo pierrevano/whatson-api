@@ -18,7 +18,12 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
   let errorCounter = 0;
 
   try {
-    const options = { validateStatus: (status) => status === 200 };
+    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    const options = {
+      headers: {
+        "User-Agent": config.userAgent,
+      },
+    };
     const $ = await getCheerioContent(allocineCriticsDetails, options);
 
     let criticsRatingDetails;
