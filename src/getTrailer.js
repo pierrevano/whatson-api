@@ -16,6 +16,7 @@ const { removeExtraChar } = require("./utils/removeExtraChar");
 const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
   try {
     let trailer = null;
+
     /* tv show logic to get trailer link. */
     if (allocineHomepage.includes(config.baseURLTypeSeries)) {
       let url = `${betaseriesHomepage}`;
@@ -43,7 +44,7 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
             const isPageBroken = $.html().length === 0;
             if (!isPageBroken) {
               const content = getContentUrl($, true, allocineHomepage);
-              trailer = content.contentUrl;
+              if (content && content.contentUrl) trailer = content.contentUrl;
             }
           }
         }
@@ -58,11 +59,11 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
       if (hasInactiveVideos) return trailer;
 
       const itemJSON = getContentUrl($, true, allocineHomepage);
-      if (itemJSON && itemJSON.trailer) {
+      if (itemJSON && itemJSON.trailer && itemJSON.trailer.url) {
         const url = itemJSON.trailer.url;
         $ = await getCheerioContent(url, options);
         const content = getContentUrl($, true, allocineHomepage);
-        trailer = content.contentUrl;
+        if (content && content.contentUrl) trailer = content.contentUrl;
       }
     }
 

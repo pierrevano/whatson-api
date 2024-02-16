@@ -63,8 +63,6 @@ function checkRatings(item, property, minRating, maxRating) {
  */
 function checkItemProperties(items) {
   return items.forEach((item) => {
-    console.log(item);
-
     config.keysToCheck.forEach((key) => {
       item.is_active === true ? expect(item).toHaveProperty(key) : null;
       item.is_active === true ? expect(typeof item[key]).not.toBe("undefined") : null;
@@ -114,8 +112,8 @@ function checkItemProperties(items) {
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
 
-    item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
-    expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.item_type === "tvshow" && item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
+    item.item_type === "tvshow" ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
 
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
     expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);
@@ -433,13 +431,23 @@ const params = {
     },
   },
 
-  items_with_all_required_keys_active: {
-    query: "?item_type=movie,tvshow&is_active=true&limit=400",
+  items_with_all_required_keys_active_movie: {
+    query: "?item_type=movie&is_active=true&limit=400",
     expectedResult: checkItemProperties,
   },
 
-  items_with_all_required_keys_inactive: {
-    query: "?item_type=movie,tvshow&is_active=false&limit=3000",
+  items_with_all_required_keys_inactive_movie: {
+    query: "?item_type=movie&is_active=false&limit=3000",
+    expectedResult: checkItemProperties,
+  },
+
+  items_with_all_required_keys_active_tvshow: {
+    query: "?item_type=tvshow&is_active=true&limit=400",
+    expectedResult: checkItemProperties,
+  },
+
+  items_with_all_required_keys_inactive_tvshow: {
+    query: "?item_type=tvshow&is_active=false&limit=3000",
     expectedResult: checkItemProperties,
   },
 

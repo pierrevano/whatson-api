@@ -20,6 +20,8 @@ const getStatus = async (allocineHomepage, status) => {
         return "Pilot";
       case "Terminée":
         return "Ended";
+      case "":
+        return "Unknown";
       default:
         console.error(`Unrecognized status: ${status}`);
         process.exit(1);

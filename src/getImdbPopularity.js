@@ -17,9 +17,10 @@ const getImdbPopularity = async (imdbHomepage) => {
         "User-Agent": config.userAgent,
       },
     };
-    const $ = await getCheerioContent(`${imdbHomepage}reference/`, options);
+    const $ = await getCheerioContent(`${imdbHomepage}`, options);
 
-    const popularity = $('a[href="/chart/toptv"]').text().trim() === "" ? null : parseInt($('a[href="/chart/toptv"]').text().split("#")[1]);
+    const popularity =
+      $('div[data-testid="hero-rating-bar__popularity__score"]').first().text().trim() !== "" ? parseInt($('div[data-testid="hero-rating-bar__popularity__score"]').first().text().trim()) : null;
 
     return {
       popularity: popularity,

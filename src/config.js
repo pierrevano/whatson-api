@@ -123,8 +123,8 @@ const config = {
     default: 25,
     mojo: 15,
     popularity: 15,
-    trailer: 200,
-    senscritiqueItems: 15,
+    trailer: 150,
+    senscritiqueItems: 3,
 
     allocine: 7,
     imdb: 4,

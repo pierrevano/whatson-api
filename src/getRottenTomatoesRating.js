@@ -22,10 +22,20 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
 
     if (rottenTomatoesId !== "null") {
       $ = await getCheerioContent(`${rottenTomatoesHomepage}`, options);
-      let usersRating = parseInt($("score-board-deprecated").attr("audiencescore"));
-      if (isNaN(usersRating)) usersRating = null;
 
+      let usersRating = parseInt($("score-board-deprecated").attr("audiencescore"));
       let criticsRating = parseInt($("score-board-deprecated").attr("tomatometerscore"));
+
+      if (isNaN(usersRating) || isNaN(criticsRating)) {
+        const scriptTag = $("#media-scorecard-json");
+        const jsonString = scriptTag.html();
+        const data = JSON.parse(jsonString);
+
+        usersRating = data.audienceScore && data.audienceScore.score ? parseInt(data.audienceScore.score) : null;
+        criticsRating = data.criticsScore && data.criticsScore.score ? parseInt(data.criticsScore.score) : null;
+      }
+
+      if (isNaN(usersRating)) usersRating = null;
       if (isNaN(criticsRating)) criticsRating = null;
 
       rottenTomatoesObj = {

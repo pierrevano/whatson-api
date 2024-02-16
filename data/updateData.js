@@ -107,8 +107,7 @@ async function checkStatus(service) {
       console.log(`${variable}: ${variableValue}`);
     }
 
-    const check_db_ids = getNodeVarsValues.check_db_ids;
-    if (check_db_ids === "check") {
+    if (getNodeVarsValues.check_db_ids === "check") {
       let idFromFiles = [];
       jsonArrayFromCSV.forEach((element) => {
         idFromFiles.push(b64Encode(`${config.baseURLAllocine}${element.URL}`));

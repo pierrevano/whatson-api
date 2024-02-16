@@ -85,7 +85,8 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       // Get The Movie Database ID
       const theMoviedbId = urls.themoviedb.id;
 
-      if (parseInt(getNodeVarsValues.check_date) > 0) {
+      const checkDate = getNodeVarsValues.check_date;
+      if (parseInt(checkDate) >= 0) {
         const item_type_api = item_type === "movie" ? "movie" : "tv";
         const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
 
@@ -96,10 +97,10 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
             const { updated_at } = response.data;
             const updatedAtDate = new Date(updated_at);
             const dateValue = new Date();
-            dateValue.setDate(dateValue.getDate() - parseInt(getNodeVarsValues.check_date));
+            dateValue.setDate(dateValue.getDate() - parseInt(checkDate));
 
             if (updatedAtDate >= dateValue) {
-              console.log(`Skipping because updated less than ${parseInt(getNodeVarsValues.check_date)} days ago.`);
+              console.log(`Skipping because updated less than ${parseInt(checkDate)} days ago.`);
 
               continue;
             }
