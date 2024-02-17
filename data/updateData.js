@@ -24,6 +24,7 @@ const loopItems = require("./loopItems");
 const isThirdPartyServiceOK = require("../src/utils/thirdPartyStatus");
 const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
 const { fetchAndCheckItemCount } = require("../src/getAllocineItemsNumber");
+const checkDbIds = require("./checkDbIds");
 
 async function checkStatus(service) {
   if (await isThirdPartyServiceOK(service.url)) {
@@ -107,23 +108,7 @@ async function checkStatus(service) {
       console.log(`${variable}: ${variableValue}`);
     }
 
-    if (getNodeVarsValues.check_db_ids === "check") {
-      let idFromFiles = [];
-      jsonArrayFromCSV.forEach((element) => {
-        idFromFiles.push(b64Encode(`${config.baseURLAllocine}${element.URL}`));
-      });
-      const allDbIdsArray = await collectionData
-        .find({ item_type: getNodeVarsValues.item_type })
-        .map((el) => {
-          return el._id;
-        })
-        .toArray();
-      const idsOnlyInDb = allDbIdsArray.filter((x) => !idFromFiles.includes(x));
-      idsOnlyInDb.forEach((element) => {
-        console.log(`${element}: ${b64Decode(element)}`);
-      });
-      process.exit(0);
-    }
+    if (getNodeVarsValues.check_db_ids === "check") await checkDbIds(jsonArrayFromCSV, collectionData);
 
     const force = getNodeVarsValues.force === "force";
 

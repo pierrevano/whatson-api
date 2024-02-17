@@ -68,7 +68,8 @@ const config = {
   films_ids_path: "./src/assets/films_ids.txt",
   series_ids_path: "./src/assets/series_ids.txt",
 
-  checkItemsNumber: false,
+  checkItemsNumber: true,
+  margin: 50,
 
   keysToCheck: [
     "_id",

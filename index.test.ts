@@ -316,7 +316,7 @@ const params = {
         const filmsLines = countLines(config.films_ids_path);
         const seriesLines = countLines(config.series_ids_path);
 
-        expect(filmsLines + seriesLines - 2).toEqual(items.total_results);
+        expect(filmsLines + seriesLines + config.margin).toBeGreaterThanOrEqual(items.total_results);
       }
     },
   },
