@@ -16,7 +16,7 @@ const fetchAndCheckItemCount = async (index) => {
 };
 
 const getAllocineItemsNumber = async (baseURLAllocineType, baseURLType, index) => {
-  let countItems = (errorCounter = 0);
+  let countItems = 0;
 
   try {
     const options = {
@@ -26,7 +26,7 @@ const getAllocineItemsNumber = async (baseURLAllocineType, baseURLType, index) =
     };
 
     const url = `${baseURLAllocineType}${index > 1 ? "?page=" + index : ""}`;
-    $ = await getCheerioContent(`${url}`, options);
+    $ = await getCheerioContent(`${url}`, options, "getAllocineItemsNumber");
     const links = $("a.meta-title-link");
 
     links.each((_i, link) => {
@@ -36,10 +36,8 @@ const getAllocineItemsNumber = async (baseURLAllocineType, baseURLType, index) =
         countItems++;
       }
     });
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, baseURLAllocineType);
+    logErrors(error, baseURLAllocineType, "getAllocineItemsNumber");
   }
 
   return countItems;

@@ -11,7 +11,6 @@ const { logErrors } = require("./utils/logErrors");
  */
 const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId) => {
   let rottenTomatoesObj = null;
-  let errorCounter = 0;
 
   try {
     const options = {
@@ -20,8 +19,8 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
       },
     };
 
-    if (rottenTomatoesId !== "null") {
-      $ = await getCheerioContent(`${rottenTomatoesHomepage}`, options);
+    if (rottenTomatoesId !== null) {
+      $ = await getCheerioContent(`${rottenTomatoesHomepage}`, options, "getRottenTomatoesRating");
 
       let usersRating = parseInt($("score-board-deprecated").attr("audiencescore"));
       let criticsRating = parseInt($("score-board-deprecated").attr("tomatometerscore"));
@@ -31,8 +30,8 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
         const jsonString = scriptTag.html();
         const data = JSON.parse(jsonString);
 
-        usersRating = data.audienceScore && data.audienceScore.score ? parseInt(data.audienceScore.score) : null;
-        criticsRating = data.criticsScore && data.criticsScore.score ? parseInt(data.criticsScore.score) : null;
+        if (isNaN(usersRating)) usersRating = data && data.audienceScore && data.audienceScore.score ? parseInt(data.audienceScore.score) : null;
+        if (isNaN(criticsRating)) criticsRating = data && data.criticsScore && data.criticsScore.score ? parseInt(data.criticsScore.score) : null;
       }
 
       if (isNaN(usersRating)) usersRating = null;
@@ -45,10 +44,8 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
         criticsRating: criticsRating,
       };
     }
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, rottenTomatoesHomepage);
+    logErrors(error, rottenTomatoesHomepage, "getRottenTomatoesRating");
   }
 
   return rottenTomatoesObj;

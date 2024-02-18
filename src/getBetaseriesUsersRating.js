@@ -9,7 +9,6 @@ const { logErrors } = require("./utils/logErrors");
  */
 const getBetaseriesUsersRating = async (betaseriesHomepage, betaseriesId) => {
   let criticsRating = null;
-  let errorCounter = 0;
 
   try {
     const options = {
@@ -18,8 +17,8 @@ const getBetaseriesUsersRating = async (betaseriesHomepage, betaseriesId) => {
       },
     };
 
-    if (betaseriesId !== "null") {
-      $ = await getCheerioContent(`${betaseriesHomepage}`, options);
+    if (betaseriesId !== null) {
+      $ = await getCheerioContent(`${betaseriesHomepage}`, options, "getBetaseriesUsersRating");
       const numberOfStars = $(".js-render-stars")[0];
       criticsRating = numberOfStars ? parseFloat(numberOfStars.attribs.title.replace(" / 5", "").replace(",", ".")) : null;
 
@@ -30,10 +29,8 @@ const getBetaseriesUsersRating = async (betaseriesHomepage, betaseriesId) => {
        */
       if (criticsRating === 0) criticsRating = null;
     }
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, betaseriesHomepage);
+    logErrors(error, betaseriesHomepage, "getBetaseriesUsersRating");
   }
 
   return criticsRating;

@@ -16,7 +16,6 @@ const { config } = require("./config");
  */
 const getAllocineCriticInfo = async (allocineCriticsDetails) => {
   let allocineCriticInfo = null;
-  let errorCounter = 0;
 
   try {
     const options = {
@@ -54,10 +53,8 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
       criticsRating: criticsRating,
       criticsRatingDetails: criticsRatingDetails,
     };
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, allocineCriticsDetails);
+    logErrors(error, allocineCriticsDetails, "getAllocineCriticInfo");
   }
 
   return allocineCriticInfo;

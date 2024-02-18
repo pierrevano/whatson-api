@@ -12,7 +12,6 @@ async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
 
 async function fetchTableData(offset) {
   let tableData = [];
-  let errorCounter = 0;
 
   try {
     const response = await axios.get(`${config.mojo.baseURL}${config.mojo.urlToFetch}?offset=${offset}`);
@@ -54,10 +53,8 @@ async function fetchTableData(offset) {
 
       tableData.push(rowData);
     });
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error);
+    logErrors(error, null, "fetchTableData");
   }
 
   return tableData;

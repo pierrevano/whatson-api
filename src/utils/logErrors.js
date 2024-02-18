@@ -1,31 +1,19 @@
-const fs = require("fs");
-const path = require("path");
-
-const { config } = require("../config");
-
-const logErrors = (errorCounter, error, item) => {
-  const fileName = path.basename(__filename);
-
-  let errorMsg = `errorCounter: ${errorCounter} - ${fileName} - ${item}: ${error}\n`;
-
-  console.log(errorMsg);
-
-  fs.appendFile("errors.log", errorMsg, (err) => {
-    if (err) throw err;
-  });
-
+const logErrors = (error, item, origin) => {
   if (error instanceof RangeError) {
     console.log("First item not updated:", item);
     process.exit(1);
   }
 
-  errorCounter++;
-  if (errorCounter > config.maxErrorCounter.default) {
-    console.log(`An error on ${fileName} has been returned more than ${config.maxErrorCounter.default} times, exiting the script.`);
+  if (error.response && error.response.status >= 500) {
+    console.log(`Error - status code ${error.response.status} - ${item}`);
     process.exit(1);
   }
 
-  return errorCounter;
+  let errorMsg = `${item} - ${origin} - ${error}`;
+  if (!errorMsg.includes("AxiosError: Request failed with status code 404") && !errorMsg.includes("TypeError: $ is not a function")) {
+    console.log(errorMsg);
+    process.exit(1);
+  }
 };
 
 module.exports = { logErrors };

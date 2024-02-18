@@ -16,7 +16,6 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const { config } = require("../src/config");
 const { getNodeVarsValues } = require("../src/getNodeVarsValues");
 
-const { b64Encode, b64Decode } = require("../src/utils/b64EncodeAndDecode");
 const { countNullElements } = require("./countNullElements");
 const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
 const { updateIds } = require("../src/updateIds");
@@ -46,18 +45,6 @@ async function checkStatus(service) {
     await checkStatus(service);
   }
   console.log("----------------------------------------------------------------------------------------------------");
-
-  if (getNodeVarsValues.item_type === "movie") {
-    if (fs.existsSync("errors.log")) {
-      try {
-        fs.unlinkSync("errors.log");
-        console.log("Errors log has been removed.");
-        console.log("----------------------------------------------------------------------------------------------------");
-      } catch (err) {
-        console.error("There was an error:", err);
-      }
-    }
-  }
 
   if (getNodeVarsValues.get_ids === "update_ids") updateIds();
 

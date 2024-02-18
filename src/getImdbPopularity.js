@@ -17,7 +17,7 @@ const getImdbPopularity = async (imdbHomepage) => {
         "User-Agent": config.userAgent,
       },
     };
-    const $ = await getCheerioContent(`${imdbHomepage}`, options);
+    const $ = await getCheerioContent(`${imdbHomepage}`, options, "getImdbPopularity");
 
     const popularity =
       $('div[data-testid="hero-rating-bar__popularity__score"]').first().text().trim() !== "" ? parseInt($('div[data-testid="hero-rating-bar__popularity__score"]').first().text().trim()) : null;

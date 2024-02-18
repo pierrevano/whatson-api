@@ -11,7 +11,6 @@ const { logErrors } = require("./utils/logErrors");
  */
 const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
   let sensCritiqueObj = null;
-  let errorCounter = 0;
 
   try {
     const options = {
@@ -20,8 +19,8 @@ const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
       },
     };
 
-    if (sensCritiqueId !== "null") {
-      $ = await getCheerioContent(`${sensCritiqueHomepage}`, options);
+    if (sensCritiqueId !== null) {
+      $ = await getCheerioContent(`${sensCritiqueHomepage}`, options, "getSensCritiqueRating");
       let usersRating = parseFloat($('[data-testid="Rating"]').first().text());
       if (isNaN(usersRating)) usersRating = null;
 
@@ -31,10 +30,8 @@ const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
         usersRating: usersRating,
       };
     }
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, sensCritiqueHomepage);
+    logErrors(error, sensCritiqueHomepage, "getSensCritiqueRating");
   }
 
   return sensCritiqueObj;

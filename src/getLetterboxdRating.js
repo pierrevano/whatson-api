@@ -11,7 +11,7 @@ const { logErrors } = require("./utils/logErrors");
  */
 const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
   let letterboxdObj = null;
-  let errorCounter = 0;
+  let usersRating = null;
 
   try {
     const options = {
@@ -20,13 +20,12 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
       },
     };
 
-    if (letterboxdId !== "null") {
-      $ = await getCheerioContent(`${letterboxdHomepage}`, options);
-      let usersRating = parseFloat(
-        $('meta[name="twitter:data2"]')
-          .attr("content")
-          .match(/(\d+\.\d+)/)[0]
-      );
+    if (letterboxdId !== null) {
+      $ = await getCheerioContent(`${letterboxdHomepage}`, options, "getLetterboxdRating");
+
+      let metaContent = $('meta[name="twitter:data2"]');
+      if (metaContent.length) usersRating = parseFloat(metaContent.attr("content").match(/(\d+\.\d+)/)[0]);
+
       if (isNaN(usersRating)) usersRating = null;
 
       letterboxdObj = {
@@ -35,10 +34,8 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
         usersRating: usersRating,
       };
     }
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, letterboxdHomepage);
+    logErrors(error, letterboxdHomepage, "getLetterboxdRating");
   }
 
   return letterboxdObj;

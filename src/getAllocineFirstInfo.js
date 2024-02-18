@@ -14,11 +14,10 @@ const { logErrors } = require("./utils/logErrors");
  */
 const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId, compare) => {
   let allocineFirstInfo = null;
-  let errorCounter = 0;
 
   try {
     const options = { validateStatus: (status) => status < 500 && status !== 404 };
-    const $ = await getCheerioContent(allocineHomepage, options);
+    const $ = await getCheerioContent(allocineHomepage, options, "getAllocineFirstInfo");
 
     const title = $('meta[property="og:title"]').attr("content");
 
@@ -42,10 +41,8 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
       status: status,
       trailer: trailer,
     };
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, allocineHomepage);
+    logErrors(error, allocineHomepage, "getAllocineFirstInfo");
 
     return {
       error: error,

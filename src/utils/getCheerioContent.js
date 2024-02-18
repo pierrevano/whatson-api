@@ -6,22 +6,22 @@ const cheerio = require("cheerio");
 const { logErrors } = require("./logErrors");
 
 /**
- * It takes a URL and an optional options object, makes a request to the URL, and returns a cheerio
- * object
+ * It takes a URL and an optional options object, makes a request to the URL, and returns a cheerio object.
  * @param url - The URL of the page you want to scrape.
- * @param options - This is an object that contains the headers and other options that you want to pass
- * to the request.
- * @returns A function that returns a promise that resolves to a cheerio object.
+ * @param options - This is an object that contains the headers and other options, that you want to pass to the request.
+ * @returns A function that returns a promise that resolves to a cheerio object or
+ * an error object if any error occurs during the process.
  */
-const getCheerioContent = async (url, options) => {
-  let errorCounter = 0;
-
+const getCheerioContent = async (url, options, origin) => {
   try {
     console.time("Execution time");
 
     axiosRetry(axios, {
-      retries: 3,
+      retries: 5,
       retryDelay: () => 3000,
+      retryCondition: (error) => {
+        return error.response && error.response.status >= 500;
+      },
       onRetryAttempt: (error) => {
         const cfg = axiosRetry.getConfig(error);
         console.log(`Retrying request [${cfg.currentRetryAttempt}]: ${cfg.url}`);
@@ -38,12 +38,10 @@ const getCheerioContent = async (url, options) => {
 
     const $ = cheerio.load(response.data);
 
-    errorCounter = 0;
-
     console.timeEnd("Execution time");
     return $;
   } catch (error) {
-    logErrors(errorCounter, error, url);
+    logErrors(error, url, origin);
 
     console.timeEnd("Execution time");
     return {

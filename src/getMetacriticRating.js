@@ -11,7 +11,6 @@ const { logErrors } = require("./utils/logErrors");
  */
 const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
   let metacriticObj = null;
-  let errorCounter = 0;
 
   try {
     const options = {
@@ -20,12 +19,12 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
       },
     };
 
-    if (metacriticId !== "null") {
-      $ = await getCheerioContent(`${metacriticHomepage}`, options);
+    if (metacriticId !== null) {
+      $ = await getCheerioContent(`${metacriticHomepage}`, options, "getMetacriticRating");
       let usersRating = parseFloat($(".c-siteReviewScore_user span").first().text());
       if (isNaN(usersRating)) usersRating = null;
 
-      $ = await getCheerioContent(`${metacriticHomepage}/critic-reviews`, options);
+      $ = await getCheerioContent(`${metacriticHomepage}/critic-reviews`, options, "getMetacriticRating");
       let criticsRating = parseInt($(".c-siteReviewScore span").first().text());
       if (isNaN(criticsRating)) criticsRating = null;
 
@@ -36,10 +35,8 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
         criticsRating: criticsRating,
       };
     }
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, metacriticHomepage);
+    logErrors(error, metacriticHomepage, "getMetacriticRating");
   }
 
   return metacriticObj;

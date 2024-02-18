@@ -52,11 +52,6 @@ const config = {
     offset: 200,
   },
 
-  maxErrorCounter: {
-    default: 5,
-    rotten_tomatoes: 10,
-  },
-
   minimumActiveItems: 150,
 
   /* Tests config */

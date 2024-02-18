@@ -12,7 +12,6 @@ const { config } = require("./config");
  */
 const getImdbUsersRating = async (imdbHomepage) => {
   let criticsRating = null;
-  let errorCounter = 0;
 
   try {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
@@ -21,14 +20,12 @@ const getImdbUsersRating = async (imdbHomepage) => {
         "User-Agent": config.userAgent,
       },
     };
-    const $ = await getCheerioContent(imdbHomepage, options);
+    const $ = await getCheerioContent(imdbHomepage, options, "getImdbUsersRating");
 
     criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
     if (isNaN(criticsRating)) criticsRating = null;
-
-    errorCounter = 0;
   } catch (error) {
-    logErrors(errorCounter, error, imdbHomepage);
+    logErrors(error, imdbHomepage, "getImdbUsersRating");
   }
 
   return criticsRating;
