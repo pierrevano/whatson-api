@@ -7,7 +7,7 @@ FILMS_MAX_NUMBER=15
 PAGES_MAX_NUMBER=15
 PAGES_MIN_NUMBER=1
 PROMPT=$3
-PROMPT_FIRST_OR_ALL=$4
+PROMPT_SERVICE_NAME=$4
 SECONDS=0
 SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
@@ -137,28 +137,48 @@ data_found () {
 get_other_ids () {
   METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
   METACRITIC_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.metacritic.com" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ -z $METACRITIC_ID ]] || [[ $METACRITIC_ID_DEPRECATED -eq 1 ]]; then
+  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "metacritic" ]]; then
+    open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+    open -a $BROWSER_PATH "https://www.metacritic.com"
+    echo "Enter the Metacritic ID:"
+    read METACRITIC_ID
+  elif [[ -z $METACRITIC_ID ]] || [[ $METACRITIC_ID_DEPRECATED -eq 1 ]]; then
     METACRITIC_ID=null
   fi
   echo "Metacritic ID: $METACRITIC_ID"
 
   ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
   ROTTEN_TOMATOES_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.rottentomatoes.com" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ -z $ROTTEN_TOMATOES_ID ]] || [[ $ROTTEN_TOMATOES_ID_DEPRECATED -eq 1 ]]; then
+  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "rottentomatoes" ]]; then
+    open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+    open -a $BROWSER_PATH "https://www.rottentomatoes.com"
+    echo "Enter the Rotten Tomatoes ID:"
+    read ROTTEN_TOMATOES_ID
+  elif [[ -z $ROTTEN_TOMATOES_ID ]] || [[ $ROTTEN_TOMATOES_ID_DEPRECATED -eq 1 ]]; then
     ROTTEN_TOMATOES_ID=null
   fi
   echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
 
   LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
   LETTERBOXD_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://letterboxd.com" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ -z $LETTERBOXD_ID ]] || [[ $LETTERBOXD_ID_DEPRECATED -eq 1 ]]; then
+  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "letterboxd" ]]; then
+    open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+    open -a $BROWSER_PATH "https://letterboxd.com"
+    echo "Enter the Letterboxd ID:"
+    read LETTERBOXD_ID
+  elif [[ -z $LETTERBOXD_ID ]] || [[ $LETTERBOXD_ID_DEPRECATED -eq 1 ]]; then
     LETTERBOXD_ID=null
   fi
   echo "Letterboxd ID: $LETTERBOXD_ID"
 
   SENSCRITIQUE_ID=$(curl -s $WIKI_URL | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
   SENSCRITIQUE_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.senscritique.com" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ -z $SENSCRITIQUE_ID ]] || [[ $SENSCRITIQUE_ID_DEPRECATED -eq 1 ]]; then
+  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "senscritique" ]]; then
+    open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+    open -a $BROWSER_PATH "https://www.senscritique.com"
+    echo "Enter the SensCritique ID:"
+    read SENSCRITIQUE_ID
+  elif [[ -z $SENSCRITIQUE_ID ]] || [[ $SENSCRITIQUE_ID_DEPRECATED -eq 1 ]]; then
     SENSCRITIQUE_ID=null
   fi
   echo "SensCritique ID: $SENSCRITIQUE_ID"
@@ -274,19 +294,9 @@ do
       echo $URL >> $TEMP_URLS_FILE_PATH
 
       if [[ $PROMPT == "recheck" ]]; then
-        if [[ $PROMPT_FIRST_OR_ALL == "first" ]] && [[ $METACRITIC_CHECK == "null" ]] && [[ $ROTTEN_TOMATOES_CHECK != "null" ]]; then
+        if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]] || [[ $LETTERBOXD_CHECK == "null" ]] || [[ $SENSCRITIQUE_CHECK == "null" ]]; then
           DUPLICATE=0
           echo "Found $URL to be rechecked."
-        elif [[ $PROMPT_FIRST_OR_ALL == "first" ]] && [[ $METACRITIC_CHECK != "null" ]] && [[ $ROTTEN_TOMATOES_CHECK == "null" ]]; then
-          DUPLICATE=0
-          echo "Found $URL to be rechecked."
-        elif [[ $PROMPT_FIRST_OR_ALL == "all" ]]; then
-          if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]] || [[ $LETTERBOXD_CHECK == "null" ]] || [[ $SENSCRITIQUE_CHECK == "null" ]]; then
-            DUPLICATE=0
-            echo "Found $URL to be rechecked."
-          else
-            DUPLICATE=1
-          fi
         else
           DUPLICATE=1
         fi
@@ -340,7 +350,7 @@ do
           fi
         fi
 
-        if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_FIRST_OR_ALL == "imdb" ]]; then
+        if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_SERVICE_NAME == "imdb" ]]; then
           TRUES=$(cat $SKIP_IDS_FILE_PATH | grep "TRUE,TRUE,TRUE," | wc -l | awk '{print $1}')
           if [ $TRUES -gt 0 ]; then
               sed -i '' '/TRUE/!d' $SKIP_IDS_FILE_PATH
@@ -373,34 +383,6 @@ do
           else
             IMDB_ID=null
           fi
-        fi
-
-        if [[ $METACRITIC_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
-          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-          open -a $BROWSER_PATH "https://www.metacritic.com"
-          echo "Enter the Metacritic ID:"
-          read METACRITIC_ID
-        fi
-
-        if [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
-          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-          open -a $BROWSER_PATH "https://www.rottentomatoes.com"
-          echo "Enter the Rotten Tomatoes ID:"
-          read ROTTEN_TOMATOES_ID
-        fi
-
-        if [[ $LETTERBOXD_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
-          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-          open -a $BROWSER_PATH "https://letterboxd.com"
-          echo "Enter the Letterboxd ID:"
-          read LETTERBOXD_ID
-        fi
-
-        if [[ $SENSCRITIQUE_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
-          open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-          open -a $BROWSER_PATH "https://www.senscritique.com"
-          echo "Enter the SensCritique ID:"
-          read SENSCRITIQUE_ID
         fi
 
         if [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; then
