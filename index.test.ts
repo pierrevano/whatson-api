@@ -63,6 +63,7 @@ function checkRatings(item, property, minRating, maxRating) {
  */
 function checkItemProperties(items) {
   return items.forEach((item) => {
+    /* Common */
     config.keysToCheck.forEach((key) => {
       item.is_active === true ? expect(item).toHaveProperty(key) : null;
       item.is_active === true ? expect(typeof item[key]).not.toBe("undefined") : null;
@@ -70,38 +71,28 @@ function checkItemProperties(items) {
 
     expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(config.maximumIsActiveItems);
 
+    expect(item.title).not.toBeNull();
+    expect(item.image).not.toBeNull();
+    expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
+
+    item.item_type === "tvshow" && item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
+    item.item_type === "tvshow" ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
+    item.item_type === "movie" ? expect(item.platforms_links).toBeNull() : null; // No platforms links for movie item type.
+
+    item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
+    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);
+
+    /* Popularity */
+    item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;
+    item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;
+
+    /* AlloCiné */
     expect(item.allocine).not.toBeNull();
     expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.allocine);
     expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.allocine.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.allocine.critics_number).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.allocine.critics_rating_details).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-
-    expect(item.imdb).not.toBeNull();
-    expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.imdb);
-    expect(item.imdb.id.startsWith("tt")).toBeTruthy();
-    expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-
-    item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.betaseries) : null;
-    expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-
-    item.is_active === true && item.metacritic ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.metacritic) : null;
-    expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-
-    item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.rottenTomatoes) : null;
-    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-
-    item.letterboxd ? expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.letterboxd) : null;
-    item.is_active === true && item.item_type === "movie"
-      ? expect(items.filter((item) => item.letterboxd && item.letterboxd.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
-      : null;
-    item.item_type === "tvshow" ? expect(item.letterboxd).toBeNull() : null; // No tvshows on Letterboxd (yet).
-
-    item.senscritique ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritique) : null;
-    item.is_active === true ? expect(items.filter((item) => item.senscritique && item.senscritique.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems) : null;
-
     expect(
       items.filter(
         (item) =>
@@ -109,25 +100,45 @@ function checkItemProperties(items) {
       ).length
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    expect(item.title).not.toBeNull();
-    expect(item.image).not.toBeNull();
-    expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
+    /* IMDb */
+    expect(item.imdb).not.toBeNull();
+    expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.imdb);
+    expect(item.imdb.id.startsWith("tt")).toBeTruthy();
+    expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    item.item_type === "tvshow" && item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
-    item.item_type === "tvshow" ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
+    /* BetaSeries */
+    item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.betaseries) : null;
+    expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
-    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);
+    /* Metacritic */
+    item.is_active === true && item.metacritic ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.metacritic) : null;
+    expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;
-    item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;
+    /* Rotten Tomatoes */
+    item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.rottenTomatoes) : null;
+    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
+    /* Letterboxd */
+    item.letterboxd ? expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.letterboxd) : null;
+    item.is_active === true && item.item_type === "movie"
+      ? expect(items.filter((item) => item.letterboxd && item.letterboxd.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+    item.item_type === "tvshow" ? expect(item.letterboxd).toBeNull() : null; // No tvshows on Letterboxd (yet).
+
+    /* SensCritique */
+    item.senscritique ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritique) : null;
+    item.is_active === true ? expect(items.filter((item) => item.senscritique && item.senscritique.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems) : null;
+
+    /* Mojo */
     item.is_active === true && item.item_type === "movie"
       ? expect(items.filter((item) => item.mojo && item.mojo.lifetime_gross.charAt(0) === "$").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
       : null;
     item.is_active === true && item.item_type === "movie"
       ? expect(items.filter((item) => item.mojo && Number.isInteger(item.mojo.rank)).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
       : null;
+    item.item_type === "tvshow" ? expect(item.mojo).toBeNull() : null; // No mojo information for tvshow item type.
   });
 }
 
