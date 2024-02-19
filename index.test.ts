@@ -97,6 +97,7 @@ function checkItemProperties(items) {
     item.is_active === true && item.item_type === "movie"
       ? expect(items.filter((item) => item.letterboxd && item.letterboxd.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
+    item.item_type === "tvshow" ? expect(item.letterboxd).toBeNull() : null; // No tvshows on Letterboxd (yet).
 
     item.senscritique ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritique) : null;
     item.is_active === true ? expect(items.filter((item) => item.senscritique && item.senscritique.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems) : null;
