@@ -57,89 +57,128 @@ Example of an item returned:
 
 ```
 {
-    "_id": "aHR0cHM6Ly93d3cuYWxsb2NpbmUuZnIvc2VyaWVzL2ZpY2hlc2VyaWVfZ2VuX2NzZXJpZT03MTU3Lmh0bWw=",
-    "allocine": {
-        "id": 7157,
-        "url": "https://www.allocine.fr/series/ficheserie_gen_cserie=7157.html",
-        "users_rating": 4.6,
-        "critics_rating": 4.1,
-        "critics_number": 7,
-        "critics_rating_details": [
-            {
-                "critic_name": "Entertainment weekly",
-                "critic_rating": 5
-            },
-            {
-                "critic_name": "The Hollywood Reporter",
-                "critic_rating": 5
-            },
-            {
-                "critic_name": "Variety",
-                "critic_rating": 5
-            },
-            {
-                "critic_name": "Hitfix",
-                "critic_rating": 4
-            },
-            {
-                "critic_name": "Pittsburg Post-Gazette",
-                "critic_rating": 4
-            },
-            {
-                "critic_name": "TV Squad",
-                "critic_rating": 4
-            },
-            {
-                "critic_name": "Wall Street Journal",
-                "critic_rating": 1.5
-            }
-        ],
-        "popularity": 34
-    },
-    "betaseries": {
-        "id": "gameofthrones",
-        "url": "https://www.betaseries.com/serie/gameofthrones",
-        "users_rating": 4.67
-    },
-    "id": 1399,
-    "image": "https://fr.web.img5.acsta.net/pictures/23/01/03/14/13/0717778.jpg",
-    "imdb": {
-        "id": "tt0944947",
-        "url": "https://www.imdb.com/title/tt0944947/",
-        "users_rating": 9.2,
-        "popularity": 13
-    },
-    "is_active": true,
-    "item_type": "tvshow",
-    "platforms_links": [
-        {
-            "name": "Pass Warner",
-            "link_url": "https://www.betaseries.com/link/1161/415/fr"
-        },
-        {
-            "name": "Prime Video",
-            "link_url": "https://www.betaseries.com/link/1161/3/fr"
-        }
+  "_id": "aHR0cHM6Ly93d3cuYWxsb2NpbmUuZnIvc2VyaWVzL2ZpY2hlc2VyaWVfZ2VuX2NzZXJpZT0yNTYzMy5odG1s",
+  "allocine": {
+    "id": 25633,
+    "url": "https://www.allocine.fr/series/ficheserie_gen_cserie=25633.html",
+    "users_rating": 4.2,
+    "critics_rating": 3.5,
+    "critics_number": 16,
+    "critics_rating_details": [
+      {
+        "critic_name": "Ecran Large",
+        "critic_rating": 4
+      },
+      {
+        "critic_name": "Entertainment weekly",
+        "critic_rating": 4
+      },
+      {
+        "critic_name": "IGN France",
+        "critic_rating": 4
+      },
+      {
+        "critic_name": "Le Monde",
+        "critic_rating": 4
+      },
+      {
+        "critic_name": "Le Parisien",
+        "critic_rating": 4
+      },
+      {
+        "critic_name": "Les Inrockuptibles",
+        "critic_rating": 4
+      },
+      {
+        "critic_name": "Libération",
+        "critic_rating": 4
+      },
+      {
+        "critic_name": "Variety",
+        "critic_rating": 4
+      },
+      {
+        "critic_name": "Le Figaro",
+        "critic_rating": 3.5
+      },
+      {
+        "critic_name": "Numerama",
+        "critic_rating": 3.5
+      },
+      {
+        "critic_name": "Première",
+        "critic_rating": 3.5
+      },
+      {
+        "critic_name": "Empire",
+        "critic_rating": 3
+      },
+      {
+        "critic_name": "Numerama",
+        "critic_rating": 3
+      },
+      {
+        "critic_name": "The Hollywood Reporter",
+        "critic_rating": 3
+      },
+      {
+        "critic_name": "Rolling Stone",
+        "critic_rating": 2
+      },
+      {
+        "critic_name": "USA Today",
+        "critic_rating": 2
+      }
     ],
-    "seasons_number": 8,
-    "status": "Ended",
-    "title": "Game of Thrones",
-    "trailer": "https://www.dailymotion.com/embed/video/x86esn8",
-    "metacritic": {
-        "id": "game-of-thrones",
-        "url": "https://www.metacritic.com/tv/game-of-thrones",
-        "users_rating": 8.4,
-        "critics_rating": 86
-    },
-    "mojo": null,
-    "rotten_tomatoes": {
-        "id": "game_of_thrones",
-        "url": "https://www.rottentomatoes.com/tv/game_of_thrones",
-        "users_rating": 85,
-        "critics_rating": 88
-    },
-    "popularity_average": 23.5,
-    "ratings_average": 4.4
+    "popularity": 4
+  },
+  "betaseries": {
+    "id": "house-of-the-dragon",
+    "url": "https://www.betaseries.com/serie/house-of-the-dragon",
+    "users_rating": 4.33
+  },
+  "id": 94997,
+  "image": "https://fr.web.img4.acsta.net/pictures/23/05/17/14/30/0480031.jpg",
+  "imdb": {
+    "id": "tt11198330",
+    "url": "https://www.imdb.com/title/tt11198330/",
+    "users_rating": 8.4,
+    "popularity": 55
+  },
+  "is_active": true,
+  "item_type": "tvshow",
+  "platforms_links": [
+    {
+      "name": "Pass Warner",
+      "link_url": "https://www.betaseries.com/link/22920/415/fr"
+    }
+  ],
+  "seasons_number": 2,
+  "status": "Ongoing",
+  "title": "Game of Thrones: House of the Dragon",
+  "trailer": "https://www.dailymotion.com/embed/video/x8csylj",
+  "metacritic": {
+    "id": "house-of-the-dragon",
+    "url": "https://www.metacritic.com/tv/house-of-the-dragon",
+    "users_rating": 5.4,
+    "critics_rating": 69
+  },
+  "mojo": null,
+  "rotten_tomatoes": {
+    "id": "house_of_the_dragon",
+    "url": "https://www.rottentomatoes.com/tv/house_of_the_dragon",
+    "users_rating": 82,
+    "critics_rating": 93
+  },
+  "updated_at": "2024-02-19T13:06:13.058Z",
+  "letterboxd": null,
+  "senscritique": {
+    "id": "40572227",
+    "url": "https://www.senscritique.com/serie/-/40572227",
+    "users_rating": 7.5
+  },
+  "popularity_average": 29.5,
+  "ratings_average": 3.9
 }
 ```
 

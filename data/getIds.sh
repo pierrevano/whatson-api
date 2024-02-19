@@ -294,7 +294,12 @@ do
       echo $URL >> $TEMP_URLS_FILE_PATH
 
       if [[ $PROMPT == "recheck" ]]; then
-        if [[ $IMDB_CHECK == "null" ]] || [[ $BETASERIES_CHECK == "null" ]] || [[ $METACRITIC_CHECK == "null" ]] || [[ $ROTTEN_TOMATOES_CHECK == "null" ]] || [[ $LETTERBOXD_CHECK == "null" ]] || [[ $SENSCRITIQUE_CHECK == "null" ]]; then
+        if { [[ $IMDB_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "imdb" ]]; } ||
+          { [[ $BETASERIES_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "betaseries" ]]; } ||
+          { [[ $METACRITIC_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "metacritic" ]]; } ||
+          { [[ $ROTTEN_TOMATOES_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "rottentomatoes" ]]; } ||
+          { [[ $LETTERBOXD_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "letterboxd" ]]; } ||
+          { [[ $SENSCRITIQUE_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "senscritique" ]]; }; then
           DUPLICATE=0
           echo "Found $URL to be rechecked."
         else
