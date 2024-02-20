@@ -1,11 +1,19 @@
 COUNTER=0
+BASE_URL=https://www.allocine.fr
+MAX_INDEX=350000
 
 if [[ $2 == "movie" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
   FILMS_IDS_FILE_PATH_TEMP=./temp_new_films_ids.txt
+  BASE_URL_ALLOCINE=/film/fichefilm_gen_cfilm=
+  TEMP_FILE=temp_check_allocine_movie.txt
+  BETASERIES_TYPE=movies/movie
 elif [[ $2 == "tvshow" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
   FILMS_IDS_FILE_PATH_TEMP=./temp_new_series_ids.txt
+  BASE_URL_ALLOCINE=/series/ficheserie_gen_cserie=
+  TEMP_FILE=temp_check_allocine_series.txt
+  BETASERIES_TYPE=shows/display
 elif [[ -z $1 ]]; then
   echo "Add 'check' or 'update' first"
   exit 1
@@ -26,7 +34,7 @@ function CheckID {
 }
 
 get_other_ids () {
-  if [[ $METACRITIC_ID_FROM_FILE == "null" ]]; then
+  if [[ $1 == "check_allocine" ]] || [[ $METACRITIC_ID_FROM_FILE == "null" ]]; then
     METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
     METACRITIC_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.metacritic.com" | grep "Q21441764" | wc -l | awk '{print $1}')
     if [[ -z $METACRITIC_ID ]] || [[ $METACRITIC_ID_DEPRECATED -eq 1 ]]; then
@@ -37,7 +45,7 @@ get_other_ids () {
   fi
   echo "Metacritic ID: $METACRITIC_ID"
 
-  if [[ $ROTTEN_TOMATOES_ID_FROM_FILE == "null" ]]; then
+  if [[ $1 == "check_allocine" ]] || [[ $ROTTEN_TOMATOES_ID_FROM_FILE == "null" ]]; then
     ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
     ROTTEN_TOMATOES_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.rottentomatoes.com" | grep "Q21441764" | wc -l | awk '{print $1}')
     if [[ -z $ROTTEN_TOMATOES_ID ]] || [[ $ROTTEN_TOMATOES_ID_DEPRECATED -eq 1 ]]; then
@@ -48,7 +56,7 @@ get_other_ids () {
   fi
   echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
 
-  if [[ $LETTERBOXD_ID_FROM_FILE == "null" ]]; then
+  if [[ $1 == "check_allocine" ]] || [[ $LETTERBOXD_ID_FROM_FILE == "null" ]]; then
     LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
     LETTERBOXD_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://letterboxd.com" | grep "Q21441764" | wc -l | awk '{print $1}')
     if [[ -z $LETTERBOXD_ID ]] || [[ $LETTERBOXD_ID_DEPRECATED -eq 1 ]]; then
@@ -59,7 +67,7 @@ get_other_ids () {
   fi
   echo "Letterboxd ID: $LETTERBOXD_ID"
 
-  if [[ $SENSCRITIQUE_ID_FROM_FILE == "null" ]]; then
+  if [[ $1 == "check_allocine" ]] || [[ $SENSCRITIQUE_ID_FROM_FILE == "null" ]]; then
     SENSCRITIQUE_ID=$(curl -s $WIKI_URL | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
     SENSCRITIQUE_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.senscritique.com" | grep "Q21441764" | wc -l | awk '{print $1}')
     if [[ -z $SENSCRITIQUE_ID ]] || [[ $SENSCRITIQUE_ID_DEPRECATED -eq 1 ]]; then
@@ -128,7 +136,7 @@ elif [[ $1 == "update" ]]; then
 
   TOTAL_LINES=$(wc -l <"${FILMS_IDS_FILE_PATH_TEMP}")
 
-  REGEX_IDS="^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(.+?)+,(.+?)+,(TRUE|FALSE){1}$"
+  REGEX_IDS="^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(.+?)+,(.+?)+,(TRUE|FALSE)$"
   WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | wc -l | awk '{print $1}')
   if [[ $WRONG_LINES_NB -gt 1 ]]; then
     echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
@@ -164,4 +172,51 @@ elif [[ $1 == "update" ]]; then
 
     ((COUNTER++))
   done < "$FILMS_IDS_FILE_PATH_TEMP"
+elif [[ $1 == "check_allocine" ]]; then
+  rm -f $TEMP_FILE
+
+  source .env
+
+  for ((INDEX=1; INDEX<=MAX_INDEX; INDEX++))
+  do
+    URL="$BASE_URL_ALLOCINE$INDEX.html"
+    URL_IN_FILE=$(grep -c "$URL" "$FILMS_IDS_FILE_PATH")
+
+    if [ $URL_IN_FILE -eq 0 ]; then
+    FULL_URL="$BASE_URL$URL"
+
+    HTTP_RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null "$FULL_URL")
+
+      if [ $HTTP_RESPONSE == 200 ]; then
+        echo "$INDEX / $MAX_INDEX"
+
+        PERCENTAGE=$(echo "scale=2; ($INDEX/$MAX_INDEX)*100" | bc)
+        if [[ $PREVIOUS_PERCENTAGE != $PERCENTAGE ]]; then
+          echo "Percent of advancement: $PERCENTAGE%"
+        fi
+
+        WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$INDEX%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
+        if [[ $WIKI_URL ]]; then
+          echo "WIKI_URL: $WIKI_URL"
+
+          IMDB_ID=$(curl -s $WIKI_URL | grep "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -Eo "tt[0-9]+" | head -1)
+          if [[ $IMDB_ID ]]; then
+            echo "IMDb ID: $IMDB_ID"
+
+            BETASERIES_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE" | cut -d'/' -f5 | sed 's/"//g')
+            if [[ -z $BETASERIES_ID ]]; then
+              BETASERIES_ID=null
+            fi
+            echo "BetaSeries ID: $BETASERIES_ID"
+
+            get_other_ids
+
+            echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,FALSE" >> $TEMP_FILE
+          fi
+        fi
+      fi
+    fi
+
+    PREVIOUS_PERCENTAGE=$PERCENTAGE
+  done
 fi

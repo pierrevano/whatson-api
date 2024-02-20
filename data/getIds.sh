@@ -60,7 +60,7 @@ else
   sed -i '' -E "s/(,TRUE|,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
-REGEX_IDS="^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(.+?)+,(.+?)+,(TRUE|FALSE){1}$"
+REGEX_IDS="^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(.+?)+,(.+?)+,(TRUE|FALSE)$"
 WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
   echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
