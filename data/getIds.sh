@@ -240,6 +240,13 @@ do
     # Get AlloCiné film url
     URL=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4)
 
+    # Sometimes AlloCiné is displaying a default top series list starting by this ID. If `true`, abording.
+    if [[ $URL == "/series/ficheserie_gen_cserie=28295.html" ]] && [[ $PAGES_INDEX_NUMBER -eq 1 ]] && [[ $FILMS_INDEX_NUMBER -eq 1 ]]; then
+      echo "First URL is: $URL"
+      echo "Not updating tvshows as the top list is not correct."
+      exit 1
+    fi
+
     # Get id
     FILM_ID=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
 

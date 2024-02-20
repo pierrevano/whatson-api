@@ -14,7 +14,10 @@ const updateIds = () => {
   let item_type = getNodeVarsValues.item_type === "movie" ? "movie" : "tvshow";
 
   // Execute shell script
-  shell.exec(`bash ${config.getIdsFilePath} ${environment} ${item_type}`);
+  const command = `bash ${config.getIdsFilePath} ${environment} ${item_type}`;
+  console.log(`Running command: ${command}`);
+  console.log("----------------------------------------------------------------------------------------------------");
+  shell.exec(command);
 };
 
 module.exports = { updateIds };
