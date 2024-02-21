@@ -21,6 +21,7 @@ if [[ $TYPE == "movie" ]]; then
   BASE_URL=https://www.allocine.fr/film/aucinema/
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
   FILMS_FILE_NAME=films_ids.txt
+  POPULARITY_FILE_NAME=popularity_ids_films.txt
   FILMS_NUMBER_HREF=/film/fichefilm_gen_cfilm=
   TITLE_TYPE=feature,tv_movie,tv_special,documentary,short
   BETASERIES_TYPE=movies/movie
@@ -35,6 +36,7 @@ else
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
   FILMS_FILE_NAME=series_ids.txt
+  POPULARITY_FILE_NAME=popularity_ids_series.txt
   FILMS_NUMBER_HREF=/series/ficheserie_gen_cserie=
   TITLE_TYPE=tv_series,tv_episode,tv_special,tv_miniseries,documentary,tv_short
   BETASERIES_TYPE=shows/display
@@ -244,6 +246,9 @@ do
     if [[ $URL == "/series/ficheserie_gen_cserie=28295.html" ]] && [[ $PAGES_INDEX_NUMBER -eq 1 ]] && [[ $FILMS_INDEX_NUMBER -eq 1 ]]; then
       echo "First URL is: $URL"
       echo "Not updating tvshows as the top list is not correct."
+
+      curl -s "$BASE_URL_ASSETS/$POPULARITY_FILE_NAME" > $POPULARITY_ASSETS_PATH
+
       exit 1
     fi
 
