@@ -60,7 +60,10 @@ async function checkStatus(service) {
   const jsonArray = !getNodeVarsValues.is_not_active || getNodeVarsValues.is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
   const allTheMovieDbIds = jsonArray.map((item) => parseInt(item.THEMOVIEDB_ID));
 
-  if (allTheMovieDbIds.length < config.minimumActiveItems) {
+  if (allTheMovieDbIds.length === 0) {
+    console.log("Not updating tvshows as the top list is not correct.");
+    process.exit(0);
+  } else if (allTheMovieDbIds.length < config.minimumActiveItems) {
     console.log("Something went wrong when updating the IDs. Abording.");
     process.exit(1);
   }
