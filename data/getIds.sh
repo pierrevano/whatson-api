@@ -458,9 +458,17 @@ do
             echo "Number of lines found for $URL: $count"
 
             grep '^'"$URL"',*' $FILMS_IDS_FILE_PATH
-            echo "Which line to remove?"
-            read numberOfLine
-            if [[ $numberOfLine == "1" ]] || [[ $numberOfLine == "first" ]]; then
+
+            if [[ $SENSCRITIQUE_ID == "null" ]]; then
+              LINE_NUMBER_TO_REMOVE=2
+            elif [[ $SENSCRITIQUE_ID != "null" ]]; then
+              LINE_NUMBER_TO_REMOVE=1
+            else
+              echo "Which line to remove?"
+              read LINE_NUMBER_TO_REMOVE
+            fi
+
+            if [[ $LINE_NUMBER_TO_REMOVE == "1" ]] || [[ $LINE_NUMBER_TO_REMOVE == "first" ]]; then
               awk '!flag && /.*='"$FILM_ID"'\.html.*$/ {flag=1; next} 1' $FILMS_IDS_FILE_PATH > temp_sed && mv temp_sed $FILMS_IDS_FILE_PATH
               echo "First match removed."
             else

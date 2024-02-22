@@ -71,9 +71,13 @@ function checkItemProperties(items) {
 
     expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(config.maximumIsActiveItems);
 
+    expect(item._id).not.toBeNull();
+    expect(item.id).not.toBeNull();
     expect(item.title).not.toBeNull();
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
+    expect(item.ratings_average).not.toBeNull();
+    item.is_active === true ? expect(item.popularity_average).not.toBeNull() : null;
 
     item.item_type === "tvshow" && item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
     item.item_type === "tvshow" ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
