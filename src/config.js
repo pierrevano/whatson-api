@@ -64,7 +64,7 @@ const config = {
   series_ids_path: "./src/assets/series_ids.txt",
 
   checkItemsNumber: true,
-  margin: 200,
+  margin: 50,
 
   keysToCheck: [
     "_id",
