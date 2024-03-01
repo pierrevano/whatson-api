@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="39" failures="0" errors="0" time="54.207">
+  <testsuite name="What&apos;s on? API tests" errors="0" failures="0" skipped="0" timestamp="2024-03-01T18:51:09" time="54.17" tests="39">
+    <testcase classname="What&apos;s on? API tests valid_users_ratings" name="What&apos;s on? API tests valid_users_ratings" time="1.176">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests default_movies" name="What&apos;s on? API tests default_movies" time="0.829">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests only_movies" name="What&apos;s on? API tests only_movies" time="0.833">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests only_tvshows" name="What&apos;s on? API tests only_tvshows" time="0.82">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests only_active_items" name="What&apos;s on? API tests only_active_items" time="0.832">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests only_non_active_items" name="What&apos;s on? API tests only_non_active_items" time="1.345">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests both_movies_and_tvshows" name="What&apos;s on? API tests both_movies_and_tvshows" time="0.839">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests both_active_and_non_active_items" name="What&apos;s on? API tests both_active_and_non_active_items" time="1.417">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests only_tvshows_with_1_and_2_seasons" name="What&apos;s on? API tests only_tvshows_with_1_and_2_seasons" time="0.837">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests only_tvshows_greater_than_1_season" name="What&apos;s on? API tests only_tvshows_greater_than_1_season" time="0.842">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests only_ongoing_tvshows" name="What&apos;s on? API tests only_ongoing_tvshows" time="0.834">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests ongoing_and_canceled_tvshows" name="What&apos;s on? API tests ongoing_and_canceled_tvshows" time="0.867">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests only_null_status_items" name="What&apos;s on? API tests only_null_status_items" time="0.967">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests custom_limit_value" name="What&apos;s on? API tests custom_limit_value" time="0.808">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests ongoing_tvshows_with_1_and_2_seasons" name="What&apos;s on? API tests ongoing_tvshows_with_1_and_2_seasons" time="0.83">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests page_2_with_20_items" name="What&apos;s on? API tests page_2_with_20_items" time="0.811">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests no_items_found_on_page_3" name="What&apos;s on? API tests no_items_found_on_page_3" time="0.784">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests same_files_line_number_as_remote" name="What&apos;s on? API tests same_files_line_number_as_remote" time="1.491">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests correct_tmdb_id_returned" name="What&apos;s on? API tests correct_tmdb_id_returned" time="1.101">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests correct_tvshow_item_type_returned" name="What&apos;s on? API tests correct_tvshow_item_type_returned" time="1.134">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests correct_movie_item_type_returned" name="What&apos;s on? API tests correct_movie_item_type_returned" time="1.159">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests results_count_on_search" name="What&apos;s on? API tests results_count_on_search" time="0.995">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests titles_containing_game_on_search" name="What&apos;s on? API tests titles_containing_game_on_search" time="1.042">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests no_items_found_for_invalid_query" name="What&apos;s on? API tests no_items_found_for_invalid_query" time="0.977">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests ascending_popularity_average" name="What&apos;s on? API tests ascending_popularity_average" time="1.155">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests top_popularity_items" name="What&apos;s on? API tests top_popularity_items" time="0.893">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests correct_allocine_popularity_order" name="What&apos;s on? API tests correct_allocine_popularity_order" time="0.835">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests correct_imdb_popularity_order" name="What&apos;s on? API tests correct_imdb_popularity_order" time="0.804">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests correct_none_popularity_order" name="What&apos;s on? API tests correct_none_popularity_order" time="0.822">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests items_with_minimum_ratings" name="What&apos;s on? API tests items_with_minimum_ratings" time="0.83">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests ratings_average_for_incorrect_minimum_ratings" name="What&apos;s on? API tests ratings_average_for_incorrect_minimum_ratings" time="0.827">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests items_with_all_required_keys_active_movie" name="What&apos;s on? API tests items_with_all_required_keys_active_movie" time="1.256">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests items_with_all_required_keys_inactive_movie" name="What&apos;s on? API tests items_with_all_required_keys_inactive_movie" time="7.103">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests items_with_all_required_keys_active_tvshow" name="What&apos;s on? API tests items_with_all_required_keys_active_tvshow" time="1.203">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests items_with_all_required_keys_inactive_tvshow" name="What&apos;s on? API tests items_with_all_required_keys_inactive_tvshow" time="5.359">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests all_keys_are_lowercase" name="What&apos;s on? API tests all_keys_are_lowercase" time="1.242">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests unique_allocine_ids_movie" name="What&apos;s on? API tests unique_allocine_ids_movie" time="4.704">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests unique_allocine_ids_tvshow" name="What&apos;s on? API tests unique_allocine_ids_tvshow" time="2.52">
+    </testcase>
+    <testcase classname="What&apos;s on? API tests api_response_time_should_be_within_an_acceptable_range" name="What&apos;s on? API tests api_response_time_should_be_within_an_acceptable_range" time="0.82">
+    </testcase>
+  </testsuite>
+</testsuites>
