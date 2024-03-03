@@ -1,6 +1,7 @@
 const axios = require("axios");
 const axiosRetry = require("axios-retry");
 const { config } = require("../config");
+const { logErrors } = require("./logErrors");
 
 const isThirdPartyServiceOK = async (service) => {
   try {
@@ -13,6 +14,8 @@ const isThirdPartyServiceOK = async (service) => {
     const response = await axios.get(service, options);
     return response.status === 200;
   } catch (error) {
+    logErrors(error, service, null);
+
     return false;
   }
 };
