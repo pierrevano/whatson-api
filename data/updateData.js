@@ -35,16 +35,18 @@ async function checkStatus(service) {
 }
 
 (async () => {
-  const ids = [1, 2, 3];
-  for (const id of ids) {
-    await fetchAndCheckItemCount(id);
-  }
-  console.log("----------------------------------------------------------------------------------------------------");
+  if (getNodeVarsValues.skip_services !== "skip_services") {
+    const ids = [1, 2, 3];
+    for (const id of ids) {
+      await fetchAndCheckItemCount(id);
+    }
+    console.log("----------------------------------------------------------------------------------------------------");
 
-  for (let service of config.services) {
-    await checkStatus(service);
+    for (let service of config.services) {
+      await checkStatus(service);
+    }
+    console.log("----------------------------------------------------------------------------------------------------");
   }
-  console.log("----------------------------------------------------------------------------------------------------");
 
   if (getNodeVarsValues.get_ids === "update_ids") updateIds();
 

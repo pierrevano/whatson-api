@@ -1,6 +1,19 @@
+function isErrorPresent(errorMsg, error, item) {
+  const errorList = ["AxiosError: Request failed with status code 404", "TypeError: $ is not a function", "Error [ERR_FR_TOO_MANY_REDIRECTS]: Maximum number of redirects exceeded"];
+
+  if (errorMsg.includes("Error [ERR_FR_TOO_MANY_REDIRECTS]: Maximum number of redirects exceeded")) {
+    console.log(`Error: ${error.message}. Skipping the item update: ${item}`);
+  }
+
+  // Check if errorMsg includes any error from errorList
+  return !errorList.some((error) => errorMsg.includes(error));
+}
+
 const logErrors = (error, item, origin) => {
+  let errorMsg = `${item} - ${origin} - ${error}`;
+
   if (error instanceof RangeError) {
-    console.log("First item not updated:", item);
+    console.log(`Error: ${error.message}. Failed to update first item: ${item}`);
     process.exit(1);
   }
 
@@ -9,8 +22,7 @@ const logErrors = (error, item, origin) => {
     process.exit(1);
   }
 
-  let errorMsg = `${item} - ${origin} - ${error}`;
-  if (!errorMsg.includes("AxiosError: Request failed with status code 404") && !errorMsg.includes("TypeError: $ is not a function")) {
+  if (isErrorPresent(errorMsg, error, item)) {
     console.log(errorMsg);
     process.exit(1);
   }

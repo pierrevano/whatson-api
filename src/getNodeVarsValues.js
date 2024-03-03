@@ -12,7 +12,8 @@ const getNodeVarsValues = {
   skip_already_added_documents: node_vars[7],
   force: node_vars[8],
   skip_mojo: node_vars[9],
-  check_date: node_vars[10],
+  skip_services: node_vars[10],
+  check_date: node_vars[11],
 };
 
 module.exports = { getNodeVarsValues };
