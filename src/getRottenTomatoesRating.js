@@ -1,5 +1,6 @@
 const { config } = require("./config");
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { isNotNull } = require("./utils/isNotNull");
 const { logErrors } = require("./utils/logErrors");
 
 /**
@@ -19,7 +20,7 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
       },
     };
 
-    if (rottenTomatoesId !== null) {
+    if (isNotNull(rottenTomatoesId)) {
       $ = await getCheerioContent(`${rottenTomatoesHomepage}`, options, "getRottenTomatoesRating");
 
       let usersRating = parseInt($("score-board-deprecated").attr("audiencescore"));

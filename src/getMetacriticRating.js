@@ -1,5 +1,6 @@
 const { config } = require("./config");
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { isNotNull } = require("./utils/isNotNull");
 const { logErrors } = require("./utils/logErrors");
 
 /**
@@ -19,7 +20,7 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
       },
     };
 
-    if (metacriticId !== null) {
+    if (isNotNull(metacriticId)) {
       $ = await getCheerioContent(`${metacriticHomepage}`, options, "getMetacriticRating");
       let usersRating = parseFloat($(".c-siteReviewScore_user span").first().text());
       if (isNaN(usersRating)) usersRating = null;

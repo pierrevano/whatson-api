@@ -1,5 +1,6 @@
 const { config } = require("./config");
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { isNotNull } = require("./utils/isNotNull");
 const { logErrors } = require("./utils/logErrors");
 
 /**
@@ -20,7 +21,7 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
       },
     };
 
-    if (letterboxdId !== null) {
+    if (isNotNull(letterboxdId)) {
       $ = await getCheerioContent(`${letterboxdHomepage}`, options, "getLetterboxdRating");
 
       let metaContent = $('meta[name="twitter:data2"]');

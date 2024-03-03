@@ -1,5 +1,6 @@
 const { config } = require("./config");
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { isNotNull } = require("./utils/isNotNull");
 const { logErrors } = require("./utils/logErrors");
 
 /**
@@ -19,7 +20,7 @@ const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
       },
     };
 
-    if (sensCritiqueId !== null) {
+    if (isNotNull(sensCritiqueId)) {
       $ = await getCheerioContent(`${sensCritiqueHomepage}`, options, "getSensCritiqueRating");
       let usersRating = parseFloat($('[data-testid="Rating"]').first().text());
       if (isNaN(usersRating)) usersRating = null;

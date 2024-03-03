@@ -58,7 +58,8 @@ async function checkStatus(service) {
 
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
   const jsonArray = !getNodeVarsValues.is_not_active || getNodeVarsValues.is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
-  const allTheMovieDbIds = jsonArray.map((item) => parseInt(item.THEMOVIEDB_ID));
+  const jsonArraySortedHighestToLowest = jsonArray.sort((a, b) => b.THEMOVIEDB_ID - a.THEMOVIEDB_ID);
+  const allTheMovieDbIds = jsonArraySortedHighestToLowest.map((item) => parseInt(item.THEMOVIEDB_ID));
 
   if (allTheMovieDbIds.length === 0) {
     console.log("Not updating tvshows as the top list is not correct.");
@@ -110,7 +111,7 @@ async function checkStatus(service) {
       force,
       index_to_start,
       getNodeVarsValues.item_type,
-      jsonArray,
+      jsonArraySortedHighestToLowest,
       mojoBoxOfficeArray,
       getNodeVarsValues.skip_already_added_documents
     );
@@ -121,5 +122,5 @@ async function checkStatus(service) {
     await client.close();
   }
 
-  console.timeEnd("Duration", `- ${jsonArray.length} elements imported.`);
+  console.timeEnd("Duration", `- ${jsonArraySortedHighestToLowest.length} elements imported.`);
 })();
