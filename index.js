@@ -61,8 +61,14 @@ app.get("/", async (req, res) => {
 
     for (let index = 0; index < config.keysToCheckForSearch.length; index++) {
       const key = config.keysToCheckForSearch[index];
-      if (req.query.hasOwnProperty(key)) {
-        const items = await findId(req.query);
+
+      const lowerCaseQuery = {};
+      for (let queryKey in req.query) {
+        lowerCaseQuery[queryKey.toLowerCase()] = req.query[queryKey];
+      }
+
+      if (lowerCaseQuery.hasOwnProperty(key)) {
+        const items = await findId(lowerCaseQuery);
         const results = items.results;
         const total_results = items.total_results;
 
