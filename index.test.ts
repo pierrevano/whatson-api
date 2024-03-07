@@ -49,6 +49,8 @@ function isNumberWithDecimals(input) {
  */
 function checkRatings(item, property, minRating, maxRating) {
   if (item && item[property]) {
+    console.log(item);
+
     expect(item[property]).toBeGreaterThanOrEqual(minRating);
     expect(item[property]).toBeLessThanOrEqual(maxRating);
     expect(isNumberWithDecimals(item[property])).toBeTruthy;
@@ -102,6 +104,7 @@ function checkItemProperties(items) {
           item.allocine.critics_rating_details && typeof item.allocine.critics_rating_details[0].critic_name === "string" && typeof item.allocine.critics_rating_details[0].critic_rating === "number"
       ).length
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.allocine && item.allocine.critics_number ? expect(item.allocine.critics_number).toEqual(item.allocine.critics_rating_details.length) : null;
 
     /* IMDb */
     expect(item.imdb).not.toBeNull();
