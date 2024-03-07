@@ -98,6 +98,16 @@ const createJSON = async (
     popularity: imdbPopularity.popularity,
   };
 
+  /* Creates a Letterboxd object if the letterboxd rating is not null. */
+  const letterboxdObj =
+    letterboxdRating !== null
+      ? {
+          id: letterboxdRating.id,
+          url: letterboxdRating.url,
+          users_rating: letterboxdRating.usersRating,
+        }
+      : null;
+
   /* Creates a Metacritic object if the metacritic rating is not null. */
   const metacriticObj =
     metacriticRating !== null
@@ -117,16 +127,6 @@ const createJSON = async (
           url: rottenTomatoesRating.url,
           users_rating: rottenTomatoesRating.usersRating,
           critics_rating: rottenTomatoesRating.criticsRating,
-        }
-      : null;
-
-  /* Creates a Letterboxd object if the letterboxd rating is not null. */
-  const letterboxdObj =
-    letterboxdRating !== null
-      ? {
-          id: letterboxdRating.id,
-          url: letterboxdRating.url,
-          users_rating: letterboxdRating.usersRating,
         }
       : null;
 
@@ -151,20 +151,20 @@ const createJSON = async (
 
   const data = {
     id: theMoviedbId,
-    is_active: isActive,
     item_type: item_type,
+    is_active: isActive,
     title: allocineFirstInfo.allocineTitle,
     image: allocineFirstInfo.allocineImage,
+    trailer: allocineFirstInfo.trailer,
     platforms_links: betaseriesPlatformsLinks,
     seasons_number: allocineFirstInfo.seasonsNumber,
     status: allocineFirstInfo.status,
-    trailer: allocineFirstInfo.trailer,
     allocine: allocineObj,
     betaseries: betaseriesObj,
     imdb: imdbObj,
+    letterboxd: letterboxdObj,
     metacritic: metacriticObj,
     rotten_tomatoes: rottenTomatoesObj,
-    letterboxd: letterboxdObj,
     senscritique: sensCritiqueObj,
     mojo: mojoObj,
   };

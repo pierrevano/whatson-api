@@ -4,32 +4,38 @@ Companion to [What's on?](https://github.com/pierrevano/whatson)
 
 ---
 
-This API provides information on movies and tv shows.
+This API provides information on movies and tvshows.
 
 ## Endpoints
 
 ### **GET /**
 
-Retrieves detailed information about either a movie or a tv show based on the provided query parameters.
+Retrieves detailed information about either a movie or a tvshow based on the provided query parameters.
 
 #### Parameters:
 
-- **item_type:** The type of the item (either movie or tv show)
-- **popularity_filters:** Popularity filters by source
-- **minimum_ratings:** Minimum ratings
-- **seasons_number:** Number of seasons (5 means 5+)
-- **status:** TV show's status filters (only valid for tv shows)
-- **ratings_filters:** Ratings filters by source
+- **item_type:** The type of the item (movie or tvshow)
+- **popularity_filters:** Popularity filters by source (allocine_popularity or imdb_popularity)
+- **minimum_ratings:** Minimum ratings (0,1,2,2.5,3,3.5,4,4.5)
+- **seasons_number:** Number of seasons (1,2,3,4,5 and 5 means 5+) (only valid for tvshows)
+- **status:** TV show's status filters (canceled,ended,ongoing,pilot,soon,unknown) (only valid for tvshows)
+- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users)
 - **page:** Page number
-- **title:** Title of the movie or tv show
-- **allocineId:** Allocine ID of the movie or tv show
-- **betaseriesId:** BetaSeries ID of the movie or tv show
-- **imdbId:** IMDb ID of the movie or tv show
-- **themoviedbId:** The Movie Database ID of the movie or tv show
-- **metacriticId:** Metacritic ID of the movie or tv show
-- **rottentomatoesId:** Rotten Tomatoes ID of the movie or tv show
+- **limit:** Page items limit
+
+##### Search
+
+The query parameters provided below are solely for item search purposes and must be unique.
+
+- **title:** Title of the movie or tvshow
+- **allocineId:** AlloCiné ID of the movie or tvshow
+- **betaseriesId:** BetaSeries ID of the movie or tvshow
+- **imdbId:** IMDb ID of the movie or tvshow
 - **letterboxdId:** Letterboxd ID of the movie
-- **senscritiqueId:** SensCritique ID of the movie or tv show
+- **metacriticId:** Metacritic ID of the movie or tvshow
+- **rottentomatoesId:** Rotten Tomatoes ID of the movie or tvshow
+- **senscritiqueId:** SensCritique ID of the movie or tvshow
+- **themoviedbId:** The Movie Database ID of the movie or tvshow
 
 #### Responses:
 
@@ -39,13 +45,13 @@ Retrieves detailed information about either a movie or a tv show based on the pr
 
 ### **GET /{item_type}/{id}**
 
-Provides detailed information about specific item (movie or tv show) by its unique identifier and type
+Provides detailed information about specific item (movie or tvshow) by its unique identifier and type
 
 #### Parameters:
 
-- **item_type:** The type of the item (either movie or tv show)
-- **id:** The unique identifier for the item (the movie DB ID)
-- **ratings_filters:** Ratings filters by source
+- **item_type:** The type of the item (movie or tv)
+- **id:** The unique identifier for the item (The Movie Database ID)
+- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users)
 
 #### Responses:
 
@@ -57,128 +63,219 @@ Example of an item returned:
 
 ```
 {
-  "_id": "aHR0cHM6Ly93d3cuYWxsb2NpbmUuZnIvc2VyaWVzL2ZpY2hlc2VyaWVfZ2VuX2NzZXJpZT0yNTYzMy5odG1s",
-  "allocine": {
-    "id": 25633,
-    "url": "https://www.allocine.fr/series/ficheserie_gen_cserie=25633.html",
-    "users_rating": 4.2,
-    "critics_rating": 3.5,
-    "critics_number": 16,
-    "critics_rating_details": [
-      {
-        "critic_name": "Ecran Large",
-        "critic_rating": 4
-      },
-      {
-        "critic_name": "Entertainment weekly",
-        "critic_rating": 4
-      },
-      {
-        "critic_name": "IGN France",
-        "critic_rating": 4
-      },
-      {
-        "critic_name": "Le Monde",
-        "critic_rating": 4
-      },
-      {
-        "critic_name": "Le Parisien",
-        "critic_rating": 4
-      },
-      {
-        "critic_name": "Les Inrockuptibles",
-        "critic_rating": 4
-      },
-      {
-        "critic_name": "Libération",
-        "critic_rating": 4
-      },
-      {
-        "critic_name": "Variety",
-        "critic_rating": 4
-      },
-      {
-        "critic_name": "Le Figaro",
-        "critic_rating": 3.5
-      },
-      {
-        "critic_name": "Numerama",
-        "critic_rating": 3.5
-      },
-      {
-        "critic_name": "Première",
-        "critic_rating": 3.5
-      },
-      {
-        "critic_name": "Empire",
-        "critic_rating": 3
-      },
-      {
-        "critic_name": "Numerama",
-        "critic_rating": 3
-      },
-      {
-        "critic_name": "The Hollywood Reporter",
-        "critic_rating": 3
-      },
-      {
-        "critic_name": "Rolling Stone",
-        "critic_rating": 2
-      },
-      {
-        "critic_name": "USA Today",
-        "critic_rating": 2
-      }
-    ],
-    "popularity": 4
-  },
-  "betaseries": {
-    "id": "house-of-the-dragon",
-    "url": "https://www.betaseries.com/serie/house-of-the-dragon",
-    "users_rating": 4.33
-  },
-  "id": 94997,
-  "image": "https://fr.web.img4.acsta.net/pictures/23/05/17/14/30/0480031.jpg",
-  "imdb": {
-    "id": "tt11198330",
-    "url": "https://www.imdb.com/title/tt11198330/",
-    "users_rating": 8.4,
-    "popularity": 55
-  },
-  "is_active": true,
-  "item_type": "tvshow",
-  "platforms_links": [
-    {
-      "name": "Pass Warner",
-      "link_url": "https://www.betaseries.com/link/22920/415/fr"
-    }
-  ],
-  "seasons_number": 2,
-  "status": "Ongoing",
-  "title": "Game of Thrones: House of the Dragon",
-  "trailer": "https://www.dailymotion.com/embed/video/x8csylj",
-  "metacritic": {
-    "id": "house-of-the-dragon",
-    "url": "https://www.metacritic.com/tv/house-of-the-dragon",
-    "users_rating": 5.4,
-    "critics_rating": 69
-  },
-  "mojo": null,
-  "rotten_tomatoes": {
-    "id": "house_of_the_dragon",
-    "url": "https://www.rottentomatoes.com/tv/house_of_the_dragon",
-    "users_rating": 82,
-    "critics_rating": 93
-  },
-  "updated_at": "2024-02-19T13:06:13.058Z",
-  "letterboxd": null,
-  "senscritique": {
-    "id": "40572227",
-    "url": "https://www.senscritique.com/serie/-/40572227",
-    "users_rating": 7.5
-  },
-  "popularity_average": 29.5,
-  "ratings_average": 3.9
+    "_id": "aHR0cHM6Ly93d3cuYWxsb2NpbmUuZnIvZmlsbS9maWNoZWZpbG1fZ2VuX2NmaWxtPTI3ODc0Mi5odG1s",
+    "allocine": {
+        "id": 278742,
+        "url": "https://www.allocine.fr/film/fichefilm_gen_cfilm=278742.html",
+        "users_rating": 4.5,
+        "critics_rating": 4.2,
+        "critics_number": 38,
+        "critics_rating_details": [
+            {
+                "critic_name": "20 Minutes",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "CNews",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "CinemaTeaser",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Closer",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Dernières Nouvelles d'Alsace",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Filmsactu",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "IGN France",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "L'Humanité",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "LCI",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "La Voix du Nord",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Le Dauphiné Libéré",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Le Journal du Dimanche",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Le Journal du Geek",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Le Parisien",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Le Point",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Les Echos",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Ouest France",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Première",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "aVoir-aLire.com",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Ecran Large",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Elle",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Franceinfo Culture",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "L'Obs",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "La Croix",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Le Figaro",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Les Fiches du Cinéma",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Libération",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Paris Match",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Rolling Stone",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Sud Ouest",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Télé Loisirs",
+                "critic_rating": 4
+            },
+            {
+                "critic_name": "Les Inrockuptibles",
+                "critic_rating": 3
+            },
+            {
+                "critic_name": "Télérama",
+                "critic_rating": 3
+            },
+            {
+                "critic_name": "Cahiers du Cinéma",
+                "critic_rating": 2
+            },
+            {
+                "critic_name": "Critikat.com",
+                "critic_rating": 2
+            },
+            {
+                "critic_name": "Le Monde",
+                "critic_rating": 2
+            },
+            {
+                "critic_name": "Marianne",
+                "critic_rating": 2
+            },
+            {
+                "critic_name": "Le Figaro",
+                "critic_rating": 1
+            }
+        ],
+        "popularity": 3
+    },
+    "betaseries": {
+        "id": "91505-dune-part-two",
+        "url": "https://www.betaseries.com/film/91505-dune-part-two",
+        "users_rating": 4.55
+    },
+    "id": 693134,
+    "image": "https://fr.web.img4.acsta.net/pictures/24/01/26/10/18/5392835.jpg",
+    "imdb": {
+        "id": "tt15239678",
+        "url": "https://www.imdb.com/title/tt15239678/",
+        "users_rating": 9,
+        "popularity": 1
+    },
+    "is_active": true,
+    "item_type": "movie",
+    "platforms_links": null,
+    "seasons_number": null,
+    "status": null,
+    "title": "Dune : Deuxième Partie",
+    "trailer": "https://fr.vid.web.acsta.net/nmedia/33/23/12/12/18/19604610_hd_013.mp4",
+    "metacritic": {
+        "id": "dune-part-two",
+        "url": "https://www.metacritic.com/movie/dune-part-two",
+        "users_rating": 8.3,
+        "critics_rating": 79
+    },
+    "mojo": {
+        "rank": 915,
+        "url": "https://www.boxofficemojo.com/title/tt15239678/",
+        "lifetime_gross": "$197,981,312"
+    },
+    "rotten_tomatoes": {
+        "id": "dune_part_two",
+        "url": "https://www.rottentomatoes.com/m/dune_part_two",
+        "users_rating": 95,
+        "critics_rating": 94
+    },
+    "letterboxd": {
+        "id": "dune-part-two",
+        "url": "https://letterboxd.com/film/dune-part-two",
+        "users_rating": 4.57
+    },
+    "senscritique": {
+        "id": "45424060",
+        "url": "https://www.senscritique.com/film/-/45424060",
+        "users_rating": 7.9
+    },
+    "updated_at": "2024-03-07T09:24:45.783Z",
+    "popularity_average": 2,
+    "ratings_average": 4.4
 }
 ```
 
