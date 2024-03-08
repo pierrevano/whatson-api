@@ -343,11 +343,19 @@ do
 
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
-          IMDB_ID=null
-          METACRITIC_ID=null
-          ROTTEN_TOMATOES_ID=null
-          LETTERBOXD_ID=null
-          SENSCRITIQUE_ID=null
+          if [[ $PROMPT == "recheck" ]] && [[ $IMDB_CHECK ]]; then
+            IMDB_ID=$IMDB_CHECK
+            METACRITIC_ID=$METACRITIC_CHECK
+            ROTTEN_TOMATOES_ID=$ROTTEN_TOMATOES_CHECK
+            LETTERBOXD_ID=$LETTERBOXD_CHECK
+            SENSCRITIQUE_ID=$SENSCRITIQUE_CHECK
+          else
+            IMDB_ID=null
+            METACRITIC_ID=null
+            ROTTEN_TOMATOES_ID=null
+            LETTERBOXD_ID=null
+            SENSCRITIQUE_ID=null
+          fi
         else
           echo "wikiUrl: $WIKI_URL"
 
