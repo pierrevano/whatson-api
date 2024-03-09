@@ -496,6 +496,20 @@ const params = {
       expect(uniqueIds.length).toEqual(ids.length);
     },
   },
+
+  today_date_items: {
+    query: "?item_type=movie,tvshow&is_active=true&limit=400",
+    expectedResult: (items) => {
+      const today = new Date();
+      const formattedDate = today.toISOString().split("T")[0];
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("updated_at");
+        let itemDate = new Date(item.updated_at).toISOString().split("T")[0];
+        expect(itemDate).toBe(formattedDate);
+      });
+    },
+  },
 };
 
 /**
