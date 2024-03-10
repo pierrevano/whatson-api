@@ -43,7 +43,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=55.html,tt0200276,thewestwing,688,the-west-wing,the-west-wing,null,null,FALSE
 /series/ficheserie_gen_cserie=56.html,tt0286486,theshield,1414,the-shield,null,null,null,FALSE
 /series/ficheserie_gen_cserie=57.html,tt0118437,thepractice,3050,the-practice,the_practice,null,null,FALSE
-/series/ficheserie_gen_cserie=58.html,tt0285331,24,1973,24,24,null,null,TRUE
+/series/ficheserie_gen_cserie=58.html,tt0285331,24,1973,24,24,null,null,FALSE
 /series/ficheserie_gen_cserie=60.html,tt0118300,dawsoncreek,2327,dawsons-creek,dawson-s-creek,null,null,FALSE
 /series/ficheserie_gen_cserie=61.html,tt0115341,sabrinatheteenagewitch1996,605,sabrina-the-teenage-witch,null,null,null,FALSE
 /series/ficheserie_gen_cserie=62.html,tt0279600,smallville,4604,smallville,smallville,null,null,FALSE
@@ -137,7 +137,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=193.html,tt0361200,line-of-fire,844,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=195.html,tt0247135,thedstreet,1616,the-treet,null,null,null,FALSE
 /series/ficheserie_gen_cserie=198.html,tt0330251,thelword,3475,the-l-word,the_l_word,null,null,FALSE
-/series/ficheserie_gen_cserie=199.html,tt0386676,theofficeus,2316,the-office,the_office,null,null,FALSE
+/series/ficheserie_gen_cserie=199.html,tt0386676,theofficeus,2316,the-office,the_office,null,null,TRUE
 /series/ficheserie_gen_cserie=202.html,tt0324864,kingdomhospital,1617,kingdom-hospital,null,kingdom-hospital-2004,null,FALSE
 /series/ficheserie_gen_cserie=203.html,tt0377153,centurycity,6355,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=204.html,tt0367313,cracking-up,10063,null,null,null,null,FALSE
@@ -327,7 +327,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=448.html,tt0460686,threshold,1441,threshold,null,null,null,FALSE
 /series/ficheserie_gen_cserie=449.html,tt0463811,courtingalex,1665,courting-alex,null,null,null,FALSE
 /series/ficheserie_gen_cserie=450.html,tt0460690,theunit,2321,the-unit,null,null,null,FALSE
-/series/ficheserie_gen_cserie=451.html,tt0455275,prisonbreak,2288,prison-break,prison_break,null,266186,TRUE
+/series/ficheserie_gen_cserie=451.html,tt0455275,prisonbreak,2288,prison-break,prison_break,null,266186,FALSE
 /series/ficheserie_gen_cserie=452.html,tt0460627,bones,1911,bones,bones,null,null,FALSE
 /series/ficheserie_gen_cserie=454.html,tt0460654,kitchenconfidential,15123,kitchen-confidential,null,null,null,FALSE
 /series/ficheserie_gen_cserie=455.html,tt0460672,reunion,2366,null,null,null,null,FALSE
@@ -339,7 +339,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=462.html,tt0086662,airwolf,2119,airwolf,null,null,null,FALSE
 /series/ficheserie_gen_cserie=463.html,tt0101205,notrebellefamille,2617,step-by-step,null,null,null,FALSE
 /series/ficheserie_gen_cserie=464.html,tt0420388,dolmen,43385,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=465.html,tt0172057,souslesoleilsainttropez,6833,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=465.html,tt0172057,souslesoleilsainttropez,6833,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=466.html,tt0081873,hillstreetblues,3828,hill-street-blues,null,null,null,FALSE
 /series/ficheserie_gen_cserie=467.html,tt0115270,millennium,4330,millennium,null,null,null,FALSE
 /series/ficheserie_gen_cserie=468.html,tt0078611,the-famous-five-1978,31441,null,null,null,null,FALSE
@@ -535,7 +535,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=731.html,tt0213327,andromeda,2985,andromeda,null,null,null,FALSE
 /series/ficheserie_gen_cserie=732.html,tt0207933,twice-in-a-lifetime,10000,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=734.html,tt0491281,heist,2039,heist,null,null,null,FALSE
-/series/ficheserie_gen_cserie=735.html,tt0086827,whostheboss,634,whos-the-boss,null,null,null,FALSE
+/series/ficheserie_gen_cserie=735.html,tt0086827,whostheboss,634,whos-the-boss,null,null,null,TRUE
 /series/ficheserie_gen_cserie=737.html,tt0070981,derrick,4583,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=739.html,tt0065272,all-my-children,879,all-my-children,null,null,null,FALSE
 /series/ficheserie_gen_cserie=740.html,tt0111880,americangothic,318,american-gothic,null,null,null,FALSE
@@ -708,7 +708,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=3040.html,tt0346223,the-cambridge-spies,6200,null,null,cambridge-spies,null,FALSE
 /series/ficheserie_gen_cserie=3043.html,tt0103414,fish-police,13670,fish-police,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3044.html,tt0485301,torchwood,424,torchwood-uk,null,null,null,FALSE
-/series/ficheserie_gen_cserie=3046.html,tt0108829,rex-chien-flic,994,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=3046.html,tt0108829,rex-chien-flic,994,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3049.html,tt0478079,noahs-arc,2234,noahs-arc,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3050.html,tt0112112,pacificblue,50,null,pacific_blue,null,null,FALSE
 /series/ficheserie_gen_cserie=3054.html,tt0108798,hawkeye,6016,null,null,null,null,FALSE
@@ -829,7 +829,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=3237.html,tt0928173,swingtown,10133,swingtown,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3239.html,tt0955346,moonlight,5690,moonlight,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3240.html,tt0955322,reaper,5107,reaper,null,null,null,FALSE
-/series/ficheserie_gen_cserie=3241.html,tt0397442,gossipgirl,1395,gossip-girl,gossip-girl,null,null,FALSE
+/series/ficheserie_gen_cserie=3241.html,tt0397442,gossipgirl,1395,gossip-girl,gossip-girl,null,null,TRUE
 /series/ficheserie_gen_cserie=3242.html,tt0851851,thesarahconnorchronicles,433,terminator-the-sarah-connor-chronicles,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3243.html,tt0790603,aliensinamerica,3538,aliens-in-america,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3244.html,tt0938853,lifeiswild,1381,life-is-wild,null,null,null,FALSE
@@ -933,7 +933,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=3409.html,tt0215392,beastmaster,2925,beastmaster,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3411.html,tt0838800,fallen2010,25126,null,null,fallen-iii-the-destiny,null,FALSE
 /series/ficheserie_gen_cserie=3412.html,tt0458290,starwarstheclonewars,4194,star-wars-the-clone-wars,star_wars_the_clone_wars,null,null,FALSE
-/series/ficheserie_gen_cserie=3413.html,tt0080274,the-shogun,13862,null,shogun,shogun,null,FALSE
+/series/ficheserie_gen_cserie=3413.html,tt0080274,the-shogun,13862,null,shogun,shogun,null,TRUE
 /series/ficheserie_gen_cserie=3416.html,tt0106175,wild-palms,3283,wild-palms,wild_palms_the_dream_begins_and_the_dream_concludes,wild-palms,null,FALSE
 /series/ficheserie_gen_cserie=3418.html,tt0078600,dick-turpin,10612,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3419.html,tt0809497,tellmeyouloveme,15003,tell-me-you-love-me,null,null,null,FALSE
@@ -1038,7 +1038,6 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=3604.html,tt0078709,san-ku-kai,65958,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3607.html,tt1059475,flashpoint,5829,flashpoint,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3608.html,tt1179817,secretlifeoftheamericanteenager,5721,the-secret-life-of-the-american-teenager,null,null,null,FALSE
-/series/ficheserie_gen_cserie=3609.html,tt0965394,sanctuary,1310,sanctuary,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3610.html,tt1324069,seconde-chance,104588,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3611.html,tt1181541,thelistener,14666,the-listener,null,null,null,FALSE
 /series/ficheserie_gen_cserie=3612.html,tt0090506,the-real-ghostbusters,2286,null,null,null,null,FALSE
@@ -1292,8 +1291,8 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=4334.html,tt1321865,carlos,41693,carlos,carlos_2010,carlos,null,FALSE
 /series/ficheserie_gen_cserie=4347.html,tt1330143,pigallelanuit,37084,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4348.html,tt1388782,melroseplace2009,18109,melrose-place,null,null,null,FALSE
-/series/ficheserie_gen_cserie=4349.html,tt0287839,frank-herberts-children-of-dune,9156,children-of-dune,children_of_dune,frank-herberts-children-of-dune,null,TRUE
-/series/ficheserie_gen_cserie=4350.html,tt0142032,frank-herberts-dune,19566,frank-herberts-dune,frank_herbert_s_dune_,frank-herberts-dune,null,TRUE
+/series/ficheserie_gen_cserie=4349.html,tt0287839,frank-herberts-children-of-dune,9156,children-of-dune,children_of_dune,frank-herberts-children-of-dune,null,FALSE
+/series/ficheserie_gen_cserie=4350.html,tt0142032,frank-herberts-dune,19566,frank-herberts-dune,frank_herbert_s_dune_,frank-herberts-dune,null,FALSE
 /series/ficheserie_gen_cserie=4351.html,tt0879688,sea-patrol,4858,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4369.html,tt0063962,ufo,2560,null,null,gerry-andersons-ufo,null,FALSE
 /series/ficheserie_gen_cserie=4376.html,tt0111904,bugs,7,null,null,null,null,FALSE
@@ -1382,7 +1381,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=4541.html,tt0121932,extreme-ghostbusters,4793,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4542.html,tt0111970,freakazoid,4334,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4543.html,tt0821927,sms-sin-miedo-a-sonar,46201,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=4545.html,tt0417299,avatar-the-last-airbender,246,null,avatar_the_last_airbender,null,null,TRUE
+/series/ficheserie_gen_cserie=4545.html,tt0417299,avatar-the-last-airbender,246,null,avatar_the_last_airbender,null,null,FALSE
 /series/ficheserie_gen_cserie=4547.html,tt0298695,bouba,52270,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4548.html,tt0088628,the-13-ghosts-of-scooby-doo,1069,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4549.html,tt0092329,captain-power-et-les-soldats-du-futur,4698,null,null,null,null,FALSE
@@ -1406,7 +1405,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=4575.html,tt0383718,witch,137,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4577.html,tt0230804,sonic-underground,20992,sonic-underground,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4578.html,tt1116911,kum-kum,24163,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=4580.html,tt0283226,totally-spies,2808,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=4580.html,tt0283226,totally-spies,2808,null,totally_spies,null,null,FALSE
 /series/ficheserie_gen_cserie=4582.html,tt0135114,le-tour-du-monde-en-80-jours,5150,null,null,around-the-world-with-willy-fog,null,FALSE
 /series/ficheserie_gen_cserie=4583.html,tt0280233,beethoven,9805,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4585.html,tt1186331,britanniahigh,5981,britannia-high,null,null,null,FALSE
@@ -1445,7 +1444,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=4674.html,tt0103352,areyouafraidofthedark,2913,are-you-afraid-of-the-dark,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4676.html,tt0112194,thethinblueline,2301,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4679.html,tt1019431,the-gathering,17033,null,null,the-gathering-2007,null,FALSE
-/series/ficheserie_gen_cserie=4680.html,tt1227918,labolition,567155,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=4680.html,tt1227918,labolition,567155,null,null,labolition,null,FALSE
 /series/ficheserie_gen_cserie=4682.html,tt1470837,garfield-cie,18352,the-garfield-show,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4683.html,tt0094469,garfield-friends,4606,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=4685.html,tt1807824,wakfu-2008,64414,null,null,null,null,FALSE
@@ -2114,7 +2113,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=7151.html,tt0062551,the-champions-1968,4579,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7152.html,tt0140731,crossbow,4268,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7155.html,tt1442434,los-misterios-de-laura,62984,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=7157.html,tt0944947,gameofthrones,1399,game-of-thrones,game_of_thrones,null,null,TRUE
+/series/ficheserie_gen_cserie=7157.html,tt0944947,gameofthrones,1399,game-of-thrones,game_of_thrones,null,null,FALSE
 /series/ficheserie_gen_cserie=7161.html,tt0083390,brideshead-revisited,4951,null,null,brideshead-revisited-1981,null,FALSE
 /series/ficheserie_gen_cserie=7164.html,tt0149440,dancin-days,104687,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7165.html,tt0138222,baila-comigo,95498,null,null,null,null,FALSE
@@ -2171,7 +2170,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=7325.html,tt1615926,runningwilde,32757,running-wilde,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7327.html,tt0169247,so-weird,1954,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7328.html,tt1489372,fortunes,64575,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=7330.html,tt1520211,thewalkingdead,1402,the-walking-dead,the_walking_dead,null,null,TRUE
+/series/ficheserie_gen_cserie=7330.html,tt1520211,thewalkingdead,1402,the-walking-dead,the_walking_dead,null,null,FALSE
 /series/ficheserie_gen_cserie=7334.html,tt1216378,furtv,7290,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7335.html,tt0068039,anna-and-the-king,9952,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7336.html,tt0068059,colditz,546,null,null,null,null,FALSE
@@ -2251,7 +2250,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=7612.html,tt1461312,alice2009,33466,null,null,alice-2009,null,FALSE
 /series/ficheserie_gen_cserie=7618.html,tt0946589,elisas-daughter-return-to-rivombrosa,41520,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7624.html,tt0061289,commando-spatial-orion,13834,null,null,space-patrol,null,FALSE
-/series/ficheserie_gen_cserie=7634.html,tt1586680,shamelessus,34307,shameless-us,shameless,null,null,TRUE
+/series/ficheserie_gen_cserie=7634.html,tt1586680,shamelessus,34307,shameless-us,shameless,null,null,FALSE
 /series/ficheserie_gen_cserie=7635.html,tt1370334,boys-before-flowers,16420,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7637.html,tt0161186,roger-ramjet,5683,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=7638.html,tt1599357,thegates,32552,the-gates,null,null,null,FALSE
@@ -2592,7 +2591,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=9264.html,tt1835129,death-valley,40245,death-valley,null,null,null,FALSE
 /series/ficheserie_gen_cserie=9271.html,tt7380366,true-lies,202099,true-lies-2023,true_lies,null,null,FALSE
 /series/ficheserie_gen_cserie=9274.html,tt1720619,neverland,43720,neverland,null,neverland-2011,null,FALSE
-/series/ficheserie_gen_cserie=9280.html,tt1606375,downton-abbey,33907,downton-abbey,downton_abbey-pbs,null,null,TRUE
+/series/ficheserie_gen_cserie=9280.html,tt1606375,downton-abbey,33907,downton-abbey,downton_abbey-pbs,null,null,FALSE
 /series/ficheserie_gen_cserie=9285.html,tt1796960,homeland,1407,homeland,homeland,null,null,FALSE
 /series/ficheserie_gen_cserie=9287.html,tt1652216,dci-banks,40675,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=9289.html,tt2402137,legends-2013,60855,legends,legends,null,null,FALSE
@@ -2849,7 +2848,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=10828.html,tt1794147,the-la-complex,43197,the-la-complex,null,null,null,FALSE
 /series/ficheserie_gen_cserie=10829.html,tt2177491,ben-and-kate,43275,ben-kate,null,null,null,FALSE
 /series/ficheserie_gen_cserie=10833.html,tt2176609,la-noir,44840,mob-city,null,null,null,FALSE
-/series/ficheserie_gen_cserie=10839.html,tt2193021,arrow,1412,arrow,arrow,null,null,TRUE
+/series/ficheserie_gen_cserie=10839.html,tt2193021,arrow,1412,arrow,arrow,null,null,FALSE
 /series/ficheserie_gen_cserie=10840.html,tt2296682,dracula-2013,58928,dracula,null,null,null,FALSE
 /series/ficheserie_gen_cserie=10841.html,tt2189461,marco-polo-2014,60699,marco-polo-2014,marco-polo,null,null,FALSE
 /series/ficheserie_gen_cserie=10843.html,tt2184980,do-no-harm,45046,do-no-harm,null,null,null,FALSE
@@ -2890,7 +2889,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=11029.html,tt2384747,the-unknown-2012,74891,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=11035.html,tt2476706,jo,47144,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=11038.html,tt2188249,prisoners-wives,43143,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=11041.html,tt2294189,the-fall,49010,the-fall,the-fall,null,null,TRUE
+/series/ficheserie_gen_cserie=11041.html,tt2294189,the-fall,49010,the-fall,the-fall,null,null,FALSE
 /series/ficheserie_gen_cserie=11042.html,tt2802850,fargo,60622,fargo,fargo,null,8831048,FALSE
 /series/ficheserie_gen_cserie=11044.html,tt1695366,titanic-blood-and-steel,40161,titanic-blood-and-steel,null,titanic-blood-and-steel,null,FALSE
 /series/ficheserie_gen_cserie=11045.html,tt2310212,mr-selfridge,46643,mr-selfridge,mr_selfridge,null,null,FALSE
@@ -2938,7 +2937,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=11208.html,tt3063454,man-down,52268,null,man_down,null,null,FALSE
 /series/ficheserie_gen_cserie=11222.html,tt1877889,teenage-mutant-ninja-turtles-2012,51817,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=11225.html,tt1865718,gravity-falls,40075,gravity-falls,gravity_falls,null,null,FALSE
-/series/ficheserie_gen_cserie=11230.html,tt2249364,broadchurch,1427,broadchurch,broadchurch,null,null,TRUE
+/series/ficheserie_gen_cserie=11230.html,tt2249364,broadchurch,1427,broadchurch,broadchurch,null,null,FALSE
 /series/ficheserie_gen_cserie=11233.html,tt2262456,the-hollow-crown,44037,the-hollow-crown,null,null,null,FALSE
 /series/ficheserie_gen_cserie=11238.html,tt2262532,the-fosters-2013,46880,the-fosters,the_fosters,null,null,FALSE
 /series/ficheserie_gen_cserie=11245.html,tt2372182,we-are-men,50719,we-are-men,null,null,null,FALSE
@@ -3090,7 +3089,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=11866.html,tt2657258,killer-women-2013,51036,killer-women,null,null,null,FALSE
 /series/ficheserie_gen_cserie=11868.html,tt2753110,mulaney,61429,mulaney,mulaney,null,null,FALSE
 /series/ficheserie_gen_cserie=11870.html,tt2788780,undateable-2014,51345,undateable-2014,undateable,null,null,FALSE
-/series/ficheserie_gen_cserie=11871.html,tt2661044,the-hundred,48866,the-100,the_100,null,null,TRUE
+/series/ficheserie_gen_cserie=11871.html,tt2661044,the-hundred,48866,the-100,the_100,null,null,FALSE
 /series/ficheserie_gen_cserie=11872.html,tt2657262,star-crossed,51168,star-crossed,null,null,null,FALSE
 /series/ficheserie_gen_cserie=11873.html,tt2710394,reign-2013,48865,reign-2013,reign,null,null,FALSE
 /series/ficheserie_gen_cserie=11875.html,tt2660734,the-tomorrow-people-2013,48860,the-tomorrow-people,null,null,null,FALSE
@@ -3132,7 +3131,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=12074.html,tt3498622,fortitude,61335,fortitude,fortitude,null,null,FALSE
 /series/ficheserie_gen_cserie=12075.html,tt1883092,unsere-mutter-unsere-vater,46849,generation-war,771363367,generation-war,null,FALSE
 /series/ficheserie_gen_cserie=12087.html,tt3132738,houdini,49157,houdini,houdini_2014,houdini-2014-1,10307935,FALSE
-/series/ficheserie_gen_cserie=12091.html,tt2805096,chicago-pd,58841,chicago-pd,chicago-pd,null,null,FALSE
+/series/ficheserie_gen_cserie=12091.html,tt2805096,chicago-pd,58841,chicago-pd,chicago-pd,null,null,TRUE
 /series/ficheserie_gen_cserie=12097.html,tt3143398,the-smoke,62866,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=12101.html,tt3992820,parents-mode-demploi,64056,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=12102.html,tt3495080,in-america,98105,null,null,null,null,FALSE
@@ -3222,10 +3221,10 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=16943.html,tt3371556,leo-mattei,65377,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=16947.html,tt0168333,les-faucheurs-de-marguerites,41144,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=16948.html,tt3117648,le-ranch,62306,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=16950.html,tt3032476,better-call-saul,60059,better-call-saul,better_call_saul,null,null,TRUE
+/series/ficheserie_gen_cserie=16950.html,tt3032476,better-call-saul,60059,better-call-saul,better_call_saul,null,null,FALSE
 /series/ficheserie_gen_cserie=16954.html,tt3318024,virage-nord,73053,null,null,match-day,null,FALSE
-/series/ficheserie_gen_cserie=16955.html,tt3107288,the-flash-2014,60735,the-flash-2014,flash,null,null,TRUE
-/series/ficheserie_gen_cserie=16958.html,tt3743822,fear-the-walking-dead,62286,fear-the-walking-dead,fear_the_walking_dead,null,null,TRUE
+/series/ficheserie_gen_cserie=16955.html,tt3107288,the-flash-2014,60735,the-flash-2014,flash,null,null,FALSE
+/series/ficheserie_gen_cserie=16958.html,tt3743822,fear-the-walking-dead,62286,fear-the-walking-dead,fear_the_walking_dead,null,null,FALSE
 /series/ficheserie_gen_cserie=16959.html,tt3202580,connasse,124204,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=16960.html,tt3355142,chefs,62034,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=16965.html,tt3475734,marvels-agent-carter,61550,marvels-agent-carter,marvel_s_agent_carter,null,null,FALSE
@@ -3243,7 +3242,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=16998.html,tt0069647,the-tomorrow-people,1550,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=17006.html,tt4322508,les-temoins,62641,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=17009.html,tt3010520,turbo-fast,63157,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=17010.html,tt2707408,narcos,63351,narcos,narcos,null,null,FALSE
+/series/ficheserie_gen_cserie=17010.html,tt2707408,narcos,63351,narcos,narcos,null,null,TRUE
 /series/ficheserie_gen_cserie=17019.html,tt3530726,astronaut-wives-club,62458,the-astronaut-wives-club,null,null,null,FALSE
 /series/ficheserie_gen_cserie=17025.html,tt3644256,marvel-disk-wars-the-avengers,70801,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=17026.html,tt3186138,finding-carter,61135,finding-carter,finding_carter,null,null,FALSE
@@ -3278,7 +3277,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=17144.html,tt4592410,the-get-down,65345,the-get-down,the-get-down,null,null,FALSE
 /series/ficheserie_gen_cserie=17150.html,tt4074084,ad,62287,ad-the-bible-continues,null,ad-the-bible-continues,null,FALSE
 /series/ficheserie_gen_cserie=17152.html,tt3305096,galavant,61698,galavant,galavant,null,null,FALSE
-/series/ficheserie_gen_cserie=17157.html,tt3205802,how-to-get-away-with-murder,61056,how-to-get-away-with-murder,how_to_get_away_with_murder,null,null,TRUE
+/series/ficheserie_gen_cserie=17157.html,tt3205802,how-to-get-away-with-murder,61056,how-to-get-away-with-murder,how_to_get_away_with_murder,null,null,FALSE
 /series/ficheserie_gen_cserie=17159.html,tt3467380,kurt-seyit-and-ura,62553,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=17177.html,tt3956604,the-driver,61393,null,null,the-driver-2014-1,null,FALSE
 /series/ficheserie_gen_cserie=17179.html,tt0115128,casper,8627,casper,null,null,null,FALSE
@@ -3374,11 +3373,11 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=17471.html,tt3463606,welcome-to-sweden-2014,60901,welcome-to-sweden,null,null,null,FALSE
 /series/ficheserie_gen_cserie=17480.html,tt3687802,disparue,62547,null,null,the-disappearance-2015,null,FALSE
 /series/ficheserie_gen_cserie=17481.html,tt3663490,the-librarians-us,61599,the-librarians-2014,the_librarians,null,null,FALSE
-/series/ficheserie_gen_cserie=17483.html,tt3230854,the-expanse,63639,the-expanse,the_expanse,null,null,TRUE
+/series/ficheserie_gen_cserie=17483.html,tt3230854,the-expanse,63639,the-expanse,the_expanse,null,null,FALSE
 /series/ficheserie_gen_cserie=17491.html,tt2575968,hinterland,60605,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=17501.html,tt3069212,street-fighter-assassins-fist,61873,null,null,street-fighter-assassins-fist,null,FALSE
 /series/ficheserie_gen_cserie=17553.html,tt3230780,the-returned-us,62142,the-returned-2015,null,null,null,FALSE
-/series/ficheserie_gen_cserie=17554.html,tt6439752,snowfall-2017,71694,snowfall,snowfall,null,null,TRUE
+/series/ficheserie_gen_cserie=17554.html,tt6439752,snowfall-2017,71694,snowfall,snowfall,null,null,FALSE
 /series/ficheserie_gen_cserie=17565.html,tt3214310,tut,62977,tut,null,tut,null,FALSE
 /series/ficheserie_gen_cserie=17566.html,tt4122068,humans,62822,humans,humans,null,null,FALSE
 /series/ficheserie_gen_cserie=17568.html,tt4197508,blunt-talk,62238,blunt-talk,blunt-talk,null,null,FALSE
@@ -3506,7 +3505,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=18398.html,tt4307902,the-carmichael-show,63761,the-carmichael-show,the_carmichael_show,null,null,FALSE
 /series/ficheserie_gen_cserie=18416.html,tt4834206,a-series-of-unfortunate-events,65294,lemony-snickets-a-series-of-unfortunate-events-2017,a_series_of_unfortunate_events,null,null,FALSE
 /series/ficheserie_gen_cserie=18437.html,tt4189022,ash-vs-evil-dead,62264,ash-vs-evil-dead,ash_vs_evil_dead,null,null,FALSE
-/series/ficheserie_gen_cserie=18438.html,tt0804484,foundation-2020,93740,foundation,foundation,null,null,FALSE
+/series/ficheserie_gen_cserie=18438.html,tt0804484,foundation-2020,93740,foundation,foundation,null,null,TRUE
 /series/ficheserie_gen_cserie=18446.html,tt5011816,sneaky-pete,64199,sneaky-pete,sneaky_pete,null,null,FALSE
 /series/ficheserie_gen_cserie=18468.html,tt5531470,frequency,66894,frequency,frequency,null,null,FALSE
 /series/ficheserie_gen_cserie=18480.html,tt3375350,a-livre-ouvert,116999,null,null,null,null,FALSE
@@ -3559,7 +3558,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=18780.html,tt3596176,nicky-ricky-dicky-dawn,61854,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=18781.html,tt4445154,deutschland-83,62681,deutschland-83,deutschland-83,null,null,FALSE
 /series/ficheserie_gen_cserie=18782.html,tt4447390,doubt,68950,doubt,doubt,null,null,FALSE
-/series/ficheserie_gen_cserie=18783.html,tt3602528,kfulim,65312,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=18783.html,tt3602528,kfulim,65312,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=18784.html,tt4384086,life-in-pieces,63398,life-in-pieces,life_in_pieces,null,null,FALSE
 /series/ficheserie_gen_cserie=18788.html,tt4428124,wicked-city,62927,wicked-city,wicked_city,null,null,FALSE
 /series/ficheserie_gen_cserie=18789.html,tt4387170,of-kings-and-prophets,65814,of-kings-and-prophets,of_kings_and_prophets,null,null,FALSE
@@ -3667,7 +3666,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=19487.html,tt5376862,guilt,66490,guilt,guilt,null,null,FALSE
 /series/ficheserie_gen_cserie=19491.html,tt4687880,goliath,67384,goliath,goliath,null,null,FALSE
 /series/ficheserie_gen_cserie=19499.html,tt4406248,vixen,62125,vixen,vixen,null,null,FALSE
-/series/ficheserie_gen_cserie=19500.html,tt3561180,trapped-2015,64852,null,trapped,null,null,FALSE
+/series/ficheserie_gen_cserie=19500.html,tt3561180,trapped-2015,64852,null,trapped,null,null,TRUE
 /series/ficheserie_gen_cserie=19504.html,tt4820370,channel-zero,67752,channel-zero,null,null,null,FALSE
 /series/ficheserie_gen_cserie=19505.html,tt3315386,roots-2016,66606,null,roots_2016,roots-2016,null,FALSE
 /series/ficheserie_gen_cserie=19508.html,tt0054572,top-cat,4232,null,null,null,null,FALSE
@@ -3736,7 +3735,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=19778.html,tt5057054,jack-ryan,73375,tom-clancys-jack-ryan,jack_ryan,null,null,FALSE
 /series/ficheserie_gen_cserie=19785.html,tt4276618,the-strike-series,72748,cb-strike,c_b_strike,null,null,FALSE
 /series/ficheserie_gen_cserie=19786.html,tt5057130,medici-masters-of-florence,66761,null,medici_masters_of_florence,null,null,FALSE
-/series/ficheserie_gen_cserie=19792.html,tt5071412,ozark,69740,ozark,ozark,null,null,FALSE
+/series/ficheserie_gen_cserie=19792.html,tt5071412,ozark,69740,ozark,ozark,null,null,TRUE
 /series/ficheserie_gen_cserie=19804.html,tt4378376,babylon-berlin,66980,null,babylon_berlin,null,24786239,FALSE
 /series/ficheserie_gen_cserie=19810.html,tt5079788,class,64073,class,class,null,null,FALSE
 /series/ficheserie_gen_cserie=19813.html,tt5193172,dawn-of-the-croods,64783,null,null,null,null,FALSE
@@ -3751,7 +3750,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=19854.html,tt5100366,rakudai-kishi-no-cavalry,67154,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=19866.html,tt5520772,alex-co,65852,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=19873.html,tt5114356,legion,67195,legion,legion,null,null,FALSE
-/series/ficheserie_gen_cserie=19874.html,tt3850470,la-petite-histoire-de-france,71870,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=19874.html,tt3850470,la-petite-histoire-de-france,71870,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=19879.html,tt8042500,y-the-last-man,86550,y-the-last-man,y_the_last_man,null,null,FALSE
 /series/ficheserie_gen_cserie=19883.html,tt4215734,be-cool-scooby-doo,64228,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=19886.html,tt6046238,molang,84508,null,null,null,null,FALSE
@@ -3768,7 +3767,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=19931.html,tt5200372,josh,84475,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=19941.html,tt1837492,13-reasons-why,66788,13-reasons-why,13_reasons_why,null,null,FALSE
 /series/ficheserie_gen_cserie=19946.html,tt3909224,the-seven-deadly-sins,62104,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=19949.html,tt5171438,star-trek-discovery,67198,star-trek-discovery,star_trek_discovery,null,null,FALSE
+/series/ficheserie_gen_cserie=19949.html,tt5171438,star-trek-discovery,67198,star-trek-discovery,star_trek_discovery,null,null,TRUE
 /series/ficheserie_gen_cserie=19953.html,tt5460226,search-party-2016,67697,search-party-2016,search_party,null,null,FALSE
 /series/ficheserie_gen_cserie=19954.html,tt5607976,his-dark-materials,68507,his-dark-materials,his_dark_materials,null,null,FALSE
 /series/ficheserie_gen_cserie=19955.html,tt5197820,van-helsing,65820,van-helsing-2016,van_helsing,null,null,FALSE
@@ -3807,7 +3806,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=20136.html,tt2577192,howards-end,74630,null,null,howards-end-2017,null,FALSE
 /series/ficheserie_gen_cserie=20138.html,tt2761354,nowhere-boys,54866,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=20141.html,tt5651032,ride-upon-the-storm,74145,null,ride_upon_the_storm,null,null,FALSE
-/series/ficheserie_gen_cserie=20143.html,tt5290382,mindhunter,67744,mindhunter,mindhunter,null,null,TRUE
+/series/ficheserie_gen_cserie=20143.html,tt5290382,mindhunter,67744,mindhunter,mindhunter,null,null,FALSE
 /series/ficheserie_gen_cserie=20145.html,tt3511852,part-of-me,66888,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=20146.html,tt4789300,lady-dynamite,66309,lady-dynamite,lady_dynamite,null,null,FALSE
 /series/ficheserie_gen_cserie=20150.html,tt1734135,trollhunters,68267,trollhunters,trollhunters,null,null,FALSE
@@ -3830,7 +3829,6 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=20189.html,tt5592146,speechless,67040,speechless-2016,speechless,null,null,FALSE
 /series/ficheserie_gen_cserie=20196.html,tt4711184,game-shakers,64264,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=20198.html,tt2261227,altered-carbon,68421,altered-carbon,altered_carbon,null,null,FALSE
-/series/ficheserie_gen_cserie=20201.html,tt5500158,pitch,67147,pitch,pitch,null,null,FALSE
 /series/ficheserie_gen_cserie=20203.html,tt5736758,glace,69488,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=20206.html,tt5500906,pure-genius,66545,pure-genius,pure_genius,null,null,FALSE
 /series/ficheserie_gen_cserie=20207.html,tt5462364,superior-donuts,69632,superior-donuts,superior_donuts,null,null,FALSE
@@ -3959,7 +3957,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=20653.html,tt5916218,skylanders-academy,68435,null,skylanders_academy,null,null,FALSE
 /series/ficheserie_gen_cserie=20658.html,tt4976512,secret-city,66357,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=20665.html,tt6519410,zone-blanche,70613,null,black_spot,null,null,FALSE
-/series/ficheserie_gen_cserie=20666.html,tt5830254,das-boot-2018,83936,das-boot-2019,das_boot,null,null,FALSE
+/series/ficheserie_gen_cserie=20666.html,tt5830254,das-boot-2018,83936,das-boot-2019,das_boot,null,null,TRUE
 /series/ficheserie_gen_cserie=20668.html,tt7369974,step-up-high-water,75379,step-up-high-water,null,null,null,FALSE
 /series/ficheserie_gen_cserie=20669.html,tt4508902,one-punch-man,63926,null,one_punch_man,null,null,FALSE
 /series/ficheserie_gen_cserie=20670.html,tt5895314,kuromukuro,66080,null,kuromukuro,null,null,FALSE
@@ -4078,7 +4076,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=21144.html,tt5152136,franky,73265,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=21145.html,tt6160506,impulse,78670,null,impulse,null,null,FALSE
 /series/ficheserie_gen_cserie=21150.html,tt6297682,seven-seconds,75540,seven-seconds,null,seven-seconds-2018,null,FALSE
-/series/ficheserie_gen_cserie=21170.html,tt6730152,on-va-saimer-un-peu-beaucoup,75397,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=21170.html,tt6730152,on-va-saimer-un-peu-beaucoup,75397,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=21181.html,tt5866074,paquita-salas,66806,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=21186.html,tt6337766,muppet-babies-2018,77410,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=21190.html,tt6794990,absentia,72755,absentia,absentia,null,null,FALSE
@@ -4197,7 +4195,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=21925.html,tt5180734,below-the-surface,71302,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=21935.html,tt7278862,my-brilliant-friend,78154,my-brilliant-friend,my_brilliant_friend,null,null,FALSE
 /series/ficheserie_gen_cserie=21941.html,tt6213220,ernest-et-celestine-la-collection,74623,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=21947.html,tt6970700,vivir-sin-permiso,82516,null,unauthorized_living,null,null,TRUE
+/series/ficheserie_gen_cserie=21947.html,tt6970700,vivir-sin-permiso,82516,null,unauthorized_living,null,null,FALSE
 /series/ficheserie_gen_cserie=21948.html,tt7714460,holly-weed,75849,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=21954.html,tt7738778,les-chamois,75513,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=21963.html,tt7368150,aux-animaux-la-guerre,83785,null,null,null,null,FALSE
@@ -4207,7 +4205,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=21973.html,tt7018644,grown-ish,71885,grown-ish,grown_ish,null,null,FALSE
 /series/ficheserie_gen_cserie=21974.html,tt6148376,ben-10-2016,68295,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=21978.html,tt6763664,the-haunting-of-hill-house,72844,the-haunting-of-hill-house,the_haunting_of_hill_house,the-haunting-2018,null,FALSE
-/series/ficheserie_gen_cserie=21980.html,tt4580372,merli,62914,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=21980.html,tt4580372,merli,62914,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=21986.html,tt5650650,jamestown,71391,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=21989.html,tt6779076,star-wars-forces-of-destiny,71412,null,star_wars_forces_of_destiny,null,null,FALSE
 /series/ficheserie_gen_cserie=21990.html,tt6464458,born-to-kill-2017,71379,null,null,born-to-kill-2017,null,FALSE
@@ -4221,7 +4219,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=22011.html,tt6792200,the-keepers,26101,the-keepers,the_keepers,the-keepers-2017,null,FALSE
 /series/ficheserie_gen_cserie=22012.html,tt6635810,crawford,77081,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22015.html,tt7177890,tell-me-your-secrets,90452,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=22019.html,tt7462410,the-wheel-of-time,71914,the-wheel-of-time,the_wheel_of_time,null,null,FALSE
+/series/ficheserie_gen_cserie=22019.html,tt7462410,the-wheel-of-time,71914,the-wheel-of-time,the_wheel_of_time,null,null,TRUE
 /series/ficheserie_gen_cserie=22028.html,tt3007572,locke-key,86423,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22030.html,tt7440726,your-honor-2020,86430,your-honor,your_honor_2020,your-honor-2020,null,FALSE
 /series/ficheserie_gen_cserie=22036.html,tt6010920,white-gold,71683,null,null,null,null,FALSE
@@ -4246,11 +4244,10 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=22138.html,tt7053188,station-19,76773,station-19,station_19,null,null,FALSE
 /series/ficheserie_gen_cserie=22139.html,tt6905686,lovecraft-country,82816,lovecraft-country,lovecraft_country,null,null,FALSE
 /series/ficheserie_gen_cserie=22144.html,tt7529770,miracle-workers-2018,78950,miracle-workers-2019,miracle_workers,null,null,FALSE
-/series/ficheserie_gen_cserie=22146.html,tt5180504,the-witcher,71912,the-witcher,the_witcher,null,null,FALSE
+/series/ficheserie_gen_cserie=22146.html,tt5180504,the-witcher,71912,the-witcher,the_witcher,null,null,TRUE
 /series/ficheserie_gen_cserie=22147.html,tt6905756,der-pass,85526,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22148.html,tt6994156,close-enough,84503,null,close_enough,null,null,FALSE
 /series/ficheserie_gen_cserie=22150.html,tt6905542,the-dark-crystal-age-of-resistance,71809,the-dark-crystal-age-of-resistance,the_dark_crystal_age_of_resistance,null,null,FALSE
-/series/ficheserie_gen_cserie=22158.html,tt5973164,fearless-2017,72289,null,null,fearless-2017,null,FALSE
 /series/ficheserie_gen_cserie=22162.html,tt6903852,ben,77018,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22164.html,tt6839538,juda,72670,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22176.html,tt9628244,dc-super-hero-girls-2019,87491,null,null,null,null,FALSE
@@ -4287,7 +4284,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=22361.html,tt7702924,calls,75718,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22363.html,tt7806456,le-miracle,91253,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22367.html,tt1312171,the-umbrella-academy,75006,the-umbrella-academy,the_umbrella_academy,null,null,TRUE
-/series/ficheserie_gen_cserie=22373.html,tt7134908,elite,76669,elite,elite,null,null,TRUE
+/series/ficheserie_gen_cserie=22373.html,tt7134908,elite,76669,elite,elite,null,null,FALSE
 /series/ficheserie_gen_cserie=22375.html,tt7186126,the-virtues,87932,null,the_virtues,null,null,FALSE
 /series/ficheserie_gen_cserie=22378.html,tt3900614,odd-squad,73549,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22385.html,tt6255500,man-in-an-orange-shirt,73099,man-in-an-orange-shirt,null,man-in-an-orange-shirt-2017,null,FALSE
@@ -4305,7 +4302,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=22424.html,tt1210820,the-long-road-home,73178,the-long-road-home,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22426.html,tt7423322,the-right-stuff,93786,the-right-stuff-2020,the_right_stuff,null,null,FALSE
 /series/ficheserie_gen_cserie=22428.html,tt6686450,million-yen-women,73325,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=22429.html,tt7366338,chernobyl-2019,87108,chernobyl,chernobyl,chernobyl,null,TRUE
+/series/ficheserie_gen_cserie=22429.html,tt7366338,chernobyl-2019,87108,chernobyl,chernobyl,chernobyl,null,FALSE
 /series/ficheserie_gen_cserie=22437.html,tt7186588,i-am-the-night,81239,null,i_am_the_night,i-am-the-night-2019,null,FALSE
 /series/ficheserie_gen_cserie=22438.html,tt7203552,the-morning-show,90282,the-morning-show,the_morning_show,null,null,FALSE
 /series/ficheserie_gen_cserie=22440.html,tt6461346,secret-forest,70626,null,null,null,null,FALSE
@@ -4404,7 +4401,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=22934.html,tt8324820,noces-rouges,81403,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22935.html,tt2583620,the-twilight-zone-2019,83135,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22937.html,tt7573686,erased-2017,74939,null,erased,null,null,FALSE
-/series/ficheserie_gen_cserie=22940.html,tt7631058,the-lord-of-the-rings,84773,the-lord-of-the-rings-the-rings-of-power,the_lord_of_the_rings_the_rings_of_power,null,28468372,TRUE
+/series/ficheserie_gen_cserie=22940.html,tt7631058,the-lord-of-the-rings,84773,the-lord-of-the-rings-the-rings-of-power,the_lord_of_the_rings_the_rings_of_power,null,28468372,FALSE
 /series/ficheserie_gen_cserie=22942.html,tt7598448,the-little-drummer-girl-2018,76887,null,the_little_drummer_girl,the-little-drummer-girl-2018,null,FALSE
 /series/ficheserie_gen_cserie=22943.html,tt8001788,most-beautiful-thing,86943,null,most_beautiful_thing,null,null,FALSE
 /series/ficheserie_gen_cserie=22946.html,tt7222086,made-in-abyss,72636,null,null,made-in-abyss,null,FALSE
@@ -4413,7 +4410,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=22957.html,tt9421436,les-secrets,79221,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22961.html,tt8510382,high-school-musical-the-musical,85801,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22962.html,tt8610082,monsters-at-work,90461,null,monsters_at_work,null,null,FALSE
-/series/ficheserie_gen_cserie=22963.html,tt8111088,the-mandalorian,82856,the-mandalorian,the_mandalorian,null,null,FALSE
+/series/ficheserie_gen_cserie=22963.html,tt8111088,the-mandalorian,82856,the-mandalorian,the_mandalorian,null,null,TRUE
 /series/ficheserie_gen_cserie=22964.html,tt8009602,huge-in-france,87799,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22966.html,tt7608238,wanderlust,81902,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=22975.html,tt1532495,american-rust,91746,american-rust,american_rust,null,null,FALSE
@@ -4463,7 +4460,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=23143.html,tt7701694,mob-psycho-100-2018,75867,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23146.html,tt8026466,critters-a-new-binge,87208,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23147.html,tt1877514,the-vietnam-war-2017,46434,the-vietnam-war,null,the-vietnam-war,null,FALSE
-/series/ficheserie_gen_cserie=23158.html,tt5973164,fearless-2017,72289,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=23158.html,tt5973164,fearless-2017,72289,null,null,fearless-2017,null,FALSE
 /series/ficheserie_gen_cserie=23160.html,tt6516354,arthurs-law,82277,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23163.html,tt7949218,see,80752,see,see,null,null,TRUE
 /series/ficheserie_gen_cserie=23164.html,tt9308346,the-plot-against-america,83870,the_plot_against_america,the_plot_against_america,null,null,FALSE
@@ -4486,7 +4483,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=23234.html,tt7332652,remind,77156,null,null,re-mind,null,FALSE
 /series/ficheserie_gen_cserie=23240.html,tt7772602,in-the-dark-us,85727,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23244.html,tt7942806,random-acts-of-flyness,81749,random-acts-of-flyness,random_acts_of_flyness,null,null,FALSE
-/series/ficheserie_gen_cserie=23245.html,tt7491982,fbi,80748,fbi,fbi,null,null,TRUE
+/series/ficheserie_gen_cserie=23245.html,tt7491982,fbi,80748,fbi,fbi,null,null,FALSE
 /series/ficheserie_gen_cserie=23246.html,tt7909970,unbelievable,91275,unbelievable,unbelievable,null,null,FALSE
 /series/ficheserie_gen_cserie=23249.html,tt7920500,skam-fr,76880,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23251.html,tt7976568,happy-together-2018,79583,happy-together,null,null,null,FALSE
@@ -4498,7 +4495,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=23269.html,tt7971476,the-politician-2019,83127,the-politician,the_politician,null,null,FALSE
 /series/ficheserie_gen_cserie=23276.html,tt7943036,il-etait-une-seconde-fois,92647,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23277.html,tt7923832,avlu,78058,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=23279.html,tt9050352,le-bazar-de-la-charite,93742,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=23279.html,tt9050352,le-bazar-de-la-charite,93742,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=23282.html,tt7866098,the-village-2018,81948,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23292.html,tt6958022,the-defiant-ones,72141,the-defiant-ones-2017,the_defiant_ones,the-defiant-ones-2017,null,FALSE
 /series/ficheserie_gen_cserie=23295.html,tt7817340,new-amsterdam-2018,80350,new-amsterdam-2018,new_amsterdam_2018,null,null,FALSE
@@ -4510,7 +4507,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=23316.html,tt8021824,the-innocents,77400,the-innocents-2018,the_innocents,null,null,FALSE
 /series/ficheserie_gen_cserie=23320.html,tt7913450,soundtrack,96095,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23326.html,tt8134186,devs,81349,devs,devs,null,null,FALSE
-/series/ficheserie_gen_cserie=23331.html,tt8883922,un-si-grand-soleil,81329,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=23331.html,tt8883922,un-si-grand-soleil,81329,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23333.html,tt8036272,tuca-bertie,79356,tuca-bertie,tuca_and_bertie,null,null,FALSE
 /series/ficheserie_gen_cserie=23342.html,tt7371868,pine-gap,82469,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23344.html,tt7861612,the-inbetween,81947,null,null,null,null,FALSE
@@ -4629,7 +4626,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=23685.html,tt8359610,death-and-nightingales,84534,death-and-nightingales,null,death-and-nightingales,null,FALSE
 /series/ficheserie_gen_cserie=23687.html,tt8518136,dickinson,89901,dickinson,dickinson,null,null,FALSE
 /series/ficheserie_gen_cserie=23691.html,tt8912244,super-drags,83414,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=23695.html,tt8690918,resident-alien,96580,resident-alien,resident_alien,null,null,TRUE
+/series/ficheserie_gen_cserie=23695.html,tt8690918,resident-alien,96580,resident-alien,resident_alien,null,null,FALSE
 /series/ficheserie_gen_cserie=23697.html,tt7217374,hidden-2018,76566,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23698.html,tt8619822,light-as-a-feather,81829,light-as-a-feather,light_as_a_feather,null,null,FALSE
 /series/ficheserie_gen_cserie=23706.html,tt8078816,pretty-noona-who-buys-me-food,78385,null,null,null,null,FALSE
@@ -4706,7 +4703,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=23900.html,tt6467568,the-river-2017,70618,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23904.html,tt8749198,daisy-jones-the-six,95555,daisy-jones-the-six,daisy_jones_and_the_six,null,null,FALSE
 /series/ficheserie_gen_cserie=23905.html,tt8746478,fosseverdon,81131,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=23908.html,tt7137906,when-they-see-us,81355,when-they-see-us,when_they_see_us,when-they-see-us,null,FALSE
+/series/ficheserie_gen_cserie=23908.html,tt7137906,when-they-see-us,81355,when-they-see-us,when_they_see_us,when-they-see-us,null,TRUE
 /series/ficheserie_gen_cserie=23909.html,tt8693266,toy-boy,87763,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=23911.html,tt8300324,i-am-a-killer,81337,null,i_am_a_killer,null,null,FALSE
 /series/ficheserie_gen_cserie=23913.html,tt2983222,dare-me,95259,null,null,null,null,FALSE
@@ -4767,7 +4764,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=24182.html,tt1308089,acertainmagicalindex,30980,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24186.html,tt5473364,the-cry,82681,the-cry,the_cry,the-cry-2018,null,FALSE
 /series/ficheserie_gen_cserie=24192.html,tt9027772,the-birch,94517,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=24193.html,tt2304589,defending-jacob,87784,defending-jacob,defending_jacob,null,null,TRUE
+/series/ficheserie_gen_cserie=24193.html,tt2304589,defending-jacob,87784,defending-jacob,defending_jacob,null,37549135,TRUE
 /series/ficheserie_gen_cserie=24195.html,tt9039142,no-good-nick,82578,null,no_good_nick,null,null,FALSE
 /series/ficheserie_gen_cserie=24198.html,tt8404094,aj-and-the-queen,84896,null,aj_and_the_queen,null,null,FALSE
 /series/ficheserie_gen_cserie=24205.html,tt9054904,why-women-kill,87428,why-women-kill,why_women_kill,null,null,FALSE
@@ -4851,7 +4848,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=24426.html,tt8959860,motown-magic,83689,null,motown_magic,null,null,FALSE
 /series/ficheserie_gen_cserie=24430.html,tt9310330,yasuke,112166,yasuke,yasuke,null,null,FALSE
 /series/ficheserie_gen_cserie=24431.html,tt9319770,4400-2021,127581,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=24432.html,tt13106334,the-girl-in-the-mirror,127424,null,the_girl_in_the_mirror,null,null,FALSE
+/series/ficheserie_gen_cserie=24432.html,tt13106334,the-girl-in-the-mirror,127424,null,the_girl_in_the_mirror,null,null,TRUE
 /series/ficheserie_gen_cserie=24434.html,tt9251798,ragnarok,91557,ragnarok-2020,ragnarok,null,null,FALSE
 /series/ficheserie_gen_cserie=24437.html,tt9288892,mushikago-no-cagaster,94795,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24440.html,tt9253284,star-wars-andor,83867,andor,andor,null,null,TRUE
@@ -4877,7 +4874,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=24503.html,tt6322264,inside-the-worlds-toughest-prisons,72541,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24511.html,tt8914684,sunderland-til-i-die,84777,null,sunderland_til_i_die,null,null,FALSE
 /series/ficheserie_gen_cserie=24512.html,tt8565136,tenrou-sirius-the-jaeger,80560,null,sirius_the_jaeger,null,null,FALSE
-/series/ficheserie_gen_cserie=24518.html,tt7718110,hightown,86588,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=24518.html,tt7718110,hightown,86588,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=24525.html,tt9359220,young-wallander,91545,young-wallander,young_wallander,null,null,FALSE
 /series/ficheserie_gen_cserie=24530.html,tt8778064,the-society,84647,null,the_society,null,null,FALSE
 /series/ficheserie_gen_cserie=24534.html,tt9359796,blade-runner-black-lotus,84553,null,blade_runner_black_lotus,null,null,FALSE
@@ -4920,7 +4917,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=24682.html,tt10312854,the-kenan-show,116609,kenan,kenan,null,null,FALSE
 /series/ficheserie_gen_cserie=24690.html,tt9817980,domestic-girlfriend,83103,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24692.html,tt10312964,katy-keene,87539,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=24693.html,tt10155688,mare-of-easttown,115004,mare-of-easttown,mare_of_easttown,null,null,TRUE
+/series/ficheserie_gen_cserie=24693.html,tt10155688,mare-of-easttown,115004,mare-of-easttown,mare_of_easttown,null,38915361,TRUE
 /series/ficheserie_gen_cserie=24694.html,tt9660182,resident-evil,108296,resident-evil-2022,resident_evil,null,null,FALSE
 /series/ficheserie_gen_cserie=24697.html,tt10327294,outmatched,96652,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24699.html,tt9654086,go-vive-a-tu-manera,87024,null,null,null,null,FALSE
@@ -4929,7 +4926,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=24709.html,tt9398466,delhi-crime,87508,null,delhi_crime,null,null,FALSE
 /series/ficheserie_gen_cserie=24711.html,tt9164986,the-baker-and-the-beauty,92045,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24712.html,tt10327354,prodigal-son,91875,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=24718.html,tt5500158,pitch,67147,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=24718.html,tt5500158,pitch,67147,pitch,pitch,null,null,FALSE
 /series/ficheserie_gen_cserie=24719.html,tt10313066,stumptown,89440,stumptown,stumptown,null,null,FALSE
 /series/ficheserie_gen_cserie=24721.html,tt1831804,the-stand-2020,86382,the-stand,the_stand_2020,the-stand-2020,null,FALSE
 /series/ficheserie_gen_cserie=24725.html,tt7181728,your-honor,88491,null,null,null,null,FALSE
@@ -4988,7 +4985,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=24858.html,tt9817290,green-door,87663,null,green_door,null,null,FALSE
 /series/ficheserie_gen_cserie=24859.html,tt10027946,my-husband-wont-fit,87815,null,my_husband_wont_fit,null,null,FALSE
 /series/ficheserie_gen_cserie=24860.html,tt7197558,carlo-malik,87829,null,carlo_and_malik,null,null,FALSE
-/series/ficheserie_gen_cserie=24861.html,tt9012876,firefly-lane,87049,null,firefly_lane,null,null,FALSE
+/series/ficheserie_gen_cserie=24861.html,tt9012876,firefly-lane,87049,null,firefly_lane,null,null,TRUE
 /series/ficheserie_gen_cserie=24863.html,tt9827854,hollywood-2020,87050,null,hollywood,null,null,FALSE
 /series/ficheserie_gen_cserie=24868.html,tt9860690,gremlins-secrets-of-the-mogwai,90808,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24869.html,tt8311576,the-murders,87954,null,null,null,null,FALSE
@@ -5029,7 +5026,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=24971.html,tt10048342,the-queens-gambit,87739,the-queens-gambit,the_queens_gambit,the-queens-gambit,null,TRUE
 /series/ficheserie_gen_cserie=24973.html,tt8995604,my-first-first-love,87527,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24978.html,tt10619444,levius,93899,null,levius,null,null,FALSE
-/series/ficheserie_gen_cserie=24979.html,tt13079194,lopera,128481,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=24979.html,tt13079194,lopera,128481,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=24980.html,tt18549982,les-sentinelles,195657,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=24988.html,tt9046782,yankee,88775,null,yankee,null,null,FALSE
 /series/ficheserie_gen_cserie=24989.html,tt7559438,dead-pixels,88028,null,null,null,null,FALSE
@@ -5086,7 +5083,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=25153.html,tt9098432,malibu-rescue,85958,null,malibu_rescue,null,null,FALSE
 /series/ficheserie_gen_cserie=25155.html,tt7661384,the-l-word-generation-q,89630,the-l-word-generation-q,the_l_word_generation_q,null,null,FALSE
 /series/ficheserie_gen_cserie=25156.html,tt10375568,vis-a-vis-el-oasis,45871,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=25157.html,tt0965394,sanctuary,1310,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=25157.html,tt0965394,sanctuary,1310,sanctuary,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25158.html,tt10122814,mental-fr,95123,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25159.html,tt10380934,the-expanding-universe-of-ashley-garcia,99517,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25161.html,tt10380768,love-life-2020,102316,love-life,love_life_2020,null,null,FALSE
@@ -5098,7 +5095,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=25175.html,tt10405220,romulus,93782,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25176.html,tt6183736,ouro-verde,69692,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25179.html,tt9587732,jugar-con-fuego,86151,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=25183.html,tt9059760,normal-people,89905,normal-people,normal_people,null,null,TRUE
+/series/ficheserie_gen_cserie=25183.html,tt9059760,normal-people,89905,normal-people,normal_people,null,null,FALSE
 /series/ficheserie_gen_cserie=25186.html,tt6873926,two-sentence-horror-stories,90961,two-sentence-horror-stories,two_sentence_horror_stories,null,null,FALSE
 /series/ficheserie_gen_cserie=25187.html,tt10436228,jurassic-world-camp-cretaceous,93741,jurassic-world-camp-cretaceous,jurassic_world_camp_cretaceous,null,null,FALSE
 /series/ficheserie_gen_cserie=25190.html,tt10376904,exhibit-a-2019,90725,null,exhibit_a,null,null,FALSE
@@ -5136,7 +5133,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=25302.html,tt10580064,most-dangerous-game,90795,null,most_dangerous_game,null,null,FALSE
 /series/ficheserie_gen_cserie=25304.html,tt10970552,the-haunting-of-hill-house,109958,the-haunting-of-bly-manor,the_haunting_of_bly_manor,null,null,FALSE
 /series/ficheserie_gen_cserie=25305.html,tt8769360,professionals-2020,113452,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=25308.html,tt8685324,sanditon,92875,sanditon,sanditon,null,null,FALSE
+/series/ficheserie_gen_cserie=25308.html,tt8685324,sanditon,92875,sanditon,sanditon,null,null,TRUE
 /series/ficheserie_gen_cserie=25310.html,tt10574558,midnight-mass,97400,midnight-mass,midnight_mass,null,null,FALSE
 /series/ficheserie_gen_cserie=25313.html,tt10955558,la-garconne,108683,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25319.html,tt11724100,h24,98806,null,null,null,null,FALSE
@@ -5172,7 +5169,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=25435.html,tt10752770,sistas,94686,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25436.html,tt10758074,the-man-who-fell-to-earth,118663,the-man-who-fell-to-earth-2022,the_man_who_fell_to_earth,null,null,FALSE
 /series/ficheserie_gen_cserie=25438.html,tt10417836,work-in-progress,91814,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=25439.html,tt9839146,blood-water,103411,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=25439.html,tt9839146,blood-water,103411,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=25445.html,tt10516352,ak-101,100897,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25456.html,tt8121156,gr5,101791,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25457.html,tt10768876,ovnis,108353,null,null,null,null,FALSE
@@ -5232,9 +5229,9 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=25625.html,tt11004134,ghostwriter-2019,93520,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25628.html,tt10857210,muppets-now,92824,muppets-now,muppets_now,null,null,FALSE
 /series/ficheserie_gen_cserie=25630.html,tt10895604,power-players,103659,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=25631.html,tt12101170,derapages,101690,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=25631.html,tt12101170,derapages,101690,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=25632.html,tt8682738,betty-en-ny,86189,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=25633.html,tt11198330,house-of-the-dragon,94997,house-of-the-dragon,house_of_the_dragon,null,40572227,TRUE
+/series/ficheserie_gen_cserie=25633.html,tt11198330,house-of-the-dragon,94997,house-of-the-dragon,house_of_the_dragon,null,40572227,FALSE
 /series/ficheserie_gen_cserie=25634.html,tt11058644,my-holo-love,96160,null,my_holo_love,null,null,FALSE
 /series/ficheserie_gen_cserie=25637.html,tt9466596,darkness-those-who-kill,87542,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25640.html,tt13144222,18h30,110530,null,null,null,null,FALSE
@@ -5247,7 +5244,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=25661.html,tt9335498,demon-slayer-kimetsu-no-yaiba,85937,null,demon_slayer_kimetsu_no_yaiba,null,null,FALSE
 /series/ficheserie_gen_cserie=25663.html,tt12079136,cellule-de-crise-2020,114158,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25664.html,tt8589702,apocalypse-la-guerre-des-mondes-1945-1991,95224,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=25670.html,tt22694974,toutouyoutou,206076,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=25670.html,tt22694974,toutouyoutou,206076,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=25673.html,tt13206854,moah,110881,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25674.html,tt10985096,call-me-kat,113627,call-me-kat,call_me_kat,null,null,FALSE
 /series/ficheserie_gen_cserie=25686.html,tt11006642,walker-texas-ranger-2020,99121,walker,walker,null,null,FALSE
@@ -5269,7 +5266,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=25748.html,tt11110622,white-house-farm,96954,the-murders-at-white-house-farm,white_house_farm,null,null,FALSE
 /series/ficheserie_gen_cserie=25750.html,tt11102190,katla,104157,null,katla,null,null,FALSE
 /series/ficheserie_gen_cserie=25752.html,tt10487072,prank-encounters,94515,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=25756.html,tt15384074,marie-antoinette-2022,158439,marie-antoinette-2022,marie_antoinette,null,null,FALSE
+/series/ficheserie_gen_cserie=25756.html,tt15384074,marie-antoinette-2022,158439,marie-antoinette-2022,marie_antoinette,null,null,TRUE
 /series/ficheserie_gen_cserie=25759.html,tt9181662,just-roll-with-it,89315,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=25762.html,tt10986410,ted-lasso,97546,ted-lasso,ted_lasso,null,null,TRUE
 /series/ficheserie_gen_cserie=25763.html,tt11737794,run-the-world,123084,run-the-world,run_the_world,null,null,FALSE
@@ -5352,10 +5349,10 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=26099.html,tt11640018,la-brea,128839,la-brea,la_brea,null,null,FALSE
 /series/ficheserie_gen_cserie=26101.html,tt13039896,plan-b-fr,124343,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=26103.html,tt26676007,rictus,212574,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=26106.html,tt11846996,vigil,126167,vigil,vigil_2021,null,41163874,TRUE
+/series/ficheserie_gen_cserie=26106.html,tt11846996,vigil,126167,vigil,vigil_2021,null,41163874,FALSE
 /series/ficheserie_gen_cserie=26107.html,tt10394844,soulmates-2020,100771,null,soulmates,null,null,FALSE
 /series/ficheserie_gen_cserie=26112.html,tt11650492,girls5eva,100350,girls5eva,girls5eva,null,null,FALSE
-/series/ficheserie_gen_cserie=26113.html,tt18260550,drole,157726,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=26113.html,tt18260550,drole,157726,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=26114.html,tt10982034,trying,98177,trying,trying,null,null,FALSE
 /series/ficheserie_gen_cserie=26119.html,tt11714932,trolls-trollstopia,113378,null,trolls_trollstopia,null,null,FALSE
 /series/ficheserie_gen_cserie=26121.html,tt11120674,desenfrenadas,99385,null,null,null,null,FALSE
@@ -5440,7 +5437,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=26351.html,tt11497904,pandemic-how-to-prevent-an-outbreak,96557,null,pandemic_how_to_prevent_an_outbreak,null,null,FALSE
 /series/ficheserie_gen_cserie=26354.html,tt0096626,the-kids-in-the-hall,1551,the-kids-in-the-hall,null,null,null,FALSE
 /series/ficheserie_gen_cserie=26355.html,tt8381724,coop-and-cami-ask-the-world,79787,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=26361.html,tt8855592,rojst,81686,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=26361.html,tt8855592,rojst,81686,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=26372.html,tt10293938,outer-banks,100757,outer-banks,outer_banks,null,null,TRUE
 /series/ficheserie_gen_cserie=26376.html,tt9184592,the-unlisted,94625,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=26379.html,tt5744802,les-kassos,66038,null,null,null,null,FALSE
@@ -5479,7 +5476,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=26571.html,tt11239552,itaewon-class,96162,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=26575.html,tt12286434,just-beyond,120734,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=26577.html,tt12580982,national-treasure-2022,137437,national-treasure-edge-of-history,national_treasure_edge_of_history,null,null,FALSE
-/series/ficheserie_gen_cserie=26581.html,tt12306692,american-horror-stories,113036,null,american_horror_stories,null,null,FALSE
+/series/ficheserie_gen_cserie=26581.html,tt12306692,american-horror-stories,113036,null,american_horror_stories,null,null,TRUE
 /series/ficheserie_gen_cserie=26583.html,tt12286260,santa-inc,103214,null,santa_inc,null,null,FALSE
 /series/ficheserie_gen_cserie=26586.html,tt1910645,the-woods-2020,103425,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=26587.html,tt12304420,clark,157008,null,null,null,null,FALSE
@@ -5554,7 +5551,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=27126.html,tt6831266,close-to-me,133302,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27127.html,tt12851524,only-murders-in-the-building,107113,only-murders-in-the-building,only_murders_in_the_building,null,null,TRUE
 /series/ficheserie_gen_cserie=27133.html,tt12887536,csi-vegas,122194,csi-vegas,csi_vegas,null,null,FALSE
-/series/ficheserie_gen_cserie=27135.html,tt12878838,bel-air,107365,bel-air,bel_air,null,null,TRUE
+/series/ficheserie_gen_cserie=27135.html,tt12878838,bel-air,107365,bel-air,bel_air,null,null,FALSE
 /series/ficheserie_gen_cserie=27148.html,tt13390542,sauver-lisa,128579,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27159.html,tt9310390,the-duchess,107363,the-duchess,the_duchess,null,null,FALSE
 /series/ficheserie_gen_cserie=27170.html,tt12824922,long-way-up,106871,long-way-up,long_way_up,null,null,FALSE
@@ -5605,14 +5602,14 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=27382.html,tt9270752,the-unusual-suspects,125309,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27388.html,tt11187454,trickster-2020,106707,null,trickster,null,null,FALSE
 /series/ficheserie_gen_cserie=27389.html,tt21928100,et-la-montagne-fleurira,207889,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=27397.html,tt13195218,tout-le-monde-ment,124902,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=27403.html,tt13210838,the-gentlemen,236235,the-gentlemen,the_gentlemen,null,null,TRUE
+/series/ficheserie_gen_cserie=27397.html,tt13195218,tout-le-monde-ment,124902,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=27403.html,tt13210838,the-gentlemen,236235,the-gentlemen,the_gentlemen,null,null,FALSE
 /series/ficheserie_gen_cserie=27406.html,tt13111040,the-offer,114068,the-offer,the_offer,null,null,FALSE
 /series/ficheserie_gen_cserie=27407.html,tt13111078,lioness,113962,null,special_ops_lioness,null,null,FALSE
 /series/ficheserie_gen_cserie=27411.html,tt13207736,monster-the-jeffrey-dahmer-story,113988,dahmer---monster-the-jeffrey-dahmer-story,dahmer_monster_the_jeffrey_dahmer_story,null,null,TRUE
 /series/ficheserie_gen_cserie=27412.html,tt13259878,whitstable-pearl,113966,whitstable-pearl,whitstable_pearl,null,44863495,FALSE
 /series/ficheserie_gen_cserie=27414.html,tt14315926,le-remplacant,121622,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=27439.html,tt10795658,alice-in-borderland-2020,110316,null,alice_in_borderland,null,null,FALSE
+/series/ficheserie_gen_cserie=27439.html,tt10795658,alice-in-borderland-2020,110316,alice-in-borderland,alice_in_borderland,null,null,FALSE
 /series/ficheserie_gen_cserie=27445.html,tt14180156,luther-fr,124888,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27448.html,tt13266618,flatbush-misdemeanors,111500,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27454.html,tt13288904,angela-black,136069,null,null,null,null,FALSE
@@ -5651,7 +5648,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=27596.html,tt6549760,the-ollie-moon-show,90422,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27599.html,tt11097576,on-pointe,112804,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27602.html,tt11252090,the-hardy-boys-2020,112945,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=27612.html,tt10098728,our-house-2022,157014,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=27612.html,tt10098728,our-house-2022,157014,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=27620.html,tt15392100,the-billion-dollar-code,133357,null,the_billion_dollar_code,the-billion-dollar-code,null,FALSE
 /series/ficheserie_gen_cserie=27621.html,tt12104930,kitz,139799,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27623.html,tt9112152,the-investigation,110333,null,null,null,null,FALSE
@@ -5668,7 +5665,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=27787.html,tt13273826,amazing-rumor,113268,null,the_uncanny_counter,null,null,FALSE
 /series/ficheserie_gen_cserie=27789.html,tt13394544,city-couples-way-of-love,113710,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27798.html,tt13696152,lol-qui-rit-sort,122228,null,null,null,44544323,TRUE
-/series/ficheserie_gen_cserie=27803.html,tt27548095,la-peste,219133,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=27803.html,tt27548095,la-peste,219133,null,null,null,55716234,TRUE
 /series/ficheserie_gen_cserie=27821.html,tt13696452,money-heist-kr,112836,money-heist-korea---joint-economic-area,money_heist_korea_joint_economic_area,null,null,FALSE
 /series/ficheserie_gen_cserie=27823.html,tt13560186,erase-una-vez-pero-ya-no,114156,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=27836.html,tt8160890,craig-ross-jrs-monogamy,101502,null,null,null,null,FALSE
@@ -5784,7 +5781,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=28474.html,tt14218674,ncis-hawaii,124271,ncis-hawaii,ncis_hawaii,null,44723919,FALSE
 /series/ficheserie_gen_cserie=28484.html,tt14094206,assembled,118924,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=28486.html,tt12711158,demi-lovato-dancing-with-the-devil,120424,demi-lovato-dancing-with-the-devil,demi_lovato_dancing_with_the_devil,null,null,FALSE
-/series/ficheserie_gen_cserie=28487.html,tt13443470,wednesday,119051,wednesday,wednesday,null,null,TRUE
+/series/ficheserie_gen_cserie=28487.html,tt13443470,wednesday,119051,wednesday,wednesday,null,null,FALSE
 /series/ficheserie_gen_cserie=28492.html,tt10608454,harlem,138089,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=28504.html,tt14449470,fbi-international,121658,fbi-international,fbi_international,null,null,FALSE
 /series/ficheserie_gen_cserie=28519.html,tt14040910,queens-2021,127390,null,null,null,null,FALSE
@@ -5814,8 +5811,8 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=28653.html,tt14168162,bosch-legacy,153657,bosch-legacy,bosch_legacy,null,null,FALSE
 /series/ficheserie_gen_cserie=28656.html,tt14192504,we-own-this-city,125949,we-own-this-city,we_own_this_city,null,null,FALSE
 /series/ficheserie_gen_cserie=28661.html,tt14376190,kindred,138561,kindred,kindred,null,null,FALSE
-/series/ficheserie_gen_cserie=28671.html,tt14664414,young-royals,125910,null,young_royals,null,null,FALSE
-/series/ficheserie_gen_cserie=28673.html,tt21822590,the-woman-in-the-wall,209922,the-woman-in-the-wall,the_woman_in_the_wall,null,null,TRUE
+/series/ficheserie_gen_cserie=28671.html,tt14664414,young-royals,125910,null,young_royals,null,null,TRUE
+/series/ficheserie_gen_cserie=28673.html,tt21822590,the-woman-in-the-wall,209922,the-woman-in-the-wall,the_woman_in_the_wall,null,null,FALSE
 /series/ficheserie_gen_cserie=28678.html,tt12564616,jiva,127940,null,jiva,null,null,FALSE
 /series/ficheserie_gen_cserie=28680.html,tt13524842,generation-56k,126304,null,generation_56k,null,null,FALSE
 /series/ficheserie_gen_cserie=28681.html,tt13231962,elves-2021,135864,null,null,null,null,FALSE
@@ -5824,7 +5821,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=28686.html,tt14315542,sexify,100226,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=28689.html,tt11898920,naomi-osaka,126387,naomi-osaka,naomi_osaka,null,null,FALSE
 /series/ficheserie_gen_cserie=28698.html,tt13433814,my-dad-the-bounty-hunter,157221,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=28699.html,tt10183912,alrawabi-school-for-girls,88516,null,alrawabi_school_for_girls,null,45249545,FALSE
+/series/ficheserie_gen_cserie=28699.html,tt10183912,alrawabi-school-for-girls,88516,null,alrawabi_school_for_girls,null,45249545,TRUE
 /series/ficheserie_gen_cserie=28709.html,tt10405370,sas-rogue-heroes,93870,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=28711.html,tt16477036,esprit-dhiver,211030,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=28712.html,tt13968792,abducted,121241,null,null,null,null,FALSE
@@ -5874,7 +5871,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=28951.html,tt13156316,the-sons-of-sam-a-descent-into-darkness,122672,the-sons-of-sam-a-descent-into-darkness,the_sons_of_sam_a_descent_into_darkness,null,null,FALSE
 /series/ficheserie_gen_cserie=28952.html,tt14055432,the-crime-of-the-century,119142,the-crime-of-the-century,the_crime_of_the_century,null,null,FALSE
 /series/ficheserie_gen_cserie=28955.html,tt14829590,why-didnt-they-ask-evans,157372,why-didnt-they-ask-evans,why_didnt_they_ask_evans,null,null,FALSE
-/series/ficheserie_gen_cserie=28959.html,tt9813792,from,124364,from,from,null,null,TRUE
+/series/ficheserie_gen_cserie=28959.html,tt9813792,from,124364,from,from,null,null,FALSE
 /series/ficheserie_gen_cserie=28964.html,tt14507354,the-endgame,134375,null,the_endgame,null,null,FALSE
 /series/ficheserie_gen_cserie=28977.html,tt14524712,beckham,235345,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=28986.html,tt14463552,baruca,201331,null,null,null,null,FALSE
@@ -5898,7 +5895,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=29113.html,tt14023192,mine-2021,124426,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29121.html,tt15377930,la-venganza-de-las-juanas,133086,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29125.html,tt11808942,schmigadoon,98892,null,schmigadoon,null,null,FALSE
-/series/ficheserie_gen_cserie=29127.html,tt11126994,arcane,94605,arcane,arcane_league_of_legends,null,null,FALSE
+/series/ficheserie_gen_cserie=29127.html,tt11126994,arcane,94605,arcane,arcane_league_of_legends,null,null,TRUE
 /series/ficheserie_gen_cserie=29129.html,tt14586350,love-and-death,124800,love-death,love_and_death,null,null,FALSE
 /series/ficheserie_gen_cserie=29133.html,tt5835180,plan-b,69222,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29137.html,tt13655552,systrabond,127563,null,null,null,null,FALSE
@@ -5915,13 +5912,13 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=29207.html,tt14218830,abbott-elementary,125935,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29208.html,tt14661396,queen-charlotte-a-bridgerton-story,196454,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29212.html,tt13107070,the-pact-2021,125366,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=29219.html,tt9174718,the-lost-flowers-of-alice-hart,125816,the-lost-flowers-of-alice-hart,the_lost_flowers_of_alice_hart,null,null,TRUE
+/series/ficheserie_gen_cserie=29219.html,tt9174718,the-lost-flowers-of-alice-hart,125816,the-lost-flowers-of-alice-hart,the_lost_flowers_of_alice_hart,null,null,FALSE
 /series/ficheserie_gen_cserie=29225.html,tt14675860,immigrant,130567,null,null,welcome-to-chippendales,null,FALSE
-/series/ficheserie_gen_cserie=29238.html,tt14689620,vampire-academy,125940,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=29238.html,tt14689620,vampire-academy,125940,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=29239.html,tt12379170,cielo-grande,155545,null,null,dream-18,null,FALSE
 /series/ficheserie_gen_cserie=29243.html,tt11952974,the-surrealtor,106148,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29244.html,tt13371760,le-somnambuliste,127233,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=29245.html,tt14688458,wool,125988,silo,silo,null,null,TRUE
+/series/ficheserie_gen_cserie=29245.html,tt14688458,wool,125988,silo,silo,null,null,FALSE
 /series/ficheserie_gen_cserie=29247.html,tt5598192,before-we-die,70337,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29248.html,tt14155414,this-is-pop,125972,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29253.html,tt14518284,nevertheless,126035,null,null,null,null,FALSE
@@ -5957,7 +5954,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=29528.html,tt14792896,liaison,128066,liaison,liaison,null,null,FALSE
 /series/ficheserie_gen_cserie=29529.html,tt14923244,the-winchesters,128113,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29530.html,tt14921986,interview-with-the-vampire,128098,interview-with-the-vampire,interview_with_the_vampire,null,null,FALSE
-/series/ficheserie_gen_cserie=29533.html,tt15808042,mauvaise-pioche,136135,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=29533.html,tt15808042,mauvaise-pioche,136135,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=29555.html,tt1998372,under-the-banner-of-heaven,128095,under-the-banner-of-heaven,under_the_banner_of_heaven,null,null,FALSE
 /series/ficheserie_gen_cserie=29581.html,tt16413992,marion-2022,202875,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29588.html,tt14954498,echoes,129612,null,null,null,null,FALSE
@@ -5986,7 +5983,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=29747.html,tt12923632,dead-ringers-2021,130987,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29751.html,tt13024974,dp,110534,null,dp,null,null,FALSE
 /series/ficheserie_gen_cserie=29765.html,tt10731840,platform,6850,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=29767.html,tt15114768,wedding-season-2022,131836,null,wedding_season,null,null,FALSE
+/series/ficheserie_gen_cserie=29767.html,tt15114768,wedding-season-2022,131836,null,wedding_season,null,null,TRUE
 /series/ficheserie_gen_cserie=29776.html,tt15125616,chicago-party-aunt,130077,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29803.html,tt13018148,tell-me-lies,130464,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29817.html,tt15180134,reboot-2022,155427,null,null,null,null,FALSE
@@ -5994,7 +5991,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=29821.html,tt12258710,thin-blue-line,116944,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29823.html,tt13315664,troppo,130578,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29824.html,tt15176890,the-lake,158051,the-lake,the_lake,null,null,FALSE
-/series/ficheserie_gen_cserie=29830.html,tt17641200,high-heat,206087,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=29830.html,tt17641200,high-heat,206087,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=29835.html,tt13275052,dive-club,131830,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29864.html,tt10901134,one-lane-bridge,102278,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29867.html,tt21955940,null,208855,null,null,null,null,FALSE
@@ -6011,7 +6008,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=29982.html,tt15303234,full-circle-2022,132016,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=29991.html,tt13643704,annika,130273,annika,annika,null,45390772,FALSE
 /series/ficheserie_gen_cserie=30006.html,tt14466294,the-control-room,194637,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=30025.html,tt15351648,three-pines,197242,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=30025.html,tt15351648,three-pines,197242,null,three_pines,null,null,FALSE
 /series/ficheserie_gen_cserie=30039.html,tt14592026,h24-24-heures-de-la-vie-dune-femme,136216,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30040.html,tt10670870,the-house-on-the-slope,89659,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30045.html,tt12940504,my-name,110356,null,null,null,null,FALSE
@@ -6037,7 +6034,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=30190.html,tt13782250,countrymen,136086,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30192.html,tt15869988,sad-city-girls,136204,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30197.html,tt15475330,black-cake,230225,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=30198.html,tt15469618,bad-sisters,199318,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=30198.html,tt15469618,bad-sisters,199318,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=30204.html,tt15393644,neumatt,135022,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30208.html,tt15506958,freeridge,136394,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30212.html,tt14456760,run-the-burbs,139474,null,null,null,null,FALSE
@@ -6072,13 +6069,13 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=30786.html,tt27012297,sous-controle,220044,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30794.html,tt13734336,non-mi-lasciare,139552,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30795.html,tt13839098,threesome-2021,130467,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=30811.html,tt9471404,the-chosen,85077,null,null,null,null,TRUE
-/series/ficheserie_gen_cserie=30816.html,tt21046402,lhomme-de-nos-vies,206997,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=30811.html,tt9471404,the-chosen,85077,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=30816.html,tt21046402,lhomme-de-nos-vies,206997,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=30852.html,tt16288804,berlin-2023,146176,null,berlin_2023,null,null,TRUE
 /series/ficheserie_gen_cserie=30864.html,tt15428778,anne-rices-mayfair-witches,207863,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=30876.html,tt26605367,coeurs-noirs,217583,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=30876.html,tt26605367,coeurs-noirs,217583,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30884.html,tt16350094,the-boys-diabolical,152483,the-boys-presents-diabolical,the_boys_presents_diabolical,null,null,FALSE
-/series/ficheserie_gen_cserie=30890.html,tt16358384,kansas-city-2022,153312,tulsa-king,tulsa_king,null,null,TRUE
+/series/ficheserie_gen_cserie=30890.html,tt16358384,kansas-city-2022,153312,tulsa-king,tulsa_king,null,null,FALSE
 /series/ficheserie_gen_cserie=30893.html,tt16291038,the-dreamer-becoming-karen-blixen,210009,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30903.html,tt8975856,care-bears-unlock-the-magic,97959,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30906.html,tt14761860,the-big-door-prize,194704,null,null,null,null,FALSE
@@ -6091,13 +6088,13 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=30972.html,tt15527308,action-pack,10779,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30977.html,tt7950716,blanca-2021,139309,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=30993.html,tt16450274,treason,157080,null,treason,treason-2022,null,FALSE
-/series/ficheserie_gen_cserie=31039.html,tt14729094,the-bad-guy,158050,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=31039.html,tt14729094,the-bad-guy,158050,null,the_bad_guy,null,null,FALSE
 /series/ficheserie_gen_cserie=31045.html,tt14729118,prisma,158053,null,prisma,null,null,FALSE
 /series/ficheserie_gen_cserie=31046.html,tt14040004,schneller-als-die-angst,154456,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31053.html,tt14442054,that-girl-lay-lay,135037,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31054.html,tt15473010,terzi,214079,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=31062.html,tt16867040,cunk-on-earth,219881,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=31063.html,tt29627241,polar-park,220043,null,null,null,45602238,TRUE
+/series/ficheserie_gen_cserie=31062.html,tt16867040,cunk-on-earth,219881,cunk-on-earth,cunk_on_earth,null,null,FALSE
+/series/ficheserie_gen_cserie=31063.html,tt29627241,polar-park,220043,null,null,null,45602238,FALSE
 /series/ficheserie_gen_cserie=31083.html,tt15964848,the-makanai-cooking-for-the-maiko-house,154916,the-makanai-cooking-for-the-maiko-house,the_makanai_cooking_for_the_maiko_house,null,null,FALSE
 /series/ficheserie_gen_cserie=31111.html,tt20883126,reina-roja,203667,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=31112.html,tt21278506,los-farad,225283,null,null,null,null,FALSE
@@ -6133,7 +6130,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=31278.html,tt18115928,east-new-york,202296,null,east_new_york,null,null,FALSE
 /series/ficheserie_gen_cserie=31297.html,tt18250904,not-dead-yet,203178,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31316.html,tt18335752,1923-yellowstone,157744,1923,1923,null,null,TRUE
-/series/ficheserie_gen_cserie=31317.html,tt17506104,bri,203276,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=31317.html,tt17506104,bri,203276,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=31320.html,tt22015782,simon-becketts-the-chemistry-of-death,217180,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31329.html,tt12661338,a-friend-of-the-family,197434,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31334.html,tt13190882,il-re,158479,null,null,null,null,FALSE
@@ -6143,7 +6140,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=31379.html,tt26442193,piste-noire,218656,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31383.html,tt15096836,krakowskie-potwory,158396,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31385.html,tt16098700,fire-country,202297,fire-country,fire_country,null,null,FALSE
-/series/ficheserie_gen_cserie=31402.html,tt30426197,escort-boys,241063,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=31402.html,tt30426197,escort-boys,241063,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=31403.html,tt18347622,bodies-2023,233629,bodies-2023,bodies_2023,null,null,TRUE
 /series/ficheserie_gen_cserie=31404.html,tt11714672,the-flatshare,211698,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31422.html,tt8983318,wrecked-2022,169582,null,null,null,null,FALSE
@@ -6191,8 +6188,8 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=31913.html,tt18699118,alert,202308,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31915.html,tt20228406,unprisoned,201902,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=31929.html,tt13925166,surviving-summer,129141,null,surviving_summer,null,null,FALSE
-/series/ficheserie_gen_cserie=31935.html,tt28480255,ninja-kamui,202284,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=31952.html,tt20285780,the-artful-dodger,202208,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=31935.html,tt28480255,ninja-kamui,202284,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=31952.html,tt20285780,the-artful-dodger,202208,the-artful-dodger,the_artful_dodger,null,null,TRUE
 /series/ficheserie_gen_cserie=31953.html,tt20259432,the-clearing-2023,202162,the-clearing,the_clearing,null,null,FALSE
 /series/ficheserie_gen_cserie=31999.html,tt28247370,riviere-perdue,228174,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=32017.html,tt14589904,farzar,202864,farzar,null,null,null,FALSE
@@ -6205,7 +6202,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=32140.html,tt21088136,criminal-record,204490,criminal-record,criminal_record,null,null,FALSE
 /series/ficheserie_gen_cserie=32142.html,tt15487922,wolf-pack,134865,wolf-pack,wolf_pack,null,null,FALSE
 /series/ficheserie_gen_cserie=32143.html,tt20318226,ten-pound-poms,204944,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=32147.html,tt14117010,breathe-2021,195822,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=32147.html,tt14117010,breathe-2021,195822,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=32152.html,tt26543007,lt-21,209804,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=32168.html,tt14899624,zeytin-aac,206180,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=32183.html,tt20449034,di4ri,202306,null,di4ries,null,null,FALSE
@@ -6228,11 +6225,11 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=32556.html,tt21446352,de-grace,209483,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=32557.html,tt21448608,detox,207470,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=32569.html,tt21365986,the-other-black-girl,209727,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=32571.html,tt21432090,the-brave-ones,209390,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=32573.html,tt21354694,665,213845,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=32571.html,tt21432090,the-brave-ones,209390,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=32573.html,tt21354694,665,213845,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=32641.html,tt21867596,sins-of-our-mother,208720,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=32659.html,tt16481820,diario-de-un-gigolo,208925,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=32667.html,tt21913366,tout-va-bien,208920,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=32667.html,tt21913366,tout-va-bien,208920,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=32671.html,tt22498608,null,131369,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=32674.html,tt15654944,gymnastics-academy-a-second-chance,208527,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=32683.html,tt5835160,les-simone,67590,null,null,null,null,FALSE
@@ -6252,18 +6249,18 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=32990.html,tt21279114,cigarette-girl,228957,null,cigarette_girl,null,null,FALSE
 /series/ficheserie_gen_cserie=33010.html,tt14527620,the-orchestra,205180,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=33031.html,tt17037878,arcadia,208487,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=33048.html,tt26246248,mary-george,212462,null,mary_and_george,null,null,FALSE
+/series/ficheserie_gen_cserie=33048.html,tt26246248,mary-george,212462,null,mary_and_george,null,null,TRUE
 /series/ficheserie_gen_cserie=33094.html,tt28225048,the-bequeathed,212553,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=33130.html,tt23033802,still-up,213337,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=33139.html,tt7216636,hazbin-hotel,94954,hazbin-hotel,hazbin_hotel,hazbin-hotel,null,FALSE
 /series/ficheserie_gen_cserie=33158.html,tt23546622,en-place,194899,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=33192.html,tt25506040,icon-of-french-cinema,214224,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=33192.html,tt25506040,icon-of-french-cinema,214224,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=33209.html,tt12708140,la-vita-bugiarda-degli-adulti,103416,the-lying-life-of-adults,the_lying_life_of_adults,null,null,FALSE
 /series/ficheserie_gen_cserie=33226.html,tt23477248,neon,214128,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=33228.html,tt15525658,olhar-indiscreto,135814,null,lady_voyeur,null,null,FALSE
 /series/ficheserie_gen_cserie=33253.html,tt23183618,un-cuento-perfecto,226216,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=33318.html,tt11384300,furies,212588,null,null,null,null,TRUE
-/series/ficheserie_gen_cserie=33338.html,tt28129282,pax-massilia,216985,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=33318.html,tt11384300,furies,212588,null,null,null,57894660,TRUE
+/series/ficheserie_gen_cserie=33338.html,tt28129282,pax-massilia,216985,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=33340.html,tt23644332,romancero,225287,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=33435.html,tt24245988,the-girl-downstairs,194797,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=33483.html,tt27487297,le-stade,217043,null,null,null,null,FALSE
@@ -6308,7 +6305,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=34154.html,tt15654810,north-sea-connection,209498,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=34157.html,tt27142031,american-manhunt-the-boston-marathon-bombing,222314,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=34167.html,tt18831118,obsession-2023,223313,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=34186.html,tt28444026,tout-cela-je-te-le-donnerai,222680,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=34186.html,tt28444026,tout-cela-je-te-le-donnerai,222680,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=34193.html,tt28083023,in-her-car,236652,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=34197.html,tt20863760,liebes-kind,229221,null,null,null,null,TRUE
 /series/ficheserie_gen_cserie=34205.html,tt27720255,null,222806,null,null,null,null,FALSE
@@ -6342,7 +6339,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=34668.html,tt27270582,flair-de-famille,245290,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=34682.html,tt28315535,null,230120,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=34727.html,tt30887903,squeezie-merci-internet,0,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=34728.html,tt29143466,nudes-2024,229160,null,null,null,null,TRUE
+/series/ficheserie_gen_cserie=34728.html,tt29143466,nudes-2024,229160,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=34729.html,tt28144095,en-terrasse,235906,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=34746.html,tt27494999,alexander-the-making-of-a-god,242392,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=34790.html,tt14466338,wolf,222117,null,null,null,null,FALSE
@@ -6368,7 +6365,7 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=35215.html,tt14081634,big-vape-the-rise-and-fall-of-juul,235540,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=35244.html,tt27591984,null,235228,null,i_woke_up_a_vampire,null,null,FALSE
 /series/ficheserie_gen_cserie=35269.html,tt21377088,the-enfield-poltergeist,235851,null,null,null,null,FALSE
-/series/ficheserie_gen_cserie=35270.html,tt13309742,blue-eye-samurai,225180,null,blue_eye_samurai,null,null,TRUE
+/series/ficheserie_gen_cserie=35270.html,tt13309742,blue-eye-samurai,225180,null,blue_eye_samurai,null,null,FALSE
 /series/ficheserie_gen_cserie=35272.html,tt22459586,dna-do-crime,235924,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=35282.html,tt29225198,strong-woman-kang-nam-soon,203164,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=35283.html,tt27688981,absolutni-debiutanci,230372,null,absolute_beginners,null,null,FALSE
@@ -6399,3 +6396,4 @@ URL,IMDB_ID,BETASERIES_ID,THEMOVIEDB_ID,METACRITIC_ID,ROTTEN_TOMATOES_ID,LETTERB
 /series/ficheserie_gen_cserie=35842.html,tt6980394,acceptable-risk,75019,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=35894.html,tt30842486,ready-set-love,243403,null,null,null,null,FALSE
 /series/ficheserie_gen_cserie=35916.html,tt31035015,can-i-tell-you-a-secret,245551,null,null,null,null,FALSE
+/series/ficheserie_gen_cserie=35997.html,tt14296284,you-me-2023,221050,null,null,null,null,FALSE
