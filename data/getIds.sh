@@ -15,6 +15,7 @@ TYPE=$2
 URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
+IMDB_ID_TO_CHECK=$5
 
 # Define alternative base variables
 if [[ $TYPE == "movie" ]]; then
@@ -176,10 +177,14 @@ get_other_ids () {
   SENSCRITIQUE_ID=$(curl -s $WIKI_URL | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
   SENSCRITIQUE_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.senscritique.com" | grep "Q21441764" | wc -l | awk '{print $1}')
   if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "senscritique" ]]; then
-    open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-    open -a $BROWSER_PATH "https://www.senscritique.com"
-    echo "Enter the SensCritique ID:"
-    read SENSCRITIQUE_ID
+    if [[ -z $IMDB_ID_TO_CHECK ]] || [[ $IMDB_ID_TO_CHECK == $IMDB_ID ]]; then
+      open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+      open -a $BROWSER_PATH "https://www.senscritique.com"
+      echo "Enter the SensCritique ID:"
+      read SENSCRITIQUE_ID
+    else
+      SENSCRITIQUE_ID=null
+    fi
   elif [[ -z $SENSCRITIQUE_ID ]] || [[ $SENSCRITIQUE_ID_DEPRECATED -eq 1 ]]; then
     SENSCRITIQUE_ID=null
   fi
