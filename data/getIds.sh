@@ -16,6 +16,7 @@ URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
 IMDB_ID_TO_CHECK=$5
+REGEX_IDS="^\/.*\=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
 
 # Define alternative base variables
 if [[ $TYPE == "movie" ]]; then
@@ -63,12 +64,11 @@ else
   sed -i '' -E "s/(,TRUE|,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
-REGEX_IDS="^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(.+?)+,(.+?)+,(TRUE|FALSE)$"
 WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | wc -l | awk '{print $1}')
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
   echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
-  cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS
+  cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | tail -1
   exit 1
 fi
 

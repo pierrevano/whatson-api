@@ -1,6 +1,7 @@
 COUNTER=0
 BASE_URL=https://www.allocine.fr
 MAX_INDEX=350000
+REGEX_IDS="^\/.*\=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
 
 if [[ $2 == "movie" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
@@ -58,6 +59,17 @@ function getOtherIDs {
       ALLOCINE_ID=null
     fi
     echo "AlloCiné ID: $ALLOCINE_ID"
+  elif [[ $3 == "metacritic" ]]; then
+    METACRITIC_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+    METACRITIC_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | wc -l | awk '{print $1}')
+    if [[ $METACRITIC_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
+      METACRITIC_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+    fi
+    METACRITIC_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://www.metacritic.com" | grep "Q21441764" | wc -l | awk '{print $1}')
+    if [[ -z $METACRITIC_ID ]] || [[ $METACRITIC_ID_DEPRECATED -eq 1 ]]; then
+      METACRITIC_ID=null
+    fi
+    echo "Metacritic ID: $METACRITIC_ID"
   else
     if [[ $1 == "check_allocine" ]] || [[ $METACRITIC_ID_FROM_FILE == "null" ]]; then
       METACRITIC_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
@@ -129,7 +141,7 @@ if [[ $1 == "check" ]]; then
       LETTERBOXD_ID_FROM_FILE=$(echo $LINE | cut -d',' -f7)
       SENSCRITIQUE_ID_FROM_FILE=$(echo $LINE | cut -d',' -f8)
 
-      if [[ $3 == "allocine" ]] || [[ $IMDB_ID_FROM_FILE == "null" ]] || [[ $BETASERIES_ID_FROM_FILE == "null" ]] || [[ $THEMOVIEDB_ID_FROM_FILE == "null" ]] || [[ $METACRITIC_ID_FROM_FILE == "null" ]] || [[ $ROTTEN_TOMATOES_ID_FROM_FILE == "null" ]] || [[ $LETTERBOXD_ID_FROM_FILE == "null" ]] || [[ $SENSCRITIQUE_ID_FROM_FILE == "null" ]]; then
+      if [[ $3 == "allocine" ]] || [[ $3 == "metacritic" ]] || [[ $IMDB_ID_FROM_FILE == "null" ]] || [[ $BETASERIES_ID_FROM_FILE == "null" ]] || [[ $THEMOVIEDB_ID_FROM_FILE == "null" ]] || [[ $METACRITIC_ID_FROM_FILE == "null" ]] || [[ $ROTTEN_TOMATOES_ID_FROM_FILE == "null" ]] || [[ $LETTERBOXD_ID_FROM_FILE == "null" ]] || [[ $SENSCRITIQUE_ID_FROM_FILE == "null" ]]; then
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID_FROM_FILE%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/' | head -1)
 
         if [[ $WIKI_URL ]]; then
@@ -145,6 +157,15 @@ if [[ $1 == "check" ]]; then
 
             if [[ $FOUND -eq 1 ]]; then
               echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_TO_USE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_FROM_FILE,$ROTTEN_TOMATOES_ID_FROM_FILE,$LETTERBOXD_ID_FROM_FILE,$SENSCRITIQUE_ID_FROM_FILE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
+            fi
+          elif [[ $3 == "metacritic" ]]; then
+            METACRITIC_ID_TO_USE=$(CheckID "$METACRITIC_ID" "$METACRITIC_ID_FROM_FILE")
+            FOUND=$(isIDFound "$METACRITIC_ID" "$METACRITIC_ID_FROM_FILE")
+
+            echo "Found: $FOUND"
+
+            if [[ $FOUND -eq 1 ]]; then
+              echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_FROM_FILE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_FROM_FILE,$LETTERBOXD_ID_FROM_FILE,$SENSCRITIQUE_ID_FROM_FILE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
             fi
           else
             if { [[ $METACRITIC_ID != $METACRITIC_ID_FROM_FILE ]] && [[ $METACRITIC_ID != "null" ]]; } ||
@@ -177,7 +198,6 @@ elif [[ $1 == "update" ]]; then
 
   TOTAL_LINES=$(wc -l <"${FILMS_IDS_FILE_PATH_TEMP}")
 
-  REGEX_IDS="^/.*\=[0-9]+\.html,tt[0-9]+,(.+?)+,[0-9]+,(.+?)+,(.+?)+,(.+?)+,(.+?)+,(TRUE|FALSE)$"
   WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | wc -l | awk '{print $1}')
   if [[ $WRONG_LINES_NB -gt 1 ]]; then
     echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
@@ -213,6 +233,43 @@ elif [[ $1 == "update" ]]; then
 
     ((COUNTER++))
   done < "$FILMS_IDS_FILE_PATH_TEMP"
+
+  cat $FILMS_IDS_FILE_PATH | sort -V | uniq > ./temp_ids.txt
+  cat ./temp_ids.txt > $FILMS_IDS_FILE_PATH
+elif [[ $1 == "check_dataset" ]]; then
+  git diff --unified=0 -- $FILMS_IDS_FILE_PATH | grep '^[+-]' | grep -Ev '^(--- a/|\+\+\+ b/)' > temp_check.txt
+
+  FILE="temp_check.txt"
+
+  ERROR=$(awk -F',' '{
+    # Remove the + or - at the front
+    sub(/^[+-]/,"")
+
+    # Add each line to an associative array with the key being the url (up to the first comma)
+    data[$1] = (data[$1] ? data[$1] FS : "") $0
+  }
+  END {
+    # Loop over each key in the array
+    for(key in data) {
+      split(data[key], lines, FS)
+
+      # Ignore keys that only have one line
+      if(length(lines) <= 9) continue
+
+      # Compare each field in the two lines
+      for(i=2; i<=9; i++) {
+        # If the '-' line field is not "null" and the '+' line field is "null", print message
+        if(lines[i] != "null" && lines[i+9] == "null")
+          print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
+      }
+    }
+  }' $FILE)
+
+  if [[ $ERROR ]]; then
+    echo "An error happened when updating the dataset, abording."
+    echo "$ERROR"
+    exit 1
+  fi
 elif [[ $1 == "check_allocine" ]]; then
   rm -f $TEMP_FILE
 
