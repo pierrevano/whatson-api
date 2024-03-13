@@ -5,7 +5,6 @@
 require("dotenv").config();
 
 const csv = require("csvtojson");
-const fs = require("fs");
 
 /* Connecting to the MongoDB database. */
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -24,6 +23,7 @@ const isThirdPartyServiceOK = require("../src/utils/thirdPartyStatus");
 const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
 const { fetchAndCheckItemCount } = require("../src/getAllocineItemsNumber");
 const checkDbIds = require("./checkDbIds");
+const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
 
 async function checkStatus(service) {
   if (await isThirdPartyServiceOK(service.url)) {
@@ -88,6 +88,27 @@ async function checkStatus(service) {
     await collectionData.updateMany(filterQueryIsActive, resetPopularity);
 
     console.log(`${allTheMovieDbIds.length} documents have been excluded from the is_active and popularity reset.`);
+  }
+
+  if (getNodeVarsValues.delete_ids === "delete_ids") {
+    let itemsToDelete = [];
+    itemsToDelete = itemsToDelete.map((item) => b64Encode(item));
+
+    const filterQueryDelete = {
+      item_type: getNodeVarsValues.item_type,
+      _id: { $in: itemsToDelete },
+    };
+
+    if (itemsToDelete.length > 0) {
+      const deleteResult = await collectionData.deleteMany(filterQueryDelete);
+
+      console.log(`${deleteResult.deletedCount} items were deleted.`);
+    } else {
+      console.log("Enter some items in the itemsToDelete array first. Abording.");
+      process.exit(1);
+    }
+
+    process.exit(0);
   }
 
   const index_to_start = getNodeVarsValues.index_to_start || 0;

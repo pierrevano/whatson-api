@@ -49,6 +49,10 @@ function getOtherIDs {
 
   if [[ $3 == "allocine" ]]; then
     ALLOCINE_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.allocine.fr" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+    ALLOCINE_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.allocine.fr" | wc -l | awk '{print $1}')
+    if [[ $ALLOCINE_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
+      ALLOCINE_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.allocine.fr" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+    fi
     ALLOCINE_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://www.allocine.fr" | grep "Q21441764" | wc -l | awk '{print $1}')
     if [[ -z $ALLOCINE_ID ]] || [[ $ALLOCINE_ID_DEPRECATED -eq 1 ]]; then
       ALLOCINE_ID=null
@@ -126,11 +130,11 @@ if [[ $1 == "check" ]]; then
       SENSCRITIQUE_ID_FROM_FILE=$(echo $LINE | cut -d',' -f8)
 
       if [[ $3 == "allocine" ]] || [[ $IMDB_ID_FROM_FILE == "null" ]] || [[ $BETASERIES_ID_FROM_FILE == "null" ]] || [[ $THEMOVIEDB_ID_FROM_FILE == "null" ]] || [[ $METACRITIC_ID_FROM_FILE == "null" ]] || [[ $ROTTEN_TOMATOES_ID_FROM_FILE == "null" ]] || [[ $LETTERBOXD_ID_FROM_FILE == "null" ]] || [[ $SENSCRITIQUE_ID_FROM_FILE == "null" ]]; then
-        WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID_FROM_FILE%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
-
-        echo $WIKI_URL
+        WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID_FROM_FILE%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/' | head -1)
 
         if [[ $WIKI_URL ]]; then
+          echo $WIKI_URL
+
           getOtherIDs $1 $2 $3
 
           if [[ $3 == "allocine" ]]; then

@@ -13,7 +13,8 @@ const getNodeVarsValues = {
   force: node_vars[8],
   skip_mojo: node_vars[9],
   skip_services: node_vars[10],
-  check_date: node_vars[11],
+  delete_ids: node_vars[11],
+  check_date: node_vars[12],
 };
 
 module.exports = { getNodeVarsValues };
