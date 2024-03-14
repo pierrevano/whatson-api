@@ -37,14 +37,20 @@ const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
       .join("");
 
     if (!dataToWrite.trim()) {
+      console.log("----------------------------------------------------------------------------------------------------");
       console.log(`The local data is already synced with the DB for ${getNodeVarsValues.item_type} item type.`);
+      console.log("----------------------------------------------------------------------------------------------------");
+
       process.exit(0);
     } else {
       fs.writeFile(`temp_check_${getNodeVarsValues.item_type}.txt`, dataToWrite, (err) => {
         if (err) {
           console.error("An error occurred while writing the file.", err);
         } else {
-          console.log(`File temp_check_${getNodeVarsValues.item_type}.txt has been successfully written.`);
+          console.log("----------------------------------------------------------------------------------------------------");
+          console.log(`File ./temp_check_${getNodeVarsValues.item_type}.txt has been successfully written.`);
+          console.log("----------------------------------------------------------------------------------------------------");
+
           process.exit(0);
         }
       });
