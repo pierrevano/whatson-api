@@ -2,6 +2,8 @@ COUNTER=0
 BASE_URL=https://www.allocine.fr
 MAX_INDEX=350000
 REGEX_IDS="^\/.*\=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
+BASE_URL_IMDB=https://www.imdb.com/title/
+BASE_URL_LETTERBOXD=https://letterboxd.com/film/
 
 if [[ $2 == "movie" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
@@ -9,12 +11,20 @@ if [[ $2 == "movie" ]]; then
   BASE_URL_ALLOCINE=/film/fichefilm_gen_cfilm=
   TEMP_FILE=temp_check_allocine_movie.txt
   BETASERIES_TYPE=movies/movie
+  BASE_URL_BETASERIES=https://www.betaseries.com/film/
+  BASE_URL_METACRITIC=https://www.metacritic.com/movie/
+  BASE_URL_ROTTEN_TOMATOES=https://www.rottentomatoes.com/m/
+  BASE_URL_SENSCRITIQUE=https://www.senscritique.com/film/-/
 elif [[ $2 == "tvshow" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
   FILMS_IDS_FILE_PATH_TEMP=./temp_new_series_ids.txt
   BASE_URL_ALLOCINE=/series/ficheserie_gen_cserie=
   TEMP_FILE=temp_check_allocine_series.txt
   BETASERIES_TYPE=shows/display
+  BASE_URL_BETASERIES=https://www.betaseries.com/serie/
+  BASE_URL_METACRITIC=https://www.metacritic.com/tv/
+  BASE_URL_ROTTEN_TOMATOES=https://www.rottentomatoes.com/tv/
+  BASE_URL_SENSCRITIQUE=https://www.senscritique.com/serie/-/
 elif [[ -z $1 ]]; then
   echo "Add 'check' or 'update' first"
   exit 1
@@ -237,36 +247,59 @@ elif [[ $1 == "update" ]]; then
   cat $FILMS_IDS_FILE_PATH | sort -V | uniq > ./temp_ids.txt
   cat ./temp_ids.txt > $FILMS_IDS_FILE_PATH
 elif [[ $1 == "check_dataset" ]]; then
-  git diff --unified=0 -- $FILMS_IDS_FILE_PATH | grep '^[+-]' | grep -Ev '^(--- a/|\+\+\+ b/)' > temp_check.txt
-
-  FILE="temp_check.txt"
-
-  ERROR=$(awk -F',' '{
-    # Remove the + or - at the front
-    sub(/^[+-]/,"")
-
-    # Add each line to an associative array with the key being the url (up to the first comma)
-    data[$1] = (data[$1] ? data[$1] FS : "") $0
-  }
-  END {
-    # Loop over each key in the array
-    for(key in data) {
-      split(data[key], lines, FS)
-
-      # Ignore keys that only have one line
-      if(length(lines) <= 9) continue
-
-      # Compare each field in the two lines
-      for(i=2; i<=9; i++) {
-        # If the '-' line field is not "null" and the '+' line field is "null", print message
-        if(lines[i] != "null" && lines[i+9] == "null")
-          print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
-      }
+  ERROR=$(git diff --unified=0 -- $FILMS_IDS_FILE_PATH \
+    | grep '^[+-]' \
+    | grep -Ev '^(--- a/|\+\+\+ b/)' \
+    | awk -v baseurlAllocine="$BASE_URL" \
+      -v baseurlImdb="$BASE_URL_IMDB" \
+      -v baseurlBetaseries="$BASE_URL_BETASERIES" \
+      -v baseurlMetacritic="$BASE_URL_METACRITIC" \
+      -v baseurlRottentomatoes="$BASE_URL_ROTTEN_TOMATOES" \
+      -v baseurlLetterboxd="$BASE_URL_LETTERBOXD" \
+      -v baseurlSenscritique="$BASE_URL_SENSCRITIQUE" -F',' '{
+      sub(/^[+-]/,"")
+      data[$1] = (data[$1] ? data[$1] FS : "") $0
     }
-  }' $FILE)
+    END {
+      urls[1]=baseurlAllocine
+      urls[2]=baseurlImdb
+      urls[3]=baseurlBetaseries
+      urls[5]=baseurlMetacritic
+      urls[6]=baseurlRottentomatoes
+      urls[7]=baseurlLetterboxd
+      urls[8]=baseurlSenscritique
+
+      for(key in data) {
+        split(data[key], lines, FS)
+        if(length(lines) <= 9) continue
+        for(i=1; i<=9; i++) {
+          if(lines[i] != "null" && lines[i+9] == "null") {
+            print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
+            exit
+          }
+          else {
+            for(j=1; j<=7; j++) {
+              if (lines[j] != "null") {
+                if (j == 4) j=5
+                url = urls[j] lines[j]
+
+                cmd = ("curl -A \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36\" -o /dev/null -s -w \"%{http_code}\" " url)
+                cmd | getline http_status_code
+                close(cmd)
+
+                if(http_status_code > 400) {
+                  print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
+                  exit
+                }
+              }
+            }
+          }
+        }
+      }
+    }')
 
   if [[ $ERROR ]]; then
-    echo "An error happened when updating the dataset, abording."
+    echo "An error happened when updating the dataset, aborting."
     echo "$ERROR"
     exit 1
   fi

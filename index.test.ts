@@ -497,7 +497,7 @@ const params = {
     },
   },
 
-  today_date_items: {
+  items_updated_within_last_week: {
     query: "?item_type=movie,tvshow&is_active=true&limit=400",
     expectedResult: (items) => {
       const today = new Date();
