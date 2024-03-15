@@ -271,26 +271,26 @@ elif [[ $1 == "check_dataset" ]]; then
 
       for(key in data) {
         split(data[key], lines, FS)
-        if(length(lines) <= 9) continue
+        if (length(lines) <= 9) continue
         for(i=1; i<=9; i++) {
-          if(lines[i] != "null" && lines[i+9] == "null") {
+          if (lines[i] != "null" && lines[i+9] == "null" && lines[i] != "") {
             print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
             exit
           }
-          else {
-            for(j=1; j<=7; j++) {
-              if (lines[j] != "null") {
-                if (j == 4) j=5
-                url = urls[j] lines[j]
 
-                cmd = ("curl -A \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36\" -o /dev/null -s -w \"%{http_code}\" " url)
-                cmd | getline http_status_code
-                close(cmd)
+          for(j=1; j<=7; j++) {
+            if (lines[j] != "null" && lines[j] != "") {
+              if (j == 4) j=5
+              url = urls[j] lines[j]
 
-                if(http_status_code > 400) {
-                  print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
-                  exit
-                }
+              cmd = ("curl -A \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36\" -o /dev/null -s -w \"%{http_code}\" " url)
+              cmd | getline http_status_code
+              close(cmd)
+
+              if (http_status_code > 400) {
+                print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
+                print lines[1] "," lines[2] "," lines[3] "," lines[5] "," lines[6] "," lines[7] "," lines[8]
+                exit
               }
             }
           }
