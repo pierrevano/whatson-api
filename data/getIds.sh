@@ -122,18 +122,18 @@ data_not_found () {
   BETASERIES_ID=null
   THEMOVIEDB_ID="noTheMovieDBId"
 
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 betaseries_to_null () {
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 # A function that is called when the data is found.
 data_found () {
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
@@ -189,6 +189,22 @@ get_other_ids () {
     SENSCRITIQUE_ID=null
   fi
   echo "SensCritique ID: $SENSCRITIQUE_ID"
+
+  TRAKT_ID=$(curl -s $WIKI_URL | grep "https://trakt.tv" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+  TRAKT_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://trakt.tv" | grep "Q21441764" | wc -l | awk '{print $1}')
+  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "trakt" ]]; then
+    if [[ -z $IMDB_ID_TO_CHECK ]] || [[ $IMDB_ID_TO_CHECK == $IMDB_ID ]]; then
+      open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+      open -a $BROWSER_PATH "https://trakt.tv"
+      echo "Enter the Trakt ID:"
+      read TRAKT_ID
+    else
+      TRAKT_ID=null
+    fi
+  elif [[ -z $TRAKT_ID ]] || [[ $TRAKT_ID_DEPRECATED -eq 1 ]]; then
+    TRAKT_ID=null
+  fi
+  echo "Trakt ID: $TRAKT_ID"
 }
 
 remove_files
@@ -296,6 +312,7 @@ do
     ROTTEN_TOMATOES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f6)
     LETTERBOXD_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f7)
     SENSCRITIQUE_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f8)
+    TRAKT_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f9)
 
     if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "recheck" ]]; then
       URL_FILE=$TEMP_URLS_FILE_PATH
@@ -316,7 +333,8 @@ do
           { [[ $METACRITIC_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "metacritic" ]]; } ||
           { [[ $ROTTEN_TOMATOES_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "rottentomatoes" ]]; } ||
           { [[ $LETTERBOXD_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "letterboxd" ]]; } ||
-          { [[ $SENSCRITIQUE_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "senscritique" ]]; }; then
+          { [[ $SENSCRITIQUE_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "senscritique" ]]; } ||
+          { [[ $TRAKT_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "trakt" ]]; }; then
           DUPLICATE=0
           echo "Found $URL to be rechecked."
         else
@@ -354,12 +372,14 @@ do
             ROTTEN_TOMATOES_ID=$ROTTEN_TOMATOES_CHECK
             LETTERBOXD_ID=$LETTERBOXD_CHECK
             SENSCRITIQUE_ID=$SENSCRITIQUE_CHECK
+            TRAKT_ID=$TRAKT_CHECK
           else
             IMDB_ID=null
             METACRITIC_ID=null
             ROTTEN_TOMATOES_ID=null
             LETTERBOXD_ID=null
             SENSCRITIQUE_ID=null
+            TRAKT_ID=null
           fi
         else
           echo "wikiUrl: $WIKI_URL"
@@ -373,7 +393,7 @@ do
           get_other_ids
         fi
 
-        if [[ $METACRITIC_ID == "null" ]] && [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $LETTERBOXD_ID == "null" ]] && [[ $SENSCRITIQUE_ID == "null" ]]; then
+        if [[ $METACRITIC_ID == "null" ]] && [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $LETTERBOXD_ID == "null" ]] && [[ $SENSCRITIQUE_ID == "null" ]] && [[ $TRAKT_ID == "null" ]]; then
           WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
           if [[ $WIKI_URL ]]; then
             get_other_ids
@@ -462,7 +482,7 @@ do
           fi
         fi
 
-        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,TRUE" >> $FILMS_IDS_FILE_PATH
+        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID,TRUE" >> $FILMS_IDS_FILE_PATH
 
         echo "----------------------------------------------------------------------------------------------------"
 
