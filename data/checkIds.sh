@@ -2,7 +2,8 @@ COUNTER=0
 BASE_URL=https://www.allocine.fr
 MAX_INDEX=350000
 PROPERTY=P345
-REGEX_IDS="^\/.*\=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
+REGEX_IDS="^\/.*\=([0-9]{1,5}|[0-3][0-9]{5})\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
+REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
 BASE_URL_IMDB=https://www.imdb.com/title/
 BASE_URL_LETTERBOXD=https://letterboxd.com/film/
 
@@ -199,10 +200,12 @@ elif [[ $1 == "update" ]]; then
   TOTAL_LINES=$(wc -l <"${FILMS_IDS_FILE_PATH_TEMP}")
 
   WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | wc -l | awk '{print $1}')
-  if [[ $WRONG_LINES_NB -gt 1 ]]; then
+  WRONG_LINES_NB_COMMAS=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS_COMMAS | wc -l | awk '{print $1}')
+  if [[ $WRONG_LINES_NB -gt 1 ]] && [[ $WRONG_LINES_NB_COMMAS -gt 0 ]]; then
     echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
     echo "details:"
-    cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS
+    cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | tail -1
+    cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS_COMMAS | tail -1
     exit 1
   fi
 

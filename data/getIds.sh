@@ -16,7 +16,8 @@ URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
 IMDB_ID_TO_CHECK=$5
-REGEX_IDS="^\/.*\=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
+REGEX_IDS="^\/.*\=([0-9]{1,5}|[0-3][0-9]{5})\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
+REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
 
 # Define alternative base variables
 if [[ $TYPE == "movie" ]]; then
@@ -65,10 +66,12 @@ else
 fi
 
 WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | wc -l | awk '{print $1}')
-if [[ $WRONG_LINES_NB -gt 1 ]]; then
+WRONG_LINES_NB_COMMAS=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS_COMMAS | wc -l | awk '{print $1}')
+if [[ $WRONG_LINES_NB -gt 1 ]] && [[ $WRONG_LINES_NB_COMMAS -gt 0 ]]; then
   echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
   cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | tail -1
+  cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS_COMMAS | tail -1
   exit 1
 fi
 
@@ -519,7 +522,9 @@ do
   done
 done
 
-remove_files
+if [[ $PROMPT != "no_delete" ]]; then
+  remove_files
+fi
 
 DATE=$(date '+%Y-%m-%d %H:%M:%S')
 echo "Last update was on: $DATE"
