@@ -19,7 +19,8 @@ const getRatingsFilters = async (ratings_filters_query) => {
       { $divide: ["$rotten_tomatoes.critics_rating", 20] },
       { $divide: ["$rotten_tomatoes.users_rating", 20] },
       { $divide: ["$letterboxd.users_rating", 1] },
-      { $divide: ["$senscritique.users_rating", 2] }
+      { $divide: ["$senscritique.users_rating", 2] },
+      { $divide: ["$trakt.users_rating", 20] }
     ];
   } else {
     if (ratings_filters_array.includes("allocine_critics")) {
@@ -60,6 +61,10 @@ const getRatingsFilters = async (ratings_filters_query) => {
 
     if (ratings_filters_array.includes("senscritique_users")) {
       ratings_filters.push({ $divide: ["$senscritique.users_rating", 2] });
+    }
+
+    if (ratings_filters_array.includes("trakt_users")) {
+      ratings_filters.push({ $divide: ["$trakt.users_rating", 20] });
     }
   }
 

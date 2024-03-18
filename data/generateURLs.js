@@ -3,7 +3,7 @@
  * @param {string} item_type - The type of item (movie or series).
  * @param {object} config - The configuration object containing base URLs for different websites.
  * @param {object} json - The JSON data containing information about the item.
- * @returns {object} - An object containing URLs for Allocine, IMDb, Betaseries, Metacritic, Rotten Tomatoes, Letterboxd, SensCritique, The Movie Database, and an isActive flag.
+ * @returns {object} - An object containing URLs for Allocine, IMDb, Betaseries, Metacritic, Rotten Tomatoes, Letterboxd, SensCritique, Trakt, The Movie Database, and an isActive flag.
  * @throws {Error} - If an invalid Allocine URL is provided or if The Movie Database ID is not found.
  */
 const generateURLs = (item_type, config, json) => {
@@ -42,6 +42,9 @@ const generateURLs = (item_type, config, json) => {
   const sensCritiqueId = json.SENSCRITIQUE_ID;
   const sensCritiqueHomepage = item_type === "movie" ? `${config.baseURLSensCritiqueFilm}${sensCritiqueId}` : `${config.baseURLSensCritiqueSerie}${sensCritiqueId}`;
 
+  const traktId = json.TRAKT_ID;
+  const traktHomepage = item_type === "movie" ? `${config.baseURLTraktFilm}${traktId}` : `${config.baseURLTraktSerie}${traktId}`;
+
   const isActive = json.IS_ACTIVE === "TRUE";
 
   const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
@@ -59,6 +62,7 @@ const generateURLs = (item_type, config, json) => {
     rotten_tomatoes: { id: rottenTomatoesId, homepage: rottenTomatoesHomepage },
     letterboxd: { id: letterboxdId, homepage: letterboxdHomepage },
     senscritique: { id: sensCritiqueId, homepage: sensCritiqueHomepage },
+    trakt: { id: traktId, homepage: traktHomepage },
     themoviedb: { id: theMoviedbId },
     is_active: isActive,
   };

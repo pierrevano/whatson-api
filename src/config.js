@@ -20,6 +20,8 @@ const config = {
   baseURLLetterboxdFilm: "https://letterboxd.com/film/",
   baseURLSensCritiqueFilm: "https://www.senscritique.com/film/-/",
   baseURLSensCritiqueSerie: "https://www.senscritique.com/serie/-/",
+  baseURLTraktFilm: "https://trakt.tv/movies/",
+  baseURLTraktSerie: "https://trakt.tv/shows/",
   baseURLAssets: "https://whatson-assets.vercel.app",
 
   collectionName: "data",
@@ -37,7 +39,7 @@ const config = {
   corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
   userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
 
-  keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "themoviedbid", "title"],
+  keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "traktid", "themoviedbid", "title"],
 
   limit: 20,
   maxSeasonsNumber: 5,
@@ -84,6 +86,7 @@ const config = {
     "rotten_tomatoes",
     "letterboxd",
     "senscritique",
+    "trakt",
     "mojo",
     "popularity_average",
     "ratings_average",
@@ -101,6 +104,7 @@ const config = {
     { name: "Rotten Tomatoes", url: "https://www.rottentomatoes.com" },
     { name: "Letterboxd", url: "https://letterboxd.com" },
     { name: "SensCritique", url: "https://www.senscritique.com" },
+    { name: "Trakt", url: "https://trakt.tv" },
     { name: "Mojo", url: "https://www.boxofficemojo.com" },
   ],
 
@@ -121,6 +125,7 @@ const config = {
     popularity: 15,
     trailer: 150,
     senscritiqueItems: 3,
+    traktItems: 3,
 
     allocine: 7,
     imdb: 4,
@@ -129,6 +134,7 @@ const config = {
     rottenTomatoes: 4,
     letterboxd: 3,
     senscritique: 3,
+    trakt: 3,
   },
 
   maximumIsActiveItems: 400,
@@ -143,6 +149,7 @@ const config = {
       rottenTomatoes: 10,
       letterboxd: 0,
       senscritique: 0,
+      trakt: 0,
     },
 
     maximum: {
@@ -154,6 +161,7 @@ const config = {
       rottenTomatoes: 100,
       letterboxd: 5,
       senscritique: 10,
+      trakt: 100,
     },
   },
 };

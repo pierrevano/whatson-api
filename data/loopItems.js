@@ -79,6 +79,10 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       const sensCritiqueId = urls.senscritique.id;
       const sensCritiqueHomepage = urls.senscritique.homepage;
 
+      /* Handle Trakt related data */
+      const traktId = urls.trakt.id;
+      const traktHomepage = urls.trakt.homepage;
+
       // Determine if the URL is active
       const isActive = urls.is_active;
 
@@ -139,6 +143,8 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
                 letterboxdId,
                 sensCritiqueHomepage,
                 sensCritiqueId,
+                traktHomepage,
+                traktId,
                 mojoBoxOfficeArray,
                 theMoviedbId
               ));

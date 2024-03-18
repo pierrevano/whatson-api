@@ -10,6 +10,7 @@ const { getPlatformsLinks } = require("../src/getPlatformsLinks");
 const { getRottenTomatoesRating } = require("../src/getRottenTomatoesRating");
 const { getLetterboxdRating } = require("../src/getLetterboxdRating");
 const { getSensCritiqueRating } = require("../src/getSensCritiqueRating");
+const { getTraktRating } = require("../src/getTraktRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -31,6 +32,8 @@ const { getSensCritiqueRating } = require("../src/getSensCritiqueRating");
  * @param {string} letterboxdId - The Letterboxd ID
  * @param {string} sensCritiqueHomepage - The SensCritique homepage URL
  * @param {string} sensCritiqueId - The SensCritique ID
+ * @param {string} traktHomepage - The Trakt homepage URL
+ * @param {string} traktId - The Trakt ID
  * @param {number} theMoviedbId - The MovieDB ID
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
  */
@@ -53,6 +56,8 @@ const createJSON = async (
   letterboxdId,
   sensCritiqueHomepage,
   sensCritiqueId,
+  traktHomepage,
+  traktId,
   mojoBoxOfficeArray,
   theMoviedbId
 ) => {
@@ -68,6 +73,7 @@ const createJSON = async (
   const rottenTomatoesRating = await getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId);
   const letterboxdRating = await getLetterboxdRating(letterboxdHomepage, letterboxdId);
   const sensCritiqueRating = await getSensCritiqueRating(sensCritiqueHomepage, sensCritiqueId);
+  const traktRating = await getTraktRating(traktHomepage, traktId);
 
   /* Creating an object called allocineObj. */
   const allocineObj = {
@@ -140,6 +146,16 @@ const createJSON = async (
         }
       : null;
 
+  /* Creates a Trakt object if the trakt rating is not null. */
+  const traktObj =
+    traktRating !== null
+      ? {
+          id: traktRating.id,
+          url: traktRating.url,
+          users_rating: traktRating.usersRating,
+        }
+      : null;
+
   const mojoObj =
     mojoValues !== null
       ? {
@@ -166,6 +182,7 @@ const createJSON = async (
     metacritic: metacriticObj,
     rotten_tomatoes: rottenTomatoesObj,
     senscritique: sensCritiqueObj,
+    trakt: traktObj,
     mojo: mojoObj,
   };
 

@@ -137,6 +137,10 @@ function checkItemProperties(items) {
     item.senscritique ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritique) : null;
     item.is_active === true ? expect(items.filter((item) => item.senscritique && item.senscritique.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems) : null;
 
+    /* Trakt */
+    item.trakt ? expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trakt) : null;
+    item.is_active === true ? expect(items.filter((item) => item.trakt && item.trakt.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.traktItems) : null;
+
     /* Mojo */
     item.is_active === true && item.item_type === "movie"
       ? expect(items.filter((item) => item.mojo && item.mojo.lifetime_gross.charAt(0) === "$").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
@@ -169,6 +173,7 @@ const params = {
           { source: item.rotten_tomatoes, ratingType: "critics_rating", min: config.ratingsValues.minimum.rottenTomatoes, max: config.ratingsValues.maximum.rottenTomatoes },
           { source: item.letterboxd, ratingType: "users_rating", min: config.ratingsValues.minimum.letterboxd, max: config.ratingsValues.maximum.letterboxd },
           { source: item.senscritique, ratingType: "users_rating", min: config.ratingsValues.minimum.senscritique, max: config.ratingsValues.maximum.senscritique },
+          { source: item.trakt, ratingType: "users_rating", min: config.ratingsValues.minimum.trakt, max: config.ratingsValues.maximum.trakt },
         ];
 
         for (let ratingItem of ratingItems) {

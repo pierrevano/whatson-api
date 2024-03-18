@@ -19,7 +19,7 @@ Retrieves detailed information about either a movie or a tvshow based on the pro
 - **minimum_ratings:** Minimum ratings (0,1,2,2.5,3,3.5,4,4.5)
 - **seasons_number:** Number of seasons (1,2,3,4,5 and 5 means 5+) (only valid for tvshows)
 - **status:** TV show's status filters (canceled,ended,ongoing,pilot,soon,unknown) (only valid for tvshows)
-- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users)
+- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,trakt_users)
 - **page:** Page number
 - **limit:** Page items limit
 
@@ -35,6 +35,7 @@ The query parameters provided below are solely for item search purposes and must
 - **metacriticId:** Metacritic ID of the movie or tvshow
 - **rottentomatoesId:** Rotten Tomatoes ID of the movie or tvshow
 - **senscritiqueId:** SensCritique ID of the movie or tvshow
+- **traktId:** Trakt ID of the movie or tvshow
 - **themoviedbId:** The Movie Database ID of the movie or tvshow
 
 #### Responses:
@@ -51,7 +52,7 @@ Provides detailed information about specific item (movie or tvshow) by its uniqu
 
 - **item_type:** The type of the item (movie or tv)
 - **id:** The unique identifier for the item (The Movie Database ID)
-- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users)
+- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,trakt_users)
 
 #### Responses:
 

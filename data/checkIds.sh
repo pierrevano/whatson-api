@@ -190,10 +190,10 @@ if [[ $1 == "check" ]]; then
   done 3<$FILMS_IDS_FILE_PATH
 elif [[ $1 == "update" ]]; then
   if [ -f "$FILMS_IDS_FILE_PATH_TEMP" ]; then
-      echo "Updating the dataset with the file: $FILMS_IDS_FILE_PATH_TEMP"
+    echo "Updating the dataset with the file: $FILMS_IDS_FILE_PATH_TEMP"
   else
-      echo "The temp file does not exist, abording"
-      exit 1
+    echo "The temp file does not exist, abording"
+    exit 1
   fi
 
   TOTAL_LINES=$(wc -l <"${FILMS_IDS_FILE_PATH_TEMP}")
@@ -244,7 +244,6 @@ elif [[ $1 == "check_dataset" ]]; then
       -v baseurlImdb="$BASE_URL_IMDB" \
       -v baseurlBetaseries="$BASE_URL_BETASERIES" \
       -v baseurlMetacritic="$BASE_URL_METACRITIC" \
-      -v baseurlRottentomatoes="$BASE_URL_ROTTEN_TOMATOES" \
       -v baseurlLetterboxd="$BASE_URL_LETTERBOXD" \
       -v baseurlSenscritique="$BASE_URL_SENSCRITIQUE" \
       -v baseurlTrakt="$BASE_URL_TRAKT" -F',' '{
@@ -256,7 +255,6 @@ elif [[ $1 == "check_dataset" ]]; then
       urls[2]=baseurlImdb
       urls[3]=baseurlBetaseries
       urls[5]=baseurlMetacritic
-      urls[6]=baseurlRottentomatoes
       urls[7]=baseurlLetterboxd
       urls[8]=baseurlSenscritique
       urls[9]=baseurlTrakt
