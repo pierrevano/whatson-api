@@ -6,9 +6,9 @@ const { getSeasonsNumber } = require("./getSeasonsNumber");
 const { logErrors } = require("./utils/logErrors");
 
 /**
- * Retrieves information about a movie or tv show from Allocine.
- * @param {string} allocineHomepage - The URL of the Allocine page for the movie or tv show.
- * @param {string} betaseriesHomepage - The URL of the Betaseries page for the movie or tv show.
+ * Retrieves information about a movie or tv show from AlloCiné.
+ * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tv show.
+ * @param {string} betaseriesHomepage - The URL of the BetaSeries page for the movie or tv show.
  * @param {number} theMoviedbId - The ID of the movie or tv show on The Movie Database.
  * @returns An object containing information about the movie or tv show, including its title, image, user rating, number of seasons, status, and trailer.
  */

@@ -23,6 +23,7 @@ const config = {
   baseURLTraktFilm: "https://trakt.tv/movies/",
   baseURLTraktSerie: "https://trakt.tv/shows/",
   baseURLAssets: "https://whatson-assets.vercel.app",
+  baseURLDailymotion: "https://www.dailymotion.com/embed/video/",
 
   collectionName: "data",
   dbName: "whatson",
@@ -123,7 +124,7 @@ const config = {
     default: 25,
     mojo: 15,
     popularity: 15,
-    trailer: 150,
+    trailer: 100,
     senscritiqueItems: 3,
     traktItems: 3,
 

@@ -13,7 +13,7 @@ const { config } = require("../config");
 
 /**
  * Makes an API call to The Movie Database (TMDB) to retrieve information about a movie or tv show.
- * @param {string} allocineHomepage - The URL of the Allocine page for the movie or tv show.
+ * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tv show.
  * @param {number} theMoviedbId - The ID of the movie or tv show on TMDB.
  * @returns An object containing the response data and status code from the API call.
  */

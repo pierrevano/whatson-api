@@ -4,7 +4,7 @@ const { logErrors } = require("./utils/logErrors");
 const { config } = require("./config");
 
 /**
- * It takes the URL of a movie's critics page on Allocine, scrapes the page, and returns an object
+ * It takes the URL of a movie's critics page on AlloCiné, scrapes the page, and returns an object
  * containing the number of critics, the average rating, and the details of each critic's rating
  * @param allocineCriticsDetails - the URL of the page containing the critics' ratings
  * @returns An object with the following properties:

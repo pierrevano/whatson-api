@@ -11,8 +11,8 @@ const { config } = require("./config");
 
 /**
  * It gets the platforms links of a series from the allocine homepage
- * @param allocineHomepage - the URL of the show's page on Allocine
- * @param imdbHomepage - the IMDB homepage of the series
+ * @param allocineHomepage - the URL of the show's page on AlloCiné
+ * @param imdbHomepage - the IMDb homepage of the series
  * @returns An array of objects containing the name and link_url of the platforms.
  */
 const getPlatformsLinks = async (allocineHomepage, imdbHomepage) => {

@@ -8,69 +8,82 @@ const { removeExtraChar } = require("./utils/removeExtraChar");
 
 /**
  * It gets the trailer link for a movie or tv show
- * @param allocineHomepage - The URL of the movie or tv show on Allocine.
+ * @param allocineHomepage - The URL of the movie or tv show on AlloCiné.
  * @param betaseriesHomepage - The URL of the tv Show on BetaSeries.
  * @param options - This is the options object that is passed to the getCheerioContent function.
  * @returns The trailer link.
  */
 const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
+  let trailer = null;
+  let $;
+
   try {
-    let trailer = null;
+    if (betaseriesHomepage) {
+      $ = await getCheerioContent(betaseriesHomepage, options, "getTrailer");
 
-    /* tv show logic to get trailer link. */
-    if (allocineHomepage.includes(config.baseURLTypeSeries)) {
-      let url = `${betaseriesHomepage}`;
-      let $ = await getCheerioContent(url, options, "getTrailer");
-      const content = getContentUrl($, false, allocineHomepage);
-      if (content && content.video && content.video.embedUrl) trailer = content.video.embedUrl;
+      const dailymotionId = $(".video-embed-container div").first().attr("id");
+      if (dailymotionId) trailer = `${config.baseURLDailymotion}${dailymotionId.split("-")[1]}`;
+    }
 
-      /* Checking to see if the trailer variable is null. If it is, it will run the code below as a backup video link. */
-      if (!trailer) {
-        url = `${allocineHomepage}`;
+    /*
+     * If the ID has not been found previously we fallback to this logic
+     * to get the trailer link from the BetaSeries page directly (for tvshows only).
+     */
+    if (!trailer) {
+      if (allocineHomepage.includes(config.baseURLTypeSeries)) {
+        $ = await getCheerioContent(betaseriesHomepage, options, "getTrailer");
 
-        $ = await getCheerioContent(url, options, "getTrailer");
-        const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text()).trim()).includes("Vidéos");
+        const content = getContentUrl($, false, allocineHomepage);
+        if (content && content.video && content.video.embedUrl) trailer = content.video.embedUrl;
 
-        if (!hasInactiveVideos) {
-          const allocineId = parseInt(allocineHomepage.match(/=(.*)\./).pop());
-          url = `${config.baseURLAllocine}${config.baseURLCriticDetailsSeries}${allocineId}/videos/`;
+        /*
+         * Checking to see if the trailer variable is `null`.
+         * If it is, it will run the code below as a backup video link.
+         */
+        if (!trailer) {
+          $ = await getCheerioContent(allocineHomepage, options, "getTrailer");
 
-          $ = await getCheerioContent(url, options, "getTrailer");
-          const linkToVideo = $(".meta-title-link").first().attr("href");
-          url = `${config.baseURLAllocine}${linkToVideo}`;
+          const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text()).trim()).includes("Vidéos");
+          if (!hasInactiveVideos) {
+            const allocineId = parseInt(allocineHomepage.match(/=(.*)\./).pop());
+            $ = await getCheerioContent(`${config.baseURLAllocine}${config.baseURLCriticDetailsSeries}${allocineId}/videos/`, options, "getTrailer");
 
-          if (linkToVideo) {
-            $ = await getCheerioContent(url, options, "getTrailer");
-            const isPageBroken = $.html().length === 0;
-            if (!isPageBroken) {
-              const content = getContentUrl($, true, allocineHomepage);
-              if (content && content.contentUrl) trailer = content.contentUrl;
+            const linkToVideo = $(".meta-title-link").first().attr("href");
+            if (linkToVideo) {
+              $ = await getCheerioContent(`${config.baseURLAllocine}${linkToVideo}`, options, "getTrailer");
+
+              const isPageBroken = $.html().length === 0;
+              if (!isPageBroken) {
+                const content = getContentUrl($, true, allocineHomepage);
+                if (content && content.contentUrl) trailer = content.contentUrl;
+              }
             }
           }
         }
-      }
-    } else {
-      /* Movie logic to get trailer link */
-      const url = `${allocineHomepage}`;
+      } else {
+        /*
+         * If the ID has not been found previously we fallback to this logic
+         * to get the trailer link from the AlloCiné page directly (for movies only).
+         */
+        $ = await getCheerioContent(allocineHomepage, options, "getTrailer");
 
-      $ = await getCheerioContent(url, options, "getTrailer");
+        const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text()).trim()).includes("Bandes-annonces");
+        if (hasInactiveVideos) return trailer;
 
-      const hasInactiveVideos = [...$(".third-nav .inactive")].map((e) => removeExtraChar($(e).text()).trim()).includes("Bandes-annonces");
-      if (hasInactiveVideos) return trailer;
+        const itemJSON = getContentUrl($, true, allocineHomepage);
+        if (itemJSON && itemJSON.trailer && itemJSON.trailer.url) {
+          $ = await getCheerioContent(itemJSON.trailer.url, options, "getTrailer");
 
-      const itemJSON = getContentUrl($, true, allocineHomepage);
-      if (itemJSON && itemJSON.trailer && itemJSON.trailer.url) {
-        const url = itemJSON.trailer.url;
-        $ = await getCheerioContent(url, options, "getTrailer");
-        const content = getContentUrl($, true, allocineHomepage);
-        if (content && content.contentUrl) trailer = content.contentUrl;
+          const content = getContentUrl($, true, allocineHomepage);
+          if (content && content.contentUrl) trailer = content.contentUrl;
+        }
       }
     }
-
-    return trailer;
   } catch (error) {
     console.log(`getTrailer - ${allocineHomepage}: ${error}`);
   }
+
+  return trailer;
 };
 
 module.exports = { getTrailer };

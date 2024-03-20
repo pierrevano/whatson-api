@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 const { config } = require("./config");
 
 /**
- * It fetches the movie IDs from the Allocine website, and returns them in an array
+ * It fetches the movie IDs from the AlloCiné website, and returns them in an array
  * @param cinemaIdParam - the cinema ID you want to get the movies from
  * @returns An array of movie ids
  */

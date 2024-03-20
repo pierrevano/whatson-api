@@ -5,7 +5,7 @@ const { config } = require("./config");
 
 /**
  * Retrieves the number of seasons for a given movie or tv show from The Movie Database API.
- * @param {string} allocineHomepage - The Allocine homepage URL for the movie or tv show.
+ * @param {string} allocineHomepage - The AlloCiné homepage URL for the movie or tv show.
  * @param {number} theMoviedbId - The ID of the movie or tv show on The Movie Database.
  * @returns {Promise<number|null>} - A promise that resolves with the number of seasons, or null if the number cannot be determined.
  */

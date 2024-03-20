@@ -14,14 +14,14 @@ const { getTraktRating } = require("../src/getTraktRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
- * @param {Object} allocineCriticsDetails - The Allocine critics details data
- * @param {string} allocineURL - The Allocine URL
- * @param {string} allocineHomepage - The Allocine homepage URL
- * @param {string} allocineId - The Allocine ID
- * @param {string} betaseriesHomepage - The Betaseries homepage URL
- * @param {string} betaseriesId - The Betaseries ID
- * @param {string} imdbHomepage - The IMDB homepage URL
- * @param {string} imdbId - The IMDB ID
+ * @param {Object} allocineCriticsDetails - The AlloCiné critics details data
+ * @param {string} allocineURL - The AlloCiné URL
+ * @param {string} allocineHomepage - The AlloCiné homepage URL
+ * @param {string} allocineId - The AlloCiné ID
+ * @param {string} betaseriesHomepage - The BetaSeries homepage URL
+ * @param {string} betaseriesId - The BetaSeries ID
+ * @param {string} imdbHomepage - The IMDb homepage URL
+ * @param {string} imdbId - The IMDb ID
  * @param {boolean} isActive - The active status of the item
  * @param {string} item_type - The type of the item (e.g., movie, series)
  * @param {string} metacriticHomepage - The Metacritic homepage URL

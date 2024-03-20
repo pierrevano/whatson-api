@@ -8,12 +8,12 @@ const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
 const { getImdbUsersRating } = require("../src/getImdbUsersRating");
 
 /**
- * Compares the users rating of a movie or tv show from Allocine with the rating
+ * Compares the users rating of a movie or tv show from AlloCiné with the rating
  * fetched from a remote API.
- * @param {string} allocineHomepage - The Allocine homepage URL.
- * @param {string} allocineURL - The Allocine URL specific to the item.
- * @param {string} betaseriesHomepage - The Betaseries homepage URL.
- * @param {string} imdbHomepage - The IMDB homepage URL.
+ * @param {string} allocineHomepage - The AlloCiné homepage URL.
+ * @param {string} allocineURL - The AlloCiné URL specific to the item.
+ * @param {string} betaseriesHomepage - The BetaSeries homepage URL.
+ * @param {string} imdbHomepage - The IMDb homepage URL.
  * @param {boolean} isActive - Active status of the item.
  * @param {string} item_type - The type of item (movie or tv show).
  * @param {string} theMoviedbId - The ID of the movie or tv show on The Movie Database.

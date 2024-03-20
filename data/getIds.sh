@@ -452,12 +452,12 @@ do
 
           BETASERIES_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE" | cut -d'/' -f5 | sed 's/"//g')
           echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
-          echo "Betaseries ID: $BETASERIES_ID"
+          echo "BetaSeries ID: $BETASERIES_ID"
 
           if [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
             open -a $BROWSER_PATH "https://betaseries.com"
-            echo "Enter the Betaseries ID:"
+            echo "Enter the BetaSeries ID:"
             read BETASERIES_ID
           fi
 

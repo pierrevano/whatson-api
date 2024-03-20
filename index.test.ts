@@ -75,6 +75,7 @@ function checkItemProperties(items) {
 
     expect(item._id).not.toBeNull();
     expect(item.id).not.toBeNull();
+    expect(["movie", "tvshow"]).toContain(item.item_type);
     expect(item.title).not.toBeNull();
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
@@ -86,6 +87,9 @@ function checkItemProperties(items) {
 
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
     expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);
+    item.trailer && item.is_active === true
+      ? expect(items.filter((item) => item.trailer && item.trailer.startsWith(config.baseURLDailymotion)).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer)
+      : null;
 
     /* Popularity */
     item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;

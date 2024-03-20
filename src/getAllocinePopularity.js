@@ -3,7 +3,7 @@ const { config } = require("./config");
 
 /**
  * Extracts the ID of a movie or tv show from a remote popularity file hosted on a server.
- * @param {string} allocineURL - The URL of the movie or tv show on Allocine.
+ * @param {string} allocineURL - The URL of the movie or tv show on AlloCiné.
  * @returns {Promise<string | undefined>} - The ID of the movie or tv show, or undefined if it cannot be found.
  */
 const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
@@ -28,8 +28,8 @@ const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
 };
 
 /**
- * Retrieves the popularity of a movie from Allocine's remote popularity file.
- * @param {string} allocineURL - The URL of the movie on Allocine's website.
+ * Retrieves the popularity of a movie from AlloCiné's remote popularity file.
+ * @param {string} allocineURL - The URL of the movie on AlloCiné's website.
  * @returns An object containing the popularity of the movie, or null if it could not be retrieved.
  */
 const getAllocinePopularity = async (allocineURL, item_type) => {
