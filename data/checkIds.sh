@@ -243,7 +243,7 @@ elif [[ $1 == "check_dataset" ]]; then
   ERROR=$(git diff --unified=0 -- $FILMS_IDS_FILE_PATH \
     | grep '^[+-]' \
     | grep -Ev '^(--- a/|\+\+\+ b/)' \
-    | awk -v baseurlAllocine="$BASE_URL" \
+    | timeout 300 awk -v baseurlAllocine="$BASE_URL" \
       -v baseurlImdb="$BASE_URL_IMDB" \
       -v baseurlBetaseries="$BASE_URL_BETASERIES" \
       -v baseurlMetacritic="$BASE_URL_METACRITIC" \
@@ -264,10 +264,15 @@ elif [[ $1 == "check_dataset" ]]; then
 
       for(key in data) {
         split(data[key], lines, FS)
-        if (length(lines) <= 9) continue
-        for(i=1; i<=9; i++) {
-          if (lines[i] != "null" && lines[i+9] == "null" && lines[i] != "") {
+        if (length(lines) <= 10) continue
+        for(i=1; i<=10; i++) {
+          if (lines[i] != "null" && lines[i+10] == "null" && lines[i] != "") {
+            print "------------------------------------------------------------"
             print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
+            print "Details:"
+            print "- " lines[1] "," lines[2] "," lines[3] "," lines[4] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10]
+            print "+ " lines[1+10] "," lines[2+10] "," lines[3+10] "," lines[4+10] "," lines[5+10] "," lines[6+10] "," lines[7+10] "," lines[8+10] "," lines[9+10] "," lines[10+10]
+            print "------------------------------------------------------------"
             exit
           }
 
@@ -281,9 +286,11 @@ elif [[ $1 == "check_dataset" ]]; then
               close(cmd)
 
               if (http_status_code > 400) {
+                print "------------------------------------------------------------"
                 print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
                 print "IMDb ID: " urls[2] lines[2]
                 print lines[1] "," lines[2] "," lines[3] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9]
+                print "------------------------------------------------------------"
                 exit
               }
             }
