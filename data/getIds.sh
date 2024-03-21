@@ -15,7 +15,6 @@ TYPE=$2
 URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
-IMDB_ID_TO_CHECK=$5
 REGEX_IDS="^\/.*\=([0-9]{1,5}|[0-3][0-9]{5})\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
 
@@ -140,74 +139,66 @@ data_found () {
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
+CheckID () {
+  local id=$1
+  local file_id=$2
+
+  if [[ $id != $file_id ]] && [[ $id != "null" ]]; then
+    echo $id
+  else
+    echo $file_id
+  fi
+}
+
+fetch_id() {
+  local wiki_url=$1
+  local service_url=$2
+  local service_name=$3
+
+  id=$(curl -s $wiki_url | grep $service_url | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+  deprecated_id=$(curl -s $wiki_url | grep -A15 $service_url | grep "Q21441764" | wc -l | awk '{print $1}')
+
+  if [[ -z $id ]] || [[ $deprecated_id -eq 1 ]]; then
+    id=null
+  fi
+
+  CHECK_VALUE=$(eval echo \$$service_name"_CHECK")
+
+  if [[ $PROMPT == "recheck" ]] && [[ $id == "null" ]] && \
+    { [[ -z $(eval echo \$$service_name"_CHECK") ]] || [[ $(eval echo \$$service_name"_CHECK") == "null" ]]; } && \
+    { [[ $PROMPT_SERVICE_NAME == $service_name ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
+      open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+      open -a $BROWSER_PATH $service_url
+      read -p "Enter the $service_name ID: " id
+  fi
+
+  if [[ $PROMPT == "recheck" ]] && [[ $CHECK_VALUE != "null" ]]; then
+    echo "$CHECK_VALUE"
+  else
+    echo "$id"
+  fi
+}
+
 get_other_ids () {
-  METACRITIC_ID=$(curl -s $WIKI_URL | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  METACRITIC_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.metacritic.com" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "metacritic" ]]; then
-    open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-    open -a $BROWSER_PATH "https://www.metacritic.com"
-    echo "Enter the Metacritic ID:"
-    read METACRITIC_ID
-  elif [[ -z $METACRITIC_ID ]] || [[ $METACRITIC_ID_DEPRECATED -eq 1 ]]; then
-    METACRITIC_ID=null
-  fi
+  METACRITIC_ID=$(fetch_id "$WIKI_URL" "https://www.metacritic.com" "METACRITIC")
+  ROTTEN_TOMATOES_ID=$(fetch_id "$WIKI_URL" "https://www.rottentomatoes.com" "ROTTEN_TOMATOES")
+  LETTERBOXD_ID=$(fetch_id "$WIKI_URL" "https://letterboxd.com" "LETTERBOXD")
+  SENSCRITIQUE_ID=$(fetch_id "$WIKI_URL" "https://www.senscritique.com" "SENSCRITIQUE")
+  TRAKT_ID=$(fetch_id "$WIKI_URL" "https://trakt.tv" "TRAKT")
+
   echo "Metacritic ID: $METACRITIC_ID"
-
-  ROTTEN_TOMATOES_ID=$(curl -s $WIKI_URL | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  ROTTEN_TOMATOES_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.rottentomatoes.com" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "rottentomatoes" ]]; then
-    open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-    open -a $BROWSER_PATH "https://www.rottentomatoes.com"
-    echo "Enter the Rotten Tomatoes ID:"
-    read ROTTEN_TOMATOES_ID
-  elif [[ -z $ROTTEN_TOMATOES_ID ]] || [[ $ROTTEN_TOMATOES_ID_DEPRECATED -eq 1 ]]; then
-    ROTTEN_TOMATOES_ID=null
-  fi
   echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
-
-  LETTERBOXD_ID=$(curl -s $WIKI_URL | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  LETTERBOXD_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://letterboxd.com" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "letterboxd" ]]; then
-    open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-    open -a $BROWSER_PATH "https://letterboxd.com"
-    echo "Enter the Letterboxd ID:"
-    read LETTERBOXD_ID
-  elif [[ -z $LETTERBOXD_ID ]] || [[ $LETTERBOXD_ID_DEPRECATED -eq 1 ]]; then
-    LETTERBOXD_ID=null
-  fi
   echo "Letterboxd ID: $LETTERBOXD_ID"
-
-  SENSCRITIQUE_ID=$(curl -s $WIKI_URL | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  SENSCRITIQUE_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.senscritique.com" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "senscritique" ]]; then
-    if [[ -z $IMDB_ID_TO_CHECK ]] || [[ $IMDB_ID_TO_CHECK == $IMDB_ID ]]; then
-      open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-      open -a $BROWSER_PATH "https://www.senscritique.com"
-      echo "Enter the SensCritique ID:"
-      read SENSCRITIQUE_ID
-    else
-      SENSCRITIQUE_ID=null
-    fi
-  elif [[ -z $SENSCRITIQUE_ID ]] || [[ $SENSCRITIQUE_ID_DEPRECATED -eq 1 ]]; then
-    SENSCRITIQUE_ID=null
-  fi
   echo "SensCritique ID: $SENSCRITIQUE_ID"
-
-  TRAKT_ID=$(curl -s $WIKI_URL | grep "https://trakt.tv" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  TRAKT_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://trakt.tv" | grep "Q21441764" | wc -l | awk '{print $1}')
-  if [[ $PROMPT == "recheck" ]] && [[ $PROMPT_SERVICE_NAME == "trakt" ]]; then
-    if [[ -z $IMDB_ID_TO_CHECK ]] || [[ $IMDB_ID_TO_CHECK == $IMDB_ID ]]; then
-      open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-      open -a $BROWSER_PATH "https://trakt.tv"
-      echo "Enter the Trakt ID:"
-      read TRAKT_ID
-    else
-      TRAKT_ID=null
-    fi
-  elif [[ -z $TRAKT_ID ]] || [[ $TRAKT_ID_DEPRECATED -eq 1 ]]; then
-    TRAKT_ID=null
-  fi
   echo "Trakt ID: $TRAKT_ID"
+
+  if [[ $PROMPT == "recheck" ]]; then
+    METACRITIC_ID_TO_USE=$(CheckID "$METACRITIC_ID" "$METACRITIC_CHECK")
+    ROTTEN_TOMATOES_ID_TO_USE=$(CheckID "$ROTTEN_TOMATOES_ID" "$ROTTEN_TOMATOES_CHECK")
+    LETTERBOXD_ID_TO_USE=$(CheckID "$LETTERBOXD_ID" "$LETTERBOXD_CHECK")
+    SENSCRITIQUE_ID_TO_USE=$(CheckID "$SENSCRITIQUE_ID" "$SENSCRITIQUE_CHECK")
+    TRAKT_ID_TO_USE=$(CheckID "$TRAKT_ID" "$TRAKT_CHECK")
+  fi
 }
 
 remove_files
@@ -331,18 +322,19 @@ do
       echo $URL >> $TEMP_URLS_FILE_PATH
 
       if [[ $PROMPT == "recheck" ]]; then
-        if { [[ $IMDB_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "imdb" ]]; } ||
-          { [[ $BETASERIES_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "betaseries" ]]; } ||
-          { [[ $METACRITIC_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "metacritic" ]]; } ||
-          { [[ $ROTTEN_TOMATOES_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "rottentomatoes" ]]; } ||
-          { [[ $LETTERBOXD_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "letterboxd" ]]; } ||
-          { [[ $SENSCRITIQUE_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "senscritique" ]]; } ||
-          { [[ $TRAKT_CHECK == "null" ]] && [[ $PROMPT_SERVICE_NAME == "trakt" ]]; }; then
-          DUPLICATE=0
-          echo "Found $URL to be rechecked."
-        else
-          DUPLICATE=1
-        fi
+        services=("imdb" "betaseries" "metacritic" "rottentomatoes" "letterboxd" "senscritique" "trakt")
+        DUPLICATE=1
+
+        for service in "${services[@]}"; do
+          check_var="$(echo ${service}_CHECK | tr '[:lower:]' '[:upper:]')"
+
+          if [[ ${!check_var} == "null" ]] &&
+            { [[ $PROMPT_SERVICE_NAME == "$service" ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
+            DUPLICATE=0
+            echo "Found $URL to be rechecked."
+            break
+          fi
+        done
       fi
 
       if [[ $DUPLICATE -eq 0 ]]; then
@@ -369,7 +361,7 @@ do
 
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
-          if [[ $PROMPT == "recheck" ]] && [[ $IMDB_CHECK ]]; then
+          if [[ $PROMPT == "recheck" ]]; then
             IMDB_ID=$IMDB_CHECK
             METACRITIC_ID=$METACRITIC_CHECK
             ROTTEN_TOMATOES_ID=$ROTTEN_TOMATOES_CHECK
@@ -490,14 +482,16 @@ do
         echo "----------------------------------------------------------------------------------------------------"
 
         count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
-        if [[ $count -gt 1 ]] && [[ $PROMPT == "recheck" ]]; then
+        if [[ $count -eq 2 ]] && [[ $PROMPT == "recheck" ]]; then
             echo "Number of lines found for $URL: $count"
 
             grep '^'"$URL"',*' $FILMS_IDS_FILE_PATH
 
-            if [[ $SENSCRITIQUE_ID == "null" ]]; then
+            FIRST_LINE_LENGTH=$(grep '^'"$URL"',*' $FILMS_IDS_FILE_PATH | head -1 | wc -c | awk '{print $1}')
+            SECOND_LINE_LENGTH=$(grep '^'"$URL"',*' $FILMS_IDS_FILE_PATH | tail -1 | wc -c | awk '{print $1}')
+            if [[ $FIRST_LINE_LENGTH -gt $SECOND_LINE_LENGTH ]]; then
               LINE_NUMBER_TO_REMOVE=2
-            elif [[ $SENSCRITIQUE_ID != "null" ]]; then
+            elif [[ $SECOND_LINE_LENGTH -gt $FIRST_LINE_LENGTH ]]; then
               LINE_NUMBER_TO_REMOVE=1
             else
               echo "Which line to remove?"

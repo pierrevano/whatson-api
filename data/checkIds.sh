@@ -243,7 +243,7 @@ elif [[ $1 == "check_dataset" ]]; then
   ERROR=$(git diff --unified=0 -- $FILMS_IDS_FILE_PATH \
     | grep '^[+-]' \
     | grep -Ev '^(--- a/|\+\+\+ b/)' \
-    | timeout 300 awk -v baseurlAllocine="$BASE_URL" \
+    | timeout 1800 awk -v baseurlAllocine="$BASE_URL" \
       -v baseurlImdb="$BASE_URL_IMDB" \
       -v baseurlBetaseries="$BASE_URL_BETASERIES" \
       -v baseurlMetacritic="$BASE_URL_METACRITIC" \
