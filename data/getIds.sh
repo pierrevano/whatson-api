@@ -139,7 +139,7 @@ data_found () {
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
-CheckID () {
+check_id () {
   local id=$1
   local file_id=$2
 
@@ -150,7 +150,7 @@ CheckID () {
   fi
 }
 
-fetch_id() {
+fetch_id () {
   local wiki_url=$1
   local service_url=$2
   local service_name=$3
@@ -193,11 +193,11 @@ get_other_ids () {
   echo "Trakt ID: $TRAKT_ID"
 
   if [[ $PROMPT == "recheck" ]]; then
-    METACRITIC_ID_TO_USE=$(CheckID "$METACRITIC_ID" "$METACRITIC_CHECK")
-    ROTTEN_TOMATOES_ID_TO_USE=$(CheckID "$ROTTEN_TOMATOES_ID" "$ROTTEN_TOMATOES_CHECK")
-    LETTERBOXD_ID_TO_USE=$(CheckID "$LETTERBOXD_ID" "$LETTERBOXD_CHECK")
-    SENSCRITIQUE_ID_TO_USE=$(CheckID "$SENSCRITIQUE_ID" "$SENSCRITIQUE_CHECK")
-    TRAKT_ID_TO_USE=$(CheckID "$TRAKT_ID" "$TRAKT_CHECK")
+    METACRITIC_ID_TO_USE=$(check_id "$METACRITIC_ID" "$METACRITIC_CHECK")
+    ROTTEN_TOMATOES_ID_TO_USE=$(check_id "$ROTTEN_TOMATOES_ID" "$ROTTEN_TOMATOES_CHECK")
+    LETTERBOXD_ID_TO_USE=$(check_id "$LETTERBOXD_ID" "$LETTERBOXD_CHECK")
+    SENSCRITIQUE_ID_TO_USE=$(check_id "$SENSCRITIQUE_ID" "$SENSCRITIQUE_CHECK")
+    TRAKT_ID_TO_USE=$(check_id "$TRAKT_ID" "$TRAKT_CHECK")
   fi
 }
 

@@ -37,7 +37,7 @@ else
   exit 1
 fi
 
-function CheckID {
+check_id () {
   local id=$1
   local file_id=$2
 
@@ -48,7 +48,7 @@ function CheckID {
   fi
 }
 
-function isIDFound {
+is_id_found () {
   local id=$1
   local file_id=$2
 
@@ -59,7 +59,7 @@ function isIDFound {
   fi
 }
 
-function getOtherIDs {
+get_other_ids () {
   curl -s $WIKI_URL > temp_WIKI_URL_DOWNLOADED
 
   ALLOCINE_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.allocine.fr" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
@@ -161,25 +161,25 @@ if [[ $1 == "check" ]]; then
       if [[ $WIKI_URL ]]; then
         echo $WIKI_URL
 
-        getOtherIDs $1 $2
+        get_other_ids $1 $2
 
-        ALLOCINE_ID_TO_USE=$(CheckID "$ALLOCINE_ID" "$ALLOCINE_ID_FROM_FILE")
-        FOUND_ALLOCINE=$(isIDFound "$ALLOCINE_ID" "$ALLOCINE_ID_FROM_FILE")
+        ALLOCINE_ID_TO_USE=$(check_id "$ALLOCINE_ID" "$ALLOCINE_ID_FROM_FILE")
+        FOUND_ALLOCINE=$(is_id_found "$ALLOCINE_ID" "$ALLOCINE_ID_FROM_FILE")
 
-        METACRITIC_ID_TO_USE=$(CheckID "$METACRITIC_ID" "$METACRITIC_ID_FROM_FILE")
-        FOUND_METACRITIC=$(isIDFound "$METACRITIC_ID" "$METACRITIC_ID_FROM_FILE")
+        METACRITIC_ID_TO_USE=$(check_id "$METACRITIC_ID" "$METACRITIC_ID_FROM_FILE")
+        FOUND_METACRITIC=$(is_id_found "$METACRITIC_ID" "$METACRITIC_ID_FROM_FILE")
 
-        ROTTEN_TOMATOES_ID_TO_USE=$(CheckID "$ROTTEN_TOMATOES_ID" "$ROTTEN_TOMATOES_ID_FROM_FILE")
-        FOUND_ROTTEN_TOMATOES=$(isIDFound "$ROTTEN_TOMATOES_ID" "$ROTTEN_TOMATOES_ID_FROM_FILE")
+        ROTTEN_TOMATOES_ID_TO_USE=$(check_id "$ROTTEN_TOMATOES_ID" "$ROTTEN_TOMATOES_ID_FROM_FILE")
+        FOUND_ROTTEN_TOMATOES=$(is_id_found "$ROTTEN_TOMATOES_ID" "$ROTTEN_TOMATOES_ID_FROM_FILE")
 
-        LETTERBOXD_ID_TO_USE=$(CheckID "$LETTERBOXD_ID" "$LETTERBOXD_ID_FROM_FILE")
-        FOUND_LETTERBOXD=$(isIDFound "$LETTERBOXD_ID" "$LETTERBOXD_ID_FROM_FILE")
+        LETTERBOXD_ID_TO_USE=$(check_id "$LETTERBOXD_ID" "$LETTERBOXD_ID_FROM_FILE")
+        FOUND_LETTERBOXD=$(is_id_found "$LETTERBOXD_ID" "$LETTERBOXD_ID_FROM_FILE")
 
-        SENSCRITIQUE_ID_TO_USE=$(CheckID "$SENSCRITIQUE_ID" "$SENSCRITIQUE_ID_FROM_FILE")
-        FOUND_SENSCRITIQUE=$(isIDFound "$SENSCRITIQUE_ID" "$SENSCRITIQUE_ID_FROM_FILE")
+        SENSCRITIQUE_ID_TO_USE=$(check_id "$SENSCRITIQUE_ID" "$SENSCRITIQUE_ID_FROM_FILE")
+        FOUND_SENSCRITIQUE=$(is_id_found "$SENSCRITIQUE_ID" "$SENSCRITIQUE_ID_FROM_FILE")
 
-        TRAKT_ID_TO_USE=$(CheckID "$TRAKT_ID" "$TRAKT_ID_FROM_FILE")
-        FOUND_TRAKT=$(isIDFound "$TRAKT_ID" "$TRAKT_ID_FROM_FILE")
+        TRAKT_ID_TO_USE=$(check_id "$TRAKT_ID" "$TRAKT_ID_FROM_FILE")
+        FOUND_TRAKT=$(is_id_found "$TRAKT_ID" "$TRAKT_ID_FROM_FILE")
 
         if [[ $FOUND_ALLOCINE -eq 1 ]] || [[ $FOUND_METACRITIC -eq 1 ]] || [[ $FOUND_ROTTEN_TOMATOES -eq 1 ]] || [[ $FOUND_LETTERBOXD -eq 1 ]] || [[ $FOUND_SENSCRITIQUE -eq 1 ]] || [[ $FOUND_TRAKT -eq 1 ]]; then
           echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_TO_USE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
@@ -266,6 +266,7 @@ elif [[ $1 == "check_dataset" ]]; then
         split(data[key], lines, FS)
         if (length(lines) <= 10) continue
         for(i=1; i<=10; i++) {
+          if (lines[1] == lines[1+10] && lines[2] == lines[2+10] && lines[3] == lines[3+10] && lines[4] == lines[4+10] && lines[5] == lines[5+10] && lines[6] == lines[6+10] && lines[7] == lines[7+10] && lines[8] == lines[8+10] && lines[9] == lines[9+10]) continue
           if (lines[i] != "null" && lines[i+10] == "null" && lines[i] != "") {
             print "------------------------------------------------------------"
             print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
@@ -341,7 +342,7 @@ elif [[ $1 == "check_allocine" ]]; then
             fi
             echo "BetaSeries ID: $BETASERIES_ID"
 
-            getOtherIDs $1 $2
+            get_other_ids $1 $2
 
             echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,FALSE" >> $TEMP_FILE
           fi

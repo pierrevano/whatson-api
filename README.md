@@ -70,7 +70,7 @@ Example of an item returned:
         "url": "https://www.allocine.fr/film/fichefilm_gen_cfilm=278742.html",
         "users_rating": 4.5,
         "critics_rating": 4.2,
-        "critics_number": 38,
+        "critics_number": 39,
         "critics_rating_details": [
             {
                 "critic_name": "20 Minutes",
@@ -134,6 +134,10 @@ Example of an item returned:
             },
             {
                 "critic_name": "Les Echos",
+                "critic_rating": 5
+            },
+            {
+                "critic_name": "Mad Movies",
                 "critic_rating": 5
             },
             {
@@ -225,20 +229,20 @@ Example of an item returned:
                 "critic_rating": 1
             }
         ],
-        "popularity": 3
+        "popularity": 1
     },
     "betaseries": {
         "id": "91505-dune-part-two",
         "url": "https://www.betaseries.com/film/91505-dune-part-two",
-        "users_rating": 4.55
+        "users_rating": 4.54
     },
     "id": 693134,
     "image": "https://fr.web.img4.acsta.net/pictures/24/01/26/10/18/5392835.jpg",
     "imdb": {
         "id": "tt15239678",
         "url": "https://www.imdb.com/title/tt15239678/",
-        "users_rating": 9,
-        "popularity": 1
+        "users_rating": 8.8,
+        "popularity": 2
     },
     "is_active": true,
     "item_type": "movie",
@@ -246,36 +250,41 @@ Example of an item returned:
     "seasons_number": null,
     "status": null,
     "title": "Dune : Deuxième Partie",
-    "trailer": "https://fr.vid.web.acsta.net/nmedia/33/23/12/12/18/19604610_hd_013.mp4",
+    "trailer": "https://www.dailymotion.com/embed/video/x8ltyzt",
     "metacritic": {
         "id": "dune-part-two",
         "url": "https://www.metacritic.com/movie/dune-part-two",
-        "users_rating": 8.3,
+        "users_rating": 8.4,
         "critics_rating": 79
     },
     "mojo": {
-        "rank": 915,
+        "rank": 235,
         "url": "https://www.boxofficemojo.com/title/tt15239678/",
-        "lifetime_gross": "$197,981,312"
+        "lifetime_gross": "$509,801,051"
     },
     "rotten_tomatoes": {
         "id": "dune_part_two",
         "url": "https://www.rottentomatoes.com/m/dune_part_two",
         "users_rating": 95,
-        "critics_rating": 94
+        "critics_rating": 93
     },
     "letterboxd": {
         "id": "dune-part-two",
         "url": "https://letterboxd.com/film/dune-part-two",
-        "users_rating": 4.57
+        "users_rating": 4.52
     },
     "senscritique": {
         "id": "45424060",
         "url": "https://www.senscritique.com/film/-/45424060",
         "users_rating": 7.9
     },
-    "updated_at": "2024-03-07T09:24:45.783Z",
-    "popularity_average": 2,
+    "updated_at": "2024-03-21T21:26:55.512Z",
+    "trakt": {
+        "id": "dune-part-two-2023",
+        "url": "https://trakt.tv/movies/dune-part-two-2023",
+        "users_rating": 86
+    },
+    "popularity_average": 1.5,
     "ratings_average": 4.4
 }
 ```
