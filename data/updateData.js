@@ -136,7 +136,7 @@ async function checkStatus(service) {
       getNodeVarsValues.item_type,
       jsonArraySortedHighestToLowest,
       mojoBoxOfficeArray,
-      getNodeVarsValues.skip_already_added_documents
+      getNodeVarsValues.check_data
     );
     await countNullElements(collectionData, newOrUpdatedItems);
   } catch (error) {

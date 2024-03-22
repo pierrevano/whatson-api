@@ -19,10 +19,10 @@ const { getNodeVarsValues } = require("../src/getNodeVarsValues");
  * @param {string} item_type - The type of item being looped.
  * @param {Array} jsonArray - The array of JSON objects to loop through.
  * @param {Array} mojoBoxOfficeArray - The array of Mojo Box Office data to be included in the operations.
- * @param {string} skip_already_added_documents - Flag indicating whether to skip already added documents.
+ * @param {string} check_data - Flag indicating whether we check the data or not.
  * @returns {Object} Returns an object containing the number of new or updated items.
  */
-const loopItems = async (collectionData, config, force, index_to_start, item_type, jsonArray, mojoBoxOfficeArray, skip_already_added_documents) => {
+const loopItems = async (collectionData, config, force, index_to_start, item_type, jsonArray, mojoBoxOfficeArray, check_data) => {
   let createJsonCounter = (itemCounter = 0);
 
   // Loop through jsonArray with the given start index
@@ -42,17 +42,8 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       const allocineHomepage = urls.allocine.homepage;
       const allocineCriticsDetails = urls.allocine.criticsDetails;
 
-      // If set to skip already added documents
-      if (skip_already_added_documents === "skip") {
-        // Check if the document exists in the database
-        const allocineQuery = { _id: b64Encode(allocineHomepage) };
-        const isDocumentExisting = await collectionData.find(allocineQuery).toArray();
-        const isDocumentHasInfo = isDocumentExisting.length > 0;
-
+      if (check_data === "check_data") {
         // await controlData(allocineHomepage, config.keysToCheck, isDocumentHasInfo, isDocumentExisting[0], item_type);
-
-        // If the document already exists, skip processing this item
-        if (isDocumentHasInfo) continue;
       }
 
       /* Handle IMDb related data */
@@ -112,6 +103,10 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
         } catch (error) {
           throw new Error(`Error fetching data: ${error}`);
         }
+      }
+
+      if (getNodeVarsValues.check_id) {
+        if (imdbId !== getNodeVarsValues.check_id) continue;
       }
 
       // Check if page is existing before upsert to DB

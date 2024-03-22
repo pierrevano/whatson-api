@@ -9,12 +9,13 @@ const getNodeVarsValues = {
   is_not_active: node_vars[4],
   check_db_ids: node_vars[5],
   index_to_start: node_vars[6],
-  skip_already_added_documents: node_vars[7],
+  check_data: node_vars[7],
   force: node_vars[8],
   skip_mojo: node_vars[9],
   skip_services: node_vars[10],
   delete_ids: node_vars[11],
   check_date: node_vars[12],
+  check_id: node_vars[13],
 };
 
 module.exports = { getNodeVarsValues };

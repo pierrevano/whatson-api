@@ -20,10 +20,7 @@ const getPlatformsLinks = async (allocineHomepage, imdbHomepage) => {
     let platformsLinks = null;
 
     if (allocineHomepage.includes(config.baseURLTypeSeries)) {
-      const betaseries_api_key = process.env.BETASERIES_API_KEY;
-      const baseURLBetaseriesAPI = config.baseURLBetaseriesAPI;
-      const imdbHomepageId = imdbHomepage.split("/")[4];
-      const url = `${baseURLBetaseriesAPI}?key=${betaseries_api_key}&imdb_id=${imdbHomepageId}`;
+      const url = `${config.baseURLBetaseriesAPI}?key=${process.env.BETASERIES_API_KEY}&imdb_id=${imdbHomepage.split("/")[4]}`;
 
       const options = { validateStatus: (status) => status < 500 };
       const { data, status } = await axios.get(url, options);
