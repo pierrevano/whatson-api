@@ -4,7 +4,8 @@ const config = {
   baseURLAllocine: "https://www.allocine.fr",
   baseURLAllocineFilms: "https://www.allocine.fr/film/aucinema",
   baseURLAllocineSeries: "https://www.allocine.fr/series/top",
-  baseURLBetaseriesAPI: "https://api.betaseries.com/shows/display",
+  baseURLBetaseriesAPIFilms: "https://api.betaseries.com/movies/movie",
+  baseURLBetaseriesAPISeries: "https://api.betaseries.com/shows/display",
   baseURLBetaseriesFilm: "https://www.betaseries.com/film/",
   baseURLBetaseriesSerie: "https://www.betaseries.com/serie/",
   baseURLCriticDetailsFilms: "/film/fichefilm-",
@@ -127,6 +128,7 @@ const config = {
     trailer: 100,
     senscritiqueItems: 3,
     traktItems: 3,
+    platformsLinksMovies: 5,
 
     allocine: 7,
     imdb: 4,

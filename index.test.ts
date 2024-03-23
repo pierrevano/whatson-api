@@ -83,7 +83,9 @@ function checkItemProperties(items) {
 
     item.item_type === "tvshow" && item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
     item.item_type === "tvshow" ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
-    item.item_type === "movie" ? expect(item.platforms_links).toBeNull() : null; // No platforms links for movie item type.
+    item.item_type === "movie" && item.is_active === true
+      ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.platformsLinksMovies)
+      : null;
 
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
     expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);
