@@ -1,4 +1,5 @@
 const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 /**
  * Returns the English equivalent of the given French status string.
@@ -27,7 +28,7 @@ const getStatus = async (allocineHomepage, status) => {
         process.exit(1);
     }
   } catch (error) {
-    console.log(`getStatus - ${status}: ${error}`);
+    logErrors(error, status, "getStatus");
   }
 };
 

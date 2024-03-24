@@ -1,4 +1,5 @@
 /* It's importing the function `removeExtraChar` from the file `removeExtraChar.js` */
+const { logErrors } = require("./logErrors");
 const { removeExtraChar } = require("./removeExtraChar");
 
 /**
@@ -22,8 +23,7 @@ function getContentUrl($, backup, allocineHomepage) {
 
     return contentParsed;
   } catch (error) {
-    console.log(`getContentUrl - ${allocineHomepage}: ${error}`);
-
+    logErrors(error, allocineHomepage, "getContentUrl");
     return null;
   }
 }

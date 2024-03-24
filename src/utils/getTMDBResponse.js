@@ -10,6 +10,7 @@ const axios = require("axios");
 
 /* Importing the config.js file and assigning it to the config variable. */
 const { config } = require("../config");
+const { logErrors } = require("./logErrors");
 
 /**
  * Makes an API call to The Movie Database (TMDB) to retrieve information about a movie or tv show.
@@ -30,7 +31,7 @@ const getTMDBResponse = async (allocineHomepage, theMoviedbId) => {
 
     return { data, status };
   } catch (error) {
-    console.log(`getTMDBResponse - ${allocineHomepage}: ${error}`);
+    logErrors(error, allocineHomepage, "getTMDBResponse");
   }
 };
 

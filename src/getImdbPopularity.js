@@ -3,6 +3,7 @@ const axios = require("axios");
 
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 /**
  * It takes the IMDb homepage of a movie as an argument, and returns the IMDb popularity ranking of the movie
@@ -28,7 +29,7 @@ const getImdbPopularity = async (imdbHomepage) => {
       popularity: popularity,
     };
   } catch (error) {
-    console.log(`getImdbPopularity - ${imdbHomepage}: ${error}`);
+    logErrors(error, imdbHomepage, "getImdbPopularity");
   }
 };
 

@@ -1,5 +1,6 @@
 const axios = require("axios");
 const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 /**
  * Extracts the ID of a movie or tv show from a remote popularity file hosted on a server.
@@ -11,8 +12,6 @@ const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
     const popularityPath = item_type === "movie" ? config.filmsPopularityPath : config.seriesPopularityPath;
     const url = `${config.baseURLAssets}/${popularityPath}`;
 
-    console.log("Getting popularity from:", url);
-
     const response = await axios.get(url);
     const lines = response.data.split("\n");
 
@@ -23,7 +22,7 @@ const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
       return valueBeforeComma;
     }
   } catch (error) {
-    console.log(`extractIdFromRemotePopularityFile - ${allocineURL}: ${error}`);
+    logErrors(error, allocineURL, "extractIdFromRemotePopularityFile");
   }
 };
 
@@ -41,7 +40,7 @@ const getAllocinePopularity = async (allocineURL, item_type) => {
       popularity: popularity,
     };
   } catch (error) {
-    console.log(`getAllocinePopularity - ${allocineURL}: ${error}`);
+    logErrors(error, allocineURL, "getAllocinePopularity");
   }
 };
 

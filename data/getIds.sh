@@ -17,6 +17,7 @@ UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
 REGEX_IDS="^\/.*\=([0-9]{1,5}|[0-3][0-9]{5})\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
+DEFAULT_FIRST_SHOW=/series/ficheserie_gen_cserie=28295.html
 
 # Define alternative base variables
 if [[ $TYPE == "movie" ]]; then
@@ -258,7 +259,7 @@ do
     URL=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4)
 
     # Sometimes AlloCiné is displaying a default top series list starting by this ID. If `true`, abording.
-    if [[ $URL == "/series/ficheserie_gen_cserie=28295.html" ]] && [[ $PAGES_INDEX_NUMBER -eq 1 ]] && [[ $FILMS_INDEX_NUMBER -eq 1 ]]; then
+    if [[ $URL == $DEFAULT_FIRST_SHOW ]] && [[ $PAGES_INDEX_NUMBER -eq 1 ]] && [[ $FILMS_INDEX_NUMBER -eq 1 ]]; then
       echo "First URL is: $URL"
       echo "Not updating tvshows as the top list is not correct."
 

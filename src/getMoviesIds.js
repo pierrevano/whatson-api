@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 
 const { config } = require("./config");
+const { logErrors } = require("./utils/logErrors");
 
 /**
  * It fetches the movie IDs from the AlloCiné website, and returns them in an array
@@ -35,7 +36,7 @@ const getMoviesIds = async (cinemaIdParam) => {
 
     return allMoviesIds;
   } catch (error) {
-    console.log(`getMoviesIds - ${cinemaIdParam}: ${error}`);
+    logErrors(error, cinemaIdParam, "getMoviesIds");
   }
 };
 

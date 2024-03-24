@@ -52,7 +52,7 @@ const config = {
     urlToFetch: "/chart/ww_top_lifetime_gross",
     tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
 
-    maxIterations: 20,
+    maxIterations: 30,
     offset: 200,
   },
 

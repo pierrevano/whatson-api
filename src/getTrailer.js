@@ -4,6 +4,7 @@ const { config } = require("./config");
 /* Importing the functions from the files in the utils folder. */
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { getContentUrl } = require("./utils/getContentUrl");
+const { logErrors } = require("./utils/logErrors");
 const { removeExtraChar } = require("./utils/removeExtraChar");
 
 /**
@@ -80,7 +81,7 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
       }
     }
   } catch (error) {
-    console.log(`getTrailer - ${allocineHomepage}: ${error}`);
+    logErrors(error, allocineHomepage, "getTrailer");
   }
 
   return trailer;
