@@ -100,9 +100,9 @@ function checkItemProperties(items) {
     /* AlloCiné */
     expect(item.allocine).not.toBeNull();
     expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.allocine);
-    expect(items.filter((item) => item.allocine.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.allocine.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.allocine.critics_number).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => typeof item.allocine.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => typeof item.allocine.critics_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => typeof item.allocine.critics_number === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.allocine.critics_rating_details).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(
       items.filter(
@@ -116,36 +116,38 @@ function checkItemProperties(items) {
     expect(item.imdb).not.toBeNull();
     expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.imdb);
     expect(item.imdb.id.startsWith("tt")).toBeTruthy();
-    expect(items.filter((item) => item.imdb.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => typeof item.imdb.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* BetaSeries */
     item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.betaseries) : null;
-    expect(items.filter((item) => item.betaseries && item.betaseries.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.betaseries && typeof item.betaseries.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Metacritic */
     item.is_active === true && item.metacritic ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.metacritic) : null;
-    expect(items.filter((item) => item.metacritic && item.metacritic.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.metacritic && item.metacritic.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.metacritic && typeof item.metacritic.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.metacritic && typeof item.metacritic.critics_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Rotten Tomatoes */
     item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.rottenTomatoes) : null;
-    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.rotten_tomatoes && item.rotten_tomatoes.critics_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.rotten_tomatoes && typeof item.rotten_tomatoes.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.rotten_tomatoes && typeof item.rotten_tomatoes.critics_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Letterboxd */
     item.letterboxd ? expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.letterboxd) : null;
     item.is_active === true && item.item_type === "movie"
-      ? expect(items.filter((item) => item.letterboxd && item.letterboxd.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      ? expect(items.filter((item) => item.letterboxd && typeof item.letterboxd.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
     item.item_type === "tvshow" ? expect(item.letterboxd).toBeNull() : null; // No tvshows on Letterboxd (yet).
 
     /* SensCritique */
     item.senscritique ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritique) : null;
-    item.is_active === true ? expect(items.filter((item) => item.senscritique && item.senscritique.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems) : null;
+    item.is_active === true
+      ? expect(items.filter((item) => item.senscritique && typeof item.senscritique.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems)
+      : null;
 
     /* Trakt */
     item.trakt ? expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trakt) : null;
-    item.is_active === true ? expect(items.filter((item) => item.trakt && item.trakt.users_rating).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.traktItems) : null;
+    item.is_active === true ? expect(items.filter((item) => item.trakt && typeof item.trakt.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.traktItems) : null;
 
     /* Mojo */
     item.is_active === true && item.item_type === "movie"
