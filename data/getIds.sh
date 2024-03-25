@@ -180,6 +180,7 @@ fetch_id () {
 
   if [[ $PROMPT == "recheck" ]] && [[ $id == "null" ]] && \
     { [[ -z $(eval echo \$$service_name"_CHECK") ]] || [[ $(eval echo \$$service_name"_CHECK") == "null" ]]; } && \
+    { [[ $service_name != "LETTERBOXD" ]] || [[ $TYPE != "tvshow" ]]; } && \
     { [[ $PROMPT_SERVICE_NAME == $service_name ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
       open -a $BROWSER_PATH "https://www.allocine.fr$URL"
       open -a $BROWSER_PATH $service_url
@@ -507,6 +508,8 @@ do
               LINE_NUMBER_TO_REMOVE=2
             elif [[ $SECOND_LINE_LENGTH -gt $FIRST_LINE_LENGTH ]]; then
               LINE_NUMBER_TO_REMOVE=1
+            elif [[ $FIRST_LINE_LENGTH -eq $SECOND_LINE_LENGTH ]]; then
+              LINE_NUMBER_TO_REMOVE=2
             else
               echo "Which line to remove?"
               read LINE_NUMBER_TO_REMOVE
