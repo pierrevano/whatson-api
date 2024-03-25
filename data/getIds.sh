@@ -65,13 +65,26 @@ else
   sed -i '' -E "s/(,TRUE|,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
-WRONG_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | wc -l | awk '{print $1}')
-WRONG_LINES_NB_COMMAS=$(cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS_COMMAS | wc -l | awk '{print $1}')
-if [[ $WRONG_LINES_NB -gt 1 ]] && [[ $WRONG_LINES_NB_COMMAS -gt 0 ]]; then
-  echo "WRONG_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
-  echo "details:"
-  cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS | tail -1
-  cat $FILMS_IDS_FILE_PATH | grep -E -v $REGEX_IDS_COMMAS | tail -1
+WRONG_LINES_NB=$(grep -E -v "$REGEX_IDS" $FILMS_IDS_FILE_PATH | wc -l)
+WRONG_LINES_NB_COMMAS=$(grep -E -v "$REGEX_IDS_COMMAS" $FILMS_IDS_FILE_PATH | wc -l)
+WRONG_LINES_NB_INVISIBLE=$(perl -lne 'print if m/[^\x20-\x7E]/ || /[^[:ascii:]]/ || /[[:^print:]]/' $FILMS_IDS_FILE_PATH | wc -l)
+ERRORS_FOUND=0
+
+if [[ $WRONG_LINES_NB -gt 1 ]]; then
+  echo "WRONG_LINES_NB / Something's wrong in the IDs file: $FILMS_IDS_FILE_PATH. Wrong Lines Count: $WRONG_LINES_NB"
+  grep -E -v "$REGEX_IDS" $FILMS_IDS_FILE_PATH | tail -1
+  ERRORS_FOUND=1
+elif [[ $WRONG_LINES_NB_COMMAS -gt 0 ]]; then
+  echo "WRONG_LINES_NB_COMMAS / Something's wrong with commas in the file: $FILMS_IDS_FILE_PATH. Wrong Lines Commas Count: $WRONG_LINES_NB_COMMAS"
+  grep -E -v "$REGEX_IDS_COMMAS" $FILMS_IDS_FILE_PATH | tail -1
+  ERRORS_FOUND=1
+elif [[ $WRONG_LINES_NB_INVISIBLE -gt 0 ]]; then
+  echo "WRONG_LINES_NB_INVISIBLE / Something's wrong with invisible characters in the file: $FILMS_IDS_FILE_PATH. Wrong Lines Invisible Count: $WRONG_LINES_NB_INVISIBLE"
+  perl -lne 'print if m/[^\x20-\x7E]/ || /[^[:ascii:]]/ || /[[:^print:]]/' $FILMS_IDS_FILE_PATH | tail -1
+  ERRORS_FOUND=1
+fi
+
+if [[ $ERRORS_FOUND -eq 1 ]]; then
   exit 1
 fi
 
