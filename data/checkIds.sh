@@ -262,7 +262,8 @@ elif [[ $1 == "check_dataset" ]]; then
       -v baseurlMetacritic="$BASE_URL_METACRITIC" \
       -v baseurlLetterboxd="$BASE_URL_LETTERBOXD" \
       -v baseurlSenscritique="$BASE_URL_SENSCRITIQUE" \
-      -v baseurlTrakt="$BASE_URL_TRAKT" -F',' '{
+      -v baseurlTrakt="$BASE_URL_TRAKT" \
+      -v filmIdsFilePath="$FILMS_IDS_FILE_PATH" -F',' '{
       sub(/^[+-]/,"")
       data[$1] = (data[$1] ? data[$1] FS : "") $0
     }
@@ -275,12 +276,15 @@ elif [[ $1 == "check_dataset" ]]; then
       urls[8]=baseurlSenscritique
       urls[9]=baseurlTrakt
 
+      print "Only last values changed for: " filmIdsFilePath
+
       for(key in data) {
         split(data[key], lines, FS)
         if (length(lines) <= 10) continue
         for(i=1; i<=10; i++) {
-          if (lines[1] == lines[1+10] && lines[2] == lines[2+10] && lines[3] == lines[3+10] && lines[4] == lines[4+10] && lines[5] == lines[5+10] && lines[6] == lines[6+10] && lines[7] == lines[7+10] && lines[8] == lines[8+10] && lines[9] == lines[9+10]) continue
-          if (lines[i] != "null" && lines[i+10] == "null" && lines[i] != "") {
+          if (lines[i] != lines[i+10]) print "Other values changed for: " filmIdsFilePath
+
+          if (lines[i] != "null" && lines[i+10] == "null") {
             print "------------------------------------------------------------"
             print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
             print "Details:"
@@ -313,7 +317,10 @@ elif [[ $1 == "check_dataset" ]]; then
       }
     }')
 
-  if [[ $ERROR ]]; then
+  if [[ $ERROR == "Only last values changed for: ./src/assets/films_ids.txt" ]] && [[ $ERROR == "Only last values changed for: ./src/assets/series_ids.txt" ]]; then
+    git update-index --assume-unchanged src/assets/films_ids.txt
+    git update-index --assume-unchanged src/assets/series_ids.txt
+  elif [[ $ERROR =~ "------------------------------------------------------------" ]]; then
     echo "An error happened when updating the dataset, aborting."
     echo "$ERROR"
     exit 1

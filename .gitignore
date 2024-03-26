@@ -13,6 +13,7 @@ reports/*
 run.sh
 src/assets/.!*!films_ids.txt
 src/assets/.!*!series_ids.txt
+src/assets/popularity_ids_*.txt
 src/assets/skip_ids_*.txt
 src/assets/updated_at.txt
 temp_*
