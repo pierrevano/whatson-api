@@ -253,10 +253,12 @@ elif [[ $1 == "update" ]]; then
   cat $FILMS_IDS_FILE_PATH | sort -V | uniq > ./temp_ids.txt
   cat ./temp_ids.txt > $FILMS_IDS_FILE_PATH
 elif [[ $1 == "check_dataset" ]]; then
+  git update-index --no-assume-unchanged $FILMS_IDS_FILE_PATH
+
   ERROR=$(git diff --unified=0 -- $FILMS_IDS_FILE_PATH \
     | grep '^[+-]' \
     | grep -Ev '^(--- a/|\+\+\+ b/)' \
-    | timeout 1800 awk -v baseurlAllocine="$BASE_URL" \
+    | timeout 3600 awk -v baseurlAllocine="$BASE_URL" \
       -v baseurlImdb="$BASE_URL_IMDB" \
       -v baseurlBetaseries="$BASE_URL_BETASERIES" \
       -v baseurlMetacritic="$BASE_URL_METACRITIC" \
@@ -281,8 +283,9 @@ elif [[ $1 == "check_dataset" ]]; then
       for(key in data) {
         split(data[key], lines, FS)
         if (length(lines) <= 10) continue
+        if (lines[1] == lines[1+10] && lines[2] == lines[2+10] && lines[3] == lines[3+10] && lines[4] == lines[4+10] && lines[5] == lines[5+10] && lines[6] == lines[6+10] && lines[7] == lines[7+10] && lines[8] == lines[8+10] && lines[9] == lines[9+10] && lines[10] != lines[10+10]) continue
         for(i=1; i<=10; i++) {
-          if (lines[i] != lines[i+10]) print "Other values changed for: " filmIdsFilePath
+          print "Other values changed for: " filmIdsFilePath
 
           if (lines[i] != "null" && lines[i+10] == "null") {
             print "------------------------------------------------------------"
@@ -317,14 +320,22 @@ elif [[ $1 == "check_dataset" ]]; then
       }
     }')
 
-  if [[ $ERROR == "Only last values changed for: ./src/assets/films_ids.txt" ]] && [[ $ERROR == "Only last values changed for: ./src/assets/series_ids.txt" ]]; then
-    git update-index --assume-unchanged src/assets/films_ids.txt
-    git update-index --assume-unchanged src/assets/series_ids.txt
-  elif [[ $ERROR =~ "------------------------------------------------------------" ]]; then
-    echo "An error happened when updating the dataset, aborting."
-    echo "$ERROR"
-    exit 1
-  fi
+  case "$ERROR" in
+    "Only last values changed for: ./src/assets/films_ids.txt")
+      echo "$ERROR"
+      git update-index --assume-unchanged src/assets/films_ids.txt
+      ;;
+
+    "Only last values changed for: ./src/assets/series_ids.txt")
+      echo "$ERROR"
+      git update-index --assume-unchanged src/assets/series_ids.txt
+      ;;
+
+    *------------------------------------------------------------*)
+      echo "$ERROR"
+      exit 1
+      ;;
+  esac
 elif [[ $1 == "check_allocine" ]]; then
   rm -f $TEMP_FILE
 
