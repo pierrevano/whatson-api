@@ -53,8 +53,7 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
             if (linkToVideo) {
               $ = await getCheerioContent(`${config.baseURLAllocine}${linkToVideo}`, options, "getTrailer");
 
-              const isPageBroken = $.html().length === 0;
-              if (!isPageBroken) {
+              if ($) {
                 const content = getContentUrl($, true, allocineHomepage);
                 if (content && content.contentUrl) trailer = content.contentUrl;
               }
