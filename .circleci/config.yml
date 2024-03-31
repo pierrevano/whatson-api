@@ -44,6 +44,7 @@ jobs:
       - run:
           name: Update movie data
           command: node data/updateData.js movie update_ids update_db
+      - run_tests
       - run:
           name: Update tvshow data
           command: node data/updateData.js tvshow update_ids update_db
@@ -67,6 +68,7 @@ jobs:
       - run:
           name: Update all movie data second half
           command: npm run update-movie-data-second-half
+      - run_tests
       - run:
           name: Update all tvshow data all
           command: npm run update-tvshow-data-all
