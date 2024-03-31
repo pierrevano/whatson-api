@@ -1,13 +1,13 @@
 const axios = require("axios");
 
-const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
+const { b64Encode } = require("./utils/b64EncodeAndDecode");
 // const { controlData } = require("./controlData");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
 const createJSON = require("./createJSON");
 const generateURLs = require("./generateURLs");
-const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
-const { getNodeVarsValues } = require("../src/getNodeVarsValues");
+const { getAllocineFirstInfo } = require("./getAllocineFirstInfo");
+const { getNodeVarsValues } = require("./getNodeVarsValues");
 
 /**
  * Loop through items in a collection, perform various operations on each item, and return an object containing the number of new or updated items.

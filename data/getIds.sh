@@ -12,7 +12,7 @@ SECONDS=0
 SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
 TYPE=$2
-URL_ESCAPE_FILE_PATH=./data/urlEscape.sed
+URL_ESCAPE_FILE_PATH=./src/utils/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
 REGEX_IDS="^\/.*\=([0-9]{1,5}|[0-3][0-9]{5})\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){4},(TRUE|FALSE)$"

@@ -1,8 +1,8 @@
 const fs = require("fs");
 
-const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
-const { config } = require("../src/config");
-const { getNodeVarsValues } = require("../src/getNodeVarsValues");
+const { b64Encode } = require("./utils/b64EncodeAndDecode");
+const { config } = require("./config");
+const { getNodeVarsValues } = require("./getNodeVarsValues");
 
 const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
   let idsFromFile = [];

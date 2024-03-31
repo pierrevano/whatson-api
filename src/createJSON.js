@@ -1,16 +1,16 @@
-const { getAllocineCriticInfo } = require("../src/getAllocineCriticInfo");
-const { getAllocineFirstInfo } = require("../src/getAllocineFirstInfo");
-const { getAllocinePopularity } = require("../src/getAllocinePopularity");
-const { getBetaseriesUsersRating } = require("../src/getBetaseriesUsersRating");
-const { getImdbPopularity } = require("../src/getImdbPopularity");
-const { getImdbUsersRating } = require("../src/getImdbUsersRating");
-const { getMetacriticRating } = require("../src/getMetacriticRating");
-const { getObjectByImdbId } = require("../src/getMojoBoxOffice");
-const { getPlatformsLinks } = require("../src/getPlatformsLinks");
-const { getRottenTomatoesRating } = require("../src/getRottenTomatoesRating");
-const { getLetterboxdRating } = require("../src/getLetterboxdRating");
-const { getSensCritiqueRating } = require("../src/getSensCritiqueRating");
-const { getTraktRating } = require("../src/getTraktRating");
+const { getAllocineCriticInfo } = require("./getAllocineCriticInfo");
+const { getAllocineFirstInfo } = require("./getAllocineFirstInfo");
+const { getAllocinePopularity } = require("./getAllocinePopularity");
+const { getBetaseriesUsersRating } = require("./getBetaseriesUsersRating");
+const { getImdbPopularity } = require("./getImdbPopularity");
+const { getImdbUsersRating } = require("./getImdbUsersRating");
+const { getMetacriticRating } = require("./getMetacriticRating");
+const { getObjectByImdbId } = require("./getMojoBoxOffice");
+const { getPlatformsLinks } = require("./getPlatformsLinks");
+const { getRottenTomatoesRating } = require("./getRottenTomatoesRating");
+const { getLetterboxdRating } = require("./getLetterboxdRating");
+const { getSensCritiqueRating } = require("./getSensCritiqueRating");
+const { getTraktRating } = require("./getTraktRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.

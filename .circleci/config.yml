@@ -43,11 +43,11 @@ jobs:
       - setup_env
       - run:
           name: Update movie data
-          command: node data/updateData.js movie update_ids update_db
+          command: node src/updateData.js movie update_ids update_db
       - run_tests
       - run:
           name: Update tvshow data
-          command: node data/updateData.js tvshow update_ids update_db
+          command: node src/updateData.js tvshow update_ids update_db
       - run_tests
   build_all:
     docker:

@@ -12,18 +12,18 @@ const credentials = process.env.CREDENTIALS;
 const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-const { config } = require("../src/config");
-const { getNodeVarsValues } = require("../src/getNodeVarsValues");
+const { config } = require("./config");
+const { getNodeVarsValues } = require("./getNodeVarsValues");
 
 const { countNullElements } = require("./countNullElements");
-const { jsonArrayFiltered } = require("../src/utils/jsonArrayFiltered");
-const { updateIds } = require("../src/updateIds");
+const { jsonArrayFiltered } = require("./utils/jsonArrayFiltered");
+const { updateIds } = require("./updateIds");
 const loopItems = require("./loopItems");
-const isThirdPartyServiceOK = require("../src/utils/thirdPartyStatus");
-const { getMojoBoxOffice } = require("../src/getMojoBoxOffice");
-const { fetchAndCheckItemCount } = require("../src/getAllocineItemsNumber");
+const isThirdPartyServiceOK = require("./utils/thirdPartyStatus");
+const { getMojoBoxOffice } = require("./getMojoBoxOffice");
+const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
 const checkDbIds = require("./checkDbIds");
-const { b64Encode } = require("../src/utils/b64EncodeAndDecode");
+const { b64Encode } = require("./utils/b64EncodeAndDecode");
 
 async function checkStatus(service) {
   if (await isThirdPartyServiceOK(service.url)) {

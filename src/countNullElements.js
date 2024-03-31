@@ -1,4 +1,4 @@
-const { config } = require("../src/config");
+const { config } = require("./config");
 
 /**
  * Verifies that the number of null results for a specific rate source in a collection doesn't exceed a specified threshold.
