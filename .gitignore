@@ -1,6 +1,7 @@
 .env
 .jshintrc
 .prettierignore
+.vscode
 junit.xml
 node_modules
 package-lock.json
