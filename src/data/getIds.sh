@@ -4,7 +4,7 @@ BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
-PAGES_MAX_NUMBER=15
+PAGES_MAX_NUMBER=20
 PAGES_MIN_NUMBER=1
 PROMPT=$3
 PROMPT_SERVICE_NAME=$4
@@ -224,17 +224,17 @@ curl -s -H "User-Agent: $USER_AGENT" $BASE_URL > temp_baseurl
 
 # Get AlloCiné baseUrl number
 FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
-if [[ $FILMS_NUMBER -gt 15 ]]; then
+if [[ $FILMS_NUMBER -gt $FILMS_MAX_NUMBER ]]; then
   FILMS_NUMBER=$FILMS_MAX_NUMBER
 fi
 
-if [[ $FILMS_NUMBER -lt 15 ]]; then
+if [[ $FILMS_NUMBER -lt $FILMS_MAX_NUMBER ]]; then
   # Define AlloCiné baseUrl pages number to 1
   PAGES_NUMBER=1
 else
   # Define AlloCiné baseUrl pages number
   PAGES_NUMBER=$(cat temp_baseurl | grep -Eo "\">[0-9]+</a></div></nav>" | cut -d'>' -f2 | cut -d'<' -f1)
-  if [[ $PAGES_NUMBER -gt 15 ]]; then
+  if [[ $PAGES_NUMBER -gt $PAGES_MAX_NUMBER ]]; then
     PAGES_NUMBER=$PAGES_MAX_NUMBER
   fi
 fi
