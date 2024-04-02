@@ -8,22 +8,20 @@ const csv = require("csvtojson");
 
 /* Connecting to the MongoDB database. */
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const credentials = process.env.CREDENTIALS;
-const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+const { b64Encode } = require("./utils/b64EncodeAndDecode");
 const { config } = require("./config");
-const { getNodeVarsValues } = require("./getNodeVarsValues");
-
 const { countNullElements } = require("./countNullElements");
+const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
+const { getMojoBoxOffice } = require("./content/getMojoBoxOffice");
+const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
 const { jsonArrayFiltered } = require("./utils/jsonArrayFiltered");
 const { updateIds } = require("./updateIds");
-const loopItems = require("./loopItems");
-const isThirdPartyServiceOK = require("./utils/thirdPartyStatus");
-const { getMojoBoxOffice } = require("./getMojoBoxOffice");
-const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
 const checkDbIds = require("./checkDbIds");
-const { b64Encode } = require("./utils/b64EncodeAndDecode");
+const isThirdPartyServiceOK = require("./utils/thirdPartyStatus");
+const loopItems = require("./loopItems");
 
 async function checkStatus(service) {
   if (await isThirdPartyServiceOK(service.url)) {

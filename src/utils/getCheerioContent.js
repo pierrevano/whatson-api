@@ -5,6 +5,18 @@ const cheerio = require("cheerio");
 
 const { logErrors } = require("./logErrors");
 
+axiosRetry(axios, {
+  retries: 5,
+  retryDelay: () => 3000,
+  retryCondition: (error) => {
+    return error.response && error.response.status >= 500;
+  },
+  onRetryAttempt: (error) => {
+    const cfg = axiosRetry.getConfig(error);
+    console.log(`Retrying request [${cfg.currentRetryAttempt}]: ${cfg.url}`);
+  },
+});
+
 /**
  * It takes a URL and an optional options object, makes a request to the URL, and returns a cheerio object.
  * @param url - The URL of the page you want to scrape.
@@ -14,36 +26,25 @@ const { logErrors } = require("./logErrors");
  */
 const getCheerioContent = async (url, options, origin) => {
   try {
-    console.time("Execution time");
-
-    axiosRetry(axios, {
-      retries: 5,
-      retryDelay: () => 3000,
-      retryCondition: (error) => {
-        return error.response && error.response.status >= 500;
-      },
-      onRetryAttempt: (error) => {
-        const cfg = axiosRetry.getConfig(error);
-        console.log(`Retrying request [${cfg.currentRetryAttempt}]: ${cfg.url}`);
-      },
-    });
+    const startTime = Date.now();
 
     const response = await axios.get(url, options);
 
     if (response.status !== 200) {
       throw new Error("Failed to retrieve data.");
-    } else {
-      console.log(`${url}:`, response.status);
     }
 
     const $ = cheerio.load(response.data);
 
-    console.timeEnd("Execution time");
+    const endTime = Date.now();
+    const executionTime = endTime - startTime;
+
+    console.log(`${origin} - ${url}:`, response.status, "- Execution time:", executionTime + "ms");
+
     return $;
   } catch (error) {
     logErrors(error, url, origin);
 
-    console.timeEnd("Execution time");
     return {
       error: error,
     };

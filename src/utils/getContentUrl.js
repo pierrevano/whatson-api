@@ -1,4 +1,3 @@
-/* It's importing the function `removeExtraChar` from the file `removeExtraChar.js` */
 const { logErrors } = require("./logErrors");
 const { removeExtraChar } = require("./removeExtraChar");
 

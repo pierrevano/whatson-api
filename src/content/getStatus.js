@@ -1,5 +1,5 @@
-const { config } = require("./config");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * Returns the English equivalent of the given French status string.

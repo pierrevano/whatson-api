@@ -1,75 +1,47 @@
-/* A configuration file for the API. */
+const baseURL = {
+  allocine: "https://www.allocine.fr",
+  assets: "https://whatson-assets.vercel.app",
+  betaseries: "https://www.betaseries.com",
+  betaseriesAPI: "https://api.betaseries.com",
+  dailymotion: "https://www.dailymotion.com/embed/video/",
+  imdb: "https://www.imdb.com",
+  letterboxd: "https://letterboxd.com",
+  metacritic: "https://www.metacritic.com",
+  mojo: "https://www.boxofficemojo.com",
+  render: "https://status.render.com",
+  rottenTomatoes: "https://www.rottentomatoes.com",
+  senscritique: "https://www.senscritique.com",
+  theMovieDatabaseAPI: "https://api.themoviedb.org/3",
+  trakt: "https://trakt.tv",
+  vercel: "https://www.vercel-status.com",
+};
+
 const config = {
-  /* Prod config */
-  baseURLAllocine: "https://www.allocine.fr",
-  baseURLAllocineFilms: "https://www.allocine.fr/film/aucinema",
-  baseURLAllocineSeries: "https://www.allocine.fr/series/top",
-  baseURLBetaseriesAPIFilms: "https://api.betaseries.com/movies/movie",
-  baseURLBetaseriesAPISeries: "https://api.betaseries.com/shows/display",
-  baseURLBetaseriesFilm: "https://www.betaseries.com/film/",
-  baseURLBetaseriesSerie: "https://www.betaseries.com/serie/",
-  baseURLCriticDetailsFilms: "/film/fichefilm-",
-  baseURLCriticDetailsSeries: "/series/ficheserie-",
-  baseURLIMDB: "https://www.imdb.com/title/",
-  baseURLTMDB: "https://api.themoviedb.org/3",
-  baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
-  baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
-  baseURLMetacriticFilm: "https://www.metacritic.com/movie/",
-  baseURLMetacriticSerie: "https://www.metacritic.com/tv/",
-  baseURLRottenTomatoesFilm: "https://www.rottentomatoes.com/m/",
-  baseURLRottenTomatoesSerie: "https://www.rottentomatoes.com/tv/",
-  baseURLLetterboxdFilm: "https://letterboxd.com/film/",
-  baseURLSensCritiqueFilm: "https://www.senscritique.com/film/-/",
-  baseURLSensCritiqueSerie: "https://www.senscritique.com/serie/-/",
-  baseURLTraktFilm: "https://trakt.tv/movies/",
-  baseURLTraktSerie: "https://trakt.tv/shows/",
-  baseURLAssets: "https://whatson-assets.vercel.app",
-  baseURLDailymotion: "https://www.dailymotion.com/embed/video/",
-
-  collectionName: "data",
+  /* Database settings */
   dbName: "whatson",
+  collectionName: "data",
 
-  endURLCriticDetails: "/critiques/presse/",
-  filmsIdsFilePath: "./src/assets/films_ids.txt",
-  seriesIdsFilePath: "./src/assets/series_ids.txt",
-  filmsPopularityPath: "popularity_ids_films.txt",
-  seriesPopularityPath: "popularity_ids_series.txt",
-
-  getIdsFilePath: "./data/getIds.sh",
-
-  baseURLTheaters: "https://www.allocine.fr/_/showtimes/theater-",
-  corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev/",
+  /* Global settings */
+  corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev",
+  limit: 20,
+  maximumThreshold: {
+    default: 30,
+    metacritic_or_rotten_tomatoes: 95,
+    allocine_critics: 80,
+  },
+  maxSeasonsNumber: 5,
+  minimumActiveItems: 150,
+  page: 1,
   userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
 
-  keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "traktid", "themoviedbid", "title"],
+  /* CircleCI settings */
+  circleLimitPerDay: 1500,
+  circleLimitPerInstance: 50,
 
-  limit: 20,
-  maxSeasonsNumber: 5,
-  page: 1,
-
-  mojo: {
-    baseURL: "https://www.boxofficemojo.com",
-    urlToFetch: "/chart/ww_top_lifetime_gross",
-    tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
-
-    maxIterations: 30,
-    offset: 200,
-  },
-
-  minimumActiveItems: 150,
-
-  /* Tests config */
-  baseURL: "http://localhost:8081",
+  /* Tests settings */
+  baseURLLocal: "http://localhost:8081",
   baseURLRemote: "https://whatson-api.onrender.com",
-  maxResponseTime: 5000,
-  timeout: 500000,
-
-  films_ids_path: "./src/assets/films_ids.txt",
-  series_ids_path: "./src/assets/series_ids.txt",
-
   checkItemsNumber: true,
-  margin: 50,
-
   keysToCheck: [
     "_id",
     "id",
@@ -94,33 +66,8 @@ const config = {
     "ratings_average",
     "updated_at",
   ],
-
-  services: [
-    { name: "Render", url: "https://status.render.com" },
-    { name: "Vercel", url: "https://www.vercel-status.com" },
-
-    { name: "AlloCiné", url: "https://www.allocine.fr" },
-    { name: "BetaSeries", url: "https://www.betaseries.com" },
-    { name: "IMDb", url: "https://www.imdb.com" },
-    { name: "Metacritic", url: "https://www.metacritic.com" },
-    { name: "Rotten Tomatoes", url: "https://www.rottentomatoes.com" },
-    { name: "Letterboxd", url: "https://letterboxd.com" },
-    { name: "SensCritique", url: "https://www.senscritique.com" },
-    { name: "Trakt", url: "https://trakt.tv" },
-    { name: "Mojo", url: "https://www.boxofficemojo.com" },
-  ],
-
-  maximumNumberOfItems: 46500,
-
-  circleLimitPerDay: 1500,
-  circleLimitPerInstance: 50,
-
-  maximumThreshold: {
-    default: 30,
-    metacritic_or_rotten_tomatoes: 95,
-    allocine_critics: 80,
-  },
-
+  margin: 50,
+  maxResponseTime: 5000,
   minimumNumberOfItems: {
     default: 25,
     mojo: 15,
@@ -139,9 +86,70 @@ const config = {
     senscritique: 3,
     trakt: 3,
   },
-
   maximumIsActiveItems: 400,
+  timeout: 500000,
 
+  /* Services settings */
+  services: [
+    { name: "Render", url: baseURL.render },
+    { name: "Vercel", url: baseURL.vercel },
+
+    { name: "AlloCiné", url: baseURL.allocine },
+    { name: "BetaSeries", url: baseURL.betaseries },
+    { name: "IMDb", url: baseURL.imdb },
+    { name: "Metacritic", url: baseURL.metacritic },
+    { name: "Rotten Tomatoes", url: baseURL.rottenTomatoes },
+    { name: "Letterboxd", url: baseURL.letterboxd },
+    { name: "SensCritique", url: baseURL.senscritique },
+    { name: "Trakt", url: baseURL.trakt },
+    { name: "Mojo", url: baseURL.mojo },
+  ],
+
+  /* URLs and paths settings */
+  baseURLAllocine: baseURL.allocine,
+  baseURLAllocineFilms: `${baseURL.allocine}/film/aucinema`,
+  baseURLAllocineSeries: `${baseURL.allocine}/series/top`,
+  baseURLAssets: baseURL.assets,
+  baseURLBetaseriesAPIFilms: `${baseURL.betaseriesAPI}/movies/movie`,
+  baseURLBetaseriesAPISeries: `${baseURL.betaseriesAPI}/shows/display`,
+  baseURLBetaseriesFilm: `${baseURL.betaseries}/film/`,
+  baseURLBetaseriesSerie: `${baseURL.betaseries}/serie/`,
+  baseURLCriticDetailsFilms: "/film/fichefilm-",
+  baseURLCriticDetailsSeries: "/series/ficheserie-",
+  baseURLDailymotion: baseURL.dailymotion,
+  baseURLIMDB: `${baseURL.imdb}/title/`,
+  baseURLLetterboxdFilm: `${baseURL.letterboxd}/film/`,
+  baseURLMetacriticFilm: `${baseURL.metacritic}/movie/`,
+  baseURLMetacriticSerie: `${baseURL.metacritic}/tv/`,
+  baseURLRottenTomatoesFilm: `${baseURL.rottenTomatoes}/m/`,
+  baseURLRottenTomatoesSerie: `${baseURL.rottenTomatoes}/tv/`,
+  baseURLSensCritiqueFilm: `${baseURL.senscritique}/film/-/`,
+  baseURLSensCritiqueSerie: `${baseURL.senscritique}/serie/-/`,
+  baseURLTheaters: `${baseURL.allocine}/_/showtimes/theater-`,
+  baseURLTMDB: baseURL.theMovieDatabaseAPI,
+  baseURLTraktFilm: `${baseURL.trakt}/movies/`,
+  baseURLTraktSerie: `${baseURL.trakt}/shows/`,
+  baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
+  baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
+  endURLCriticDetails: "/critiques/presse/",
+
+  filmsIdsFilePath: "./src/assets/films_ids.txt",
+  filmsPopularityPath: "popularity_ids_films.txt",
+  getIdsFilePath: "./src/data/getIds.sh",
+  seriesIdsFilePath: "./src/assets/series_ids.txt",
+  seriesPopularityPath: "popularity_ids_series.txt",
+
+  /* Mojo specific settings */
+  mojo: {
+    baseURL: baseURL.mojo,
+    urlToFetch: "/chart/ww_top_lifetime_gross",
+    tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
+
+    maxIterations: 30,
+    offset: 200,
+  },
+
+  /* Ratings settings */
   ratingsValues: {
     minimum: {
       allocine: 0,
@@ -167,6 +175,9 @@ const config = {
       trakt: 100,
     },
   },
+
+  /* Search settings */
+  keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "traktid", "themoviedbid", "title"],
 };
 
 module.exports = { config };

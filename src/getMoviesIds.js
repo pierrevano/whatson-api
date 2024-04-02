@@ -9,8 +9,7 @@ const { logErrors } = require("./utils/logErrors");
  * @returns An array of movie ids
  */
 const getMoviesIds = async (cinemaIdParam) => {
-  const base_url = `${config.corsURL}${config.baseURLTheaters}`;
-  const initial_complete_url = `${base_url}${cinemaIdParam}/p-1/`;
+  const base_url = `${config.corsURL}/${config.baseURLTheaters}`;
   const options = {
     headers: {
       "User-Agent": config.userAgent,
@@ -18,7 +17,7 @@ const getMoviesIds = async (cinemaIdParam) => {
   };
 
   try {
-    const response = await fetch(initial_complete_url, options);
+    const response = await fetch(`${base_url}${cinemaIdParam}/p-1/`, options);
     const data = await response.json();
     const page = data.pagination.page;
     const totalPages = data.pagination.totalPages;

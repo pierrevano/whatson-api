@@ -1,6 +1,7 @@
 const axios = require("axios");
-const { config } = require("./config");
-const { logErrors } = require("./utils/logErrors");
+
+const { config } = require("../config");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * Extracts the ID of a movie or tv show from a remote popularity file hosted on a server.

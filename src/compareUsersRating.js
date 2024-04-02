@@ -1,11 +1,11 @@
 const axios = require("axios");
 
 const { config } = require("./config");
-const { getAllocineFirstInfo } = require("./getAllocineFirstInfo");
-const { getAllocinePopularity } = require("./getAllocinePopularity");
-const { getImdbPopularity } = require("./getImdbPopularity");
-const { getObjectByImdbId } = require("./getMojoBoxOffice");
-const { getImdbUsersRating } = require("./getImdbUsersRating");
+const { getAllocineFirstInfo } = require("./content/getAllocineFirstInfo");
+const { getAllocinePopularity } = require("./content/getAllocinePopularity");
+const { getImdbPopularity } = require("./content/getImdbPopularity");
+const { getImdbUsersRating } = require("./content/getImdbUsersRating");
+const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 
 /**
  * Compares the users rating of a movie or tv show from AlloCiné with the rating

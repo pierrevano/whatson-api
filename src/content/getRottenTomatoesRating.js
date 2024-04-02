@@ -1,7 +1,7 @@
-const { config } = require("./config");
-const { getCheerioContent } = require("./utils/getCheerioContent");
-const { isNotNull } = require("./utils/isNotNull");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { getCheerioContent } = require("../utils/getCheerioContent");
+const { isNotNull } = require("../utils/isNotNull");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * Retrieves the Rotten Tomatoes rating for a given movie or tv show.

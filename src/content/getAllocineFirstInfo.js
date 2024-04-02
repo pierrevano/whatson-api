@@ -1,9 +1,9 @@
-const { getCheerioContent } = require("./utils/getCheerioContent");
+const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getImageFromTMDB } = require("./getImageFromTMDB");
-const { getTrailer } = require("./getTrailer");
-const { getStatus } = require("./getStatus");
 const { getSeasonsNumber } = require("./getSeasonsNumber");
-const { logErrors } = require("./utils/logErrors");
+const { getStatus } = require("./getStatus");
+const { getTrailer } = require("./getTrailer");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * Retrieves information about a movie or tv show from AlloCiné.

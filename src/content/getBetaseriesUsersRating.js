@@ -1,7 +1,7 @@
-const { config } = require("./config");
-const { getCheerioContent } = require("./utils/getCheerioContent");
-const { isNotNull } = require("./utils/isNotNull");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { getCheerioContent } = require("../utils/getCheerioContent");
+const { isNotNull } = require("../utils/isNotNull");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * It takes a betaseriesHomepage as an argument, and returns the criticsRating of the show

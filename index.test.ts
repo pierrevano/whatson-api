@@ -344,8 +344,8 @@ const params = {
     query: "?item_type=movie,tvshow&is_active=true,false&allData=true",
     expectedResult: (items) => {
       if (config.checkItemsNumber) {
-        const filmsLines = countLines(config.films_ids_path);
-        const seriesLines = countLines(config.series_ids_path);
+        const filmsLines = countLines(config.filmsIdsFilePath);
+        const seriesLines = countLines(config.seriesIdsFilePath);
 
         expect(filmsLines + seriesLines + config.margin).toBeGreaterThanOrEqual(items.total_results);
       }
@@ -531,7 +531,7 @@ const params = {
  */
 describe("What's on? API tests", () => {
   const param = process.env.SOURCE;
-  const baseURL = param === "remote" ? config.baseURLRemote : config.baseURL;
+  const baseURL = param === "remote" ? config.baseURLRemote : config.baseURLLocal;
   console.log(`Testing on ${baseURL}`);
 
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {

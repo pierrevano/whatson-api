@@ -36,11 +36,6 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     const documents = await collectionData.estimatedDocumentCount();
     console.log(`Number of documents in the collection: ${documents}`);
 
-    if (documents > config.maximumNumberOfItems) {
-      console.log("Maximum number of items reached.");
-      process.exit(1);
-    }
-
     const queriesAndThresholdKeys = [
       { query: { item_type: "movie" }, rateSource: "item_type.movie", thresholdKey: null },
       { query: { item_type: "tvshow" }, rateSource: "item_type.tvshow", thresholdKey: null },

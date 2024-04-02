@@ -1,20 +1,20 @@
-const { getAllocineCriticInfo } = require("./getAllocineCriticInfo");
-const { getAllocineFirstInfo } = require("./getAllocineFirstInfo");
-const { getAllocinePopularity } = require("./getAllocinePopularity");
-const { getBetaseriesUsersRating } = require("./getBetaseriesUsersRating");
-const { getImdbPopularity } = require("./getImdbPopularity");
-const { getImdbUsersRating } = require("./getImdbUsersRating");
-const { getMetacriticRating } = require("./getMetacriticRating");
-const { getObjectByImdbId } = require("./getMojoBoxOffice");
-const { getPlatformsLinks } = require("./getPlatformsLinks");
-const { getRottenTomatoesRating } = require("./getRottenTomatoesRating");
-const { getLetterboxdRating } = require("./getLetterboxdRating");
-const { getSensCritiqueRating } = require("./getSensCritiqueRating");
-const { getTraktRating } = require("./getTraktRating");
+const { getAllocineCriticInfo } = require("./content/getAllocineCriticInfo");
+const { getAllocineFirstInfo } = require("./content/getAllocineFirstInfo");
+const { getAllocinePopularity } = require("./content/getAllocinePopularity");
+const { getBetaseriesUsersRating } = require("./content/getBetaseriesUsersRating");
+const { getImdbPopularity } = require("./content/getImdbPopularity");
+const { getImdbUsersRating } = require("./content/getImdbUsersRating");
+const { getLetterboxdRating } = require("./content/getLetterboxdRating");
+const { getMetacriticRating } = require("./content/getMetacriticRating");
+const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
+const { getPlatformsLinks } = require("./content/getPlatformsLinks");
+const { getRottenTomatoesRating } = require("./content/getRottenTomatoesRating");
+const { getSensCritiqueRating } = require("./content/getSensCritiqueRating");
+const { getTraktRating } = require("./content/getTraktRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
- * @param {Object} allocineCriticsDetails - The AlloCiné critics details data
+ * @param {Object} allocineCriticsDetails - The AlloCiné critics details
  * @param {string} allocineURL - The AlloCiné URL
  * @param {string} allocineHomepage - The AlloCiné homepage URL
  * @param {string} allocineId - The AlloCiné ID
@@ -23,7 +23,7 @@ const { getTraktRating } = require("./getTraktRating");
  * @param {string} imdbHomepage - The IMDb homepage URL
  * @param {string} imdbId - The IMDb ID
  * @param {boolean} isActive - The active status of the item
- * @param {string} item_type - The type of the item (e.g., movie, series)
+ * @param {string} item_type - The type of the item (e.g., movie, tvshow)
  * @param {string} metacriticHomepage - The Metacritic homepage URL
  * @param {string} metacriticId - The Metacritic ID
  * @param {string} rottenTomatoesHomepage - The Rotten Tomatoes homepage URL

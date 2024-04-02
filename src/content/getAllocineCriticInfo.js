@@ -1,7 +1,7 @@
-const { getCheerioContent } = require("./utils/getCheerioContent");
-const { convertTitleToNumber } = require("./utils/convertTitleToNumber");
-const { logErrors } = require("./utils/logErrors");
-const { config } = require("./config");
+const { config } = require("../config");
+const { convertTitleToNumber } = require("../utils/convertTitleToNumber");
+const { getCheerioContent } = require("../utils/getCheerioContent");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * It takes the URL of a movie's critics page on AlloCiné, scrapes the page, and returns an object
@@ -24,7 +24,7 @@ const getAllocineCriticInfo = async (allocineCriticsDetails) => {
       },
     };
 
-    const $ = await getCheerioContent(allocineCriticsDetails, options);
+    const $ = await getCheerioContent(allocineCriticsDetails, options, "getAllocineCriticInfo");
 
     let criticsRatingDetails;
     criticsRatingDetails = $(".js-anchor-link")

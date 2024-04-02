@@ -1,8 +1,6 @@
-const { getTMDBResponse } = require("./utils/getTMDBResponse");
-
-/* Importing the config.js file and assigning it to the config variable. */
-const { config } = require("./config");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { getTMDBResponse } = require("../getTMDBResponse");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * Retrieves the number of seasons for a given movie or tv show from The Movie Database API.

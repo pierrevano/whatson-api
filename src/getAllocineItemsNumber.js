@@ -1,6 +1,6 @@
 const { config } = require("./config");
-const { getNodeVarsValues } = require("./getNodeVarsValues");
 const { getCheerioContent } = require("./utils/getCheerioContent");
+const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
 const { logErrors } = require("./utils/logErrors");
 
 const fetchAndCheckItemCount = async (index) => {

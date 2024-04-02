@@ -4,22 +4,20 @@
  */
 require("dotenv").config();
 
+const { MongoClient, ServerApiVersion } = require("mongodb");
+
 const { config } = require("./config");
 const { getMoviesIds } = require("./getMoviesIds");
-const { getRatingsFilters } = require("./getRatingsFilters");
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
+const { getRatingsFilters } = require("./getRatingsFilters");
 
-const credentials = process.env.CREDENTIALS;
-const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 /* Connecting to the database and the collection. */
-const dbName = config.dbName;
-const collectionName = config.collectionName;
-const database = client.db(dbName);
-const collectionData = database.collection(collectionName);
+const database = client.db(config.dbName);
+const collectionData = database.collection(config.collectionName);
 
 const getItems = async (
   cinema_id_query,

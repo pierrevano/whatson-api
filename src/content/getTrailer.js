@@ -1,11 +1,8 @@
-/* Importing the config.js file and assigning it to the config variable. */
-const { config } = require("./config");
-
-/* Importing the functions from the files in the utils folder. */
-const { getCheerioContent } = require("./utils/getCheerioContent");
-const { getContentUrl } = require("./utils/getContentUrl");
-const { logErrors } = require("./utils/logErrors");
-const { removeExtraChar } = require("./utils/removeExtraChar");
+const { config } = require("../config");
+const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getContentUrl } = require("../utils/getContentUrl");
+const { logErrors } = require("../utils/logErrors");
+const { removeExtraChar } = require("../utils/removeExtraChar");
 
 /**
  * It gets the trailer link for a movie or tv show

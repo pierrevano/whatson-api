@@ -1,8 +1,8 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-const { config } = require("./config");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { logErrors } = require("../utils/logErrors");
 
 async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
   const foundItem = mojoBoxOfficeArray.find((item) => item.imdbId === imdbId);

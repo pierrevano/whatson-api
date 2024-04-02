@@ -1,9 +1,9 @@
 const axiosRetry = require("axios-retry");
 const axios = require("axios");
 
-const { getCheerioContent } = require("./utils/getCheerioContent");
-const { config } = require("./config");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { getCheerioContent } = require("../utils/getCheerioContent");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * It takes the IMDb homepage of a movie as an argument, and returns the IMDb popularity ranking of the movie

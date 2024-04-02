@@ -6,9 +6,8 @@ require("dotenv").config();
 
 const axios = require("axios");
 
-/* Importing the config.js file and assigning it to the config variable. */
-const { config } = require("./config");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * It gets the platforms links of a movie or tvshow from the BetaSeries API

@@ -1,5 +1,5 @@
-const { getTMDBResponse } = require("./utils/getTMDBResponse");
-const { logErrors } = require("./utils/logErrors");
+const { getTMDBResponse } = require("../getTMDBResponse");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * Retrieves the image path for a movie or tv show from The Movie Database (TMDB) API.

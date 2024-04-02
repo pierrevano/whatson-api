@@ -4,11 +4,11 @@
  */
 require("dotenv").config();
 
-const { config } = require("./config");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const credentials = process.env.CREDENTIALS;
-const uri = `mongodb+srv://${credentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
+const { config } = require("./config");
+
+const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 /* Connecting to the database */

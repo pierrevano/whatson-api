@@ -10,10 +10,10 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8081;
 
+const { config } = require("./src/config");
 const { getItems } = require("./src/getItems");
 const findId = require("./src/findId");
 const getId = require("./src/getId");
-const { config } = require("./src/config");
 
 /**
  * Handles a GET request to the root endpoint and returns a JSON object containing
