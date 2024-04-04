@@ -86,6 +86,11 @@ function checkItemProperties(items) {
     item.item_type === "movie" && item.is_active === true
       ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.platformsLinksMovies)
       : null;
+    item.item_type === "tvshow" && item.platforms_links
+      ? item.platforms_links.forEach((platform_link) => {
+          expect(platform_link.name.includes("Regarder")).toBeFalsy();
+        })
+      : null;
 
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
     expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);

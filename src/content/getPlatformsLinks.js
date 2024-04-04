@@ -8,6 +8,7 @@ const axios = require("axios");
 
 const { config } = require("../config");
 const { logErrors } = require("../utils/logErrors");
+const { getCheerioContent } = require("../utils/getCheerioContent");
 
 /**
  * It gets the platforms links of a movie or tvshow from the BetaSeries API
@@ -16,7 +17,7 @@ const { logErrors } = require("../utils/logErrors");
  * @param imdbId - the IMDb ID
  * @returns An array of objects containing the name and link_url of the platforms.
  */
-const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
+const getPlatformsLinks = async (betaseriesHomepage, betaseriesId, allocineHomepage, imdbId) => {
   let platformsLinks = null;
 
   try {
@@ -49,6 +50,23 @@ const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
       }
 
       if (platformsLinks && platformsLinks.length === 0) platformsLinks = null;
+
+      if (!platformsLinks) {
+        const $ = await getCheerioContent(betaseriesHomepage, options, "getPlatformsLinks");
+
+        const platformElements = $(".toolTipWrapper.btnPlayVideoWrapper a");
+        platformsLinks = [];
+
+        platformElements.each((_id, el) => {
+          const text = $(el).text();
+          const name = text.replace(/Regarder avec |Regarder sur /g, "").trim();
+          const link_url = $(el).attr("href");
+
+          if (name !== "" && link_url !== "") platformsLinks.push({ name, link_url });
+        });
+
+        if (platformsLinks && platformsLinks.length === 0) platformsLinks = null;
+      }
     }
   } catch (error) {
     logErrors(error, allocineHomepage, "getPlatformsLinks");

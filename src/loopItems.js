@@ -151,7 +151,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
 
         itemCounter++;
 
-        if (itemCounter === config.circleLimitPerInstance && getNodeVarsValues.environment === "no_local") {
+        if (itemCounter === config.circleLimitPerInstance && getNodeVarsValues.environment === "circleci") {
           process.exit(0);
         }
       } else {
