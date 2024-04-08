@@ -545,6 +545,37 @@ const params = {
       });
     },
   },
+
+  only_platforms_netflix: {
+    query: "?platforms=Netflix",
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("platforms_links");
+        expect(item.platforms_links).not.toBeNull();
+        expect(item.platforms_links.some((platform) => platform.name === "Netflix")).toBeTruthy();
+      });
+    },
+  },
+
+  only_platforms_netflix_or_canal: {
+    query: "?platforms=Netflix,Canal%2B",
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("platforms_links");
+        expect(item.platforms_links).not.toBeNull();
+        const hasNetflix = item.platforms_links.some((platform) => platform.name === "Netflix");
+        const hasCanalPlus = item.platforms_links.some((platform) => platform.name === "Canal+");
+        expect(hasNetflix || hasCanalPlus).toBeTruthy();
+      });
+    },
+  },
+
+  include_all_platforms: {
+    query: "?platforms=all,Netflix,Canal%2B&limit=3000",
+    expectedResult: (items) => {
+      expect(items.filter((item) => item.platforms_links === null).length).toBeGreaterThan(config.minimumNumberOfItems.default);
+    },
+  },
 };
 
 /**

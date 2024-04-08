@@ -31,6 +31,7 @@ app.get("/", async (req, res) => {
     const limit_query = parseInt(req.query.limit);
     const minimum_ratings_query = req.query.minimum_ratings;
     const page_query = parseInt(req.query.page);
+    const platforms_query = req.query.platforms;
     const popularity_filters_query = req.query.popularity_filters;
     const ratings_filters_query = req.query.ratings_filters;
     const seasons_number_query = req.query.seasons_number;
@@ -44,6 +45,7 @@ app.get("/", async (req, res) => {
       limit_query,
       minimum_ratings_query,
       page_query,
+      platforms_query,
       popularity_filters_query,
       ratings_filters_query,
       seasons_number_query,

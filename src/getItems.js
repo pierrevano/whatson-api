@@ -11,6 +11,7 @@ const { getMoviesIds } = require("./getMoviesIds");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
 const { getRatingsFilters } = require("./getRatingsFilters");
+const { getPipelineByPlatformNames } = require("./getPipelineByPlatformNames");
 
 const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -27,6 +28,7 @@ const getItems = async (
   limit_query,
   minimum_ratings_query,
   page_query,
+  platforms_query,
   popularity_filters_query,
   ratings_filters_query,
   seasons_number_query,
@@ -39,6 +41,7 @@ const getItems = async (
   const movies_ids = typeof cinema_id_query !== "undefined" ? await getMoviesIds(cinema_id_query) : "";
   const minimum_ratings = typeof minimum_ratings_query !== "undefined" ? minimum_ratings_query : "";
   const page = isNaN(page_query) ? config.page : page_query;
+  const platforms = typeof platforms_query !== "undefined" ? platforms_query : "";
   const popularity_filters_query_value = typeof popularity_filters_query !== "undefined" ? popularity_filters_query : "all";
   const popularity_filters = await getPopularityFilters(popularity_filters_query_value);
   const ratings_filters_query_value = typeof ratings_filters_query !== "undefined" ? ratings_filters_query : "all";
@@ -111,6 +114,7 @@ const getItems = async (
   };
 
   const pipeline = [];
+
   if (id !== "") {
     pipeline.push(match_id);
   } else if (item_type === "tvshow") {
@@ -120,6 +124,8 @@ const getItems = async (
   } else {
     pipeline.push(match_item_type);
   }
+
+  if (!id) getPipelineByPlatformNames(is_active_item, platforms, pipeline);
 
   pipeline.push(facet);
 
