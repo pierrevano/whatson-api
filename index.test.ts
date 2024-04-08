@@ -5,6 +5,8 @@ const fs = require("fs");
 
 const config = require("./src/config").config;
 
+const baseURL = process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
+
 /**
  * A function to count the number of lines in a file.
  *
@@ -458,6 +460,21 @@ const params = {
       }),
   },
 
+  compare_two_minimum_ratings: {
+    query: "?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5",
+    expectedResult: async (items) => {
+      const response = await axios.get(`${baseURL}?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5,1`);
+      const data = response.data;
+      const itemsFromExtraCall = data.results;
+
+      expect(items.length).toEqual(itemsFromExtraCall.length);
+
+      items.forEach((item, index) => {
+        expect(item).toEqual(itemsFromExtraCall[index]);
+      });
+    },
+  },
+
   ratings_average_for_incorrect_minimum_ratings: {
     query: "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
     expectedResult: (items) => {
@@ -535,8 +552,6 @@ const params = {
  * @returns None
  */
 describe("What's on? API tests", () => {
-  const param = process.env.SOURCE;
-  const baseURL = param === "remote" ? config.baseURLRemote : config.baseURLLocal;
   console.log(`Testing on ${baseURL}`);
 
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {

@@ -91,7 +91,7 @@ const getItems = async (
 
   const limit_results = { $limit: limit };
   const skip_results = { $skip: (page - 1) * limit };
-  const sort_popularity_and_ratings = { $sort: { sortAvgField: 1, popularity_average: 1, ratings_average: -1 } };
+  const sort_popularity_and_ratings = { $sort: { sortAvgField: 1, popularity_average: 1, ratings_average: -1, title: 1 } };
   const remove_sort_popularity = { $project: { sortAvgField: 0 } };
 
   const facet = {

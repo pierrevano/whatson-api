@@ -34,13 +34,13 @@ const getPlatformsLinks = async (betaseriesHomepage, betaseriesId, allocineHomep
       }
 
       const processSvods = (svods) => {
-        platformsLinks = [];
-        svods.forEach((element) => {
-          platformsLinks.push({
-            name: element.name,
-            link_url: element.link_url,
-          });
-        });
+        let platformsLinks = [];
+
+        if (Array.isArray(svods)) {
+          platformsLinks = svods.map((element) => ({ name: element.name, link_url: element.link_url }));
+        } else if (typeof svods === "object") {
+          platformsLinks = Object.values(svods).map((element) => ({ name: element.name, link_url: element.link_url }));
+        }
       };
 
       if (data.show && data.show.platforms && data.show.platforms.svods) {
