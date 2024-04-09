@@ -10,6 +10,16 @@ const { config } = require("../config");
 const { logErrors } = require("../utils/logErrors");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 
+const processSvods = (svods) => {
+  let platformsLinks = [];
+
+  if (Array.isArray(svods)) {
+    platformsLinks = svods.map((element) => ({ name: element.name, link_url: element.link_url }));
+  } else if (typeof svods === "object") {
+    platformsLinks = Object.values(svods).map((element) => ({ name: element.name, link_url: element.link_url }));
+  }
+};
+
 /**
  * It gets the platforms links of a movie or tvshow from the BetaSeries API
  * @param betaseriesId - the BetaSeries ID
@@ -32,16 +42,6 @@ const getPlatformsLinks = async (betaseriesHomepage, betaseriesId, allocineHomep
 
         return platformsLinks;
       }
-
-      const processSvods = (svods) => {
-        let platformsLinks = [];
-
-        if (Array.isArray(svods)) {
-          platformsLinks = svods.map((element) => ({ name: element.name, link_url: element.link_url }));
-        } else if (typeof svods === "object") {
-          platformsLinks = Object.values(svods).map((element) => ({ name: element.name, link_url: element.link_url }));
-        }
-      };
 
       if (data.show && data.show.platforms && data.show.platforms.svods) {
         processSvods(data.show.platforms.svods);

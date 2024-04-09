@@ -8,7 +8,11 @@
     "test_remote": "SOURCE=remote jest --ci --runInBand --reporters=default --reporters=jest-junit",
     "prettier": "prettier --write .",
     "update": "rm -rf node_modules package-lock.json && npm install",
-    "push": "bash src/data/checkIds.sh check_dataset movie && bash src/data/checkIds.sh check_dataset tvshow && npm run prettier && npm run test && git add . && git cz && git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main",
+    "check-api-version": "node src/checkApiVersion.js",
+    "check-dataset": "bash src/data/checkIds.sh check_dataset movie && bash src/data/checkIds.sh check_dataset tvshow",
+    "commit": "git add . && git cz",
+    "push-all-platforms": "git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main",
+    "push": "npm run check-api-version && npm run check-dataset && npm run prettier && npm run test && npm run commit && npm run push-all-platforms",
     "update-movie-data-first-half": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(true));\" | xargs -I {} node src/updateData.js movie no_update_ids update_db circleci no_active no_check {} no_check_data no_force mojo check_services no_delete 7",
     "update-movie-data-second-half": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(false));\" | xargs -I {} node src/updateData.js movie no_update_ids update_db circleci no_active no_check {} no_check_data no_force mojo check_services no_delete 7",
     "update-tvshow-data-all": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(true));\" | xargs -I {} node src/updateData.js tvshow no_update_ids update_db circleci no_active no_check {} no_check_data no_force mojo check_services no_delete 7"

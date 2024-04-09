@@ -574,6 +574,7 @@ const params = {
     query: "?platforms=all,Netflix,Canal%2B&limit=3000",
     expectedResult: (items) => {
       expect(items.filter((item) => item.platforms_links === null).length).toBeGreaterThan(config.minimumNumberOfItems.default);
+      items.forEach((item) => item.platforms_links && item.platforms_links.forEach((platform) => expect(config.platforms).toContain(platform.name)));
     },
   },
 };

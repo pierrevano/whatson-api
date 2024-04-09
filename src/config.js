@@ -176,6 +176,9 @@ const config = {
     },
   },
 
+  /* Platforms settings */
+  platforms: ["ADN", "Apple TV+", "Arte", "Canal+", "Canal+ Ciné Séries", "Crunchyroll", "Disney+", "France TV", "Netflix", "OCS", "Paramount+", "Pass Warner", "Prime Video", "TF1+", "Universal+"],
+
   /* Search settings */
   keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "traktid", "themoviedbid", "title"],
 };

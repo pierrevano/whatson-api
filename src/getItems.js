@@ -119,7 +119,7 @@ const getItems = async (
     pipeline.push(match_id);
   } else if (item_type === "tvshow") {
     getPipelineFromTVShow(config, is_active_item, item_type, pipeline, seasons_number, status);
-  } else if (movies_ids !== "") {
+  } else if (movies_ids) {
     pipeline.push(match_in_movies_ids);
   } else {
     pipeline.push(match_item_type);
