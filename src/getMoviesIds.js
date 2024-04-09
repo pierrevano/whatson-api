@@ -25,8 +25,7 @@ const getMoviesIds = async (cinemaIdParam) => {
 
       const allMoviesIds = [];
       for (let index = page; index <= totalPages; index++) {
-        const complete_url = `${base_url}${cinemaIdParam}/p-${index}/`;
-        const response = await fetch(complete_url);
+        const response = await fetch(`${base_url}${cinemaIdParam}/p-${index}/`);
         const data = await response.json();
         const results = data.results;
         results.forEach((element) => {
