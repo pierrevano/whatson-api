@@ -446,7 +446,7 @@ const params = {
     },
   },
 
-  correct_movie_item_type_if_undefined_returned: {
+  correct_data_to_null_returned_if_undefined: {
     query: "/movie/undefined?allData=true",
     expectedResult: (data) => {
       expect(data).toBeNull;
