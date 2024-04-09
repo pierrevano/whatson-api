@@ -14,7 +14,11 @@ const { getRatingsFilters } = require("./getRatingsFilters");
 const { getPipelineByPlatformNames } = require("./getPipelineByPlatformNames");
 
 const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
 
 /* Connecting to the database and the collection. */
 const database = client.db(config.dbName);
@@ -66,20 +70,36 @@ const getItems = async (
     },
   };
 
-  let is_active_item = { is_active: is_active === "true" || is_active === true };
+  let is_active_item = {
+    is_active: is_active === "true" || is_active === true,
+  };
   const is_active_all = { $or: [{ is_active: true }, { is_active: false }] };
   is_active_item = is_active === "true,false" || is_active === "false,true" ? is_active_all : is_active_item;
 
   let item_type_default = { item_type: item_type };
-  const item_type_all = { $or: [{ item_type: "movie" }, { item_type: "tvshow" }] };
+  const item_type_all = {
+    $or: [{ item_type: "movie" }, { item_type: "tvshow" }],
+  };
   item_type_default = item_type === "movie,tvshow" || item_type === "tvshow,movie" ? item_type_all : item_type_default;
 
   const match_id = { $match: { id: id } };
-  const match_in_movies_ids = { $match: { "allocine.id": { $in: movies_ids } } };
-  const match_item_type = { $match: { $and: [item_type_default, is_active_item] } };
+  const match_in_movies_ids = {
+    $match: { "allocine.id": { $in: movies_ids } },
+  };
+  const match_item_type = {
+    $match: { $and: [item_type_default, is_active_item] },
+  };
 
-  const match_not_allocine_null = { $match: { $or: [{ "allocine.critics_rating": { $ne: null } }, { "allocine.users_rating": { $ne: null } }] } };
-  const match_not_betaseries_or_imdb_null = { $match: { $or: [{ "betaseries.users_rating": { $ne: null } }, { "imdb.users_rating": { $ne: null } }] } };
+  const match_not_allocine_null = {
+    $match: {
+      $or: [{ "allocine.critics_rating": { $ne: null } }, { "allocine.users_rating": { $ne: null } }],
+    },
+  };
+  const match_not_betaseries_or_imdb_null = {
+    $match: {
+      $or: [{ "betaseries.users_rating": { $ne: null } }, { "imdb.users_rating": { $ne: null } }],
+    },
+  };
 
   const minimum_ratings_sorted = minimum_ratings.includes(",")
     ? parseFloat(
@@ -90,11 +110,24 @@ const getItems = async (
           .join(",")
       )
     : parseFloat(minimum_ratings);
-  const match_ratings_above_minimum = { $match: { ratings_average: { $gte: !isNaN(minimum_ratings_sorted) ? minimum_ratings_sorted : -Infinity } } };
+  const match_ratings_above_minimum = {
+    $match: {
+      ratings_average: {
+        $gte: !isNaN(minimum_ratings_sorted) ? minimum_ratings_sorted : -Infinity,
+      },
+    },
+  };
 
   const limit_results = { $limit: limit };
   const skip_results = { $skip: (page - 1) * limit };
-  const sort_popularity_and_ratings = { $sort: { sortAvgField: 1, popularity_average: 1, ratings_average: -1, title: 1 } };
+  const sort_popularity_and_ratings = {
+    $sort: {
+      sortAvgField: 1,
+      popularity_average: 1,
+      ratings_average: -1,
+      title: 1,
+    },
+  };
   const remove_sort_popularity = { $project: { sortAvgField: 0 } };
 
   const facet = {

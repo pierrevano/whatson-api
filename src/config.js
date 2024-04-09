@@ -176,8 +176,8 @@ const config = {
     },
   },
 
-  /* Platforms settings */
-  platforms: ["ADN", "Apple TV+", "Arte", "Canal+", "Canal+ Ciné Séries", "Crunchyroll", "Disney+", "France TV", "Netflix", "OCS", "Paramount+", "Pass Warner", "Prime Video", "TF1+", "Universal+"],
+  /* Platforms settings (ordered by popularity) */
+  platforms: ["Canal+ Ciné Séries", "Netflix", "Prime Video", "Canal+", "OCS", "Disney+", "Apple TV+", "Pass Warner", "Paramount+", "TF1+", "France TV", "Crunchyroll", "Arte", "ADN"],
 
   /* Search settings */
   keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "traktid", "themoviedbid", "title"],

@@ -178,17 +178,72 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         const ratingItems = [
-          { source: item.allocine, ratingType: "users_rating", min: config.ratingsValues.minimum.allocine, max: config.ratingsValues.maximum.allocine },
-          { source: item.allocine, ratingType: "critics_rating", min: config.ratingsValues.minimum.allocine, max: config.ratingsValues.maximum.allocine },
-          { source: item.betaseries, ratingType: "users_rating", min: config.ratingsValues.minimum.betaseries, max: config.ratingsValues.maximum.betaseries },
-          { source: item.imdb, ratingType: "users_rating", min: config.ratingsValues.minimum.imdb, max: config.ratingsValues.maximum.imdb },
-          { source: item.metacritic, ratingType: "users_rating", min: config.ratingsValues.minimum.metacriticUsers, max: config.ratingsValues.maximum.metacriticUsers },
-          { source: item.metacritic, ratingType: "critics_rating", min: config.ratingsValues.minimum.metacriticCritics, max: config.ratingsValues.maximum.metacriticCritics },
-          { source: item.rotten_tomatoes, ratingType: "users_rating", min: config.ratingsValues.minimum.rottenTomatoes, max: config.ratingsValues.maximum.rottenTomatoes },
-          { source: item.rotten_tomatoes, ratingType: "critics_rating", min: config.ratingsValues.minimum.rottenTomatoes, max: config.ratingsValues.maximum.rottenTomatoes },
-          { source: item.letterboxd, ratingType: "users_rating", min: config.ratingsValues.minimum.letterboxd, max: config.ratingsValues.maximum.letterboxd },
-          { source: item.senscritique, ratingType: "users_rating", min: config.ratingsValues.minimum.senscritique, max: config.ratingsValues.maximum.senscritique },
-          { source: item.trakt, ratingType: "users_rating", min: config.ratingsValues.minimum.trakt, max: config.ratingsValues.maximum.trakt },
+          {
+            source: item.allocine,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.allocine,
+            max: config.ratingsValues.maximum.allocine,
+          },
+          {
+            source: item.allocine,
+            ratingType: "critics_rating",
+            min: config.ratingsValues.minimum.allocine,
+            max: config.ratingsValues.maximum.allocine,
+          },
+          {
+            source: item.betaseries,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.betaseries,
+            max: config.ratingsValues.maximum.betaseries,
+          },
+          {
+            source: item.imdb,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.imdb,
+            max: config.ratingsValues.maximum.imdb,
+          },
+          {
+            source: item.metacritic,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.metacriticUsers,
+            max: config.ratingsValues.maximum.metacriticUsers,
+          },
+          {
+            source: item.metacritic,
+            ratingType: "critics_rating",
+            min: config.ratingsValues.minimum.metacriticCritics,
+            max: config.ratingsValues.maximum.metacriticCritics,
+          },
+          {
+            source: item.rotten_tomatoes,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.rottenTomatoes,
+            max: config.ratingsValues.maximum.rottenTomatoes,
+          },
+          {
+            source: item.rotten_tomatoes,
+            ratingType: "critics_rating",
+            min: config.ratingsValues.minimum.rottenTomatoes,
+            max: config.ratingsValues.maximum.rottenTomatoes,
+          },
+          {
+            source: item.letterboxd,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.letterboxd,
+            max: config.ratingsValues.maximum.letterboxd,
+          },
+          {
+            source: item.senscritique,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.senscritique,
+            max: config.ratingsValues.maximum.senscritique,
+          },
+          {
+            source: item.trakt,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.trakt,
+            max: config.ratingsValues.maximum.trakt,
+          },
         ];
 
         for (let ratingItem of ratingItems) {

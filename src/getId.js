@@ -10,7 +10,11 @@ const { config } = require("./config");
 const { getItems } = require("./getItems");
 
 const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
 
 /* Connecting to the database and the collection. */
 const dbName = config.dbName;

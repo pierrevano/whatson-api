@@ -9,7 +9,11 @@ const csv = require("csvtojson");
 /* Connecting to the MongoDB database. */
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
 
 const { b64Encode } = require("./utils/b64EncodeAndDecode");
 const { config } = require("./config");
@@ -78,9 +82,18 @@ async function checkStatus(service) {
    */
   if (getNodeVarsValues.get_ids === "update_ids") {
     const resetIsActive = { $set: { is_active: false } };
-    const resetPopularity = { $set: { "allocine.popularity": null, "imdb.popularity": null, mojo: null } };
+    const resetPopularity = {
+      $set: {
+        "allocine.popularity": null,
+        "imdb.popularity": null,
+        mojo: null,
+      },
+    };
 
-    const filterQueryIsActive = { item_type: getNodeVarsValues.item_type, id: { $nin: allTheMovieDbIds } };
+    const filterQueryIsActive = {
+      item_type: getNodeVarsValues.item_type,
+      id: { $nin: allTheMovieDbIds },
+    };
 
     await collectionData.updateMany(filterQueryIsActive, resetIsActive);
     await collectionData.updateMany(filterQueryIsActive, resetPopularity);

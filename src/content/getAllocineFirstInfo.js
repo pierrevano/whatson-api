@@ -16,7 +16,9 @@ const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMov
   let allocineFirstInfo = null;
 
   try {
-    const options = { validateStatus: (status) => status < 500 && status !== 404 };
+    const options = {
+      validateStatus: (status) => status < 500 && status !== 404,
+    };
     const $ = await getCheerioContent(allocineHomepage, options, "getAllocineFirstInfo");
 
     const title = $('meta[property="og:title"]').attr("content");

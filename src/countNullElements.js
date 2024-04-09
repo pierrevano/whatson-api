@@ -37,14 +37,46 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     console.log(`Number of documents in the collection: ${documents}`);
 
     const queriesAndThresholdKeys = [
-      { query: { item_type: "movie" }, rateSource: "item_type.movie", thresholdKey: null },
-      { query: { item_type: "tvshow" }, rateSource: "item_type.tvshow", thresholdKey: null },
-      { query: { "allocine.users_rating": null }, rateSource: "allocine.users_rating", thresholdKey: "default" },
-      { query: { "allocine.critics_rating": null }, rateSource: "allocine.critics_rating", thresholdKey: "allocine_critics" },
-      { query: { "betaseries.users_rating": null }, rateSource: "betaseries.users_rating", thresholdKey: "default" },
-      { query: { "imdb.users_rating": null }, rateSource: "imdb.users_rating", thresholdKey: "default" },
-      { query: { metacritic: null }, rateSource: "metacritic", thresholdKey: "metacritic_or_rotten_tomatoes" },
-      { query: { rotten_tomatoes: null }, rateSource: "rotten_tomatoes", thresholdKey: "metacritic_or_rotten_tomatoes" },
+      {
+        query: { item_type: "movie" },
+        rateSource: "item_type.movie",
+        thresholdKey: null,
+      },
+      {
+        query: { item_type: "tvshow" },
+        rateSource: "item_type.tvshow",
+        thresholdKey: null,
+      },
+      {
+        query: { "allocine.users_rating": null },
+        rateSource: "allocine.users_rating",
+        thresholdKey: "default",
+      },
+      {
+        query: { "allocine.critics_rating": null },
+        rateSource: "allocine.critics_rating",
+        thresholdKey: "allocine_critics",
+      },
+      {
+        query: { "betaseries.users_rating": null },
+        rateSource: "betaseries.users_rating",
+        thresholdKey: "default",
+      },
+      {
+        query: { "imdb.users_rating": null },
+        rateSource: "imdb.users_rating",
+        thresholdKey: "default",
+      },
+      {
+        query: { metacritic: null },
+        rateSource: "metacritic",
+        thresholdKey: "metacritic_or_rotten_tomatoes",
+      },
+      {
+        query: { rotten_tomatoes: null },
+        rateSource: "rotten_tomatoes",
+        thresholdKey: "metacritic_or_rotten_tomatoes",
+      },
     ];
 
     await Promise.all(

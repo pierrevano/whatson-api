@@ -22,12 +22,24 @@ const getPopularityFilters = async (popularity_filters_query) => {
     }));
   } else {
     if (popularity_filters_array.includes("allocine_popularity")) {
-      const filter = { $filter: { input: ["$allocine.popularity"], as: "val", cond: { $ne: ["$$val", null] } } };
+      const filter = {
+        $filter: {
+          input: ["$allocine.popularity"],
+          as: "val",
+          cond: { $ne: ["$$val", null] },
+        },
+      };
       popularity_filters.push({ $divide: [{ $arrayElemAt: [filter, 0] }, 1] });
     }
 
     if (popularity_filters_array.includes("imdb_popularity")) {
-      const filter = { $filter: { input: ["$imdb.popularity"], as: "val", cond: { $ne: ["$$val", null] } } };
+      const filter = {
+        $filter: {
+          input: ["$imdb.popularity"],
+          as: "val",
+          cond: { $ne: ["$$val", null] },
+        },
+      };
       popularity_filters.push({ $divide: [{ $arrayElemAt: [filter, 0] }, 1] });
     }
   }

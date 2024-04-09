@@ -9,7 +9,11 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 const { config } = require("./config");
 
 const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
 
 /* Connecting to the database */
 const database = client.db(config.dbName);

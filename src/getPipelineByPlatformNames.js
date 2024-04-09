@@ -22,7 +22,9 @@ const getPipelineByPlatformNames = (is_active_item, platform_names, pipeline) =>
       },
     };
 
-    const matchPlatform = { $match: { $and: [is_active_item, platformCondition] } };
+    const matchPlatform = {
+      $match: { $and: [is_active_item, platformCondition] },
+    };
     pipeline.push(matchPlatform);
   }
 

@@ -14,9 +14,15 @@ const processSvods = (svods) => {
   let platformsLinks = [];
 
   if (Array.isArray(svods)) {
-    platformsLinks = svods.map((element) => ({ name: element.name, link_url: element.link_url }));
+    platformsLinks = svods.map((element) => ({
+      name: element.name,
+      link_url: element.link_url,
+    }));
   } else if (typeof svods === "object") {
-    platformsLinks = Object.values(svods).map((element) => ({ name: element.name, link_url: element.link_url }));
+    platformsLinks = Object.values(svods).map((element) => ({
+      name: element.name,
+      link_url: element.link_url,
+    }));
   }
 };
 

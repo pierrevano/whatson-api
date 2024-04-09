@@ -55,7 +55,12 @@ const generateURLs = (item_type, config, json) => {
   }
 
   return {
-    allocine: { id: allocineId, lastPartUrl: allocineURL, homepage: allocineHomepage, criticsDetails: allocineCriticsDetails },
+    allocine: {
+      id: allocineId,
+      lastPartUrl: allocineURL,
+      homepage: allocineHomepage,
+      criticsDetails: allocineCriticsDetails,
+    },
     imdb: { id: imdbId, homepage: imdbHomepage },
     betaseries: { id: betaseriesId, homepage: betaseriesHomepage },
     metacritic: { id: metacriticId, homepage: metacriticHomepage },
