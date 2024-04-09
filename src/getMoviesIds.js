@@ -9,7 +9,7 @@ const { logErrors } = require("./utils/logErrors");
  * @returns An array of movie ids
  */
 const getMoviesIds = async (cinemaIdParam) => {
-  if (cinemaIdParam) {
+  if (cinemaIdParam && cinemaIdParam !== "undefined") {
     const base_url = `${config.corsURL}/${config.baseURLTheaters}`;
     const options = {
       headers: {

@@ -312,6 +312,14 @@ const params = {
       }),
   },
 
+  cinema_id_should_be_ignored: {
+    query: "?cinema_id=undefined&is_active=true,false&limit=200",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(items.length).toBe(200);
+      }),
+  },
+
   custom_limit_value: {
     query: "?limit=5",
     expectedResult: (items) => {
@@ -380,6 +388,13 @@ const params = {
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.item_type).toBe("movie");
+    },
+  },
+
+  correct_movie_item_type_if_undefined_returned: {
+    query: "/movie/undefined?allData=true",
+    expectedResult: (data) => {
+      expect(data).toBeNull;
     },
   },
 
@@ -594,7 +609,7 @@ describe("What's on? API tests", () => {
 
       const response = await axios.get(apiCall);
       const data = response.data;
-      const items = data.results;
+      const items = data && data.results;
 
       if (query.includes("allData=true")) {
         expectedResult(data);

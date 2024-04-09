@@ -115,7 +115,7 @@ const getItems = async (
 
   const pipeline = [];
 
-  if (id !== "") {
+  if (id) {
     pipeline.push(match_id);
   } else if (item_type === "tvshow") {
     getPipelineFromTVShow(config, is_active_item, item_type, pipeline, seasons_number, status);
