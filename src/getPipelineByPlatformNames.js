@@ -8,15 +8,16 @@
  */
 const getPipelineByPlatformNames = (is_active_item, platform_names, pipeline) => {
   if (platform_names) {
-    let decodedPlatformNames = decodeURIComponent(platform_names);
+    const decodedPlatformNames = decodeURIComponent(platform_names);
+    const decodedPlatformNamesArray = decodedPlatformNames.split(",");
 
-    if (decodedPlatformNames.includes("all")) return pipeline;
+    if (decodedPlatformNamesArray.includes("all")) return pipeline;
 
     let platformCondition = {
       platforms_links: {
         $elemMatch: {
           name: {
-            $in: decodedPlatformNames.split(","),
+            $in: decodedPlatformNamesArray,
           },
         },
       },

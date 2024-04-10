@@ -51,8 +51,6 @@ function isNumberWithDecimals(input) {
  */
 function checkRatings(item, property, minRating, maxRating) {
   if (item && item[property]) {
-    console.log(item);
-
     expect(item[property]).toBeGreaterThanOrEqual(minRating);
     expect(item[property]).toBeLessThanOrEqual(maxRating);
     expect(isNumberWithDecimals(item[property])).toBeTruthy;
@@ -617,18 +615,18 @@ const params = {
   },
 
   only_platforms_netflix: {
-    query: "?platforms=Netflix",
+    query: `?platforms=${encodeURIComponent("Disney+")}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");
         expect(item.platforms_links).not.toBeNull();
-        expect(item.platforms_links.some((platform) => platform.name === "Netflix")).toBeTruthy();
+        expect(item.platforms_links.some((platform) => platform.name === "Disney+")).toBeTruthy();
       });
     },
   },
 
   only_platforms_netflix_or_canal: {
-    query: "?platforms=Netflix,Canal%2B",
+    query: `?platforms=${encodeURIComponent("Netflix,Canal+")}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");
@@ -641,10 +639,21 @@ const params = {
   },
 
   include_all_platforms: {
-    query: "?platforms=all,Netflix,Canal%2B&limit=3000",
+    query: `?platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=3000`,
     expectedResult: (items) => {
       expect(items.filter((item) => item.platforms_links === null).length).toBeGreaterThan(config.minimumNumberOfItems.default);
       items.forEach((item) => item.platforms_links && item.platforms_links.forEach((platform) => expect(config.platforms).toContain(platform.name)));
+    },
+  },
+
+  should_return_no_values_when_platform_contains_all: {
+    query: `?platforms=${encodeURIComponent("allAndSomeOtherWords,Netflix")}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("platforms_links");
+        expect(item.platforms_links).not.toBeNull();
+        expect(item.platforms_links.some((platform) => platform.name === "Netflix")).toBeTruthy();
+      });
     },
   },
 };
