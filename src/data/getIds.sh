@@ -1,5 +1,6 @@
 # Define the main variables
 BASE_URL_ASSETS=https://whatson-assets.vercel.app
+BASE_URL_API=https://whatson-api.onrender.com
 BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
@@ -8,6 +9,7 @@ PAGES_MAX_NUMBER=20
 PAGES_MIN_NUMBER=1
 PROMPT=$3
 PROMPT_SERVICE_NAME=$4
+MIN_RATING=$5
 SECONDS=0
 SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
@@ -35,7 +37,7 @@ if [[ $TYPE == "movie" ]]; then
   METACRITIC_TYPE=movie
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_films.txt
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_films.txt
-else
+elif [[ $TYPE == "tvshow" ]]; then
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
   FILMS_FILE_NAME=series_ids.txt
@@ -50,6 +52,9 @@ else
   METACRITIC_TYPE=tv
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_series.txt
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_series.txt
+else
+  echo "Item type should be either `movie` or `tvshow`"
+  exit 1
 fi
 
 if [[ $SOURCE == "circleci" ]]; then
@@ -318,6 +323,7 @@ do
 
     IMDB_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f2)
     BETASERIES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f3)
+    THEMOVIEDB_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f4)
     METACRITIC_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f5)
     ROTTEN_TOMATOES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f6)
     LETTERBOXD_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f7)
@@ -346,9 +352,18 @@ do
 
           if [[ ${!check_var} == "null" ]] &&
             { [[ $PROMPT_SERVICE_NAME == "$service" ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
-            DUPLICATE=0
-            echo "Found $URL to be rechecked."
-            break
+            if [[ $MIN_RATING ]]; then
+              RATINGS_AVERAGE=$(curl -s "$BASE_URL_API/$METACRITIC_TYPE/$THEMOVIEDB_CHECK?ratings_filters=all" | jq '.ratings_average')
+              LESS_OR_EQUAL=$(echo "$MIN_RATING<=$RATINGS_AVERAGE" | bc)
+            fi
+
+            if [[ -z $MIN_RATING ]] || [[ $LESS_OR_EQUAL -eq 1 ]]; then
+              DUPLICATE=0
+              echo "Found $URL to be rechecked."
+              break
+            else
+              DUPLICATE=1
+            fi
           fi
         done
       fi

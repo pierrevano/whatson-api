@@ -425,6 +425,7 @@ const params = {
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.id).toBe(87108);
+      expect(data.ratings_average).toBeGreaterThan(0);
     },
   },
 
