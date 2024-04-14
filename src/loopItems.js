@@ -81,7 +81,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
 
       const checkDate = getNodeVarsValues.check_date;
       if (parseInt(checkDate) >= 0) {
-        const item_type_api = item_type === "movie" ? "movie" : "tv";
+        const item_type_api = item_type === "movie" ? "movie" : "tvshow";
         const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
 
         try {

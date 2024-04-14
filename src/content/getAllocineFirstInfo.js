@@ -6,11 +6,11 @@ const { getTrailer } = require("./getTrailer");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves information about a movie or tv show from AlloCiné.
- * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tv show.
- * @param {string} betaseriesHomepage - The URL of the BetaSeries page for the movie or tv show.
- * @param {number} theMoviedbId - The ID of the movie or tv show on The Movie Database.
- * @returns An object containing information about the movie or tv show, including its title, image, user rating, number of seasons, status, and trailer.
+ * Retrieves information about a movie or tvshow from AlloCiné.
+ * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow.
+ * @param {string} betaseriesHomepage - The URL of the BetaSeries page for the movie or tvshow.
+ * @param {number} theMoviedbId - The ID of the movie or tvshow on The Movie Database.
+ * @returns An object containing information about the movie or tvshow, including its title, image, user rating, number of seasons, status, and trailer.
  */
 const getAllocineFirstInfo = async (allocineHomepage, betaseriesHomepage, theMoviedbId, compare) => {
   let allocineFirstInfo = null;

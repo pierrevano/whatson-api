@@ -8,15 +8,15 @@ const { getImdbUsersRating } = require("./content/getImdbUsersRating");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 
 /**
- * Compares the users rating of a movie or tv show from AlloCiné with the rating
+ * Compares the users rating of a movie or tvshow from AlloCiné with the rating
  * fetched from a remote API.
  * @param {string} allocineHomepage - The AlloCiné homepage URL.
  * @param {string} allocineURL - The AlloCiné URL specific to the item.
  * @param {string} betaseriesHomepage - The BetaSeries homepage URL.
  * @param {string} imdbHomepage - The IMDb homepage URL.
  * @param {boolean} isActive - Active status of the item.
- * @param {string} item_type - The type of item (movie or tv show).
- * @param {string} theMoviedbId - The ID of the movie or tv show on The Movie Database.
+ * @param {string} item_type - The type of item (movie or tvshow).
+ * @param {string} theMoviedbId - The ID of the movie or tvshow on The Movie Database.
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
@@ -31,7 +31,7 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
     isEqual: false,
   };
 
-  const item_type_api = item_type === "movie" ? "movie" : "tv";
+  const item_type_api = item_type === "movie" ? "movie" : "tvshow";
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
 
   try {

@@ -421,7 +421,7 @@ const params = {
   },
 
   correct_tmdb_id_returned: {
-    query: "/tv/87108?ratings_filters=all&allData=true",
+    query: "/tvshow/87108?ratings_filters=all&allData=true",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.id).toBe(87108);
@@ -430,7 +430,7 @@ const params = {
   },
 
   correct_tvshow_item_type_returned: {
-    query: "/tv/121?allData=true",
+    query: "/tvshow/121?allData=true",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.item_type).toBe("tvshow");

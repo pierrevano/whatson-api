@@ -102,8 +102,8 @@ app.get("/movie/:id", async (req, res) => {
   await getId(req, res);
 });
 
-/* A route that is used to get the data for a specific tv show. */
-app.get("/tv/:id", async (req, res) => {
+/* A route that is used to get the data for a specific tvshow. */
+app.get("/tvshow/:id", async (req, res) => {
   await getId(req, res);
 });
 

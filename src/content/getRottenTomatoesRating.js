@@ -4,9 +4,9 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the Rotten Tomatoes rating for a given movie or tv show.
+ * Retrieves the Rotten Tomatoes rating for a given movie or tvshow.
  * @param {string} rottenTomatoesHomepage - The Rotten Tomatoes homepage URL.
- * @param {string} rottenTomatoesId - The Rotten Tomatoes ID for the movie or tv show.
+ * @param {string} rottenTomatoesId - The Rotten Tomatoes ID for the movie or tvshow.
  * @returns {Promise<Object>} - An object containing the Rotten Tomatoes rating information.
  * @throws {Error} - If there is an error retrieving the Rotten Tomatoes rating.
  */

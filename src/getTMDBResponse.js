@@ -11,9 +11,9 @@ const { config } = require("./config");
 const { logErrors } = require("../src/utils/logErrors");
 
 /**
- * Makes an API call to The Movie Database (TMDB) to retrieve information about a movie or tv show.
- * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tv show.
- * @param {number} theMoviedbId - The ID of the movie or tv show on TMDB.
+ * Makes an API call to The Movie Database (TMDB) to retrieve information about a movie or tvshow.
+ * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow.
+ * @param {number} theMoviedbId - The ID of the movie or tvshow on TMDB.
  * @returns An object containing the response data and status code from the API call.
  */
 const getTMDBResponse = async (allocineHomepage, theMoviedbId) => {

@@ -353,7 +353,7 @@ do
           if [[ ${!check_var} == "null" ]] &&
             { [[ $PROMPT_SERVICE_NAME == "$service" ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
             if [[ $MIN_RATING ]]; then
-              RATINGS_AVERAGE=$(curl -s "$BASE_URL_API/$METACRITIC_TYPE/$THEMOVIEDB_CHECK?ratings_filters=all" | jq '.ratings_average')
+              RATINGS_AVERAGE=$(curl -s "$BASE_URL_API/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all" | jq '.ratings_average')
               LESS_OR_EQUAL=$(echo "$MIN_RATING<=$RATINGS_AVERAGE" | bc)
             fi
 

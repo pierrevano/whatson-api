@@ -51,7 +51,7 @@ Provides detailed information about specific item (movie or tvshow) by its uniqu
 
 #### Parameters:
 
-- **item_type:** The type of the item (movie or tv)
+- **item_type:** The type of the item (movie or tvshow)
 - **id:** The unique identifier for the item (The Movie Database ID)
 - **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,trakt_users)
 

@@ -4,9 +4,9 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the Metacritic rating for a given movie or tv show.
+ * Retrieves the Metacritic rating for a given movie or tvshow.
  * @param {string} metacriticHomepage - The Metacritic homepage URL.
- * @param {string} metacriticId - The Metacritic ID for the movie or tv show.
+ * @param {string} metacriticId - The Metacritic ID for the movie or tvshow.
  * @returns {Promise<Object>} - An object containing the Metacritic rating information.
  * @throws {Error} - If there is an error retrieving the Metacritic rating.
  */

@@ -4,9 +4,9 @@ const { config } = require("../config");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Extracts the ID of a movie or tv show from a remote popularity file hosted on a server.
- * @param {string} allocineURL - The URL of the movie or tv show on AlloCiné.
- * @returns {Promise<string | undefined>} - The ID of the movie or tv show, or undefined if it cannot be found.
+ * Extracts the ID of a movie or tvshow from a remote popularity file hosted on a server.
+ * @param {string} allocineURL - The URL of the movie or tvshow on AlloCiné.
+ * @returns {Promise<string | undefined>} - The ID of the movie or tvshow, or undefined if it cannot be found.
  */
 const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
   try {

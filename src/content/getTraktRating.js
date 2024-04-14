@@ -4,9 +4,9 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the Trakt rating for a given movie or tv show.
+ * Retrieves the Trakt rating for a given movie or tvshow.
  * @param {string} traktHomepage - The Trakt homepage URL.
- * @param {string} traktId - The Trakt ID for the movie or tv show.
+ * @param {string} traktId - The Trakt ID for the movie or tvshow.
  * @returns {Promise<Object>} - An object containing the Trakt rating information.
  * @throws {Error} - If there is an error retrieving the Trakt rating.
  */

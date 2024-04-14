@@ -2,9 +2,9 @@ const { getTMDBResponse } = require("../getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the image path for a movie or tv show from The Movie Database (TMDB) API.
- * @param {string} allocineHomepage - The homepage of the movie or tv show on AlloCiné.
- * @param {number} theMoviedbId - The ID of the movie or tv show on TMDB.
+ * Retrieves the image path for a movie or tvshow from The Movie Database (TMDB) API.
+ * @param {string} allocineHomepage - The homepage of the movie or tvshow on AlloCiné.
+ * @param {number} theMoviedbId - The ID of the movie or tvshow on TMDB.
  * @returns {Promise<string|null>} - A promise that resolves with the image path or null if there was an error.
  */
 const getImageFromTMDB = async (allocineHomepage, theMoviedbId) => {

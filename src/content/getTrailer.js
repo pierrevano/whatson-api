@@ -5,9 +5,9 @@ const { logErrors } = require("../utils/logErrors");
 const { removeExtraChar } = require("../utils/removeExtraChar");
 
 /**
- * It gets the trailer link for a movie or tv show
- * @param allocineHomepage - The URL of the movie or tv show on AlloCiné.
- * @param betaseriesHomepage - The URL of the tv Show on BetaSeries.
+ * It gets the trailer link for a movie or tvshow
+ * @param allocineHomepage - The URL of the movie or tvshow on AlloCiné.
+ * @param betaseriesHomepage - The URL of the tvshow on BetaSeries.
  * @param options - This is the options object that is passed to the getCheerioContent function.
  * @returns The trailer link.
  */
