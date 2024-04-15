@@ -10,7 +10,7 @@ const { logErrors } = require("../utils/logErrors");
  * @param imdbHomepage - The IMDb homepage of the movie.
  * @returns The critics rating for the movie.
  */
-const getImdbUsersRating = async (imdbHomepage) => {
+const getImdbRating = async (imdbHomepage) => {
   let criticsRating = null;
 
   try {
@@ -20,15 +20,15 @@ const getImdbUsersRating = async (imdbHomepage) => {
         "User-Agent": config.userAgent,
       },
     };
-    const $ = await getCheerioContent(imdbHomepage, options, "getImdbUsersRating");
+    const $ = await getCheerioContent(imdbHomepage, options, "getImdbRating");
 
     criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
     if (isNaN(criticsRating)) criticsRating = null;
   } catch (error) {
-    logErrors(error, imdbHomepage, "getImdbUsersRating");
+    logErrors(error, imdbHomepage, "getImdbRating");
   }
 
   return criticsRating;
 };
 
-module.exports = { getImdbUsersRating };
+module.exports = { getImdbRating };

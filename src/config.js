@@ -11,7 +11,8 @@ const baseURL = {
   render: "https://status.render.com",
   rottenTomatoes: "https://www.rottentomatoes.com",
   senscritique: "https://www.senscritique.com",
-  theMovieDatabaseAPI: "https://api.themoviedb.org/3",
+  tmdbAPI: "https://api.themoviedb.org/3",
+  tmdb: "https://www.themoviedb.org",
   trakt: "https://trakt.tv",
   vercel: "https://www.vercel-status.com",
 };
@@ -60,6 +61,7 @@ const config = {
     "rotten_tomatoes",
     "letterboxd",
     "senscritique",
+    "tmdb",
     "trakt",
     "mojo",
     "popularity_average",
@@ -84,9 +86,12 @@ const config = {
     rottenTomatoes: 4,
     letterboxd: 3,
     senscritique: 3,
+    tmdb: 3,
     trakt: 3,
   },
   maximumIsActiveItems: 400,
+  ratings_filters:
+    "allocine_critics,allocine_users,betaseries_users,imdb_users,letterboxd_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users",
   timeout: 500000,
 
   /* Services settings */
@@ -97,6 +102,7 @@ const config = {
     { name: "AlloCiné", url: baseURL.allocine },
     { name: "BetaSeries", url: baseURL.betaseries },
     { name: "IMDb", url: baseURL.imdb },
+    { name: "TMDB", url: baseURL.tmdb },
     { name: "Metacritic", url: baseURL.metacritic },
     { name: "Rotten Tomatoes", url: baseURL.rottenTomatoes },
     { name: "Letterboxd", url: baseURL.letterboxd },
@@ -126,7 +132,9 @@ const config = {
   baseURLSensCritiqueFilm: `${baseURL.senscritique}/film/-/`,
   baseURLSensCritiqueSerie: `${baseURL.senscritique}/serie/-/`,
   baseURLTheaters: `${baseURL.allocine}/_/showtimes/theater-`,
-  baseURLTMDB: baseURL.theMovieDatabaseAPI,
+  baseURLTMDBFilm: `${baseURL.tmdb}/movie/`,
+  baseURLTMDBSerie: `${baseURL.tmdb}/tv/`,
+  baseURLTMDBAPI: baseURL.tmdbAPI,
   baseURLTraktFilm: `${baseURL.trakt}/movies/`,
   baseURLTraktSerie: `${baseURL.trakt}/shows/`,
   baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
@@ -160,6 +168,7 @@ const config = {
       rottenTomatoes: 10,
       letterboxd: 0,
       senscritique: 0,
+      tmdb: 0,
       trakt: 0,
     },
 
@@ -172,6 +181,7 @@ const config = {
       rottenTomatoes: 100,
       letterboxd: 5,
       senscritique: 10,
+      tmdb: 10,
       trakt: 100,
     },
   },
@@ -180,7 +190,7 @@ const config = {
   platforms: ["Canal+ Ciné Séries", "Netflix", "Prime Video", "Canal+", "OCS", "Disney+", "Apple TV+", "Pass Warner", "Paramount+", "TF1+", "France TV", "Crunchyroll", "Arte", "ADN"],
 
   /* Search settings */
-  keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "traktid", "themoviedbid", "title"],
+  keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "traktid", "tmdbid", "title"],
 };
 
 module.exports = { config };

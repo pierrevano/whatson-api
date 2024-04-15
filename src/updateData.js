@@ -1,7 +1,3 @@
-/**
- * Loads environment variables from a .env file into process.env.
- * @returns {void}
- */
 require("dotenv").config();
 
 const csv = require("csvtojson");

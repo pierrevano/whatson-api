@@ -1,7 +1,3 @@
-/**
- * Loads environment variables from a .env file into process.env.
- * @returns None
- */
 require("dotenv").config();
 
 const axiosRetry = require("axios-retry");
@@ -13,13 +9,13 @@ const { logErrors } = require("../src/utils/logErrors");
 /**
  * Makes an API call to The Movie Database (TMDB) to retrieve information about a movie or tvshow.
  * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow.
- * @param {number} theMoviedbId - The ID of the movie or tvshow on TMDB.
+ * @param {number} tmdbId - The ID of the movie or tvshow on TMDB.
  * @returns An object containing the response data and status code from the API call.
  */
-const getTMDBResponse = async (allocineHomepage, theMoviedbId) => {
+const getTMDBResponse = async (allocineHomepage, tmdbId) => {
   try {
     const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
-    const url = `${config.baseURLTMDB}/${type}/${theMoviedbId}?api_key=${process.env.THEMOVIEDB_API_KEY}`;
+    const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${process.env.THEMOVIEDB_API_KEY}`;
 
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = { validateStatus: (status) => status < 500 };

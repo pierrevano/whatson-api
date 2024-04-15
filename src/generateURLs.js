@@ -42,15 +42,16 @@ const generateURLs = (item_type, config, json) => {
   const sensCritiqueId = json.SENSCRITIQUE_ID;
   const sensCritiqueHomepage = item_type === "movie" ? `${config.baseURLSensCritiqueFilm}${sensCritiqueId}` : `${config.baseURLSensCritiqueSerie}${sensCritiqueId}`;
 
+  const tmdbId = parseInt(json.THEMOVIEDB_ID);
+  const tmdbHomepage = item_type === "movie" ? `${config.baseURLTMDBFilm}${tmdbId}` : `${config.baseURLTMDBSerie}${tmdbId}`;
+
   const traktId = json.TRAKT_ID;
   const traktHomepage = item_type === "movie" ? `${config.baseURLTraktFilm}${traktId}` : `${config.baseURLTraktSerie}${traktId}`;
 
   const isActive = json.IS_ACTIVE === "TRUE";
 
-  const theMoviedbId = parseInt(json.THEMOVIEDB_ID);
-
   // If The Movie Database ID is not found, log an error and exit
-  if (isNaN(theMoviedbId)) {
+  if (isNaN(tmdbId)) {
     throw new Error(`Something went wrong, The Movie Database id has not been found for ${allocineHomepage}!`);
   }
 
@@ -67,8 +68,8 @@ const generateURLs = (item_type, config, json) => {
     rotten_tomatoes: { id: rottenTomatoesId, homepage: rottenTomatoesHomepage },
     letterboxd: { id: letterboxdId, homepage: letterboxdHomepage },
     senscritique: { id: sensCritiqueId, homepage: sensCritiqueHomepage },
+    tmdb: { id: tmdbId, homepage: tmdbHomepage },
     trakt: { id: traktId, homepage: traktHomepage },
-    themoviedb: { id: theMoviedbId },
     is_active: isActive,
   };
 };

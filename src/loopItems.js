@@ -69,6 +69,10 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       const sensCritiqueId = urls.senscritique.id;
       const sensCritiqueHomepage = urls.senscritique.homepage;
 
+      /* Handle TMDB related data */
+      const tmdbId = urls.tmdb.id;
+      const tmdbHomepage = urls.tmdb.homepage;
+
       /* Handle Trakt related data */
       const traktId = urls.trakt.id;
       const traktHomepage = urls.trakt.homepage;
@@ -76,16 +80,11 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       // Determine if the URL is active
       const isActive = urls.is_active;
 
-      // Get The Movie Database ID
-      const theMoviedbId = urls.themoviedb.id;
-
       const checkDate = getNodeVarsValues.check_date;
       if (parseInt(checkDate) >= 0) {
-        const item_type_api = item_type === "movie" ? "movie" : "tvshow";
-        const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
-
         try {
-          const response = await axios.get(apiUrl);
+          const item_type_api = item_type === "movie" ? "movie" : "tvshow";
+          const response = await axios.get(`${config.baseURLRemote}/${item_type_api}/${tmdbId}`);
 
           if (response && response.data && response.data.updated_at) {
             const { updated_at } = response.data;
@@ -109,11 +108,11 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       }
 
       // Check if page is existing before upsert to DB
-      const { error } = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId, true);
+      const { error } = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, tmdbId, true);
 
       // Determine if user ratings are equal and fetch the data
       if (!error) {
-        const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId, true);
+        const getIsEqualValue = await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, tmdbId, true);
         const data =
           !force && getIsEqualValue.isEqual
             ? getIsEqualValue.data
@@ -140,7 +139,8 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
                 traktHomepage,
                 traktId,
                 mojoBoxOfficeArray,
-                theMoviedbId
+                tmdbId,
+                tmdbHomepage
               ));
 
         // Adding item last `updated_at` date

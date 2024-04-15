@@ -20,7 +20,7 @@ Retrieves detailed information about either a movie or a tvshow based on the pro
 - **platforms:** Platforms filters (URI encoded platforms names)
 - **seasons_number:** Number of seasons (1,2,3,4,5 and 5 means 5+) (only valid for tvshows)
 - **status:** TV show's status filters (canceled,ended,ongoing,pilot,soon,unknown) (only valid for tvshows)
-- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,trakt_users)
+- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users)
 - **page:** Page number
 - **limit:** Page items limit
 
@@ -37,7 +37,7 @@ The query parameters provided below are solely for item search purposes and must
 - **rottentomatoesId:** Rotten Tomatoes ID of the movie or tvshow
 - **senscritiqueId:** SensCritique ID of the movie or tvshow
 - **traktId:** Trakt ID of the movie or tvshow
-- **themoviedbId:** The Movie Database ID of the movie or tvshow
+- **tmdbId:** The Movie Database ID of the movie or tvshow
 
 #### Responses:
 
@@ -53,7 +53,7 @@ Provides detailed information about specific item (movie or tvshow) by its uniqu
 
 - **item_type:** The type of the item (movie or tvshow)
 - **id:** The unique identifier for the item (The Movie Database ID)
-- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,trakt_users)
+- **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users)
 
 #### Responses:
 
@@ -71,7 +71,7 @@ Example of an item returned:
         "url": "https://www.allocine.fr/film/fichefilm_gen_cfilm=278742.html",
         "users_rating": 4.5,
         "critics_rating": 4.2,
-        "critics_number": 39,
+        "critics_number": 40,
         "critics_rating_details": [
             {
                 "critic_name": "20 Minutes",
@@ -166,6 +166,10 @@ Example of an item returned:
                 "critic_rating": 4
             },
             {
+                "critic_name": "L'Ecran Fantastique",
+                "critic_rating": 4
+            },
+            {
                 "critic_name": "L'Obs",
                 "critic_rating": 4
             },
@@ -230,19 +234,19 @@ Example of an item returned:
                 "critic_rating": 1
             }
         ],
-        "popularity": 1
+        "popularity": 10
     },
     "betaseries": {
         "id": "91505-dune-part-two",
         "url": "https://www.betaseries.com/film/91505-dune-part-two",
-        "users_rating": 4.54
+        "users_rating": 4.51
     },
     "id": 693134,
     "image": "https://fr.web.img4.acsta.net/pictures/24/01/26/10/18/5392835.jpg",
     "imdb": {
         "id": "tt15239678",
         "url": "https://www.imdb.com/title/tt15239678/",
-        "users_rating": 8.8,
+        "users_rating": 8.7,
         "popularity": 2
     },
     "is_active": true,
@@ -255,13 +259,13 @@ Example of an item returned:
     "metacritic": {
         "id": "dune-part-two",
         "url": "https://www.metacritic.com/movie/dune-part-two",
-        "users_rating": 8.4,
+        "users_rating": 8.3,
         "critics_rating": 79
     },
     "mojo": {
-        "rank": 235,
+        "rank": 150,
         "url": "https://www.boxofficemojo.com/title/tt15239678/",
-        "lifetime_gross": "$509,801,051"
+        "lifetime_gross": "$683,904,065"
     },
     "rotten_tomatoes": {
         "id": "dune_part_two",
@@ -272,21 +276,24 @@ Example of an item returned:
     "letterboxd": {
         "id": "dune-part-two",
         "url": "https://letterboxd.com/film/dune-part-two",
-        "users_rating": 4.52
+        "users_rating": 4.5
     },
     "senscritique": {
         "id": "45424060",
         "url": "https://www.senscritique.com/film/-/45424060",
-        "users_rating": 7.9
+        "users_rating": 7.8
     },
-    "updated_at": "2024-03-21T21:26:55.512Z",
+    "updated_at": "2024-04-15T11:09:04.599Z",
     "trakt": {
         "id": "dune-part-two-2023",
         "url": "https://trakt.tv/movies/dune-part-two-2023",
-        "users_rating": 86
+        "users_rating": 85
     },
-    "popularity_average": 1.5,
-    "ratings_average": 4.4
+    "tmdb": {
+        "id": 693134,
+        "url": "https://www.themoviedb.org/movie/693134",
+        "users_rating": 8.314
+    }
 }
 ```
 

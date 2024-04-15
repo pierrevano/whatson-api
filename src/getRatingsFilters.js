@@ -20,6 +20,7 @@ const getRatingsFilters = async (ratings_filters_query) => {
       { $divide: ["$rotten_tomatoes.users_rating", 20] },
       { $divide: ["$letterboxd.users_rating", 1] },
       { $divide: ["$senscritique.users_rating", 2] },
+      { $divide: ["$tmdb.users_rating", 2] },
       { $divide: ["$trakt.users_rating", 20] }
     ];
   } else {
@@ -63,6 +64,10 @@ const getRatingsFilters = async (ratings_filters_query) => {
 
     if (ratings_filters_array.includes("senscritique_users")) {
       ratings_filters.push({ $divide: ["$senscritique.users_rating", 2] });
+    }
+
+    if (ratings_filters_array.includes("tmdb_users")) {
+      ratings_filters.push({ $divide: ["$tmdb.users_rating", 2] });
     }
 
     if (ratings_filters_array.includes("trakt_users")) {

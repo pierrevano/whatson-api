@@ -74,11 +74,17 @@ function checkItemProperties(items) {
     expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(config.maximumIsActiveItems);
 
     expect(item._id).not.toBeNull();
+
     expect(item.id).not.toBeNull();
+    expect(typeof item.id).toBe("number");
+
     expect(["movie", "tvshow"]).toContain(item.item_type);
+
     expect(item.title).not.toBeNull();
+
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
+
     expect(item.ratings_average).not.toBeNull();
 
     item.item_type === "tvshow" && item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
@@ -149,6 +155,11 @@ function checkItemProperties(items) {
     item.is_active === true
       ? expect(items.filter((item) => item.senscritique && typeof item.senscritique.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems)
       : null;
+
+    /* TMDB */
+    item.tmdb ? expect(Object.keys(item.tmdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.tmdb) : null;
+    item.tmdb ? expect(typeof item.tmdb.id).toBe("number") : null;
+    item.is_active === true ? expect(items.filter((item) => item.tmdb && typeof item.tmdb.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
 
     /* Trakt */
     item.trakt ? expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trakt) : null;
@@ -235,6 +246,12 @@ const params = {
             ratingType: "users_rating",
             min: config.ratingsValues.minimum.senscritique,
             max: config.ratingsValues.maximum.senscritique,
+          },
+          {
+            source: item.tmdb,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.tmdb,
+            max: config.ratingsValues.maximum.tmdb,
           },
           {
             source: item.trakt,
@@ -429,6 +446,14 @@ const params = {
     },
   },
 
+  correct_tmdb_id_returned_on_search: {
+    query: "?tmdbid=87108",
+    expectedResult: (items) => {
+      expect(items.length).toBe(1);
+      expect(items[0].id).toBe(87108);
+    },
+  },
+
   correct_tvshow_item_type_returned: {
     query: "/tvshow/121?allData=true",
     expectedResult: (data) => {
@@ -544,6 +569,18 @@ const params = {
     },
   },
 
+  compare_two_ratings_filters: {
+    query: "?ratings_filters=all",
+    expectedResult: async (items) => {
+      const response = await axios.get(`${baseURL}?ratings_filters=${config.ratings_filters}`);
+      const results = response.data.results;
+
+      items.forEach((item, index) => {
+        expect(item.ratings_average).toEqual(results[index].ratings_average);
+      });
+    },
+  },
+
   ratings_average_for_incorrect_minimum_ratings: {
     query: "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
     expectedResult: (items) => {
@@ -615,8 +652,8 @@ const params = {
     },
   },
 
-  only_platforms_netflix: {
-    query: `?platforms=${encodeURIComponent("Disney+")}`,
+  only_platforms_disney_plus: {
+    query: `?item_type=tvshow&platforms=${encodeURIComponent("Disney+")}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");

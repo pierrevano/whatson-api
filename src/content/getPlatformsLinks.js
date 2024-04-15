@@ -1,14 +1,11 @@
-/**
- * Loads environment variables from a .env file into process.env.
- * @returns None
- */
 require("dotenv").config();
 
 const axios = require("axios");
 
 const { config } = require("../config");
-const { logErrors } = require("../utils/logErrors");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { isNotNull } = require("../utils/isNotNull");
+const { logErrors } = require("../utils/logErrors");
 
 const processSvods = (svods) => {
   let platformsLinks = [];
@@ -37,7 +34,7 @@ const getPlatformsLinks = async (betaseriesHomepage, betaseriesId, allocineHomep
   let platformsLinks = null;
 
   try {
-    if (betaseriesId) {
+    if (isNotNull(betaseriesId)) {
       const baseURLBetaseriesAPI = allocineHomepage.includes(config.baseURLTypeSeries) ? config.baseURLBetaseriesAPISeries : config.baseURLBetaseriesAPIFilms;
       const url = `${baseURLBetaseriesAPI}?key=${process.env.BETASERIES_API_KEY}&imdb_id=${imdbId}`;
 

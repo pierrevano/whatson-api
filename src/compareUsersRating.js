@@ -4,7 +4,7 @@ const { config } = require("./config");
 const { getAllocineFirstInfo } = require("./content/getAllocineFirstInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
-const { getImdbUsersRating } = require("./content/getImdbUsersRating");
+const { getImdbRating } = require("./content/getImdbRating");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 
 /**
@@ -16,14 +16,14 @@ const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
  * @param {string} imdbHomepage - The IMDb homepage URL.
  * @param {boolean} isActive - Active status of the item.
  * @param {string} item_type - The type of item (movie or tvshow).
- * @param {string} theMoviedbId - The ID of the movie or tvshow on The Movie Database.
+ * @param {number} tmdbId - TMDB ID for the movie or tvshow.
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
-const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, theMoviedbId, compare) => {
-  const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId, compare)).allocineUsersRating;
+const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, tmdbId, compare) => {
+  const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, tmdbId, compare)).allocineUsersRating;
   const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
-  const imdb_users_rating = await getImdbUsersRating(imdbHomepage);
+  const imdb_users_rating = await getImdbRating(imdbHomepage);
   const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
 
@@ -32,7 +32,7 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
   };
 
   const item_type_api = item_type === "movie" ? "movie" : "tvshow";
-  const apiUrl = `${config.baseURLRemote}/${item_type_api}/${theMoviedbId}`;
+  const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}`;
 
   try {
     const response = await axios.get(apiUrl);

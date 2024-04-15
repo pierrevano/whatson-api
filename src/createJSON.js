@@ -1,15 +1,16 @@
 const { getAllocineCriticInfo } = require("./content/getAllocineCriticInfo");
 const { getAllocineFirstInfo } = require("./content/getAllocineFirstInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
-const { getBetaseriesUsersRating } = require("./content/getBetaseriesUsersRating");
+const { getBetaseriesRating } = require("./content/getBetaseriesRating");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
-const { getImdbUsersRating } = require("./content/getImdbUsersRating");
+const { getImdbRating } = require("./content/getImdbRating");
 const { getLetterboxdRating } = require("./content/getLetterboxdRating");
 const { getMetacriticRating } = require("./content/getMetacriticRating");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { getPlatformsLinks } = require("./content/getPlatformsLinks");
 const { getRottenTomatoesRating } = require("./content/getRottenTomatoesRating");
 const { getSensCritiqueRating } = require("./content/getSensCritiqueRating");
+const { getTmdbRating } = require("./content/getTmdbRating");
 const { getTraktRating } = require("./content/getTraktRating");
 
 /**
@@ -34,7 +35,8 @@ const { getTraktRating } = require("./content/getTraktRating");
  * @param {string} sensCritiqueId - The SensCritique ID
  * @param {string} traktHomepage - The Trakt homepage URL
  * @param {string} traktId - The Trakt ID
- * @param {number} theMoviedbId - The MovieDB ID
+ * @param {number} tmdbId - TMDB ID
+ * @param {string} tmdbHomepage - TMDB homepage URL
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
  */
 const createJSON = async (
@@ -59,20 +61,22 @@ const createJSON = async (
   traktHomepage,
   traktId,
   mojoBoxOfficeArray,
-  theMoviedbId
+  tmdbId,
+  tmdbHomepage
 ) => {
-  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, theMoviedbId, false);
+  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, tmdbId, false);
   const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
   const allocinePopularity = await getAllocinePopularity(allocineURL, item_type);
-  const betaseriesUsersRating = await getBetaseriesUsersRating(betaseriesHomepage, betaseriesId);
+  const betaseriesRating = await getBetaseriesRating(betaseriesHomepage, betaseriesId);
   const betaseriesPlatformsLinks = await getPlatformsLinks(betaseriesHomepage, betaseriesId, allocineHomepage, imdbId);
-  const imdbUsersRating = await getImdbUsersRating(imdbHomepage);
+  const imdbRating = await getImdbRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(imdbHomepage);
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
   const metacriticRating = await getMetacriticRating(metacriticHomepage, metacriticId);
   const rottenTomatoesRating = await getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId);
   const letterboxdRating = await getLetterboxdRating(letterboxdHomepage, letterboxdId);
   const sensCritiqueRating = await getSensCritiqueRating(sensCritiqueHomepage, sensCritiqueId);
+  const tmdbRating = await getTmdbRating(allocineHomepage, tmdbHomepage, tmdbId);
   const traktRating = await getTraktRating(traktHomepage, traktId);
 
   /* Creating an object called allocineObj. */
@@ -92,7 +96,7 @@ const createJSON = async (
       ? {
           id: betaseriesId,
           url: betaseriesHomepage,
-          users_rating: betaseriesUsersRating,
+          users_rating: betaseriesRating,
         }
       : null;
 
@@ -100,7 +104,7 @@ const createJSON = async (
   const imdbObj = {
     id: imdbId,
     url: imdbHomepage,
-    users_rating: imdbUsersRating,
+    users_rating: imdbRating,
     popularity: imdbPopularity.popularity,
   };
 
@@ -146,6 +150,16 @@ const createJSON = async (
         }
       : null;
 
+  /* Creates a TMDB object if the TMDB rating is not null. */
+  const tmdbObj =
+    tmdbRating !== null
+      ? {
+          id: tmdbRating.id,
+          url: tmdbRating.url,
+          users_rating: tmdbRating.usersRating,
+        }
+      : null;
+
   /* Creates a Trakt object if the trakt rating is not null. */
   const traktObj =
     traktRating !== null
@@ -166,7 +180,7 @@ const createJSON = async (
       : null;
 
   const data = {
-    id: theMoviedbId,
+    id: tmdbId,
     item_type: item_type,
     is_active: isActive,
     title: allocineFirstInfo.allocineTitle,
@@ -182,6 +196,7 @@ const createJSON = async (
     metacritic: metacriticObj,
     rotten_tomatoes: rottenTomatoesObj,
     senscritique: sensCritiqueObj,
+    tmdb: tmdbObj,
     trakt: traktObj,
     mojo: mojoObj,
   };

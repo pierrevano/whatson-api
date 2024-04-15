@@ -1,7 +1,3 @@
-/**
- * Loads environment variables from a .env file into process.env.
- * @returns None
- */
 require("dotenv").config();
 
 const { MongoClient, ServerApiVersion } = require("mongodb");

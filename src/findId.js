@@ -1,7 +1,3 @@
-/**
- * Loads environment variables from a .env file into process.env.
- * @returns None
- */
 require("dotenv").config();
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -25,7 +21,7 @@ const collectionData = database.collection(config.collectionName);
  * If a key is found in the input JSON, it is used to form a query which is then executed against the MongoDB collection.
  *
  * @param {Object} json - The JSON object that contains the data to search for. Valid keys include 'title', 'allocineid',
- * 'betaseriesid', 'imdbid', 'metacriticid', 'rottentomatoesid', 'letterboxdid', 'senscritiqueid', 'traktid', 'themoviedbid'.
+ * 'betaseriesid', 'imdbid', 'metacriticid', 'rottentomatoesid', 'letterboxdid', 'senscritiqueid', 'traktid', 'tmdbid'.
  * @returns {Object} An object containing two properties: 'results' which is an array of matching documents from the database,
  *  and 'total_results', which is the total count of matching documents.
  */
@@ -39,7 +35,7 @@ const findId = async (json) => {
     rottentomatoesid: "rottentomatoes.id",
     senscritiqueid: "senscritique.id",
     traktid: "trakt.id",
-    themoviedbid: "id",
+    tmdbid: "id",
     title: null,
   };
 
@@ -47,7 +43,7 @@ const findId = async (json) => {
   for (let key in keysMapping) {
     if (json.hasOwnProperty(key)) {
       const mappedKey = keysMapping[key];
-      query[mappedKey != null ? mappedKey : key] = ["title"].includes(key) ? { $regex: json[key], $options: "i" } : ["allocineid", "themoviedbid"].includes(key) ? parseInt(json[key]) : json[key];
+      query[mappedKey != null ? mappedKey : key] = ["title"].includes(key) ? { $regex: json[key], $options: "i" } : ["allocineid", "tmdbid"].includes(key) ? parseInt(json[key]) : json[key];
       break;
     }
   }

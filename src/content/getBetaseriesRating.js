@@ -8,7 +8,7 @@ const { logErrors } = require("../utils/logErrors");
  * @param betaseriesHomepage - the URL of the show's page on betaseries.com
  * @returns The critics rating of the movie from betaseries.com
  */
-const getBetaseriesUsersRating = async (betaseriesHomepage, betaseriesId) => {
+const getBetaseriesRating = async (betaseriesHomepage, betaseriesId) => {
   let criticsRating = null;
 
   try {
@@ -19,7 +19,7 @@ const getBetaseriesUsersRating = async (betaseriesHomepage, betaseriesId) => {
     };
 
     if (isNotNull(betaseriesId)) {
-      $ = await getCheerioContent(`${betaseriesHomepage}`, options, "getBetaseriesUsersRating");
+      $ = await getCheerioContent(`${betaseriesHomepage}`, options, "getBetaseriesRating");
       const numberOfStars = $(".js-render-stars")[0];
       criticsRating = numberOfStars ? parseFloat(numberOfStars.attribs.title.replace(" / 5", "").replace(",", ".")) : null;
 
@@ -31,10 +31,10 @@ const getBetaseriesUsersRating = async (betaseriesHomepage, betaseriesId) => {
       if (criticsRating === 0) criticsRating = null;
     }
   } catch (error) {
-    logErrors(error, betaseriesHomepage, "getBetaseriesUsersRating");
+    logErrors(error, betaseriesHomepage, "getBetaseriesRating");
   }
 
   return criticsRating;
 };
 
-module.exports = { getBetaseriesUsersRating };
+module.exports = { getBetaseriesRating };
