@@ -39,7 +39,7 @@ const generateURLs = (item_type, config, json) => {
   const letterboxdId = item_type === "movie" ? json.LETTERBOXD_ID : null;
   const letterboxdHomepage = item_type === "movie" ? `${config.baseURLLetterboxdFilm}${letterboxdId}` : null;
 
-  const sensCritiqueId = json.SENSCRITIQUE_ID;
+  const sensCritiqueId = parseInt(json.SENSCRITIQUE_ID);
   const sensCritiqueHomepage = item_type === "movie" ? `${config.baseURLSensCritiqueFilm}${sensCritiqueId}` : `${config.baseURLSensCritiqueSerie}${sensCritiqueId}`;
 
   const tmdbId = parseInt(json.THEMOVIEDB_ID);
@@ -50,9 +50,9 @@ const generateURLs = (item_type, config, json) => {
 
   const isActive = json.IS_ACTIVE === "TRUE";
 
-  // If The Movie Database ID is not found, log an error and exit
+  // If the Movie Database ID is not found, log an error and exit.
   if (isNaN(tmdbId)) {
-    throw new Error(`Something went wrong, The Movie Database id has not been found for ${allocineHomepage}!`);
+    throw new Error(`Something went wrong, The Movie Database ID has not been found for ${allocineHomepage}!`);
   }
 
   return {

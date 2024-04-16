@@ -265,7 +265,7 @@ Example of an item returned:
     "mojo": {
         "rank": 150,
         "url": "https://www.boxofficemojo.com/title/tt15239678/",
-        "lifetime_gross": "$683,904,065"
+        "lifetime_gross": "$684,517,808"
     },
     "rotten_tomatoes": {
         "id": "dune_part_two",
@@ -283,7 +283,7 @@ Example of an item returned:
         "url": "https://www.senscritique.com/film/-/45424060",
         "users_rating": 7.8
     },
-    "updated_at": "2024-04-15T11:09:04.599Z",
+    "updated_at": "2024-04-16T06:12:02.170Z",
     "trakt": {
         "id": "dune-part-two-2023",
         "url": "https://trakt.tv/movies/dune-part-two-2023",
@@ -292,8 +292,10 @@ Example of an item returned:
     "tmdb": {
         "id": 693134,
         "url": "https://www.themoviedb.org/movie/693134",
-        "users_rating": 8.314
-    }
+        "users_rating": 8.308
+    },
+    "popularity_average": 6,
+    "ratings_average": 4.3
 }
 ```
 

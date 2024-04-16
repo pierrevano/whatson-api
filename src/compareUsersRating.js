@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const { config } = require("./config");
-const { getAllocineFirstInfo } = require("./content/getAllocineFirstInfo");
+const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
 const { getImdbRating } = require("./content/getImdbRating");
@@ -21,7 +21,7 @@ const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
  * @throws {Error} - If the API request fails.
  */
 const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, tmdbId, compare) => {
-  const users_rating = (await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, tmdbId, compare)).allocineUsersRating;
+  const users_rating = (await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, compare)).allocineUsersRating;
   const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
   const imdb_users_rating = await getImdbRating(imdbHomepage);
   const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;

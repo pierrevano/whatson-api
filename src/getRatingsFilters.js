@@ -24,55 +24,28 @@ const getRatingsFilters = async (ratings_filters_query) => {
       { $divide: ["$trakt.users_rating", 20] }
     ];
   } else {
-    if (ratings_filters_array.includes("allocine_critics")) {
-      ratings_filters.push({ $divide: ["$allocine.critics_rating", 1] });
-    }
+    const ratingsDivisors = {
+      allocine_critics: { path: "$allocine.critics_rating", divisor: 1 },
+      allocine_users: { path: "$allocine.users_rating", divisor: 1 },
+      betaseries_users: { path: "$betaseries.users_rating", divisor: 1 },
+      imdb_users: { path: "$imdb.users_rating", divisor: 2 },
+      metacritic_critics: { path: "$metacritic.critics_rating", divisor: 20 },
+      metacritic_users: { path: "$metacritic.users_rating", divisor: 2 },
+      rottenTomatoes_critics: { path: "$rotten_tomatoes.critics_rating", divisor: 20 },
+      rottenTomatoes_users: { path: "$rotten_tomatoes.users_rating", divisor: 20 },
+      letterboxd_users: { path: "$letterboxd.users_rating", divisor: 1 },
+      senscritique_users: { path: "$senscritique.users_rating", divisor: 2 },
+      tmdb_users: { path: "$tmdb.users_rating", divisor: 2 },
+      trakt_users: { path: "$trakt.users_rating", divisor: 20 },
+    };
 
-    if (ratings_filters_array.includes("allocine_users")) {
-      ratings_filters.push({ $divide: ["$allocine.users_rating", 1] });
-    }
-
-    if (ratings_filters_array.includes("betaseries_users")) {
-      ratings_filters.push({ $divide: ["$betaseries.users_rating", 1] });
-    }
-
-    if (ratings_filters_array.includes("imdb_users")) {
-      ratings_filters.push({ $divide: ["$imdb.users_rating", 2] });
-    }
-
-    if (ratings_filters_array.includes("metacritic_critics")) {
-      ratings_filters.push({ $divide: ["$metacritic.critics_rating", 20] });
-    }
-
-    if (ratings_filters_array.includes("metacritic_users")) {
-      ratings_filters.push({ $divide: ["$metacritic.users_rating", 2] });
-    }
-
-    if (ratings_filters_array.includes("rottenTomatoes_critics")) {
-      ratings_filters.push({
-        $divide: ["$rotten_tomatoes.critics_rating", 20],
-      });
-    }
-
-    if (ratings_filters_array.includes("rottenTomatoes_users")) {
-      ratings_filters.push({ $divide: ["$rotten_tomatoes.users_rating", 20] });
-    }
-
-    if (ratings_filters_array.includes("letterboxd_users")) {
-      ratings_filters.push({ $divide: ["$letterboxd.users_rating", 1] });
-    }
-
-    if (ratings_filters_array.includes("senscritique_users")) {
-      ratings_filters.push({ $divide: ["$senscritique.users_rating", 2] });
-    }
-
-    if (ratings_filters_array.includes("tmdb_users")) {
-      ratings_filters.push({ $divide: ["$tmdb.users_rating", 2] });
-    }
-
-    if (ratings_filters_array.includes("trakt_users")) {
-      ratings_filters.push({ $divide: ["$trakt.users_rating", 20] });
-    }
+    ratings_filters_array.forEach((filter) => {
+      if (ratingsDivisors[filter]) {
+        ratings_filters.push({
+          $divide: [ratingsDivisors[filter].path, ratingsDivisors[filter].divisor],
+        });
+      }
+    });
   }
 
   return ratings_filters;

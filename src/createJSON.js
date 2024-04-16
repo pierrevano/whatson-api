@@ -1,5 +1,5 @@
-const { getAllocineCriticInfo } = require("./content/getAllocineCriticInfo");
-const { getAllocineFirstInfo } = require("./content/getAllocineFirstInfo");
+const { getAllocineCriticsRating } = require("./content/getAllocineCriticsRating");
+const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getBetaseriesRating } = require("./content/getBetaseriesRating");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
@@ -64,11 +64,11 @@ const createJSON = async (
   tmdbId,
   tmdbHomepage
 ) => {
-  const allocineFirstInfo = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, tmdbId, false);
-  const allocineCriticInfo = await getAllocineCriticInfo(allocineCriticsDetails);
+  const allocineFirstInfo = await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, false);
+  const allocineCriticInfo = await getAllocineCriticsRating(allocineCriticsDetails);
   const allocinePopularity = await getAllocinePopularity(allocineURL, item_type);
   const betaseriesRating = await getBetaseriesRating(betaseriesHomepage, betaseriesId);
-  const betaseriesPlatformsLinks = await getPlatformsLinks(betaseriesHomepage, betaseriesId, allocineHomepage, imdbId);
+  const platformsLinks = await getPlatformsLinks(betaseriesHomepage, betaseriesId, allocineHomepage, imdbId);
   const imdbRating = await getImdbRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(imdbHomepage);
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
@@ -186,7 +186,7 @@ const createJSON = async (
     title: allocineFirstInfo.allocineTitle,
     image: allocineFirstInfo.allocineImage,
     trailer: allocineFirstInfo.trailer,
-    platforms_links: betaseriesPlatformsLinks,
+    platforms_links: platformsLinks,
     seasons_number: allocineFirstInfo.seasonsNumber,
     status: allocineFirstInfo.status,
     allocine: allocineObj,

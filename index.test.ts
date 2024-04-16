@@ -155,6 +155,7 @@ function checkItemProperties(items) {
     item.is_active === true
       ? expect(items.filter((item) => item.senscritique && typeof item.senscritique.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems)
       : null;
+    item.senscritique ? expect(["string", "number"]).toContain(typeof item.senscritique.id) : null;
 
     /* TMDB */
     item.tmdb ? expect(Object.keys(item.tmdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.tmdb) : null;

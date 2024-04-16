@@ -35,7 +35,7 @@ const getTmdbRating = async (allocineHomepage, tmdbHomepage, tmdbId) => {
       tmdbObj = {
         id: tmdbId,
         url: tmdbHomepage,
-        usersRating: parseFloat(data.vote_average),
+        usersRating: parseFloat(data.vote_average.toFixed(2)),
       };
     }
   } catch (error) {

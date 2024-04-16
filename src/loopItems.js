@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 // const { controlData } = require("./controlData");
-const { getAllocineFirstInfo } = require("./content/getAllocineFirstInfo");
+const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
@@ -108,7 +108,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       }
 
       // Check if page is existing before upsert to DB
-      const { error } = await getAllocineFirstInfo(allocineHomepage, betaseriesHomepage, tmdbId, true);
+      const { error } = await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, true);
 
       // Determine if user ratings are equal and fetch the data
       if (!error) {
