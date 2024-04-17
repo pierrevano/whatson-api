@@ -85,6 +85,8 @@ function checkItemProperties(items) {
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
 
+    item.is_active === true ? expect(items.filter((item) => item.tagline).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
+
     expect(item.ratings_average).not.toBeNull();
 
     item.item_type === "tvshow" && item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
@@ -177,6 +179,28 @@ function checkItemProperties(items) {
   });
 }
 
+function checkTypes(item, schema) {
+  Object.keys(schema).forEach((key) => {
+    if (item[key] && item.hasOwnProperty(key)) {
+      const expectedType = schema[key];
+      const actualType = typeof item[key];
+
+      // Check for an array of objects
+      if (Array.isArray(expectedType) && expectedType.length > 0 && typeof expectedType[0] === "object") {
+        item[key].forEach((obj) => {
+          checkTypes(obj, expectedType[0]);
+        });
+      } else if (typeof expectedType === "object" && !Array.isArray(expectedType)) {
+        // Check if the item is an object and recurse
+        checkTypes(item[key], expectedType);
+      } else {
+        // Simple type check
+        expect(actualType).toBe(expectedType);
+      }
+    }
+  });
+}
+
 /**
  * An object containing various query parameters and their expected results.
  * @param {object} params - An object containing various query parameters and their expected results.
@@ -266,6 +290,11 @@ const params = {
           checkRatings(ratingItem.source, ratingItem.ratingType, ratingItem.min, ratingItem.max);
         }
       }),
+  },
+
+  all_keys_type_check: {
+    query: "",
+    expectedResult: (items) => items.forEach((item) => checkTypes(item, config.schema)),
   },
 
   default_movies: {

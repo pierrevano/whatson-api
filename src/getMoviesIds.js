@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+const axios = require("axios");
 
 const { config } = require("./config");
 const { logErrors } = require("./utils/logErrors");
@@ -18,15 +18,15 @@ const getMoviesIds = async (cinemaIdParam) => {
     };
 
     try {
-      const response = await fetch(`${base_url}${cinemaIdParam}/p-1/`, options);
-      const data = await response.json();
+      let response = await axios.get(`${base_url}${cinemaIdParam}/p-1/`, options);
+      let data = response.data;
       const page = data.pagination.page;
       const totalPages = data.pagination.totalPages;
 
       const allMoviesIds = [];
       for (let index = page; index <= totalPages; index++) {
-        const response = await fetch(`${base_url}${cinemaIdParam}/p-${index}/`);
-        const data = await response.json();
+        response = await axios.get(`${base_url}${cinemaIdParam}/p-${index}/`, options);
+        data = response.data;
         const results = data.results;
         results.forEach((element) => {
           allMoviesIds.push(element.movie.internalId);

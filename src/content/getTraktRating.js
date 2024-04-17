@@ -25,10 +25,14 @@ const getTraktRating = async (traktHomepage, traktId) => {
       let usersRating = parseInt($(".trakt-rating .rating").text().replace("%", ""));
       if (isNaN(usersRating)) usersRating = null;
 
+      let tagline = $("#tagline").text();
+      if (!tagline) tagline = null;
+
       traktObj = {
         id: traktId,
         url: traktHomepage,
         usersRating: usersRating,
+        tagline: tagline,
       };
     }
   } catch (error) {

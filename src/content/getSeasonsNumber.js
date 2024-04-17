@@ -13,12 +13,7 @@ const getSeasonsNumber = async (allocineHomepage, tmdbId) => {
     let seasonsNumber = null;
 
     const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
-    if (data && data.number_of_seasons) {
-      seasonsNumber = data.number_of_seasons;
-    } else {
-      if (allocineHomepage.includes(config.baseURLTypeSeries)) seasonsNumber = parseInt($(".stats-number").eq(0).text());
-    }
-
+    if (data && data.number_of_seasons) seasonsNumber = data.number_of_seasons;
     if (isNaN(seasonsNumber)) seasonsNumber = null;
 
     return seasonsNumber;
