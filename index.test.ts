@@ -3,7 +3,8 @@ require("dotenv").config();
 const axios = require("axios");
 const fs = require("fs");
 
-const config = require("./src/config").config;
+const { config } = require("./src/config");
+const { schema } = require("./src/schema");
 
 const baseURL = process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
 
@@ -181,9 +182,12 @@ function checkItemProperties(items) {
 
 function checkTypes(item, schema) {
   Object.keys(schema).forEach((key) => {
-    if (item[key] && item.hasOwnProperty(key)) {
+    // Check if the key from schema exists on the item
+    if (item.hasOwnProperty(key)) {
       const expectedType = schema[key];
       const actualType = typeof item[key];
+
+      if (item[key] === null) return;
 
       // Check for an array of objects
       if (Array.isArray(expectedType) && expectedType.length > 0 && typeof expectedType[0] === "object") {
@@ -197,6 +201,9 @@ function checkTypes(item, schema) {
         // Simple type check
         expect(actualType).toBe(expectedType);
       }
+    } else if (!item.hasOwnProperty(key)) {
+      // The key is missing in the item
+      throw new Error(`Missing required key '${key}' in the item.`);
     }
   });
 }
@@ -294,7 +301,7 @@ const params = {
 
   all_keys_type_check: {
     query: "",
-    expectedResult: (items) => items.forEach((item) => checkTypes(item, config.schema)),
+    expectedResult: (items) => items.forEach((item) => checkTypes(item, schema)),
   },
 
   default_movies: {

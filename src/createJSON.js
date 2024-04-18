@@ -167,10 +167,9 @@ const createJSON = async (
           id: traktRating.id,
           url: traktRating.url,
           users_rating: traktRating.usersRating,
+          tagline: traktRating.tagline,
         }
       : null;
-
-  const tagline = traktRating && traktRating.tagline;
 
   const mojoObj =
     mojoValues !== null
@@ -188,7 +187,7 @@ const createJSON = async (
     title: allocineFirstInfo.allocineTitle,
     image: allocineFirstInfo.allocineImage,
     trailer: allocineFirstInfo.trailer,
-    tagline: tagline,
+    tagline: traktObj && traktObj.tagline,
     platforms_links: platformsLinks,
     seasons_number: allocineFirstInfo.seasonsNumber,
     status: allocineFirstInfo.status,
