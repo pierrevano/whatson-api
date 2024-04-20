@@ -742,9 +742,6 @@ describe("What's on? API tests", () => {
 
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     async function fetchItemsData() {
-      const { status: status_code } = await axios.get(baseURL);
-      if (status_code > 205) return;
-
       const apiCall = `${baseURL}${query}`;
 
       console.log(`Calling ${apiCall}`);

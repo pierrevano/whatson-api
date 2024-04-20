@@ -1,6 +1,6 @@
 # Define the main variables
 BASE_URL_ASSETS=https://whatson-assets.vercel.app
-BASE_URL_API=https://whatson-api.onrender.com
+BASE_URL_API=https://whatson-api-alt.onrender.com
 BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
