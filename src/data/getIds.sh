@@ -17,7 +17,7 @@ TYPE=$2
 URL_ESCAPE_FILE_PATH=./src/utils/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
-REGEX_IDS="^\/.*\=([0-9]{1,5}|[0-3][0-9]{5})\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),(TRUE|FALSE)$"
+REGEX_IDS="^\/.*\=([0-9]{1,5}|[0-3][0-9]{5}|1000000605)\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
 DEFAULT_FIRST_SHOW=/series/ficheserie_gen_cserie=28295.html
 
