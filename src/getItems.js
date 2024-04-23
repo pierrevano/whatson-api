@@ -86,17 +86,6 @@ const getItems = async (
     $match: { $and: [item_type_default, is_active_item] },
   };
 
-  const match_not_allocine_null = {
-    $match: {
-      $or: [{ "allocine.critics_rating": { $ne: null } }, { "allocine.users_rating": { $ne: null } }],
-    },
-  };
-  const match_not_betaseries_or_imdb_null = {
-    $match: {
-      $or: [{ "betaseries.users_rating": { $ne: null } }, { "imdb.users_rating": { $ne: null } }],
-    },
-  };
-
   const minimum_ratings_sorted = minimum_ratings.includes(",")
     ? parseFloat(
         minimum_ratings
@@ -128,16 +117,7 @@ const getItems = async (
 
   const facet = {
     $facet: {
-      results: [
-        match_not_allocine_null,
-        match_not_betaseries_or_imdb_null,
-        addFields_popularity_and_ratings,
-        match_ratings_above_minimum,
-        sort_popularity_and_ratings,
-        remove_sort_popularity,
-        skip_results,
-        limit_results,
-      ],
+      results: [addFields_popularity_and_ratings, match_ratings_above_minimum, sort_popularity_and_ratings, remove_sort_popularity, skip_results, limit_results],
       total_results: [{ $count: "total_results" }],
     },
   };
