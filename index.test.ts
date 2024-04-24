@@ -52,6 +52,9 @@ function isNumberWithDecimals(input) {
  */
 function checkRatings(item, property, minRating, maxRating) {
   if (item && item[property]) {
+    console.log(item);
+    console.log(item[property]);
+
     expect(item[property]).toBeGreaterThanOrEqual(minRating);
     expect(item[property]).toBeLessThanOrEqual(maxRating);
     expect(isNumberWithDecimals(item[property])).toBeTruthy;
