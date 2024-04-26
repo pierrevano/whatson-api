@@ -41,7 +41,7 @@ const config = {
 
   /* Tests settings */
   baseURLLocal: "http://localhost:8081",
-  baseURLRemote: "https://whatson-api-alt.onrender.com",
+  baseURLRemote: "https://whatson-api.onrender.com",
   checkItemsNumber: true,
   keysToCheck: [
     "_id",
