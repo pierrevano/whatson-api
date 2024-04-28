@@ -1,6 +1,6 @@
 # Define the main variables
 BASE_URL_ASSETS=https://whatson-assets.vercel.app
-BASE_URL_API=https://whatson-api.onrender.com
+BASE_URL_API=$(grep "baseURLRemote" ./src/config.js | cut -d '"' -f2)
 BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
@@ -477,7 +477,7 @@ do
           echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
           echo "BetaSeries ID: $BETASERIES_ID"
 
-          if [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
+          if { [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; } || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
             open -a $BROWSER_PATH "https://betaseries.com"
             echo "Enter the BetaSeries ID:"
@@ -494,10 +494,18 @@ do
           fi
 
           if [[ -z $THEMOVIEDB_ID ]] || [[ $THEMOVIEDB_ID == "null" ]]; then
-            if [[ $PROMPT == "recheck" ]]; then
+            if [[ $PROMPT == "recheck" ]] || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
               open -a $BROWSER_PATH "https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED"
               echo "Enter the The Movie Database ID:"
               read THEMOVIEDB_ID
+
+              if [[ $THEMOVIEDB_ID != "null" ]] && [[ $BETASERIES_ID != "null" ]]; then
+                data_found
+              elif [[ $THEMOVIEDB_ID != "null" ]] && [[ $BETASERIES_ID == "null" ]]; then
+                betaseries_to_null
+              else
+                data_not_found
+              fi
             else
               data_not_found
             fi
