@@ -10,7 +10,7 @@ BASE_URL_LETTERBOXD=https://letterboxd.com/film/
 
 if [[ $2 == "movie" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
-  FILMS_IDS_ACTIVE_FILE_PATH=./src/assets/temp_films_ids_active.txt
+  FILMS_IDS_ACTIVE_FILE_PATH=./temp_films_ids_active.txt
   FILMS_IDS_FILE_PATH_TEMP=./temp_new_films_ids.txt
   BASE_URL_ALLOCINE=/film/fichefilm_gen_cfilm=
   TEMP_FILE=temp_check_allocine_movie.txt
@@ -22,7 +22,7 @@ if [[ $2 == "movie" ]]; then
   BASE_URL_TRAKT=https://trakt.tv/movies/
 elif [[ $2 == "tvshow" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
-  FILMS_IDS_ACTIVE_FILE_PATH=./src/assets/temp_series_ids_active.txt
+  FILMS_IDS_ACTIVE_FILE_PATH=./temp_series_ids_active.txt
   FILMS_IDS_FILE_PATH_TEMP=./temp_new_series_ids.txt
   BASE_URL_ALLOCINE=/series/ficheserie_gen_cserie=
   TEMP_FILE=temp_check_allocine_series.txt
