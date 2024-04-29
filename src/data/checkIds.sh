@@ -10,6 +10,7 @@ BASE_URL_LETTERBOXD=https://letterboxd.com/film/
 
 if [[ $2 == "movie" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
+  FILMS_IDS_ACTIVE_FILE_PATH=./src/assets/temp_films_ids_active.txt
   FILMS_IDS_FILE_PATH_TEMP=./temp_new_films_ids.txt
   BASE_URL_ALLOCINE=/film/fichefilm_gen_cfilm=
   TEMP_FILE=temp_check_allocine_movie.txt
@@ -21,6 +22,7 @@ if [[ $2 == "movie" ]]; then
   BASE_URL_TRAKT=https://trakt.tv/movies/
 elif [[ $2 == "tvshow" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
+  FILMS_IDS_ACTIVE_FILE_PATH=./src/assets/temp_series_ids_active.txt
   FILMS_IDS_FILE_PATH_TEMP=./temp_new_series_ids.txt
   BASE_URL_ALLOCINE=/series/ficheserie_gen_cserie=
   TEMP_FILE=temp_check_allocine_series.txt
@@ -139,11 +141,18 @@ get_other_ids () {
 if [[ $1 == "check" ]]; then
   rm -f $FILMS_IDS_FILE_PATH_TEMP
 
-  TOTAL_LINES=$(wc -l <"${FILMS_IDS_FILE_PATH}")
+  FILE_PATH="$FILMS_IDS_FILE_PATH"
+
+  if [[ $3 == "active" ]]; then
+    grep ",TRUE$" $FILMS_IDS_FILE_PATH > $FILMS_IDS_ACTIVE_FILE_PATH
+    FILE_PATH="$FILMS_IDS_ACTIVE_FILE_PATH"
+  fi
+
+  TOTAL_LINES=$(wc -l <"${FILE_PATH}")
 
   while IFS= read -r LINE <&3; do
     PERCENT=$(echo "scale=2; ($COUNTER / $TOTAL_LINES) * 100" | bc)
-    URL=$(cat $FILMS_IDS_FILE_PATH | grep $LINE | cut -d',' -f1)
+    URL=$(cat $FILE_PATH | grep $LINE | cut -d',' -f1)
 
     if [[ $URL != "URL" ]]; then
       echo "$PERCENT: $URL"
@@ -189,7 +198,7 @@ if [[ $1 == "check" ]]; then
     fi
 
     ((COUNTER++))
-  done 3<$FILMS_IDS_FILE_PATH
+  done 3<$FILE_PATH
 elif [[ $1 == "update" ]]; then
   if [ -f "$FILMS_IDS_FILE_PATH_TEMP" ]; then
     echo "Updating the dataset with the file: $FILMS_IDS_FILE_PATH_TEMP"

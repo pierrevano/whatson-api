@@ -28,7 +28,7 @@ commands:
     steps:
       - run:
           name: Run tests
-          command: npm run test_remote
+          command: npm run test-remote
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/
             JEST_JUNIT_ADD_FILE_ATTRIBUTE: "true"
