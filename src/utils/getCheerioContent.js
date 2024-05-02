@@ -5,18 +5,6 @@ const cheerio = require("cheerio");
 
 const { logErrors } = require("./logErrors");
 
-axiosRetry(axios, {
-  retries: 5,
-  retryDelay: () => 3000,
-  retryCondition: (error) => {
-    return error.response && error.response.status >= 500;
-  },
-  onRetryAttempt: (error) => {
-    const cfg = axiosRetry.getConfig(error);
-    console.log(`Retrying request [${cfg.currentRetryAttempt}]: ${cfg.url}`);
-  },
-});
-
 /**
  * It takes a URL and an optional options object, makes a request to the URL, and returns a cheerio object.
  * @param url - The URL of the page you want to scrape.
@@ -27,6 +15,15 @@ axiosRetry(axios, {
 const getCheerioContent = async (url, options, origin) => {
   try {
     const startTime = Date.now();
+
+    axiosRetry(axios, {
+      retries: 50,
+      retryDelay: () => 10000,
+      retryCondition: (error) => {
+        // Retry only on network errors or server errors except for 404.
+        return !error.response || (error.response.status !== 404 && error.response.status >= 500);
+      },
+    });
 
     const response = await axios.get(url, options);
 
