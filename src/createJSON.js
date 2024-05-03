@@ -83,11 +83,11 @@ const createJSON = async (
   const allocineObj = {
     id: allocineId,
     url: allocineHomepage,
-    users_rating: allocineFirstInfo.allocineUsersRating,
-    critics_rating: allocineCriticInfo.criticsRating,
-    critics_number: allocineCriticInfo.criticsNumber,
-    critics_rating_details: allocineCriticInfo.criticsRatingDetails,
-    popularity: allocinePopularity.popularity,
+    users_rating: allocineFirstInfo && allocineFirstInfo.allocineUsersRating,
+    critics_rating: allocineCriticInfo && allocineCriticInfo.criticsRating,
+    critics_number: allocineCriticInfo && allocineCriticInfo.criticsNumber,
+    critics_rating_details: allocineCriticInfo && allocineCriticInfo.criticsRatingDetails,
+    popularity: allocinePopularity && allocinePopularity.popularity,
   };
 
   /* Creating an object called betaseriesObj. */
@@ -105,7 +105,7 @@ const createJSON = async (
     id: imdbId,
     url: imdbHomepage,
     users_rating: imdbRating,
-    popularity: imdbPopularity.popularity,
+    popularity: imdbPopularity && imdbPopularity.popularity,
   };
 
   /* Creates a Letterboxd object if the letterboxd rating is not null. */
