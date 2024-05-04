@@ -165,7 +165,7 @@ const config = {
       imdb: 0,
       metacriticUsers: 0,
       metacriticCritics: 10,
-      rottenTomatoes: 10,
+      rottenTomatoes: 0,
       letterboxd: 0,
       senscritique: 0,
       tmdb: 0,

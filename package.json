@@ -12,6 +12,7 @@
     "unchanged-dataset": "git update-index --assume-unchanged src/assets/films_ids.txt && git update-index --assume-unchanged src/assets/series_ids.txt",
     "check-dataset": "bash src/data/checkIds.sh check_dataset movie && bash src/data/checkIds.sh check_dataset tvshow",
     "check-dataset-force": "bash src/data/checkIds.sh check_dataset movie force && bash src/data/checkIds.sh check_dataset tvshow force",
+    "update-local": "bash src/data/getIds.sh local movie && bash src/data/getIds.sh local tvshow",
     "update-dataset": "bash src/data/checkIds.sh check movie && bash src/data/checkIds.sh check tvshow",
     "update-active-dataset": "bash src/data/checkIds.sh check movie active && bash src/data/checkIds.sh check tvshow active",
     "confirm-dataset": "bash src/data/checkIds.sh update movie && bash src/data/checkIds.sh update tvshow",
