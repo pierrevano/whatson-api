@@ -4,6 +4,13 @@ Companion to [What's on?](https://github.com/pierrevano/whatson)
 
 ---
 
+## IDs files available below
+
+- Movies: https://whatson-assets.vercel.app/films_ids.txt
+- TV Shows: https://whatson-assets.vercel.app/series_ids.txt
+
+---
+
 This API provides information on movies and tvshows.
 
 ## Endpoints

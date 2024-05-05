@@ -17,7 +17,7 @@ TYPE=$2
 URL_ESCAPE_FILE_PATH=./src/utils/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
-REGEX_IDS="^\/.*\=([0-9]{1,5}|[0-3][0-9]{5}|1000000605)\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),(TRUE|FALSE)$"
+REGEX_IDS="^\/.*\=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
 DEFAULT_FIRST_SHOW=/series/ficheserie_gen_cserie=28295.html
 
@@ -176,7 +176,7 @@ fetch_id () {
   local service_name=$3
 
   id=$(curl -s $wiki_url | grep $service_url | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  deprecated_id=$(curl -s $wiki_url | grep -A15 $service_url | grep "Q21441764" | wc -l | awk '{print $1}')
+  deprecated_id=$(curl -s $wiki_url | grep -A15 $service_url | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
 
   if [[ -z $id ]] || [[ $deprecated_id -eq 1 ]]; then
     id=null
@@ -410,7 +410,7 @@ do
         else
           echo "wikiUrl: $WIKI_URL"
 
-          IMDB_ID=$(curl -s $WIKI_URL | grep "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -Eo "tt[0-9]+" | head -1)
+          IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo "tt[0-9]+" | head -1)
           if [[ -z $IMDB_ID ]]; then
             IMDB_ID=null
           fi
@@ -427,10 +427,7 @@ do
         fi
 
         if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_SERVICE_NAME == "imdb" ]]; then
-          TRUES=$(cat $SKIP_IDS_FILE_PATH | grep "TRUE,TRUE,TRUE," | wc -l | awk '{print $1}')
-          if [ $TRUES -gt 0 ]; then
-              sed -i '' '/TRUE/!d' $SKIP_IDS_FILE_PATH
-          fi
+          sed -i '' "/TRUE,TRUE,TRUE,/d" $SKIP_IDS_FILE_PATH
 
           MATCH_SKIP_NUMBER=$(cat $SKIP_IDS_FILE_PATH | grep ".*=$FILM_ID\.html" | wc -l | awk '{print $1}')
           if [[ $MATCH_SKIP_NUMBER -eq 1 ]]; then
@@ -442,10 +439,16 @@ do
           fi
 
           if [[ $SKIP -eq 0 ]]; then
-            open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-            open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-            echo "Enter the IMDb ID:"
-            read IMDB_ID
+            KIDS_MOVIE=$(curl -s https://www.allocine.fr$URL | grep -E ">à partir de 3 ans<|>à partir de 6 ans<" | wc -l | awk '{print $1}')
+            if [[ $KIDS_MOVIE -eq 1 ]]; then
+              echo "https://www.allocine.fr$URL is a kids movie."
+              IMDB_ID="skip"
+            else
+              open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+              open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+              echo "Enter the IMDb ID:"
+              read IMDB_ID
+            fi
 
             if [[ $IMDB_ID == "skip" ]]; then
               echo $URL, >> $SKIP_IDS_FILE_PATH
