@@ -380,7 +380,7 @@ elif [[ $1 == "check_imdb" ]]; then
       if [[ $WIKI_URL ]]; then
         echo $WIKI_URL
 
-        IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo "tt[0-9]+" | head -1)
+        IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo ">tt[0-9]+<" | cut -d'<' -f1 | cut -d'>' -f2 | head -1)
         IMDB_ID_DEPRECATED=$(curl -s $WIKI_URL | grep -A15 "https://www.imdb.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
         if [[ -z $IMDB_ID ]] || [[ $IMDB_ID_DEPRECATED -eq 1 ]]; then
           IMDB_ID=null
@@ -388,8 +388,7 @@ elif [[ $1 == "check_imdb" ]]; then
         FOUND_IMDB_DIFFERENT=$(is_id_found "$IMDB_ID" "$IMDB_ID_FROM_FILE")
 
         if [[ $FOUND_IMDB_DIFFERENT -eq 1 ]]; then
-          echo "Found a different IMDB_ID from file: $IMDB_ID_FROM_FILE compared to the Wikidata one: $IMDB_ID. Aborting."
-          exit 1
+          echo "$WIKI_URL; $IMDB_ID_FROM_FILE; $IMDB_ID" >> $FILMS_IDS_FILE_PATH_TEMP
         fi
       fi
     fi
