@@ -3,7 +3,6 @@ require("dotenv").config();
 const axios = require("axios");
 
 const { config } = require("../config");
-const { getCheerioContent } = require("../utils/getCheerioContent");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -21,6 +20,8 @@ const processSvods = (svods) => {
       link_url: element.link_url,
     }));
   }
+
+  return platformsLinks;
 };
 
 /**
@@ -47,29 +48,12 @@ const getPlatformsLinks = async (betaseriesHomepage, betaseriesId, allocineHomep
       }
 
       if (data.show && data.show.platforms && data.show.platforms.svods) {
-        processSvods(data.show.platforms.svods);
+        platformsLinks = processSvods(data.show.platforms.svods);
       } else if (data.movie && data.movie.platforms_svod) {
-        processSvods(data.movie.platforms_svod);
+        platformsLinks = processSvods(data.movie.platforms_svod);
       }
 
       if (platformsLinks && platformsLinks.length === 0) platformsLinks = null;
-
-      if (!platformsLinks) {
-        const $ = await getCheerioContent(betaseriesHomepage, options, "getPlatformsLinks");
-
-        const platformElements = $(".toolTipWrapper.btnPlayVideoWrapper a");
-        platformsLinks = [];
-
-        platformElements.each((_id, el) => {
-          const text = $(el).text();
-          const name = text.replace(/Regarder avec |Regarder sur /g, "").trim();
-          const link_url = $(el).attr("href");
-
-          if (name !== "" && link_url !== "") platformsLinks.push({ name, link_url });
-        });
-
-        if (platformsLinks && platformsLinks.length === 0) platformsLinks = null;
-      }
     }
   } catch (error) {
     logErrors(error, allocineHomepage, "getPlatformsLinks");

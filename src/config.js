@@ -203,6 +203,7 @@ const config = {
     "Arte",
     "ADN",
     "Criterion Channel",
+    "Tubi TV",
   ],
 
   /* Search settings */

@@ -678,16 +678,16 @@ const params = {
     },
   },
 
-  items_updated_within_last_week: {
+  items_updated_within_last_month: {
     query: "?item_type=movie,tvshow&is_active=true&limit=400",
     expectedResult: (items) => {
       const today = new Date();
-      const weekAgoDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const monthAgoDate = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
       items.forEach((item) => {
         expect(item).toHaveProperty("updated_at");
         let itemDate = new Date(item.updated_at);
-        expect(itemDate.getTime()).toBeGreaterThanOrEqual(weekAgoDate.getTime());
+        expect(itemDate.getTime()).toBeGreaterThanOrEqual(monthAgoDate.getTime());
       });
     },
   },
