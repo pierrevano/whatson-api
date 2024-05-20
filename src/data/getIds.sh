@@ -503,6 +503,11 @@ do
 
           if [[ -z $THEMOVIEDB_ID ]]; then
             THEMOVIEDB_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE_TMDB")
+
+            if [[ $THEMOVIEDB_ID == "0" ]]; then
+              THEMOVIEDB_ID=null
+            fi
+
             echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
             echo "The Movie Database ID: $THEMOVIEDB_ID"
           fi

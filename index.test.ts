@@ -81,6 +81,7 @@ function checkItemProperties(items) {
 
     expect(item.id).not.toBeNull();
     expect(typeof item.id).toBe("number");
+    item.is_active === true ? expect(item.id).toBeGreaterThan(0) : null;
 
     expect(["movie", "tvshow"]).toContain(item.item_type);
 
