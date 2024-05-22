@@ -1,27 +1,51 @@
 require("dotenv").config();
 
 const axios = require("axios");
+const fs = require("fs");
 
 const { config } = require("../config");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
+const platformsNamesCount = {};
+
 const processSvods = (svods) => {
   let platformsLinks = [];
 
   if (Array.isArray(svods)) {
-    platformsLinks = svods.map((element) => ({
-      name: element.name,
-      link_url: element.link_url,
-    }));
+    platformsLinks = svods.map((element) => {
+      const platformName = element.name;
+      platformsNamesCount[platformName] = (platformsNamesCount[platformName] || 0) + 1;
+      return {
+        name: platformName,
+        link_url: element.link_url,
+      };
+    });
   } else if (typeof svods === "object") {
-    platformsLinks = Object.values(svods).map((element) => ({
-      name: element.name,
-      link_url: element.link_url,
-    }));
+    platformsLinks = Object.values(svods).map((element) => {
+      const platformName = element.name;
+      platformsNamesCount[platformName] = (platformsNamesCount[platformName] || 0) + 1;
+      return {
+        name: platformName,
+        link_url: element.link_url,
+      };
+    });
   }
 
   return platformsLinks;
+};
+
+/**
+ * Writes the platforms names count to a file.
+ */
+const writePlatformsNamesCount = (allocineHomepage) => {
+  const sortedPlatformsNames = Object.entries(platformsNamesCount)
+    .sort((a, b) => b[1] - a[1])
+    .map(([platformName, count]) => `${platformName}: ${count}`)
+    .join("\n");
+
+  const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tvshow" : "movie";
+  fs.writeFileSync(`./temp_platforms_names_${type}.txt`, sortedPlatformsNames);
 };
 
 /**
@@ -31,7 +55,7 @@ const processSvods = (svods) => {
  * @param imdbId - the IMDb ID
  * @returns An array of objects containing the name and link_url of the platforms.
  */
-const getPlatformsLinks = async (betaseriesHomepage, betaseriesId, allocineHomepage, imdbId) => {
+const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
   let platformsLinks = null;
 
   try {
@@ -54,6 +78,8 @@ const getPlatformsLinks = async (betaseriesHomepage, betaseriesId, allocineHomep
       }
 
       if (platformsLinks && platformsLinks.length === 0) platformsLinks = null;
+
+      writePlatformsNamesCount(allocineHomepage);
     }
   } catch (error) {
     logErrors(error, allocineHomepage, "getPlatformsLinks");

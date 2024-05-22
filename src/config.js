@@ -204,6 +204,7 @@ const config = {
     "ADN",
     "Criterion Channel",
     "Tubi TV",
+    "Kanopy",
   ],
 
   /* Search settings */
