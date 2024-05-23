@@ -347,27 +347,27 @@ do
         services=("imdb" "betaseries" "metacritic" "rottentomatoes" "letterboxd" "senscritique" "trakt")
         DUPLICATE=1
 
+        if [[ $MIN_RATING ]]; then
+          QUERY_WHATSON_API="$BASE_URL_API/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all"
+          echo "Querying: $QUERY_WHATSON_API"
+
+          ITEM=$(curl -s $QUERY_WHATSON_API)
+
+          if [[ -z $ITEM ]]; then
+            echo "----------------------------------------------------------------------------------------------------"
+            echo "Item not present in the API yet."
+            echo "----------------------------------------------------------------------------------------------------"
+          else
+            RATINGS_AVERAGE=$(echo $ITEM | jq '.ratings_average')
+            LESS_OR_EQUAL=$(echo "$MIN_RATING<=$RATINGS_AVERAGE" | bc)
+          fi
+        fi
+
         for service in "${services[@]}"; do
           check_var="$(echo ${service}_CHECK | tr '[:lower:]' '[:upper:]')"
 
           if [[ ${!check_var} == "null" ]] &&
             { [[ $PROMPT_SERVICE_NAME == "$service" ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
-            if [[ $MIN_RATING ]]; then
-              QUERY_WHATSON_API="$BASE_URL_API/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all"
-              echo "Querying: $QUERY_WHATSON_API"
-
-              ITEM=$(curl -s $QUERY_WHATSON_API)
-
-              if [[ -z $ITEM ]]; then
-                echo "----------------------------------------------------------------------------------------------------"
-                echo "Item not present in the API yet."
-                echo "----------------------------------------------------------------------------------------------------"
-              else
-                RATINGS_AVERAGE=$(echo $ITEM | jq '.ratings_average')
-                LESS_OR_EQUAL=$(echo "$MIN_RATING<=$RATINGS_AVERAGE" | bc)
-              fi
-            fi
-
             if [[ $ITEM ]] && { [[ -z $MIN_RATING ]] || [[ $LESS_OR_EQUAL -eq 1 ]]; }; then
               DUPLICATE=0
               echo "Found $URL to be rechecked."
