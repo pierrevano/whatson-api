@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const baseURL = {
   allocine: "https://www.allocine.fr",
   assets: "https://whatson-assets.vercel.app",
@@ -41,7 +43,7 @@ const config = {
 
   /* Tests settings */
   baseURLLocal: "http://localhost:8081",
-  baseURLRemote: "https://whatson-api.onrender.com",
+  baseURLRemote: process.env.WHATSON_API_URL,
   checkItemsNumber: true,
   keysToCheck: [
     "_id",
