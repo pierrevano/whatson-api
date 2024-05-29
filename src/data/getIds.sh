@@ -1,6 +1,5 @@
 # Define the main variables
 BASE_URL_ASSETS=https://whatson-assets.vercel.app
-BASE_URL_API=$(grep "baseURLRemote" ./src/config.js | cut -d '"' -f2)
 BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
 FILMS_FIRST_INDEX_NUMBER=1
@@ -107,10 +106,12 @@ if [[ $SOURCE != "circleci" ]]; then
 fi
 echo "SOURCE: $SOURCE"
 echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
+echo "CREDENTIALS: $CREDENTIALS"
 echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
 echo "VERCEL_ORG_ID: $VERCEL_ORG_ID"
 echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
 echo "VERCEL_TOKEN: $VERCEL_TOKEN"
+echo "WHATSON_API_URL: $WHATSON_API_URL"
 echo "----------------------------------------------------------------------------------------------------"
 if [[ -z $BETASERIES_API_KEY ]]; then
   exit 1
@@ -137,17 +138,32 @@ remove_files () {
   fi
 }
 
+set_default_values_if_empty () {
+  [[ -z $METACRITIC_ID ]] && METACRITIC_ID=null
+  [[ -z $IMDB_ID ]] && IMDB_ID=null
+  [[ -z $BETASERIES_ID ]] && BETASERIES_ID=null
+  [[ -z $THEMOVIEDB_ID ]] && THEMOVIEDB_ID="noTheMovieDBId"
+  [[ -z $ROTTEN_TOMATOES_ID ]] && ROTTEN_TOMATOES_ID=null
+  [[ -z $LETTERBOXD_ID ]] && LETTERBOXD_ID=null
+  [[ -z $SENSCRITIQUE_ID ]] && SENSCRITIQUE_ID=null
+  [[ -z $TRAKT_ID ]] && TRAKT_ID=null
+}
+
 # A function that is called when the data is not found.
 data_not_found () {
   IMDB_ID=null
   BETASERIES_ID=null
   THEMOVIEDB_ID="noTheMovieDBId"
 
+  set_default_values_if_empty
+
   echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
 betaseries_to_null () {
+  set_default_values_if_empty
+
   echo "BetaSeries is null but the rest is fine."
   echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
@@ -155,6 +171,8 @@ betaseries_to_null () {
 
 # A function that is called when the data is found.
 data_found () {
+  set_default_values_if_empty
+
   echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
@@ -343,12 +361,12 @@ do
 
       echo $URL >> $TEMP_URLS_FILE_PATH
 
-      if [[ $PROMPT == "recheck" ]]; then
+      if [[ $PROMPT == "recheck" ]] && [[ $THEMOVIEDB_CHECK ]]; then
         services=("imdb" "betaseries" "metacritic" "rottentomatoes" "letterboxd" "senscritique" "trakt")
         DUPLICATE=1
 
         if [[ $MIN_RATING ]]; then
-          QUERY_WHATSON_API="$BASE_URL_API/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all"
+          QUERY_WHATSON_API="$WHATSON_API_URL/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all"
           echo "Querying: $QUERY_WHATSON_API"
 
           ITEM=$(curl -s $QUERY_WHATSON_API)
@@ -475,10 +493,11 @@ do
           fi
         fi
 
-        if [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; then
+        KIDS_MOVIE=$(curl -s https://www.allocine.fr$URL | grep -E ">à partir de 3 ans<|>à partir de 6 ans<" | wc -l | awk '{print $1}')
+        if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { [[ $PROMPT == "recheck" ]] && [[ $KIDS_MOVIE -eq 1 ]]; }; then
           data_not_found
         else
-          if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; then
+          if { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && [[ $PROMPT == "recheck" ]]; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
             open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
             echo "Enter the IMDb ID:"
