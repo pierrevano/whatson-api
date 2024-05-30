@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const axiosRetry = require("axios-retry");
 const axios = require("axios");
 
@@ -15,7 +13,7 @@ const { logErrors } = require("../src/utils/logErrors");
 const getTMDBResponse = async (allocineHomepage, tmdbId) => {
   try {
     const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
-    const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${process.env.THEMOVIEDB_API_KEY}`;
+    const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}`;
 
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = { validateStatus: (status) => status < 500 };

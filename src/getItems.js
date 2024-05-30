@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { config } = require("./config");
@@ -9,7 +7,7 @@ const { getPopularityFilters } = require("./getPopularityFilters");
 const { getRatingsFilters } = require("./getRatingsFilters");
 const { getPipelineByPlatformNames } = require("./getPipelineByPlatformNames");
 
-const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${config.mongoDbCredentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

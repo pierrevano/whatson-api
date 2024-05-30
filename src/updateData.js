@@ -1,10 +1,10 @@
-require("dotenv").config();
-
 const csv = require("csvtojson");
+
+const { config } = require("./config");
 
 /* Connecting to the MongoDB database. */
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const uri = `mongodb+srv://${process.env.CREDENTIALS}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${config.mongoDbCredentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -12,7 +12,6 @@ const client = new MongoClient(uri, {
 });
 
 const { b64Encode } = require("./utils/b64EncodeAndDecode");
-const { config } = require("./config");
 const { countNullElements } = require("./countNullElements");
 const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
 const { getMojoBoxOffice } = require("./content/getMojoBoxOffice");

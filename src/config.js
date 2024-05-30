@@ -20,6 +20,11 @@ const baseURL = {
 };
 
 const config = {
+  /* Credentials */
+  betaseriesApiKey: process.env.BETASERIES_API_KEY,
+  mongoDbCredentials: process.env.CREDENTIALS,
+  tmdbApiKey: process.env.THEMOVIEDB_API_KEY,
+
   /* Database settings */
   dbName: "whatson",
   collectionName: "data",

@@ -106,7 +106,6 @@ if [[ $SOURCE != "circleci" ]]; then
 fi
 echo "SOURCE: $SOURCE"
 echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
-echo "CREDENTIALS: $CREDENTIALS"
 echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
 echo "VERCEL_ORG_ID: $VERCEL_ORG_ID"
 echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
@@ -139,10 +138,10 @@ remove_files () {
 }
 
 set_default_values_if_empty () {
-  [[ -z $METACRITIC_ID ]] && METACRITIC_ID=null
   [[ -z $IMDB_ID ]] && IMDB_ID=null
   [[ -z $BETASERIES_ID ]] && BETASERIES_ID=null
   [[ -z $THEMOVIEDB_ID ]] && THEMOVIEDB_ID="noTheMovieDBId"
+  [[ -z $METACRITIC_ID ]] && METACRITIC_ID=null
   [[ -z $ROTTEN_TOMATOES_ID ]] && ROTTEN_TOMATOES_ID=null
   [[ -z $LETTERBOXD_ID ]] && LETTERBOXD_ID=null
   [[ -z $SENSCRITIQUE_ID ]] && SENSCRITIQUE_ID=null
@@ -455,6 +454,7 @@ do
           fi
         fi
 
+        KIDS_MOVIE=$(curl -s https://www.allocine.fr$URL | grep -E ">à partir de 3 ans<|>à partir de 6 ans<" | wc -l | awk '{print $1}')
         if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_SERVICE_NAME == "imdb" ]]; then
           sed -i '' "/TRUE,TRUE,TRUE,/d" $SKIP_IDS_FILE_PATH
 
@@ -468,7 +468,6 @@ do
           fi
 
           if [[ $SKIP -eq 0 ]]; then
-            KIDS_MOVIE=$(curl -s https://www.allocine.fr$URL | grep -E ">à partir de 3 ans<|>à partir de 6 ans<" | wc -l | awk '{print $1}')
             if [[ $KIDS_MOVIE -eq 1 ]]; then
               echo "https://www.allocine.fr$URL is a kids movie."
               IMDB_ID="skip"
@@ -493,7 +492,6 @@ do
           fi
         fi
 
-        KIDS_MOVIE=$(curl -s https://www.allocine.fr$URL | grep -E ">à partir de 3 ans<|>à partir de 6 ans<" | wc -l | awk '{print $1}')
         if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { [[ $PROMPT == "recheck" ]] && [[ $KIDS_MOVIE -eq 1 ]]; }; then
           data_not_found
         else

@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const axios = require("axios");
 const fs = require("fs");
 
@@ -61,7 +59,7 @@ const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
   try {
     if (isNotNull(betaseriesId)) {
       const baseURLBetaseriesAPI = allocineHomepage.includes(config.baseURLTypeSeries) ? config.baseURLBetaseriesAPISeries : config.baseURLBetaseriesAPIFilms;
-      const url = `${baseURLBetaseriesAPI}?key=${process.env.BETASERIES_API_KEY}&imdb_id=${imdbId}`;
+      const url = `${baseURLBetaseriesAPI}?key=${config.betaseriesApiKey}&imdb_id=${imdbId}`;
 
       const options = { validateStatus: (status) => status < 500 };
       const { data, status } = await axios.get(url, options);
