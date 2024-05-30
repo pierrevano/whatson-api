@@ -70,7 +70,7 @@ Provides detailed information about specific item (movie or tvshow) by its uniqu
 
 Example of an item returned:
 
-```
+```json
 {
   "_id": "string", // Unique MongoDB identifier for the item
   "allocine": {
