@@ -49,6 +49,8 @@ const config = {
   /* Tests settings */
   baseURLLocal: "http://localhost:8081",
   baseURLRemote: process.env.WHATSON_API_URL,
+  maxLimitLocal: 3000,
+  maxLimitRemote: 400,
   checkItemsNumber: true,
   keysToCheck: [
     "_id",
@@ -100,8 +102,6 @@ const config = {
   ratings_filters:
     "allocine_critics,allocine_users,betaseries_users,imdb_users,letterboxd_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users",
   timeout: 500000,
-  maxLimit: 400,
-  maxLimitLocal: 3000,
 
   /* Services settings */
   services: [

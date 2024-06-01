@@ -7,7 +7,7 @@ const { config } = require("./src/config");
 const { schema } = require("./src/schema");
 
 const baseURL = process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
-const maxLimitInactiveItems = process.env.SOURCE === "remote" ? config.maxLimit : config.maxLimitLocal;
+const higherLimit = process.env.SOURCE === "remote" ? config.maxLimitRemote : config.maxLimitLocal;
 
 /**
  * A function to count the number of lines in a file.
@@ -220,7 +220,7 @@ function checkTypes(item, schema) {
  */
 const params = {
   valid_users_ratings: {
-    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimit}`,
+    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) =>
       items.forEach((item) => {
         const ratingItems = [
@@ -633,27 +633,27 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&limit=${config.maxLimit}`,
+    query: `?item_type=movie&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&limit=${maxLimitInactiveItems}`,
+    query: `?item_type=movie&is_active=false&limit=${higherLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimit}`,
+    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&limit=${maxLimitInactiveItems}`,
+    query: `?item_type=tvshow&is_active=false&limit=${higherLimit}`,
     expectedResult: checkItemProperties,
   },
 
   all_keys_are_lowercase: {
-    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimit}`,
+    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) =>
       items.forEach((item) => {
         for (let key in item) {
@@ -663,7 +663,7 @@ const params = {
   },
 
   unique_allocine_ids_movie: {
-    query: `?item_type=movie&is_active=true,false&limit=${maxLimitInactiveItems}`,
+    query: `?item_type=movie&is_active=true,false&limit=${higherLimit}`,
     expectedResult: (items) => {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
@@ -672,7 +672,7 @@ const params = {
   },
 
   unique_allocine_ids_tvshow: {
-    query: `?item_type=tvshow&is_active=true,false&limit=${maxLimitInactiveItems}`,
+    query: `?item_type=tvshow&is_active=true,false&limit=${higherLimit}`,
     expectedResult: (items) => {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
@@ -681,7 +681,7 @@ const params = {
   },
 
   items_updated_within_last_month: {
-    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimit}`,
+    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const today = new Date();
       const monthAgoDate = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -719,7 +719,7 @@ const params = {
   },
 
   include_all_platforms: {
-    query: `?platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimit}`,
+    query: `?platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(items.filter((item) => item.platforms_links === null).length).toBeGreaterThan(config.minimumNumberOfItems.default);
       items.forEach((item) => item.platforms_links && item.platforms_links.forEach((platform) => expect(config.platforms).toContain(platform.name)));
