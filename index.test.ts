@@ -7,6 +7,7 @@ const { config } = require("./src/config");
 const { schema } = require("./src/schema");
 
 const baseURL = process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
+const maxLimitInactiveItems = process.env.SOURCE === "remote" ? config.maxLimit : config.maxLimitLocal;
 
 /**
  * A function to count the number of lines in a file.
@@ -637,7 +638,7 @@ const params = {
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&limit=${config.maxLimit}`,
+    query: `?item_type=movie&is_active=false&limit=${maxLimitInactiveItems}`,
     expectedResult: checkItemProperties,
   },
 
@@ -647,7 +648,7 @@ const params = {
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&limit=${config.maxLimit}`,
+    query: `?item_type=tvshow&is_active=false&limit=${maxLimitInactiveItems}`,
     expectedResult: checkItemProperties,
   },
 
@@ -662,7 +663,7 @@ const params = {
   },
 
   unique_allocine_ids_movie: {
-    query: `?item_type=movie&is_active=true,false&limit=${config.maxLimit}`,
+    query: `?item_type=movie&is_active=true,false&limit=${maxLimitInactiveItems}`,
     expectedResult: (items) => {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
@@ -671,7 +672,7 @@ const params = {
   },
 
   unique_allocine_ids_tvshow: {
-    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimit}`,
+    query: `?item_type=tvshow&is_active=true,false&limit=${maxLimitInactiveItems}`,
     expectedResult: (items) => {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
