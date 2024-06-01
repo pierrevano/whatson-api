@@ -219,7 +219,7 @@ function checkTypes(item, schema) {
  */
 const params = {
   valid_users_ratings: {
-    query: "?item_type=movie,tvshow&is_active=true&limit=400",
+    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimit}`,
     expectedResult: (items) =>
       items.forEach((item) => {
         const ratingItems = [
@@ -632,27 +632,27 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: "?item_type=movie&is_active=true&limit=400",
+    query: `?item_type=movie&is_active=true&limit=${config.maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: "?item_type=movie&is_active=false&limit=3000",
+    query: `?item_type=movie&is_active=false&limit=${config.maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: "?item_type=tvshow&is_active=true&limit=400",
+    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: "?item_type=tvshow&is_active=false&limit=3000",
+    query: `?item_type=tvshow&is_active=false&limit=${config.maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   all_keys_are_lowercase: {
-    query: "?item_type=movie,tvshow&is_active=true&limit=400",
+    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimit}`,
     expectedResult: (items) =>
       items.forEach((item) => {
         for (let key in item) {
@@ -662,7 +662,7 @@ const params = {
   },
 
   unique_allocine_ids_movie: {
-    query: "?item_type=movie&is_active=true,false&limit=3000",
+    query: `?item_type=movie&is_active=true,false&limit=${config.maxLimit}`,
     expectedResult: (items) => {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
@@ -671,7 +671,7 @@ const params = {
   },
 
   unique_allocine_ids_tvshow: {
-    query: "?item_type=tvshow&is_active=true,false&limit=3000",
+    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimit}`,
     expectedResult: (items) => {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
@@ -680,7 +680,7 @@ const params = {
   },
 
   items_updated_within_last_month: {
-    query: "?item_type=movie,tvshow&is_active=true&limit=400",
+    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimit}`,
     expectedResult: (items) => {
       const today = new Date();
       const monthAgoDate = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -718,7 +718,7 @@ const params = {
   },
 
   include_all_platforms: {
-    query: `?platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=3000`,
+    query: `?platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimit}`,
     expectedResult: (items) => {
       expect(items.filter((item) => item.platforms_links === null).length).toBeGreaterThan(config.minimumNumberOfItems.default);
       items.forEach((item) => item.platforms_links && item.platforms_links.forEach((platform) => expect(config.platforms).toContain(platform.name)));
