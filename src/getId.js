@@ -10,11 +10,8 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-/* Connecting to the database and the collection. */
-const dbName = config.dbName;
-const collectionName = config.collectionName;
-const database = client.db(dbName);
-const collectionData = database.collection(collectionName);
+const database = client.db(config.dbName);
+const collectionData = database.collection(config.collectionName);
 
 /**
  * Retrieves an item's ID from the database based on the given parameters.
