@@ -6,7 +6,11 @@
  * @param {Array} pipeline - The current pipeline to add to.
  * @returns {Array} - The updated pipeline.
  */
-const getPipelineByPlatformNames = (is_active_item, platform_names, pipeline) => {
+const getPipelineByPlatformNames = (
+  is_active_item,
+  platform_names,
+  pipeline,
+) => {
   if (platform_names) {
     const decodedPlatformNames = decodeURIComponent(platform_names);
     const decodedPlatformNamesArray = decodedPlatformNames.split(",");

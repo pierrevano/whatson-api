@@ -21,7 +21,11 @@ const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
     };
 
     if (isNotNull(sensCritiqueId)) {
-      $ = await getCheerioContent(`${sensCritiqueHomepage}`, options, "getSensCritiqueRating");
+      $ = await getCheerioContent(
+        `${sensCritiqueHomepage}`,
+        options,
+        "getSensCritiqueRating",
+      );
       let usersRating = parseFloat($('[data-testid="Rating"]').first().text());
       if (isNaN(usersRating)) usersRating = null;
 

@@ -10,13 +10,18 @@ const { logErrors } = require("../utils/logErrors");
  */
 const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
   try {
-    const popularityPath = item_type === "movie" ? config.filmsPopularityPath : config.seriesPopularityPath;
+    const popularityPath =
+      item_type === "movie"
+        ? config.filmsPopularityPath
+        : config.seriesPopularityPath;
     const url = `${config.baseURLAssets}/${popularityPath}`;
 
     const response = await axios.get(url);
     const lines = response.data.split("\n");
 
-    const firstLineWithAllocineURL = lines.find((line) => line.includes(allocineURL));
+    const firstLineWithAllocineURL = lines.find((line) =>
+      line.includes(allocineURL),
+    );
 
     if (firstLineWithAllocineURL) {
       const valueBeforeComma = firstLineWithAllocineURL.match(/^(.+?),/)[1];
@@ -34,7 +39,10 @@ const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
  */
 const getAllocinePopularity = async (allocineURL, item_type) => {
   try {
-    const popularityTemp = await extractIdFromRemotePopularityFile(allocineURL, item_type);
+    const popularityTemp = await extractIdFromRemotePopularityFile(
+      allocineURL,
+      item_type,
+    );
     const popularity = popularityTemp ? parseInt(popularityTemp.trim()) : null;
 
     return {

@@ -19,9 +19,17 @@ const getBetaseriesRating = async (betaseriesHomepage, betaseriesId) => {
     };
 
     if (isNotNull(betaseriesId)) {
-      $ = await getCheerioContent(`${betaseriesHomepage}`, options, "getBetaseriesRating");
+      $ = await getCheerioContent(
+        `${betaseriesHomepage}`,
+        options,
+        "getBetaseriesRating",
+      );
       const numberOfStars = $(".js-render-stars")[0];
-      criticsRating = numberOfStars ? parseFloat(numberOfStars.attribs.title.replace(" / 5", "").replace(",", ".")) : null;
+      criticsRating = numberOfStars
+        ? parseFloat(
+            numberOfStars.attribs.title.replace(" / 5", "").replace(",", "."),
+          )
+        : null;
 
       /**
        * The value `criticsRating` received as `0` doesn't necessarily signify a rating of zero.

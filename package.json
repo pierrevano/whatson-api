@@ -26,9 +26,6 @@
     "update-movie-data-second-half": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(false));\" | xargs -I {} node src/updateData.js movie no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7",
     "update-tvshow-data-all": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(true));\" | xargs -I {} node src/updateData.js tvshow no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7"
   },
-  "prettier": {
-    "printWidth": 200
-  },
   "author": "Pierre Vanoverschelde",
   "license": "ISC",
   "dependencies": {

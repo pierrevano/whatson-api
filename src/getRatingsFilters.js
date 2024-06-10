@@ -31,8 +31,14 @@ const getRatingsFilters = async (ratings_filters_query) => {
       imdb_users: { path: "$imdb.users_rating", divisor: 2 },
       metacritic_critics: { path: "$metacritic.critics_rating", divisor: 20 },
       metacritic_users: { path: "$metacritic.users_rating", divisor: 2 },
-      rottenTomatoes_critics: { path: "$rotten_tomatoes.critics_rating", divisor: 20 },
-      rottenTomatoes_users: { path: "$rotten_tomatoes.users_rating", divisor: 20 },
+      rottenTomatoes_critics: {
+        path: "$rotten_tomatoes.critics_rating",
+        divisor: 20,
+      },
+      rottenTomatoes_users: {
+        path: "$rotten_tomatoes.users_rating",
+        divisor: 20,
+      },
       letterboxd_users: { path: "$letterboxd.users_rating", divisor: 1 },
       senscritique_users: { path: "$senscritique.users_rating", divisor: 2 },
       tmdb_users: { path: "$tmdb.users_rating", divisor: 2 },
@@ -42,7 +48,10 @@ const getRatingsFilters = async (ratings_filters_query) => {
     ratings_filters_array.forEach((filter) => {
       if (ratingsDivisors[filter]) {
         ratings_filters.push({
-          $divide: [ratingsDivisors[filter].path, ratingsDivisors[filter].divisor],
+          $divide: [
+            ratingsDivisors[filter].path,
+            ratingsDivisors[filter].divisor,
+          ],
         });
       }
     });

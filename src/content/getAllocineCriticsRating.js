@@ -24,12 +24,18 @@ const getAllocineCriticsRating = async (allocineCriticsDetails) => {
       },
     };
 
-    const $ = await getCheerioContent(allocineCriticsDetails, options, "getAllocineCriticsRating");
+    const $ = await getCheerioContent(
+      allocineCriticsDetails,
+      options,
+      "getAllocineCriticsRating",
+    );
 
     const criticsRatingDetails = [];
     let sumRatings = 0;
     $(".js-anchor-link").each((_i, element) => {
-      const rating = convertTitleToNumber(element.parent.children[0].attribs.title);
+      const rating = convertTitleToNumber(
+        element.parent.children[0].attribs.title,
+      );
       sumRatings += rating;
       criticsRatingDetails.push({
         critic_name: element.children[0].data,
@@ -38,12 +44,16 @@ const getAllocineCriticsRating = async (allocineCriticsDetails) => {
     });
 
     const criticsNumber = criticsRatingDetails.length;
-    const criticsRating = criticsNumber > 0 ? parseFloat((sumRatings / criticsNumber).toFixed(1)) : null;
+    const criticsRating =
+      criticsNumber > 0
+        ? parseFloat((sumRatings / criticsNumber).toFixed(1))
+        : null;
 
     allocineCriticInfo = {
       criticsNumber: criticsNumber || null,
       criticsRating: criticsRating,
-      criticsRatingDetails: criticsRatingDetails.length > 0 ? criticsRatingDetails : null,
+      criticsRatingDetails:
+        criticsRatingDetails.length > 0 ? criticsRatingDetails : null,
     };
   } catch (error) {
     logErrors(error, allocineCriticsDetails, "getAllocineCriticsRating");

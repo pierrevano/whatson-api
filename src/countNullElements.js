@@ -10,13 +10,21 @@ const { config } = require("./config");
  * @returns {void}
  * @throws {Error} if the percentage of null results is higher than the threshold.
  */
-const checkDocumentThreshold = async (collectionData, documents, query, rateSource, thresholdKey) => {
+const checkDocumentThreshold = async (
+  collectionData,
+  documents,
+  query,
+  rateSource,
+  thresholdKey,
+) => {
   const countNull = await collectionData.countDocuments(query);
 
   if (thresholdKey) {
     if ((countNull * 100) / documents > config.maximumThreshold[thresholdKey]) {
       console.log(`Number of null for ${rateSource}: ${countNull}`);
-      throw new Error(`Something went wrong, at least ${config.maximumThreshold[thresholdKey]}% of ${rateSource} ratings are set to null`);
+      throw new Error(
+        `Something went wrong, at least ${config.maximumThreshold[thresholdKey]}% of ${rateSource} ratings are set to null`,
+      );
     }
   } else {
     console.log(`Number of items for ${rateSource}: ${countNull}`);
@@ -81,7 +89,13 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
 
     await Promise.all(
       queriesAndThresholdKeys.map(({ query, rateSource, thresholdKey }) => {
-        return checkDocumentThreshold(collectionData, documents, query, rateSource, thresholdKey);
+        return checkDocumentThreshold(
+          collectionData,
+          documents,
+          query,
+          rateSource,
+          thresholdKey,
+        );
       }),
     );
   } catch (error) {

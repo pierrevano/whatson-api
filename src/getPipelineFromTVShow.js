@@ -12,7 +12,14 @@ function capitalize(word) {
  * @param {string} status - The status of the tvshow to retrieve.
  * @returns {Array} - The updated pipeline.
  */
-const getPipelineFromTVShow = (config, is_active_item, item_type, pipeline, seasons_number, status) => {
+const getPipelineFromTVShow = (
+  config,
+  is_active_item,
+  item_type,
+  pipeline,
+  seasons_number,
+  status,
+) => {
   const item_status = { status: { $in: status.split(",").map(capitalize) } };
   const item_type_tvshow = { item_type: "tvshow" };
   const seasons_number_first = {
@@ -33,7 +40,11 @@ const getPipelineFromTVShow = (config, is_active_item, item_type, pipeline, seas
     if (seasons_number > config.maxSeasonsNumber) {
       const match_item_type_tvshow_and_seasons_number_more_than_max = {
         $match: {
-          $and: [is_active_item, item_type_tvshow, { $or: [seasons_number_first, seasons_number_last] }],
+          $and: [
+            is_active_item,
+            item_type_tvshow,
+            { $or: [seasons_number_first, seasons_number_last] },
+          ],
         },
       };
       pipeline.push(match_item_type_tvshow_and_seasons_number_more_than_max);

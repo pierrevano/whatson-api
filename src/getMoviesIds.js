@@ -18,14 +18,20 @@ const getMoviesIds = async (cinemaIdParam) => {
     };
 
     try {
-      let response = await axios.get(`${base_url}${cinemaIdParam}/p-1/`, options);
+      let response = await axios.get(
+        `${base_url}${cinemaIdParam}/p-1/`,
+        options,
+      );
       let data = response.data;
       const page = data.pagination.page;
       const totalPages = data.pagination.totalPages;
 
       const allMoviesIds = [];
       for (let index = page; index <= totalPages; index++) {
-        response = await axios.get(`${base_url}${cinemaIdParam}/p-${index}/`, options);
+        response = await axios.get(
+          `${base_url}${cinemaIdParam}/p-${index}/`,
+          options,
+        );
         data = response.data;
         const results = data.results;
         results.forEach((element) => {

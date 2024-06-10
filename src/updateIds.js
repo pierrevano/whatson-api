@@ -16,7 +16,9 @@ const updateIds = () => {
   // Execute shell script
   const command = `bash ${config.getIdsFilePath} ${environment} ${item_type}`;
   console.log(`Running command: ${command}`);
-  console.log("----------------------------------------------------------------------------------------------------");
+  console.log(
+    "----------------------------------------------------------------------------------------------------",
+  );
   shell.exec(command);
 };
 

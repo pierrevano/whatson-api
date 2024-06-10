@@ -10,7 +10,10 @@ const { logErrors } = require("../utils/logErrors");
  * @returns {Promise<Object>} - An object containing the Rotten Tomatoes rating information.
  * @throws {Error} - If there is an error retrieving the Rotten Tomatoes rating.
  */
-const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId) => {
+const getRottenTomatoesRating = async (
+  rottenTomatoesHomepage,
+  rottenTomatoesId,
+) => {
   let rottenTomatoesObj = null;
 
   try {
@@ -21,18 +24,34 @@ const getRottenTomatoesRating = async (rottenTomatoesHomepage, rottenTomatoesId)
     };
 
     if (isNotNull(rottenTomatoesId)) {
-      $ = await getCheerioContent(`${rottenTomatoesHomepage}`, options, "getRottenTomatoesRating");
+      $ = await getCheerioContent(
+        `${rottenTomatoesHomepage}`,
+        options,
+        "getRottenTomatoesRating",
+      );
 
-      let usersRating = parseInt($("score-board-deprecated").attr("audiencescore"));
-      let criticsRating = parseInt($("score-board-deprecated").attr("tomatometerscore"));
+      let usersRating = parseInt(
+        $("score-board-deprecated").attr("audiencescore"),
+      );
+      let criticsRating = parseInt(
+        $("score-board-deprecated").attr("tomatometerscore"),
+      );
 
       if (isNaN(usersRating) || isNaN(criticsRating)) {
         const scriptTag = $("#media-scorecard-json");
         const jsonString = scriptTag.html();
         const data = JSON.parse(jsonString);
 
-        if (isNaN(usersRating)) usersRating = data && data.audienceScore && data.audienceScore.score ? parseInt(data.audienceScore.score) : null;
-        if (isNaN(criticsRating)) criticsRating = data && data.criticsScore && data.criticsScore.score ? parseInt(data.criticsScore.score) : null;
+        if (isNaN(usersRating))
+          usersRating =
+            data && data.audienceScore && data.audienceScore.score
+              ? parseInt(data.audienceScore.score)
+              : null;
+        if (isNaN(criticsRating))
+          criticsRating =
+            data && data.criticsScore && data.criticsScore.score
+              ? parseInt(data.criticsScore.score)
+              : null;
       }
 
       if (isNaN(usersRating)) usersRating = null;

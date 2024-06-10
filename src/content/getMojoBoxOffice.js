@@ -14,7 +14,9 @@ async function fetchTableData(offset) {
   let tableData = [];
 
   try {
-    const response = await axios.get(`${config.mojo.baseURL}${config.mojo.urlToFetch}?offset=${offset}`);
+    const response = await axios.get(
+      `${config.mojo.baseURL}${config.mojo.urlToFetch}?offset=${offset}`,
+    );
     const html = response.data;
     const $ = cheerio.load(html);
 
@@ -75,7 +77,9 @@ const getMojoBoxOffice = async (item_type) => {
 
     const progressPercentage = ((i + 1) / config.mojo.maxIterations) * 100;
 
-    console.log(`Fetched ${offset} to ${offset + 199}: ${parseInt(progressPercentage)}% complete.`);
+    console.log(
+      `Fetched ${offset} to ${offset + 199}: ${parseInt(progressPercentage)}% complete.`,
+    );
 
     offset += config.mojo.offset;
   }

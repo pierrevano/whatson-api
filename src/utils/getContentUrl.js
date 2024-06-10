@@ -10,7 +10,9 @@ const { removeExtraChar } = require("./removeExtraChar");
  */
 function getContentUrl($, backup, allocineHomepage) {
   try {
-    const JSONValue = backup ? $('script[type="application/ld+json"]') : $('script[type="application/ld+json"]').last();
+    const JSONValue = backup
+      ? $('script[type="application/ld+json"]')
+      : $('script[type="application/ld+json"]').last();
     let cleanedJsonString = removeExtraChar(JSONValue.text());
 
     let contentParsed;

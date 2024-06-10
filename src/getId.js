@@ -31,7 +31,12 @@ const getId = async (req, res) => {
     const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
     if (id_path && ratings_filters_query) {
       try {
-        const { items } = await getItems(cinema_id_query, id_path, item_type_query, ratings_filters_query);
+        const { items } = await getItems(
+          cinema_id_query,
+          id_path,
+          item_type_query,
+          ratings_filters_query,
+        );
         const filteredResults = items[0].results.filter((result) => {
           return result.item_type === item_type;
         });

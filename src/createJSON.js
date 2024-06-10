@@ -1,4 +1,6 @@
-const { getAllocineCriticsRating } = require("./content/getAllocineCriticsRating");
+const {
+  getAllocineCriticsRating,
+} = require("./content/getAllocineCriticsRating");
 const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getBetaseriesRating } = require("./content/getBetaseriesRating");
@@ -8,7 +10,9 @@ const { getLetterboxdRating } = require("./content/getLetterboxdRating");
 const { getMetacriticRating } = require("./content/getMetacriticRating");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { getPlatformsLinks } = require("./content/getPlatformsLinks");
-const { getRottenTomatoesRating } = require("./content/getRottenTomatoesRating");
+const {
+  getRottenTomatoesRating,
+} = require("./content/getRottenTomatoesRating");
 const { getSensCritiqueRating } = require("./content/getSensCritiqueRating");
 const { getTmdbRating } = require("./content/getTmdbRating");
 const { getTraktRating } = require("./content/getTraktRating");
@@ -64,19 +68,60 @@ const createJSON = async (
   tmdbId,
   tmdbHomepage,
 ) => {
-  const allocineFirstInfo = await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, false);
-  const allocineCriticInfo = await getAllocineCriticsRating(allocineCriticsDetails);
-  const allocinePopularity = await getAllocinePopularity(allocineURL, item_type);
-  const betaseriesRating = await getBetaseriesRating(betaseriesHomepage, betaseriesId);
-  const platformsLinks = await getPlatformsLinks(betaseriesId, allocineHomepage, imdbId);
+  const allocineFirstInfo = await getAllocineInfo(
+    allocineHomepage,
+    betaseriesHomepage,
+    tmdbId,
+    false,
+  );
+  const allocineCriticInfo = await getAllocineCriticsRating(
+    allocineCriticsDetails,
+  );
+  const allocinePopularity = await getAllocinePopularity(
+    allocineURL,
+    item_type,
+  );
+  const betaseriesRating = await getBetaseriesRating(
+    betaseriesHomepage,
+    betaseriesId,
+  );
+  const platformsLinks = await getPlatformsLinks(
+    betaseriesId,
+    allocineHomepage,
+    imdbId,
+  );
   const imdbRating = await getImdbRating(imdbHomepage);
-  const imdbPopularity = await getImdbPopularity(imdbHomepage, allocineURL, item_type);
-  const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
-  const metacriticRating = await getMetacriticRating(metacriticHomepage, metacriticId);
-  const rottenTomatoesRating = await getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId);
-  const letterboxdRating = await getLetterboxdRating(letterboxdHomepage, letterboxdId);
-  const sensCritiqueRating = await getSensCritiqueRating(sensCritiqueHomepage, sensCritiqueId);
-  const tmdbRating = await getTmdbRating(allocineHomepage, tmdbHomepage, tmdbId);
+  const imdbPopularity = await getImdbPopularity(
+    imdbHomepage,
+    allocineURL,
+    item_type,
+  );
+  const mojoValues = await getObjectByImdbId(
+    mojoBoxOfficeArray,
+    imdbId,
+    item_type,
+  );
+  const metacriticRating = await getMetacriticRating(
+    metacriticHomepage,
+    metacriticId,
+  );
+  const rottenTomatoesRating = await getRottenTomatoesRating(
+    rottenTomatoesHomepage,
+    rottenTomatoesId,
+  );
+  const letterboxdRating = await getLetterboxdRating(
+    letterboxdHomepage,
+    letterboxdId,
+  );
+  const sensCritiqueRating = await getSensCritiqueRating(
+    sensCritiqueHomepage,
+    sensCritiqueId,
+  );
+  const tmdbRating = await getTmdbRating(
+    allocineHomepage,
+    tmdbHomepage,
+    tmdbId,
+  );
   const traktRating = await getTraktRating(traktHomepage, traktId);
 
   /* Creating an object called allocineObj. */
@@ -86,7 +131,8 @@ const createJSON = async (
     users_rating: allocineFirstInfo && allocineFirstInfo.allocineUsersRating,
     critics_rating: allocineCriticInfo && allocineCriticInfo.criticsRating,
     critics_number: allocineCriticInfo && allocineCriticInfo.criticsNumber,
-    critics_rating_details: allocineCriticInfo && allocineCriticInfo.criticsRatingDetails,
+    critics_rating_details:
+      allocineCriticInfo && allocineCriticInfo.criticsRatingDetails,
     popularity: allocinePopularity && allocinePopularity.popularity,
   };
 

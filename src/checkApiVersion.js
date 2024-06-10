@@ -21,15 +21,20 @@ function updateVersion(newVersion) {
     // Update the version property
     packageJson.version = newVersion;
 
-    fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), "utf8", (writeErr) => {
-      if (writeErr) {
-        console.error(`Error writing to ${packageJsonPath}:`, writeErr);
-        process.exit(1);
-      }
+    fs.writeFile(
+      packageJsonPath,
+      JSON.stringify(packageJson, null, 2),
+      "utf8",
+      (writeErr) => {
+        if (writeErr) {
+          console.error(`Error writing to ${packageJsonPath}:`, writeErr);
+          process.exit(1);
+        }
 
-      console.log(`Version updated to ${newVersion} in package.json.`);
-      process.exit(0);
-    });
+        console.log(`Version updated to ${newVersion} in package.json.`);
+        process.exit(0);
+      },
+    );
   });
 }
 

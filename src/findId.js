@@ -41,12 +41,19 @@ const findId = async (json) => {
   for (let key in keysMapping) {
     if (json.hasOwnProperty(key)) {
       const mappedKey = keysMapping[key];
-      query[mappedKey != null ? mappedKey : key] = ["title"].includes(key) ? { $regex: json[key], $options: "i" } : ["allocineid", "tmdbid"].includes(key) ? parseInt(json[key]) : json[key];
+      query[mappedKey != null ? mappedKey : key] = ["title"].includes(key)
+        ? { $regex: json[key], $options: "i" }
+        : ["allocineid", "tmdbid"].includes(key)
+          ? parseInt(json[key])
+          : json[key];
       break;
     }
   }
 
-  const [results, total_results] = await Promise.all([collectionData.find(query).toArray(), collectionData.countDocuments(query)]);
+  const [results, total_results] = await Promise.all([
+    collectionData.find(query).toArray(),
+    collectionData.countDocuments(query),
+  ]);
 
   return { results: results, total_results: total_results };
 };

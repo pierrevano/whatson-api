@@ -21,7 +21,10 @@ const getCheerioContent = async (url, options, origin) => {
       retryDelay: () => 10000,
       retryCondition: (error) => {
         // Retry only on network errors or server errors except for 404.
-        return !error.response || (error.response.status !== 404 && error.response.status >= 500);
+        return (
+          !error.response ||
+          (error.response.status !== 404 && error.response.status >= 500)
+        );
       },
     });
 
@@ -36,7 +39,12 @@ const getCheerioContent = async (url, options, origin) => {
     const endTime = Date.now();
     const executionTime = endTime - startTime;
 
-    console.log(`${origin} - ${url}:`, response.status, "- Execution time:", executionTime + "ms");
+    console.log(
+      `${origin} - ${url}:`,
+      response.status,
+      "- Execution time:",
+      executionTime + "ms",
+    );
 
     return $;
   } catch (error) {

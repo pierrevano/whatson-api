@@ -40,7 +40,8 @@ const config = {
   maxSeasonsNumber: 5,
   minimumActiveItems: 150,
   page: 1,
-  userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+  userAgent:
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
 
   /* CircleCI settings */
   circleLimitPerDay: 1500,
@@ -219,7 +220,18 @@ const config = {
   ],
 
   /* Search settings */
-  keysToCheckForSearch: ["allocineid", "betaseriesid", "imdbid", "letterboxdid", "metacriticid", "rottentomatoesid", "senscritiqueid", "traktid", "tmdbid", "title"],
+  keysToCheckForSearch: [
+    "allocineid",
+    "betaseriesid",
+    "imdbid",
+    "letterboxdid",
+    "metacriticid",
+    "rottentomatoesid",
+    "senscritiqueid",
+    "traktid",
+    "tmdbid",
+    "title",
+  ],
 };
 
 module.exports = { config };

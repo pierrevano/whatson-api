@@ -21,7 +21,16 @@ const generateURLs = require("./generateURLs");
  * @param {string} check_data - Flag indicating whether we check the data or not.
  * @returns {Object} Returns an object containing the number of new or updated items.
  */
-const loopItems = async (collectionData, config, force, index_to_start, item_type, jsonArray, mojoBoxOfficeArray, check_data) => {
+const loopItems = async (
+  collectionData,
+  config,
+  force,
+  index_to_start,
+  item_type,
+  jsonArray,
+  mojoBoxOfficeArray,
+  check_data,
+) => {
   let createJsonCounter = (itemCounter = 0);
 
   // Loop through jsonArray with the given start index
@@ -30,7 +39,10 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       const json = jsonArray[index];
 
       // Log the progress in terms of percentage
-      console.timeLog("Duration", `- ${parseInt(index) + 1} / ${jsonArray.length} (${(((parseInt(index) + 1) * 100) / jsonArray.length).toFixed(1)}%)`);
+      console.timeLog(
+        "Duration",
+        `- ${parseInt(index) + 1} / ${jsonArray.length} (${(((parseInt(index) + 1) * 100) / jsonArray.length).toFixed(1)}%)`,
+      );
 
       // Generate URLs based on the current JSON item
       const urls = generateURLs(item_type, config, json);
@@ -84,7 +96,9 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       if (parseInt(checkDate) >= 0) {
         try {
           const item_type_api = item_type === "movie" ? "movie" : "tvshow";
-          const response = await axios.get(`${config.baseURLRemote}/${item_type_api}/${tmdbId}`);
+          const response = await axios.get(
+            `${config.baseURLRemote}/${item_type_api}/${tmdbId}`,
+          );
 
           if (response && response.data && response.data.updated_at) {
             const { updated_at } = response.data;
@@ -93,7 +107,9 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
             dateValue.setDate(dateValue.getDate() - parseInt(checkDate));
 
             if (updatedAtDate >= dateValue) {
-              console.log(`Skipping because updated less than ${parseInt(checkDate)} days ago.`);
+              console.log(
+                `Skipping because updated less than ${parseInt(checkDate)} days ago.`,
+              );
 
               continue;
             }
@@ -108,12 +124,28 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
       }
 
       // Check if page is existing before upsert to DB
-      const { error } = await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, true);
+      const { error } = await getAllocineInfo(
+        allocineHomepage,
+        betaseriesHomepage,
+        tmdbId,
+        true,
+      );
 
       // Determine if user ratings are equal and fetch the data
       if (!error) {
         const getIsEqualValue = !force
-          ? await compareUsersRating(allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, tmdbId, true)
+          ? await compareUsersRating(
+              allocineHomepage,
+              allocineURL,
+              betaseriesHomepage,
+              imdbHomepage,
+              imdbId,
+              isActive,
+              item_type,
+              mojoBoxOfficeArray,
+              tmdbId,
+              true,
+            )
           : false;
         if (!getIsEqualValue) getIsEqualValue.isEqual = false;
         const data =
@@ -154,14 +186,19 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
 
         itemCounter++;
 
-        if (itemCounter === config.circleLimitPerInstance && getNodeVarsValues.environment === "circleci") {
+        if (
+          itemCounter === config.circleLimitPerInstance &&
+          getNodeVarsValues.environment === "circleci"
+        ) {
           process.exit(0);
         }
       } else {
         console.error(error);
       }
     } catch (error) {
-      throw new Error(`Error processing item at index ${index}: ${error.message}`);
+      throw new Error(
+        `Error processing item at index ${index}: ${error.message}`,
+      );
     }
   }
 

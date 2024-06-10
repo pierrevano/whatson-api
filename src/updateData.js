@@ -37,12 +37,16 @@ async function checkStatus(service) {
     for (const id of ids) {
       await fetchAndCheckItemCount(id);
     }
-    console.log("----------------------------------------------------------------------------------------------------");
+    console.log(
+      "----------------------------------------------------------------------------------------------------",
+    );
 
     for (let service of config.services) {
       await checkStatus(service);
     }
-    console.log("----------------------------------------------------------------------------------------------------");
+    console.log(
+      "----------------------------------------------------------------------------------------------------",
+    );
   }
 
   if (getNodeVarsValues.get_ids === "update_ids") updateIds();
@@ -52,13 +56,24 @@ async function checkStatus(service) {
   const database = client.db(config.dbName);
   const collectionData = database.collection(config.collectionName);
 
-  const idsFilePath = getNodeVarsValues.item_type === "movie" ? config.filmsIdsFilePath : config.seriesIdsFilePath;
+  const idsFilePath =
+    getNodeVarsValues.item_type === "movie"
+      ? config.filmsIdsFilePath
+      : config.seriesIdsFilePath;
   console.log(`Ids file path to use: ${idsFilePath}`);
 
   const jsonArrayFromCSV = await csv().fromFile(idsFilePath);
-  const jsonArray = !getNodeVarsValues.is_not_active || getNodeVarsValues.is_not_active === "active" ? jsonArrayFiltered(jsonArrayFromCSV) : jsonArrayFromCSV;
-  const jsonArraySortedHighestToLowest = jsonArray.sort((a, b) => b.THEMOVIEDB_ID - a.THEMOVIEDB_ID);
-  const allTheMovieDbIds = jsonArraySortedHighestToLowest.map((item) => parseInt(item.THEMOVIEDB_ID));
+  const jsonArray =
+    !getNodeVarsValues.is_not_active ||
+    getNodeVarsValues.is_not_active === "active"
+      ? jsonArrayFiltered(jsonArrayFromCSV)
+      : jsonArrayFromCSV;
+  const jsonArraySortedHighestToLowest = jsonArray.sort(
+    (a, b) => b.THEMOVIEDB_ID - a.THEMOVIEDB_ID,
+  );
+  const allTheMovieDbIds = jsonArraySortedHighestToLowest.map((item) =>
+    parseInt(item.THEMOVIEDB_ID),
+  );
 
   if (allTheMovieDbIds.length === 0) {
     console.log("Not updating tvshows as the top list is not correct.");
@@ -93,7 +108,9 @@ async function checkStatus(service) {
     await collectionData.updateMany(filterQueryIsActive, resetIsActive);
     await collectionData.updateMany(filterQueryIsActive, resetPopularity);
 
-    console.log(`${allTheMovieDbIds.length} documents have been excluded from the is_active and popularity reset.`);
+    console.log(
+      `${allTheMovieDbIds.length} documents have been excluded from the is_active and popularity reset.`,
+    );
   }
 
   if (getNodeVarsValues.delete_ids === "delete_ids") {
@@ -110,7 +127,9 @@ async function checkStatus(service) {
 
       console.log(`${deleteResult.deletedCount} items were deleted.`);
     } else {
-      console.log("Enter some items in the itemsToDelete array first. Abording.");
+      console.log(
+        "Enter some items in the itemsToDelete array first. Abording.",
+      );
       process.exit(1);
     }
 
@@ -128,11 +147,15 @@ async function checkStatus(service) {
       console.log(`${variable}: ${variableValue}`);
     }
 
-    if (getNodeVarsValues.check_db_ids === "check") await checkDbIds(jsonArrayFromCSV, collectionData);
+    if (getNodeVarsValues.check_db_ids === "check")
+      await checkDbIds(jsonArrayFromCSV, collectionData);
 
     const force = getNodeVarsValues.force === "force";
 
-    const mojoBoxOfficeArray = getNodeVarsValues.skip_mojo === "skip_mojo" ? [] : await getMojoBoxOffice(getNodeVarsValues.item_type);
+    const mojoBoxOfficeArray =
+      getNodeVarsValues.skip_mojo === "skip_mojo"
+        ? []
+        : await getMojoBoxOffice(getNodeVarsValues.item_type);
 
     const { newOrUpdatedItems } = await loopItems(
       collectionData,
@@ -151,5 +174,8 @@ async function checkStatus(service) {
     await client.close();
   }
 
-  console.timeEnd("Duration", `- ${jsonArraySortedHighestToLowest.length} elements imported.`);
+  console.timeEnd(
+    "Duration",
+    `- ${jsonArraySortedHighestToLowest.length} elements imported.`,
+  );
 })();

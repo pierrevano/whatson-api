@@ -20,12 +20,33 @@ const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
-const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomepage, imdbHomepage, imdbId, isActive, item_type, mojoBoxOfficeArray, tmdbId, compare) => {
-  const users_rating = (await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, compare)).allocineUsersRating;
-  const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
+const compareUsersRating = async (
+  allocineHomepage,
+  allocineURL,
+  betaseriesHomepage,
+  imdbHomepage,
+  imdbId,
+  isActive,
+  item_type,
+  mojoBoxOfficeArray,
+  tmdbId,
+  compare,
+) => {
+  const users_rating = (
+    await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, compare)
+  ).allocineUsersRating;
+  const allocinePopularity = (
+    await getAllocinePopularity(allocineURL, item_type)
+  ).popularity;
   const imdb_users_rating = await getImdbRating(imdbHomepage);
-  const imdbPopularity = (await getImdbPopularity(imdbHomepage, allocineURL, item_type)).popularity;
-  const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
+  const imdbPopularity = (
+    await getImdbPopularity(imdbHomepage, allocineURL, item_type)
+  ).popularity;
+  const mojoValues = await getObjectByImdbId(
+    mojoBoxOfficeArray,
+    imdbId,
+    item_type,
+  );
 
   const isEqualObj = {
     isEqual: false,
@@ -57,11 +78,17 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
       dataWithoutId.imdb.popularity = imdbPopularity;
       dataWithoutId.mojo = mojoObj;
 
-      if (dataWithoutId.allocine.users_rating !== null && dataWithoutId.imdb.users_rating === null) {
+      if (
+        dataWithoutId.allocine.users_rating !== null &&
+        dataWithoutId.imdb.users_rating === null
+      ) {
         return isEqualObj;
       }
 
-      if (dataWithoutId.allocine.users_rating === users_rating && dataWithoutId.imdb.users_rating === imdb_users_rating) {
+      if (
+        dataWithoutId.allocine.users_rating === users_rating &&
+        dataWithoutId.imdb.users_rating === imdb_users_rating
+      ) {
         return {
           isEqual: true,
           data: dataWithoutId,

@@ -7,8 +7,12 @@
  * @throws {Error} - If an invalid AlloCiné URL is provided or if The Movie Database ID is not found.
  */
 const generateURLs = (item_type, config, json) => {
-  const baseURLType = item_type === "movie" ? config.baseURLTypeFilms : config.baseURLTypeSeries;
-  const baseURLCriticDetails = item_type === "movie" ? config.baseURLCriticDetailsFilms : config.baseURLCriticDetailsSeries;
+  const baseURLType =
+    item_type === "movie" ? config.baseURLTypeFilms : config.baseURLTypeSeries;
+  const baseURLCriticDetails =
+    item_type === "movie"
+      ? config.baseURLCriticDetailsFilms
+      : config.baseURLCriticDetailsSeries;
 
   const allocineURL = json.URL;
   const allocineIdMatch = allocineURL.match(/=(.*)\./);
@@ -23,7 +27,10 @@ const generateURLs = (item_type, config, json) => {
   const imdbHomepage = `${config.baseURLIMDB}${imdbId}/`;
 
   let betaseriesId = json.BETASERIES_ID;
-  const betaseriesHomepage = item_type === "movie" ? `${config.baseURLBetaseriesFilm}${betaseriesId}` : `${config.baseURLBetaseriesSerie}${betaseriesId}`;
+  const betaseriesHomepage =
+    item_type === "movie"
+      ? `${config.baseURLBetaseriesFilm}${betaseriesId}`
+      : `${config.baseURLBetaseriesSerie}${betaseriesId}`;
 
   if (betaseriesId.startsWith("serie/")) {
     const betaseriesIdNew = betaseriesId.split("/");
@@ -31,28 +38,48 @@ const generateURLs = (item_type, config, json) => {
   }
 
   const metacriticId = json.METACRITIC_ID;
-  const metacriticHomepage = item_type === "movie" ? `${config.baseURLMetacriticFilm}${metacriticId}` : `${config.baseURLMetacriticSerie}${metacriticId}`;
+  const metacriticHomepage =
+    item_type === "movie"
+      ? `${config.baseURLMetacriticFilm}${metacriticId}`
+      : `${config.baseURLMetacriticSerie}${metacriticId}`;
 
   const rottenTomatoesId = json.ROTTEN_TOMATOES_ID;
-  const rottenTomatoesHomepage = item_type === "movie" ? `${config.baseURLRottenTomatoesFilm}${rottenTomatoesId}` : `${config.baseURLRottenTomatoesSerie}${rottenTomatoesId}`;
+  const rottenTomatoesHomepage =
+    item_type === "movie"
+      ? `${config.baseURLRottenTomatoesFilm}${rottenTomatoesId}`
+      : `${config.baseURLRottenTomatoesSerie}${rottenTomatoesId}`;
 
   const letterboxdId = item_type === "movie" ? json.LETTERBOXD_ID : null;
-  const letterboxdHomepage = item_type === "movie" ? `${config.baseURLLetterboxdFilm}${letterboxdId}` : null;
+  const letterboxdHomepage =
+    item_type === "movie"
+      ? `${config.baseURLLetterboxdFilm}${letterboxdId}`
+      : null;
 
   const sensCritiqueId = parseInt(json.SENSCRITIQUE_ID);
-  const sensCritiqueHomepage = item_type === "movie" ? `${config.baseURLSensCritiqueFilm}${sensCritiqueId}` : `${config.baseURLSensCritiqueSerie}${sensCritiqueId}`;
+  const sensCritiqueHomepage =
+    item_type === "movie"
+      ? `${config.baseURLSensCritiqueFilm}${sensCritiqueId}`
+      : `${config.baseURLSensCritiqueSerie}${sensCritiqueId}`;
 
   const tmdbId = parseInt(json.THEMOVIEDB_ID);
-  const tmdbHomepage = item_type === "movie" ? `${config.baseURLTMDBFilm}${tmdbId}` : `${config.baseURLTMDBSerie}${tmdbId}`;
+  const tmdbHomepage =
+    item_type === "movie"
+      ? `${config.baseURLTMDBFilm}${tmdbId}`
+      : `${config.baseURLTMDBSerie}${tmdbId}`;
 
   const traktId = json.TRAKT_ID;
-  const traktHomepage = item_type === "movie" ? `${config.baseURLTraktFilm}${traktId}` : `${config.baseURLTraktSerie}${traktId}`;
+  const traktHomepage =
+    item_type === "movie"
+      ? `${config.baseURLTraktFilm}${traktId}`
+      : `${config.baseURLTraktSerie}${traktId}`;
 
   const isActive = json.IS_ACTIVE === "TRUE";
 
   // If the Movie Database ID is not found, log an error and exit.
   if (isNaN(tmdbId)) {
-    throw new Error(`Something went wrong, The Movie Database ID has not been found for ${allocineHomepage}!`);
+    throw new Error(
+      `Something went wrong, The Movie Database ID has not been found for ${allocineHomepage}!`,
+    );
   }
 
   return {

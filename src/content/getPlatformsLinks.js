@@ -13,7 +13,8 @@ const processSvods = (svods) => {
   if (Array.isArray(svods)) {
     platformsLinks = svods.map((element) => {
       const platformName = element.name;
-      platformsNamesCount[platformName] = (platformsNamesCount[platformName] || 0) + 1;
+      platformsNamesCount[platformName] =
+        (platformsNamesCount[platformName] || 0) + 1;
       return {
         name: platformName,
         link_url: element.link_url,
@@ -22,7 +23,8 @@ const processSvods = (svods) => {
   } else if (typeof svods === "object") {
     platformsLinks = Object.values(svods).map((element) => {
       const platformName = element.name;
-      platformsNamesCount[platformName] = (platformsNamesCount[platformName] || 0) + 1;
+      platformsNamesCount[platformName] =
+        (platformsNamesCount[platformName] || 0) + 1;
       return {
         name: platformName,
         link_url: element.link_url,
@@ -42,7 +44,9 @@ const writePlatformsNamesCount = (allocineHomepage) => {
     .map(([platformName, count]) => `${platformName}: ${count}`)
     .join("\n");
 
-  const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tvshow" : "movie";
+  const type = allocineHomepage.includes(config.baseURLTypeSeries)
+    ? "tvshow"
+    : "movie";
   fs.writeFileSync(`./temp_platforms_names_${type}.txt`, sortedPlatformsNames);
 };
 
@@ -58,7 +62,11 @@ const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
 
   try {
     if (isNotNull(betaseriesId)) {
-      const baseURLBetaseriesAPI = allocineHomepage.includes(config.baseURLTypeSeries) ? config.baseURLBetaseriesAPISeries : config.baseURLBetaseriesAPIFilms;
+      const baseURLBetaseriesAPI = allocineHomepage.includes(
+        config.baseURLTypeSeries,
+      )
+        ? config.baseURLBetaseriesAPISeries
+        : config.baseURLBetaseriesAPIFilms;
       const url = `${baseURLBetaseriesAPI}?key=${config.betaseriesApiKey}&imdb_id=${imdbId}`;
 
       const options = { validateStatus: (status) => status < 500 };

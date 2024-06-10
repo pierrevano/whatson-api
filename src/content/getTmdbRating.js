@@ -18,7 +18,9 @@ const getTmdbRating = async (allocineHomepage, tmdbHomepage, tmdbId) => {
 
   try {
     if (isNotNull(tmdbId)) {
-      const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
+      const type = allocineHomepage.includes(config.baseURLTypeSeries)
+        ? "tv"
+        : "movie";
       const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}`;
 
       axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });

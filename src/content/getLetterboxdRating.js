@@ -22,10 +22,17 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
     };
 
     if (isNotNull(letterboxdId)) {
-      $ = await getCheerioContent(`${letterboxdHomepage}`, options, "getLetterboxdRating");
+      $ = await getCheerioContent(
+        `${letterboxdHomepage}`,
+        options,
+        "getLetterboxdRating",
+      );
 
       let metaContent = $('meta[name="twitter:data2"]');
-      if (metaContent.length) usersRating = parseFloat(metaContent.attr("content").match(/(\d+\.\d+)/)[0]);
+      if (metaContent.length)
+        usersRating = parseFloat(
+          metaContent.attr("content").match(/(\d+\.\d+)/)[0],
+        );
 
       if (isNaN(usersRating)) usersRating = null;
 

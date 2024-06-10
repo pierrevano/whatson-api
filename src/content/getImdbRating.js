@@ -22,7 +22,13 @@ const getImdbRating = async (imdbHomepage) => {
     };
     const $ = await getCheerioContent(imdbHomepage, options, "getImdbRating");
 
-    criticsRating = parseFloat($(".rating-bar__base-button").first().text().split("/")[0].replace("IMDb RATING", ""));
+    criticsRating = parseFloat(
+      $(".rating-bar__base-button")
+        .first()
+        .text()
+        .split("/")[0]
+        .replace("IMDb RATING", ""),
+    );
     if (isNaN(criticsRating)) criticsRating = null;
   } catch (error) {
     logErrors(error, imdbHomepage, "getImdbRating");

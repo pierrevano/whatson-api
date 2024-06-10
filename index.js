@@ -80,7 +80,9 @@ app.get("/", async (req, res) => {
     }
 
     if (page > Math.ceil(total_results / limit)) {
-      res.status(200).json({ message: `No items have been found for page ${page}.` });
+      res
+        .status(200)
+        .json({ message: `No items have been found for page ${page}.` });
     } else if (json.results.length === 0) {
       res.status(200).json({ message: "No items have been found." });
     } else {

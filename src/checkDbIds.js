@@ -29,7 +29,9 @@ const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
       })
       .toArray();
 
-    const idsOnlyInDb = allDbData.filter((element) => !idsFromFile.includes(element.id));
+    const idsOnlyInDb = allDbData.filter(
+      (element) => !idsFromFile.includes(element.id),
+    );
 
     let dataToWrite = idsOnlyInDb
       .map((element) => {
@@ -38,26 +40,45 @@ const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
       .join("");
 
     if (!dataToWrite.trim()) {
-      console.log("----------------------------------------------------------------------------------------------------");
-      console.log(`The local data is already synced with the DB for ${getNodeVarsValues.item_type} item type.`);
-      console.log("----------------------------------------------------------------------------------------------------");
+      console.log(
+        "----------------------------------------------------------------------------------------------------",
+      );
+      console.log(
+        `The local data is already synced with the DB for ${getNodeVarsValues.item_type} item type.`,
+      );
+      console.log(
+        "----------------------------------------------------------------------------------------------------",
+      );
 
       process.exit(0);
     } else {
-      fs.writeFile(`temp_check_${getNodeVarsValues.item_type}.txt`, dataToWrite, (err) => {
-        if (err) {
-          console.error("An error occurred while writing the file.", err);
-        } else {
-          console.log("----------------------------------------------------------------------------------------------------");
-          console.log(`File ./temp_check_${getNodeVarsValues.item_type}.txt has been successfully written.`);
-          console.log("----------------------------------------------------------------------------------------------------");
+      fs.writeFile(
+        `temp_check_${getNodeVarsValues.item_type}.txt`,
+        dataToWrite,
+        (err) => {
+          if (err) {
+            console.error("An error occurred while writing the file.", err);
+          } else {
+            console.log(
+              "----------------------------------------------------------------------------------------------------",
+            );
+            console.log(
+              `File ./temp_check_${getNodeVarsValues.item_type}.txt has been successfully written.`,
+            );
+            console.log(
+              "----------------------------------------------------------------------------------------------------",
+            );
 
-          process.exit(0);
-        }
-      });
+            process.exit(0);
+          }
+        },
+      );
     }
   } catch (error) {
-    console.error("Something went wrong when fetching data from the database.", error);
+    console.error(
+      "Something went wrong when fetching data from the database.",
+      error,
+    );
   }
 };
 

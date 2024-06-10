@@ -19,13 +19,28 @@ const getImdbPopularity = async (imdbHomepage, allocineURL, item_type) => {
         "User-Agent": config.userAgent,
       },
     };
-    const $ = await getCheerioContent(`${imdbHomepage}`, options, "getImdbPopularity");
+    const $ = await getCheerioContent(
+      `${imdbHomepage}`,
+      options,
+      "getImdbPopularity",
+    );
 
-    const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
-    const rawPopularity = $('div[data-testid="hero-rating-bar__popularity__score"]').first().text().trim();
-    const popularity = rawPopularity !== "" ? parseInt(rawPopularity.replace(/,/g, "")) : null;
+    const allocinePopularity = (
+      await getAllocinePopularity(allocineURL, item_type)
+    ).popularity;
+    const rawPopularity = $(
+      'div[data-testid="hero-rating-bar__popularity__score"]',
+    )
+      .first()
+      .text()
+      .trim();
+    const popularity =
+      rawPopularity !== "" ? parseInt(rawPopularity.replace(/,/g, "")) : null;
 
-    const popularityResult = popularity - allocinePopularity > config.maxPopularityDiff ? null : popularity;
+    const popularityResult =
+      popularity - allocinePopularity > config.maxPopularityDiff
+        ? null
+        : popularity;
 
     return {
       popularity: popularityResult,

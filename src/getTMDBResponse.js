@@ -12,7 +12,9 @@ const { logErrors } = require("../src/utils/logErrors");
  */
 const getTMDBResponse = async (allocineHomepage, tmdbId) => {
   try {
-    const type = allocineHomepage.includes(config.baseURLTypeSeries) ? "tv" : "movie";
+    const type = allocineHomepage.includes(config.baseURLTypeSeries)
+      ? "tv"
+      : "movie";
     const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}`;
 
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });

@@ -21,13 +21,24 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
     };
 
     if (isNotNull(metacriticId)) {
-      $ = await getCheerioContent(`${metacriticHomepage}`, options, "getMetacriticRating");
-      let usersRating = parseFloat($(".c-siteReviewScore_user span").first().text());
+      $ = await getCheerioContent(
+        `${metacriticHomepage}`,
+        options,
+        "getMetacriticRating",
+      );
+      let usersRating = parseFloat(
+        $(".c-siteReviewScore_user span").first().text(),
+      );
       if (isNaN(usersRating)) usersRating = null;
 
-      $ = await getCheerioContent(`${metacriticHomepage}/critic-reviews`, options, "getMetacriticRating");
+      $ = await getCheerioContent(
+        `${metacriticHomepage}/critic-reviews`,
+        options,
+        "getMetacriticRating",
+      );
       let criticsRating = parseInt($(".c-siteReviewScore span").first().text());
-      if (isNaN(criticsRating) || criticsRating === parseInt(usersRating)) criticsRating = null;
+      if (isNaN(criticsRating) || criticsRating === parseInt(usersRating))
+        criticsRating = null;
 
       metacriticObj = {
         id: metacriticId,

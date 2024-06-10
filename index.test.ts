@@ -6,8 +6,12 @@ const fs = require("fs");
 const { config } = require("./src/config");
 const { schema } = require("./src/schema");
 
-const baseURL = process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
-const higherLimit = process.env.SOURCE === "remote" ? config.maxLimitRemote : config.maxLimitLocal;
+const baseURL =
+  process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
+const higherLimit =
+  process.env.SOURCE === "remote"
+    ? config.maxLimitRemote
+    : config.maxLimitLocal;
 
 /**
  * A function to count the number of lines in a file.
@@ -73,10 +77,14 @@ function checkItemProperties(items) {
     /* Common */
     config.keysToCheck.forEach((key) => {
       item.is_active === true ? expect(item).toHaveProperty(key) : null;
-      item.is_active === true ? expect(typeof item[key]).not.toBe("undefined") : null;
+      item.is_active === true
+        ? expect(typeof item[key]).not.toBe("undefined")
+        : null;
     });
 
-    expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(config.maximumIsActiveItems);
+    expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(
+      config.maximumIsActiveItems,
+    );
 
     expect(item._id).not.toBeNull();
 
@@ -91,14 +99,36 @@ function checkItemProperties(items) {
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
 
-    item.is_active === true ? expect(items.filter((item) => item.tagline).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.tagline).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
 
     expect(item.ratings_average).not.toBeNull();
 
-    item.item_type === "tvshow" && item.platforms_links ? expect(item.platforms_links.filter((link) => link.link_url.startsWith("https")).length).toBe(item.platforms_links.length) : null;
-    item.item_type === "tvshow" ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
+    item.item_type === "tvshow" && item.platforms_links
+      ? expect(
+          item.platforms_links.filter((link) =>
+            link.link_url.startsWith("https"),
+          ).length,
+        ).toBe(item.platforms_links.length)
+      : null;
+    item.item_type === "tvshow"
+      ? expect(
+          items.filter(
+            (item) => item.platforms_links && item.platforms_links.length > 0,
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
     item.item_type === "movie" && item.is_active === true
-      ? expect(items.filter((item) => item.platforms_links && item.platforms_links.length > 0).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.platformsLinksMovies)
+      ? expect(
+          items.filter(
+            (item) => item.platforms_links && item.platforms_links.length > 0,
+          ).length,
+        ).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.platformsLinksMovies,
+        )
       : null;
     item.item_type === "tvshow" && item.platforms_links
       ? item.platforms_links.forEach((platform_link) => {
@@ -107,79 +137,208 @@ function checkItemProperties(items) {
       : null;
 
     item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
-    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer);
+    expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(
+      config.minimumNumberOfItems.trailer,
+    );
     item.trailer && item.is_active === true
-      ? expect(items.filter((item) => item.trailer && item.trailer.startsWith(config.baseURLDailymotion)).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer)
+      ? expect(
+          items.filter(
+            (item) =>
+              item.trailer &&
+              item.trailer.startsWith(config.baseURLDailymotion),
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer)
       : null;
 
     /* Popularity */
-    item.is_active === true ? expect(items.filter((item) => item.allocine.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;
-    item.is_active === true ? expect(items.filter((item) => item.imdb.popularity).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity) : null;
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.allocine.popularity).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
+      : null;
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.imdb.popularity).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
+      : null;
 
     /* AlloCiné */
     expect(item.allocine).not.toBeNull();
-    expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.allocine);
-    expect(items.filter((item) => typeof item.allocine.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => typeof item.allocine.critics_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => typeof item.allocine.critics_number === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.allocine.critics_rating_details).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(
+      config.minimumNumberOfItems.allocine,
+    );
+    expect(
+      items.filter((item) => typeof item.allocine.users_rating === "number")
+        .length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter((item) => typeof item.allocine.critics_rating === "number")
+        .length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter((item) => typeof item.allocine.critics_number === "number")
+        .length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter((item) => item.allocine.critics_rating_details).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(
       items.filter(
         (item) =>
-          item.allocine.critics_rating_details && typeof item.allocine.critics_rating_details[0].critic_name === "string" && typeof item.allocine.critics_rating_details[0].critic_rating === "number",
+          item.allocine.critics_rating_details &&
+          typeof item.allocine.critics_rating_details[0].critic_name ===
+            "string" &&
+          typeof item.allocine.critics_rating_details[0].critic_rating ===
+            "number",
       ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    item.allocine && item.allocine.critics_number ? expect(item.allocine.critics_number).toEqual(item.allocine.critics_rating_details.length) : null;
+    item.allocine && item.allocine.critics_number
+      ? expect(item.allocine.critics_number).toEqual(
+          item.allocine.critics_rating_details.length,
+        )
+      : null;
 
     /* IMDb */
     expect(item.imdb).not.toBeNull();
-    expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.imdb);
+    expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(
+      config.minimumNumberOfItems.imdb,
+    );
     expect(item.imdb.id.startsWith("tt")).toBeTruthy();
-    expect(items.filter((item) => typeof item.imdb.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter((item) => typeof item.imdb.users_rating === "number").length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* BetaSeries */
-    item.betaseries ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.betaseries) : null;
-    expect(items.filter((item) => item.betaseries && typeof item.betaseries.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.betaseries
+      ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.betaseries,
+        )
+      : null;
+    expect(
+      items.filter(
+        (item) =>
+          item.betaseries && typeof item.betaseries.users_rating === "number",
+      ).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Metacritic */
-    item.is_active === true && item.metacritic ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.metacritic) : null;
-    expect(items.filter((item) => item.metacritic && typeof item.metacritic.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.metacritic && typeof item.metacritic.critics_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.is_active === true && item.metacritic
+      ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.metacritic,
+        )
+      : null;
+    expect(
+      items.filter(
+        (item) =>
+          item.metacritic && typeof item.metacritic.users_rating === "number",
+      ).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter(
+        (item) =>
+          item.metacritic && typeof item.metacritic.critics_rating === "number",
+      ).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Rotten Tomatoes */
-    item.rotten_tomatoes ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.rottenTomatoes) : null;
-    expect(items.filter((item) => item.rotten_tomatoes && typeof item.rotten_tomatoes.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(items.filter((item) => item.rotten_tomatoes && typeof item.rotten_tomatoes.critics_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.rotten_tomatoes
+      ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.rottenTomatoes,
+        )
+      : null;
+    expect(
+      items.filter(
+        (item) =>
+          item.rotten_tomatoes &&
+          typeof item.rotten_tomatoes.users_rating === "number",
+      ).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter(
+        (item) =>
+          item.rotten_tomatoes &&
+          typeof item.rotten_tomatoes.critics_rating === "number",
+      ).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Letterboxd */
-    item.letterboxd ? expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.letterboxd) : null;
+    item.letterboxd
+      ? expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.letterboxd,
+        )
+      : null;
     item.is_active === true && item.item_type === "movie"
-      ? expect(items.filter((item) => item.letterboxd && typeof item.letterboxd.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      ? expect(
+          items.filter(
+            (item) =>
+              item.letterboxd &&
+              typeof item.letterboxd.users_rating === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
     item.item_type === "tvshow" ? expect(item.letterboxd).toBeNull() : null; // No tvshows on Letterboxd (yet).
 
     /* SensCritique */
-    item.senscritique ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritique) : null;
-    item.is_active === true
-      ? expect(items.filter((item) => item.senscritique && typeof item.senscritique.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems)
+    item.senscritique
+      ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.senscritique,
+        )
       : null;
-    item.senscritique ? expect(["string", "number"]).toContain(typeof item.senscritique.id) : null;
+    item.is_active === true
+      ? expect(
+          items.filter(
+            (item) =>
+              item.senscritique &&
+              typeof item.senscritique.users_rating === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.senscritiqueItems)
+      : null;
+    item.senscritique
+      ? expect(["string", "number"]).toContain(typeof item.senscritique.id)
+      : null;
 
     /* TMDB */
-    item.tmdb ? expect(Object.keys(item.tmdb).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.tmdb) : null;
+    item.tmdb
+      ? expect(Object.keys(item.tmdb).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.tmdb,
+        )
+      : null;
     item.tmdb ? expect(typeof item.tmdb.id).toBe("number") : null;
-    item.is_active === true ? expect(items.filter((item) => item.tmdb && typeof item.tmdb.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default) : null;
+    item.is_active === true
+      ? expect(
+          items.filter(
+            (item) => item.tmdb && typeof item.tmdb.users_rating === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
 
     /* Trakt */
-    item.trakt ? expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trakt) : null;
-    item.is_active === true ? expect(items.filter((item) => item.trakt && typeof item.trakt.users_rating === "number").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.traktItems) : null;
+    item.trakt
+      ? expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.trakt,
+        )
+      : null;
+    item.is_active === true
+      ? expect(
+          items.filter(
+            (item) => item.trakt && typeof item.trakt.users_rating === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.traktItems)
+      : null;
 
     /* Mojo */
     item.is_active === true && item.item_type === "movie"
-      ? expect(items.filter((item) => item.mojo && item.mojo.lifetime_gross.charAt(0) === "$").length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
+      ? expect(
+          items.filter(
+            (item) => item.mojo && item.mojo.lifetime_gross.charAt(0) === "$",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
       : null;
     item.is_active === true && item.item_type === "movie"
-      ? expect(items.filter((item) => item.mojo && Number.isInteger(item.mojo.rank)).length).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
+      ? expect(
+          items.filter((item) => item.mojo && Number.isInteger(item.mojo.rank))
+            .length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo)
       : null;
     item.item_type === "tvshow" ? expect(item.mojo).toBeNull() : null; // No mojo information for tvshow item type.
   });
@@ -195,11 +354,18 @@ function checkTypes(item, schema) {
       if (item[key] === null) return;
 
       // Check for an array of objects
-      if (Array.isArray(expectedType) && expectedType.length > 0 && typeof expectedType[0] === "object") {
+      if (
+        Array.isArray(expectedType) &&
+        expectedType.length > 0 &&
+        typeof expectedType[0] === "object"
+      ) {
         item[key].forEach((obj) => {
           checkTypes(obj, expectedType[0]);
         });
-      } else if (typeof expectedType === "object" && !Array.isArray(expectedType)) {
+      } else if (
+        typeof expectedType === "object" &&
+        !Array.isArray(expectedType)
+      ) {
         // Check if the item is an object and recurse
         checkTypes(item[key], expectedType);
       } else {
@@ -299,14 +465,20 @@ const params = {
         ];
 
         for (let ratingItem of ratingItems) {
-          checkRatings(ratingItem.source, ratingItem.ratingType, ratingItem.min, ratingItem.max);
+          checkRatings(
+            ratingItem.source,
+            ratingItem.ratingType,
+            ratingItem.min,
+            ratingItem.max,
+          );
         }
       }),
   },
 
   all_keys_type_check: {
     query: "",
-    expectedResult: (items) => items.forEach((item) => checkTypes(item, schema)),
+    expectedResult: (items) =>
+      items.forEach((item) => checkTypes(item, schema)),
   },
 
   default_movies: {
@@ -370,7 +542,9 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("is_active");
-        expect(item.is_active === true || item.is_active === false).toBeTruthy();
+        expect(
+          item.is_active === true || item.is_active === false,
+        ).toBeTruthy();
       }),
   },
 
@@ -474,7 +648,9 @@ const params = {
         const filmsLines = countLines(config.filmsIdsFilePath);
         const seriesLines = countLines(config.seriesIdsFilePath);
 
-        expect(filmsLines + seriesLines + config.margin).toBeGreaterThanOrEqual(items.total_results);
+        expect(filmsLines + seriesLines + config.margin).toBeGreaterThanOrEqual(
+          items.total_results,
+        );
       }
     },
   },
@@ -548,7 +724,9 @@ const params = {
     query: "?item_type=tvshow",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
-        expect(items[i].popularity_average).toBeGreaterThanOrEqual(items[i - 1].popularity_average);
+        expect(items[i].popularity_average).toBeGreaterThanOrEqual(
+          items[i - 1].popularity_average,
+        );
       }
     },
   },
@@ -556,8 +734,13 @@ const params = {
   top_popularity_items: {
     query: "?item_type=tvshow&limit=200",
     expectedResult: (items) => {
-      expect(items.slice(0, 10).filter((item) => item.allocine.popularity < 10).length).toBeGreaterThanOrEqual(0);
-      expect(items.slice(0, 10).filter((item) => item.imdb.popularity < 10).length).toBeGreaterThanOrEqual(0);
+      expect(
+        items.slice(0, 10).filter((item) => item.allocine.popularity < 10)
+          .length,
+      ).toBeGreaterThanOrEqual(0);
+      expect(
+        items.slice(0, 10).filter((item) => item.imdb.popularity < 10).length,
+      ).toBeGreaterThanOrEqual(0);
     },
   },
 
@@ -565,7 +748,9 @@ const params = {
     query: "?item_type=tvshow&popularity_filters=allocine_popularity",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
-        expect(items[i].allocine.popularity).toBeGreaterThanOrEqual(items[i - 1].allocine.popularity);
+        expect(items[i].allocine.popularity).toBeGreaterThanOrEqual(
+          items[i - 1].allocine.popularity,
+        );
       }
     },
   },
@@ -574,7 +759,9 @@ const params = {
     query: "?item_type=tvshow&popularity_filters=imdb_popularity",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
-        expect(items[i].imdb.popularity).toBeGreaterThanOrEqual(items[i - 1].imdb.popularity);
+        expect(items[i].imdb.popularity).toBeGreaterThanOrEqual(
+          items[i - 1].imdb.popularity,
+        );
       }
     },
   },
@@ -583,7 +770,9 @@ const params = {
     query: "?item_type=tvshow&popularity_filters=none,imdb_popularity",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
-        expect(items[i].ratings_average).toBeLessThanOrEqual(items[i - 1].ratings_average);
+        expect(items[i].ratings_average).toBeLessThanOrEqual(
+          items[i - 1].ratings_average,
+        );
       }
     },
   },
@@ -599,7 +788,9 @@ const params = {
   compare_two_minimum_ratings: {
     query: "?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5",
     expectedResult: async (items) => {
-      const response = await axios.get(`${baseURL}?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5,1`);
+      const response = await axios.get(
+        `${baseURL}?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5,1`,
+      );
       const data = response.data;
       const itemsFromExtraCall = data.results;
 
@@ -614,7 +805,9 @@ const params = {
   compare_two_ratings_filters: {
     query: "?ratings_filters=all",
     expectedResult: async (items) => {
-      const response = await axios.get(`${baseURL}?ratings_filters=${config.ratings_filters}`);
+      const response = await axios.get(
+        `${baseURL}?ratings_filters=${config.ratings_filters}`,
+      );
       const results = response.data.results;
 
       items.forEach((item, index) => {
@@ -624,10 +817,13 @@ const params = {
   },
 
   ratings_average_for_incorrect_minimum_ratings: {
-    query: "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
+    query:
+      "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
-        expect(items[i].ratings_average).toBeLessThanOrEqual(items[i - 1].ratings_average);
+        expect(items[i].ratings_average).toBeLessThanOrEqual(
+          items[i - 1].ratings_average,
+        );
       }
     },
   },
@@ -689,7 +885,9 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("updated_at");
         let itemDate = new Date(item.updated_at);
-        expect(itemDate.getTime()).toBeGreaterThanOrEqual(monthAgoDate.getTime());
+        expect(itemDate.getTime()).toBeGreaterThanOrEqual(
+          monthAgoDate.getTime(),
+        );
       });
     },
   },
@@ -700,7 +898,9 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");
         expect(item.platforms_links).not.toBeNull();
-        expect(item.platforms_links.some((platform) => platform.name === "Disney+")).toBeTruthy();
+        expect(
+          item.platforms_links.some((platform) => platform.name === "Disney+"),
+        ).toBeTruthy();
       });
     },
   },
@@ -711,8 +911,12 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");
         expect(item.platforms_links).not.toBeNull();
-        const hasNetflix = item.platforms_links.some((platform) => platform.name === "Netflix");
-        const hasCanalPlus = item.platforms_links.some((platform) => platform.name === "Canal+");
+        const hasNetflix = item.platforms_links.some(
+          (platform) => platform.name === "Netflix",
+        );
+        const hasCanalPlus = item.platforms_links.some(
+          (platform) => platform.name === "Canal+",
+        );
         expect(hasNetflix || hasCanalPlus).toBeTruthy();
       });
     },
@@ -721,8 +925,16 @@ const params = {
   include_all_platforms: {
     query: `?platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
-      expect(items.filter((item) => item.platforms_links === null).length).toBeGreaterThan(config.minimumNumberOfItems.default);
-      items.forEach((item) => item.platforms_links && item.platforms_links.forEach((platform) => expect(config.platforms).toContain(platform.name)));
+      expect(
+        items.filter((item) => item.platforms_links === null).length,
+      ).toBeGreaterThan(config.minimumNumberOfItems.default);
+      items.forEach(
+        (item) =>
+          item.platforms_links &&
+          item.platforms_links.forEach((platform) =>
+            expect(config.platforms).toContain(platform.name),
+          ),
+      );
     },
   },
 
@@ -732,7 +944,9 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");
         expect(item.platforms_links).not.toBeNull();
-        expect(item.platforms_links.some((platform) => platform.name === "Netflix")).toBeTruthy();
+        expect(
+          item.platforms_links.some((platform) => platform.name === "Netflix"),
+        ).toBeTruthy();
       });
     },
   },
