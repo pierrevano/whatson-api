@@ -1,5 +1,5 @@
-const axiosRetry = require("axios-retry");
 const axios = require("axios");
+const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
 const { isNotNull } = require("../utils/isNotNull");

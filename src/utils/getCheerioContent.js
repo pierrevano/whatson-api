@@ -1,6 +1,5 @@
-/* Importing the libraries that are needed for the script to work. */
-const axiosRetry = require("axios-retry");
 const axios = require("axios");
+const axiosRetry = require("axios-retry").default;
 const cheerio = require("cheerio");
 
 const { logErrors } = require("./logErrors");
