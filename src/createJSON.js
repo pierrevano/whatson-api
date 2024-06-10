@@ -62,7 +62,7 @@ const createJSON = async (
   traktId,
   mojoBoxOfficeArray,
   tmdbId,
-  tmdbHomepage
+  tmdbHomepage,
 ) => {
   const allocineFirstInfo = await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, false);
   const allocineCriticInfo = await getAllocineCriticsRating(allocineCriticsDetails);
@@ -70,7 +70,7 @@ const createJSON = async (
   const betaseriesRating = await getBetaseriesRating(betaseriesHomepage, betaseriesId);
   const platformsLinks = await getPlatformsLinks(betaseriesId, allocineHomepage, imdbId);
   const imdbRating = await getImdbRating(imdbHomepage);
-  const imdbPopularity = await getImdbPopularity(imdbHomepage);
+  const imdbPopularity = await getImdbPopularity(imdbHomepage, allocineURL, item_type);
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
   const metacriticRating = await getMetacriticRating(metacriticHomepage, metacriticId);
   const rottenTomatoesRating = await getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId);

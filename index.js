@@ -43,7 +43,7 @@ app.get("/", async (req, res) => {
       popularity_filters_query,
       ratings_filters_query,
       seasons_number_query,
-      status_query
+      status_query,
     );
     const results = items[0].results;
     const total_results = items[0].total_results[0].total_results;

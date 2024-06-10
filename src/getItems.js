@@ -30,7 +30,7 @@ const getItems = async (
   popularity_filters_query,
   ratings_filters_query,
   seasons_number_query,
-  status_query
+  status_query,
 ) => {
   const id = isNaN(id_path) ? "" : id_path;
   const is_active = typeof is_active_query !== "undefined" ? is_active_query : true;
@@ -90,7 +90,7 @@ const getItems = async (
           .split(",")
           .map(parseFloat)
           .sort((a, b) => a - b)
-          .join(",")
+          .join(","),
       )
     : parseFloat(minimum_ratings);
   const match_ratings_above_minimum = {

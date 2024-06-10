@@ -142,7 +142,7 @@ async function checkStatus(service) {
       getNodeVarsValues.item_type,
       jsonArraySortedHighestToLowest,
       mojoBoxOfficeArray,
-      getNodeVarsValues.check_data
+      getNodeVarsValues.check_data,
     );
     await countNullElements(collectionData, newOrUpdatedItems);
   } catch (error) {

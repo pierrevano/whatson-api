@@ -143,7 +143,7 @@ const loopItems = async (collectionData, config, force, index_to_start, item_typ
                 traktId,
                 mojoBoxOfficeArray,
                 tmdbId,
-                tmdbHomepage
+                tmdbHomepage,
               ));
 
         // Adding item last `updated_at` date

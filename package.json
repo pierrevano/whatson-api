@@ -1,13 +1,13 @@
 {
   "name": "whatson-api",
-  "version": "2.4.15",
+  "version": "2.4.2",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
     "test": "jest",
     "test-remote": "SOURCE=remote jest --ci --runInBand --reporters=default --reporters=jest-junit",
     "prettier": "prettier --write .",
-    "update-packages": "rm -rf node_modules package-lock.json && npm install",
+    "update-packages": "ncu -u && rm -rf node_modules package-lock.json && npm install",
     "changed-dataset": "git update-index --no-assume-unchanged src/assets/films_ids.txt && git update-index --no-assume-unchanged src/assets/series_ids.txt",
     "unchanged-dataset": "git update-index --assume-unchanged src/assets/films_ids.txt && git update-index --assume-unchanged src/assets/series_ids.txt",
     "check-dataset": "bash src/data/checkIds.sh check_dataset movie && bash src/data/checkIds.sh check_dataset tvshow",
@@ -32,22 +32,22 @@
   "author": "Pierre Vanoverschelde",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.6.3",
-    "axios-retry": "^3.9.1",
+    "axios": "^1.7.2",
+    "axios-retry": "^4.4.0",
     "cheerio": "^1.0.0-rc.12",
     "csvtojson": "^2.0.10",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "fs": "^0.0.1-security",
-    "mongodb": "^4.17.2",
-    "prettier": "^2.8.8",
+    "mongodb": "^6.7.0",
+    "prettier": "^3.3.1",
     "shelljs": "^0.8.5",
-    "vercel": "^32.7.2"
+    "vercel": "^34.2.6"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.1",
+    "@types/jest": "^29.5.12",
     "cz-conventional-changelog": "^3.3.0",
-    "jest": "^29.5.0",
+    "jest": "^29.7.0",
     "jest-junit": "^16.0.0"
   },
   "config": {

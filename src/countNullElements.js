@@ -82,7 +82,7 @@ const countNullElements = async (collectionData, newOrUpdatedItems) => {
     await Promise.all(
       queriesAndThresholdKeys.map(({ query, rateSource, thresholdKey }) => {
         return checkDocumentThreshold(collectionData, documents, query, rateSource, thresholdKey);
-      })
+      }),
     );
   } catch (error) {
     throw new Error(`countNullElements: ${error}`);

@@ -24,7 +24,7 @@ const compareUsersRating = async (allocineHomepage, allocineURL, betaseriesHomep
   const users_rating = (await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, compare)).allocineUsersRating;
   const allocinePopularity = (await getAllocinePopularity(allocineURL, item_type)).popularity;
   const imdb_users_rating = await getImdbRating(imdbHomepage);
-  const imdbPopularity = (await getImdbPopularity(imdbHomepage)).popularity;
+  const imdbPopularity = (await getImdbPopularity(imdbHomepage, allocineURL, item_type)).popularity;
   const mojoValues = await getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type);
 
   const isEqualObj = {

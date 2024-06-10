@@ -99,6 +99,7 @@ const config = {
     trakt: 3,
   },
   maximumIsActiveItems: 400,
+  maxPopularityDiff: 20,
   ratings_filters:
     "allocine_critics,allocine_users,betaseries_users,imdb_users,letterboxd_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users",
   timeout: 500000,

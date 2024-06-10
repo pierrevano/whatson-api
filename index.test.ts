@@ -126,8 +126,8 @@ function checkItemProperties(items) {
     expect(
       items.filter(
         (item) =>
-          item.allocine.critics_rating_details && typeof item.allocine.critics_rating_details[0].critic_name === "string" && typeof item.allocine.critics_rating_details[0].critic_rating === "number"
-      ).length
+          item.allocine.critics_rating_details && typeof item.allocine.critics_rating_details[0].critic_name === "string" && typeof item.allocine.critics_rating_details[0].critic_rating === "number",
+      ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     item.allocine && item.allocine.critics_number ? expect(item.allocine.critics_number).toEqual(item.allocine.critics_rating_details.length) : null;
 
@@ -767,7 +767,7 @@ describe("What's on? API tests", () => {
       async () => {
         await fetchItemsData();
       },
-      config.timeout
+      config.timeout,
     );
   });
 
@@ -785,6 +785,6 @@ describe("What's on? API tests", () => {
 
       expect(responseTime).toBeLessThan(maxResponseTime);
     },
-    config.timeout
+    config.timeout,
   );
 });
