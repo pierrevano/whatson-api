@@ -217,6 +217,8 @@ const config = {
     "Tubi TV",
     "Kanopy",
     "TCM",
+    "Hoopla",
+    "FlixFling",
   ],
 
   /* Search settings */
