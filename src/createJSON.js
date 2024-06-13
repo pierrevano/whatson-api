@@ -231,6 +231,7 @@ const createJSON = async (
     is_active: isActive,
     title: allocineFirstInfo.allocineTitle,
     image: allocineFirstInfo.allocineImage,
+    release_date: allocineFirstInfo && allocineFirstInfo.releaseDate,
     trailer: allocineFirstInfo.trailer,
     tagline: traktRating && traktRating.tagline,
     platforms_links: platformsLinks,

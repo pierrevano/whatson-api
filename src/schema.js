@@ -39,6 +39,7 @@ const schema = {
       link_url: "string", // URL to the streaming platform
     },
   ],
+  release_date: "string", // Release date of the item
   seasons_number: "number", // Number of seasons available
   status: "string", // Current status of the item (e.g., ongoing, ended, etc.)
   tagline: "string", // Tagline of the item

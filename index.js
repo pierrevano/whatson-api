@@ -28,6 +28,7 @@ app.get("/", async (req, res) => {
     const platforms_query = req.query.platforms;
     const popularity_filters_query = req.query.popularity_filters;
     const ratings_filters_query = req.query.ratings_filters;
+    const release_date_query = req.query.release_date;
     const seasons_number_query = req.query.seasons_number;
     const status_query = req.query.status;
 
@@ -42,6 +43,7 @@ app.get("/", async (req, res) => {
       platforms_query,
       popularity_filters_query,
       ratings_filters_query,
+      release_date_query,
       seasons_number_query,
       status_query,
     );

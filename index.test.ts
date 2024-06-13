@@ -57,9 +57,6 @@ function isNumberWithDecimals(input) {
  */
 function checkRatings(item, property, minRating, maxRating) {
   if (item && item[property]) {
-    console.log(item);
-    console.log(item[property]);
-
     expect(item[property]).toBeGreaterThanOrEqual(minRating);
     expect(item[property]).toBeLessThanOrEqual(maxRating);
     expect(isNumberWithDecimals(item[property])).toBeTruthy;
@@ -67,7 +64,7 @@ function checkRatings(item, property, minRating, maxRating) {
 }
 
 /**
- * This function checks properties of given items and outputs log.
+ * This function checks properties of given items.
  * It validates various metrics of different rating systems against predefined expectations.
  *
  * @param items - An array of objects/items that contains the properties to be checked.
@@ -98,6 +95,14 @@ function checkItemProperties(items) {
 
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
+
+    item.is_active === true &&
+    item.item_type === "movie" &&
+    item.release_date !== null
+      ? expect(!isNaN(new Date(item.release_date).getTime())).toBe(true)
+      : null;
+
+    item.item_type === "tvshow" ? expect(item.release_date).toBeNull() : null;
 
     item.is_active === true
       ? expect(
@@ -947,6 +952,42 @@ const params = {
         expect(
           item.platforms_links.some((platform) => platform.name === "Netflix"),
         ).toBeTruthy();
+      });
+    },
+  },
+
+  should_return_recent_items_when_filtered_by_release_date: {
+    query: `?item_type=movie&is_active=true&release_date=last_6_months&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("release_date");
+
+        const releaseDate = new Date(item.release_date);
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        expect(releaseDate).toBeInstanceOf(Date);
+        expect(releaseDate).not.toBeNaN();
+        expect(releaseDate.getTime()).toBeGreaterThanOrEqual(
+          sixMonthsAgo.getTime(),
+        );
+      });
+    },
+  },
+
+  should_return_all_items_if_release_date_is_not_last_6_months: {
+    query: `?item_type=movie&is_active=true&release_date=last_12_months&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("release_date");
+
+        const releaseDate = new Date(item.release_date);
+        const severalYearsAgo = new Date();
+        severalYearsAgo.setFullYear(severalYearsAgo.getFullYear() - 1000);
+        expect(releaseDate).toBeInstanceOf(Date);
+        expect(releaseDate).not.toBeNaN();
+        expect(releaseDate.getTime()).toBeGreaterThanOrEqual(
+          severalYearsAgo.getTime(),
+        );
       });
     },
   },

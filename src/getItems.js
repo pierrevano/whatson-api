@@ -27,6 +27,7 @@ const getItems = async (
   platforms_query,
   popularity_filters_query,
   ratings_filters_query,
+  release_date_query,
   seasons_number_query,
   status_query,
 ) => {
@@ -57,6 +58,8 @@ const getItems = async (
       ? ratings_filters_query
       : "all";
   const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
+  const release_date =
+    typeof release_date_query !== "undefined" ? release_date_query : "";
   const seasons_number =
     typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
   const status = typeof status_query !== "undefined" ? status_query : "";
@@ -72,6 +75,7 @@ const getItems = async (
           1,
         ],
       },
+      releaseDateAsDate: { $dateFromString: { dateString: "$release_date" } },
       sortAvgField: {
         $cond: [
           { $eq: [{ $avg: popularity_filters }, null] },
@@ -117,13 +121,29 @@ const getItems = async (
           .join(","),
       )
     : parseFloat(minimum_ratings);
-  const match_ratings_above_minimum = {
-    $match: {
+
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+  const matchConditions = [
+    {
       ratings_average: {
         $gte: !isNaN(minimum_ratings_sorted)
           ? minimum_ratings_sorted
           : -Infinity,
       },
+    },
+  ];
+
+  if (release_date === "last_6_months") {
+    matchConditions.push({
+      releaseDateAsDate: { $gte: sixMonthsAgo },
+    });
+  }
+
+  const match_min_ratings_and_release_date = {
+    $match: {
+      $and: matchConditions,
     },
   };
 
@@ -137,15 +157,17 @@ const getItems = async (
       title: 1,
     },
   };
-  const remove_sort_popularity = { $project: { sortAvgField: 0 } };
+  const remove_sort_popularity_and_release_date = {
+    $project: { sortAvgField: 0, releaseDateAsDate: 0 },
+  };
 
   const facet = {
     $facet: {
       results: [
         addFields_popularity_and_ratings,
-        match_ratings_above_minimum,
+        match_min_ratings_and_release_date,
         sort_popularity_and_ratings,
-        remove_sort_popularity,
+        remove_sort_popularity_and_release_date,
         skip_results,
         limit_results,
       ],
