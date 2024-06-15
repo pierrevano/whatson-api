@@ -192,8 +192,12 @@ fetch_id () {
   local service_url=$2
   local service_name=$3
 
-  id=$(curl -s $wiki_url | grep $service_url | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  deprecated_id=$(curl -s $wiki_url | grep -A15 $service_url | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
+  if [[ $wiki_url ]]; then
+    id=$(curl -s $wiki_url | grep $service_url | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+    deprecated_id=$(curl -s $wiki_url | grep -A15 $service_url | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
+  else
+    id=null
+  fi
 
   if [[ -z $id ]] || [[ $deprecated_id -eq 1 ]]; then
     id=null
@@ -427,6 +431,16 @@ do
             LETTERBOXD_ID=$LETTERBOXD_CHECK
             SENSCRITIQUE_ID=$SENSCRITIQUE_CHECK
             TRAKT_ID=$TRAKT_CHECK
+
+            if [[ $IMDB_ID == "null" ]] || \
+            [[ $METACRITIC_ID == "null" ]] || \
+            [[ $ROTTEN_TOMATOES_ID == "null" ]] || \
+            [[ $LETTERBOXD_ID == "null" ]] || \
+            [[ $SENSCRITIQUE_ID == "null" ]] || \
+            [[ $TRAKT_ID == "null" ]]; then
+              get_other_ids
+            fi
+
           else
             IMDB_ID=null
             METACRITIC_ID=null
@@ -492,7 +506,7 @@ do
           fi
         fi
 
-        if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { [[ $PROMPT == "recheck" ]] && [[ $KIDS_MOVIE -eq 1 ]]; }; then
+        if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { [[ $PROMPT == "recheck" ]] && [[ $KIDS_MOVIE -eq 1 ]] && [[ -z $MIN_RATING ]]; }; then
           data_not_found
         else
           if { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && [[ $PROMPT == "recheck" ]]; then
