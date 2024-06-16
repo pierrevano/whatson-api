@@ -176,17 +176,6 @@ data_found () {
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
-check_id () {
-  local id=$1
-  local file_id=$2
-
-  if [[ $id != $file_id ]] && [[ $id != "null" ]]; then
-    echo $id
-  else
-    echo $file_id
-  fi
-}
-
 fetch_id () {
   local wiki_url=$1
   local service_url=$2
@@ -233,14 +222,6 @@ get_other_ids () {
   echo "Letterboxd ID: $LETTERBOXD_ID"
   echo "SensCritique ID: $SENSCRITIQUE_ID"
   echo "Trakt ID: $TRAKT_ID"
-
-  if [[ $PROMPT == "recheck" ]]; then
-    METACRITIC_ID_TO_USE=$(check_id "$METACRITIC_ID" "$METACRITIC_CHECK")
-    ROTTEN_TOMATOES_ID_TO_USE=$(check_id "$ROTTEN_TOMATOES_ID" "$ROTTEN_TOMATOES_CHECK")
-    LETTERBOXD_ID_TO_USE=$(check_id "$LETTERBOXD_ID" "$LETTERBOXD_CHECK")
-    SENSCRITIQUE_ID_TO_USE=$(check_id "$SENSCRITIQUE_ID" "$SENSCRITIQUE_CHECK")
-    TRAKT_ID_TO_USE=$(check_id "$TRAKT_ID" "$TRAKT_CHECK")
-  fi
 }
 
 remove_files
@@ -426,6 +407,8 @@ do
         if [[ -z $WIKI_URL ]]; then
           if [[ $PROMPT == "recheck" ]]; then
             IMDB_ID=$IMDB_CHECK
+            BETASERIES_ID=$BETASERIES_CHECK
+            THEMOVIEDB_ID=$THEMOVIEDB_CHECK
             METACRITIC_ID=$METACRITIC_CHECK
             ROTTEN_TOMATOES_ID=$ROTTEN_TOMATOES_CHECK
             LETTERBOXD_ID=$LETTERBOXD_CHECK
@@ -516,11 +499,24 @@ do
             read IMDB_ID
           fi
 
+          if [[ $IMDB_ID == "null" ]]; then
+            data_not_found
+            break
+          fi
+
           echo "imdbId URL: https://www.imdb.com/title/$IMDB_ID/"
 
           BETASERIES_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE" | cut -d'/' -f5 | sed 's/"//g')
           echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
           echo "BetaSeries ID: $BETASERIES_ID"
+
+          if [[ $BETASERIES_ID == "null" ]]; then
+            BETASERIES_ID=$BETASERIES_CHECK
+
+            if [[ -z $BETASERIES_ID ]]; then
+              BETASERIES_ID=null
+            fi
+          fi
 
           if { [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; } || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
@@ -531,6 +527,10 @@ do
 
           THEMOVIEDB_ID=$(curl -s https://api.themoviedb.org/3/find/$IMDB_ID\?api_key=$THEMOVIEDB_API_KEY\&external_source=imdb_id | jq "$JQ_COMMAND_RESULTS" | jq '.[] .id')
           echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
+
+          if [[ -z $THEMOVIEDB_ID ]]; then
+            THEMOVIEDB_ID=$THEMOVIEDB_CHECK
+          fi
 
           if [[ -z $THEMOVIEDB_ID ]]; then
             THEMOVIEDB_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE_TMDB")
