@@ -1,6 +1,7 @@
 const axios = require("axios");
 
 const { config } = require("./config");
+const { generateUserAgent } = require("./utils/generateUserAgent");
 const { logErrors } = require("./utils/logErrors");
 
 /**
@@ -13,7 +14,7 @@ const getMoviesIds = async (cinemaIdParam) => {
     const base_url = `${config.corsURL}/${config.baseURLTheaters}`;
     const options = {
       headers: {
-        "User-Agent": config.userAgent,
+        "User-Agent": generateUserAgent(),
       },
     };
 

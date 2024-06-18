@@ -1,5 +1,5 @@
-const { config } = require("../config");
 const { convertTitleToNumber } = require("../utils/convertTitleToNumber");
+const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
@@ -20,7 +20,7 @@ const getAllocineCriticsRating = async (allocineCriticsDetails) => {
   try {
     const options = {
       headers: {
-        "User-Agent": config.userAgent,
+        "User-Agent": generateUserAgent(),
       },
     };
 

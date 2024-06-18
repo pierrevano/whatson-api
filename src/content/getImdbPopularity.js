@@ -2,9 +2,10 @@ const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
+const { generateUserAgent } = require("../utils/generateUserAgent");
+const { getAllocinePopularity } = require("./getAllocinePopularity");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
-const { getAllocinePopularity } = require("./getAllocinePopularity");
 
 /**
  * It takes the IMDb homepage of a movie as an argument, and returns the IMDb popularity ranking of the movie
@@ -16,7 +17,7 @@ const getImdbPopularity = async (imdbHomepage, allocineURL, item_type) => {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = {
       headers: {
-        "User-Agent": config.userAgent,
+        "User-Agent": generateUserAgent(),
       },
     };
     const $ = await getCheerioContent(

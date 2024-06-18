@@ -1,4 +1,5 @@
 const { config } = require("./config");
+const { generateUserAgent } = require("./utils/generateUserAgent");
 const { getCheerioContent } = require("./utils/getCheerioContent");
 const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
 const { logErrors } = require("./utils/logErrors");
@@ -37,7 +38,7 @@ const getAllocineItemsNumber = async (
   try {
     const options = {
       headers: {
-        "User-Agent": config.userAgent,
+        "User-Agent": generateUserAgent(),
       },
     };
 

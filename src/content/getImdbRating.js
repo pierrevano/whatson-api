@@ -1,7 +1,7 @@
 const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
-const { config } = require("../config");
+const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
@@ -17,7 +17,7 @@ const getImdbRating = async (imdbHomepage) => {
     axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
     const options = {
       headers: {
-        "User-Agent": config.userAgent,
+        "User-Agent": generateUserAgent(),
       },
     };
     const $ = await getCheerioContent(imdbHomepage, options, "getImdbRating");

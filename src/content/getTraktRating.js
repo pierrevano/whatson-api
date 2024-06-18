@@ -1,4 +1,4 @@
-const { config } = require("../config");
+const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
@@ -16,7 +16,7 @@ const getTraktRating = async (traktHomepage, traktId) => {
   try {
     const options = {
       headers: {
-        "User-Agent": config.userAgent,
+        "User-Agent": generateUserAgent(),
       },
     };
 

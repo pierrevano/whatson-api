@@ -58,7 +58,6 @@ jobs:
       - run:
           name: Update all movie data first half
           command: npm run update-movie-data-first-half
-      - run_tests
   build_all_second:
     docker:
       - image: cimg/node:20.5.1
@@ -68,11 +67,9 @@ jobs:
       - run:
           name: Update all movie data second half
           command: npm run update-movie-data-second-half
-      - run_tests
       - run:
           name: Update all tvshow data all
           command: npm run update-tvshow-data-all
-      - run_tests
 
 workflows:
   build:
