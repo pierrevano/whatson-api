@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "2.5.2",
+  "version": "2.5.21",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,8 @@
     "check-dataset": "bash src/data/checkIds.sh check_dataset movie && bash src/data/checkIds.sh check_dataset tvshow",
     "check-dataset-force": "bash src/data/checkIds.sh check_dataset movie force && bash src/data/checkIds.sh check_dataset tvshow force",
     "update-local": "bash src/data/getIds.sh local movie && bash src/data/getIds.sh local tvshow",
+    "update-local-movie": "bash src/data/getIds.sh local movie",
+    "update-local-tvshow": "bash src/data/getIds.sh local tvshow",
     "update-local-stop": "bash src/data/getIds.sh local movie stop imdb && bash src/data/getIds.sh local tvshow stop imdb",
     "update-dataset": "bash src/data/checkIds.sh check movie && bash src/data/checkIds.sh check tvshow",
     "update-active-dataset": "bash src/data/checkIds.sh check movie active && bash src/data/checkIds.sh check tvshow active",
