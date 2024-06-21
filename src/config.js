@@ -219,6 +219,7 @@ const config = {
     "TCM",
     "Hoopla",
     "FlixFling",
+    "Showtime",
   ],
 
   /* Search settings */
