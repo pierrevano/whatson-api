@@ -220,6 +220,7 @@ const config = {
     "Hoopla",
     "FlixFling",
     "Showtime",
+    "Max",
   ],
 
   /* Search settings */
