@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "2.5.31",
+  "version": "2.5.32",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -12,10 +12,12 @@
     "unchanged-dataset": "git update-index --assume-unchanged src/assets/films_ids.txt && git update-index --assume-unchanged src/assets/series_ids.txt",
     "check-dataset": "bash src/data/checkIds.sh check_dataset movie && bash src/data/checkIds.sh check_dataset tvshow",
     "check-dataset-force": "bash src/data/checkIds.sh check_dataset movie force && bash src/data/checkIds.sh check_dataset tvshow force",
-    "update-local": "bash src/data/getIds.sh local movie && bash src/data/getIds.sh local tvshow",
     "update-local-movie": "bash src/data/getIds.sh local movie",
     "update-local-tvshow": "bash src/data/getIds.sh local tvshow",
-    "update-local-stop": "bash src/data/getIds.sh local movie stop imdb && bash src/data/getIds.sh local tvshow stop imdb",
+    "update-local": "npm run update-local-movie && npm run update-local-tvshow",
+    "update-local-stop-movie": "bash src/data/getIds.sh local movie stop imdb",
+    "update-local-stop-tvshow": "bash src/data/getIds.sh local tvshow stop imdb",
+    "update-local-stop": "npm run update-local-stop-movie && npm run update-local-stop-tvshow",
     "update-dataset": "bash src/data/checkIds.sh check movie && bash src/data/checkIds.sh check tvshow",
     "update-active-dataset": "bash src/data/checkIds.sh check movie active && bash src/data/checkIds.sh check tvshow active",
     "confirm-dataset": "bash src/data/checkIds.sh update movie && bash src/data/checkIds.sh update tvshow",
@@ -26,7 +28,8 @@
     "push-dataset": "npm run check-dataset-force && npm run prettier && npm run test && npm run commit && npm run push-all-platforms && npm run unchanged-dataset",
     "update-movie-data-first-half": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(true));\" | xargs -I {} node src/updateData.js movie no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7",
     "update-movie-data-second-half": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(false));\" | xargs -I {} node src/updateData.js movie no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7",
-    "update-tvshow-data-all": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(true));\" | xargs -I {} node src/updateData.js tvshow no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7"
+    "update-tvshow-data-all": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(true));\" | xargs -I {} node src/updateData.js tvshow no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7",
+    "run": "bash run.sh local"
   },
   "author": "Pierre Vanoverschelde",
   "license": "ISC",
