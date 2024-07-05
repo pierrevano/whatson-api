@@ -206,7 +206,6 @@ elif [[ $1 == "update" ]]; then
     echo "Updating the dataset with the file: $FILMS_IDS_FILE_PATH_TEMP"
   else
     echo "The temp file does not exist, abording"
-    exit 1
   fi
 
   TOTAL_LINES=$(wc -l <"${FILMS_IDS_FILE_PATH_TEMP}")

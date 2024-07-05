@@ -464,9 +464,10 @@ do
             SKIP=0
           fi
 
+          STATUS=$(curl -s https://www.allocine.fr$URL | grep "label-info-full label-status" | cut -d'>' -f2 | cut -d'<' -f1)
           if [[ $SKIP -eq 0 ]]; then
-            if [[ $KIDS_MOVIE -eq 1 ]]; then
-              echo "https://www.allocine.fr$URL is a kids movie."
+            if [[ $KIDS_MOVIE -eq 1 ]] || [[ $STATUS == "À venir" ]]; then
+              echo "Skipping: https://www.allocine.fr$URL"
               IMDB_ID="skip"
             else
               open -a $BROWSER_PATH "https://www.allocine.fr$URL"
@@ -518,7 +519,7 @@ do
             fi
           fi
 
-          if { [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; } || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
+          if { [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; } || { [[ $BETASERIES_ID == "null" ]] && [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
             open -a $BROWSER_PATH "https://betaseries.com"
             echo "Enter the BetaSeries ID:"
