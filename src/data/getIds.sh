@@ -9,6 +9,7 @@ PAGES_MIN_NUMBER=1
 PROMPT=$3
 PROMPT_SERVICE_NAME=$4
 MIN_RATING=$5
+IGNORE_NATIONALITY=$6
 SECONDS=0
 SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
@@ -180,6 +181,12 @@ fetch_id () {
   local wiki_url=$1
   local service_url=$2
   local service_name=$3
+  local nationality=$4
+  local ignore_nationality=$5
+
+  if [[ $ignore_nationality == "IGNORE_NATIONALITY" ]]; then
+    nationality=null
+  fi
 
   if [[ $wiki_url ]]; then
     id=$(curl -s $wiki_url | grep $service_url | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
@@ -197,6 +204,7 @@ fetch_id () {
   if [[ $PROMPT == "recheck" ]] && [[ $id == "null" ]] && \
     { [[ -z $(eval echo \$$service_name"_CHECK") ]] || [[ $(eval echo \$$service_name"_CHECK") == "null" ]]; } && \
     { [[ $service_name != "LETTERBOXD" ]] || [[ $TYPE != "tvshow" ]]; } && \
+    { [[ $nationality != "France" ]] && [[ $TYPE == "movie" ]]; } && \
     { [[ $PROMPT_SERVICE_NAME == $service_name ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
       open -a $BROWSER_PATH "https://www.allocine.fr$URL"
       open -a $BROWSER_PATH $service_url
@@ -211,8 +219,8 @@ fetch_id () {
 }
 
 get_other_ids () {
-  METACRITIC_ID=$(fetch_id "$WIKI_URL" "https://www.metacritic.com" "METACRITIC")
-  ROTTEN_TOMATOES_ID=$(fetch_id "$WIKI_URL" "https://www.rottentomatoes.com" "ROTTEN_TOMATOES")
+  METACRITIC_ID=$(fetch_id "$WIKI_URL" "https://www.metacritic.com" "METACRITIC" "$NATIONALITY" "$IGNORE_NATIONALITY")
+  ROTTEN_TOMATOES_ID=$(fetch_id "$WIKI_URL" "https://www.rottentomatoes.com" "ROTTEN_TOMATOES" "$NATIONALITY" "$IGNORE_NATIONALITY")
   LETTERBOXD_ID=$(fetch_id "$WIKI_URL" "https://letterboxd.com" "LETTERBOXD")
   SENSCRITIQUE_ID=$(fetch_id "$WIKI_URL" "https://www.senscritique.com" "SENSCRITIQUE")
   TRAKT_ID=$(fetch_id "$WIKI_URL" "https://trakt.tv" "TRAKT")
@@ -392,6 +400,9 @@ do
         # Get title
         TITLE=$(cat temp_allocine_url | grep -m1 "<meta property=\"og:title\" content=\"" | cut -d'"' -f4 | sed 's/&#039;/'"'"'/' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
         echo "Title: $TITLE"
+
+        NATIONALITY=$(curl -s https://www.allocine.fr$URL | grep -A2 -m1 "what light" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
+        echo "Nationality: $NATIONALITY"
 
         # Get original title for IMDb
         ORIGINAL_TITLE=$(cat temp_allocine_url | grep -A1 "Titre original" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/&#039;/'"'"'/' | sed 's/\&amp;/\&/g' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
