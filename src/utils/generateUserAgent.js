@@ -1,27 +1,31 @@
 /**
  * This module provides functionality to generate random User-Agent strings.
- * It includes a list of predefined User-Agent templates that cover common browsers
- * and devices, with some templates utilizing a random Chrome browser version.
+ * It includes predefined User-Agent strings for the latest versions of Chrome,
+ * Firefox, and Safari.
  *
  * Functions:
- * getRandomChromeVersion() - Generates a random version string for Chrome browsers.
- * generateUserAgent() - Selects a random User-Agent template and returns the generated string.
+ * generateUserAgent() - Selects a random User-Agent string from predefined options and returns it.
  */
 
 const userAgents = [
-  function () {
-    return `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${getRandomChromeVersion()} Safari/537.36`;
-  },
-  function () {
-    return `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${getRandomChromeVersion()} Safari/537.36`;
-  },
-];
+  // Chrome User Agents
+  () =>
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5449.179 Safari/537.36",
+  () =>
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5449.179 Safari/537.36",
 
-function getRandomChromeVersion() {
-  const major = Math.floor(Math.random() * (90 - 60 + 1) + 60); // Chrome versions 60-90
-  const minor = Math.floor(Math.random() * 1000); // 0-999
-  return `${major}.${minor}`;
-}
+  // Firefox User Agents
+  () =>
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:116.0) Gecko/20100101 Firefox/116.0",
+  () =>
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 11.5; rv:116.0) Gecko/20100101 Firefox/116.0",
+
+  // Safari User Agents
+  () =>
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15",
+  () =>
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1",
+];
 
 function generateUserAgent() {
   const randomUserAgentGenerator =
