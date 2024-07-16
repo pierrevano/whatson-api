@@ -957,7 +957,7 @@ const params = {
   },
 
   should_return_new_items_when_filtered_by_release_date: {
-    query: `?item_type=movie&is_active=true&release_date=new&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie&is_active=true&release_date=everything,new&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("release_date");
@@ -974,8 +974,8 @@ const params = {
     },
   },
 
-  should_return_all_items_if_release_date_is_not_new: {
-    query: `?item_type=movie&is_active=true&release_date=last_12_months&limit=${config.maxLimitRemote}`,
+  should_return_all_items_if_release_date_does_not_include_new: {
+    query: `?item_type=movie&is_active=true&release_date=everything&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("release_date");

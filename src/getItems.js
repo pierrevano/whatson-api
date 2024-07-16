@@ -135,7 +135,7 @@ const getItems = async (
     },
   ];
 
-  if (release_date === "new") {
+  if (release_date.split(",").includes("new")) {
     matchConditions.push({
       releaseDateAsDate: { $gte: sixMonthsAgo },
     });
