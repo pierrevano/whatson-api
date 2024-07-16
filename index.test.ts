@@ -110,7 +110,9 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
-    expect(item.ratings_average).not.toBeNull();
+    item.status !== "Soon"
+      ? expect(item.ratings_average).toBeGreaterThan(0)
+      : null;
 
     item.item_type === "tvshow" && item.platforms_links
       ? expect(
@@ -787,6 +789,15 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item.ratings_average).toBeGreaterThanOrEqual(3.5);
+      }),
+  },
+
+  items_with_no_minimum_ratings: {
+    query: `?item_type=movie,tvshow&is_active=true,false&minimum_ratings=0&limit=${higherLimit}`,
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item.ratings_average).toBeGreaterThanOrEqual(0);
+        expect(items.length).toEqual(higherLimit);
       }),
   },
 
