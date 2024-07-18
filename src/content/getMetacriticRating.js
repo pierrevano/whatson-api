@@ -17,6 +17,9 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
     const options = {
       headers: {
         "User-Agent": generateUserAgent(),
+        Referer: "https://www.metacritic.com/",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
       },
     };
 
