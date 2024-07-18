@@ -18,40 +18,25 @@ const getCheerioContent = async (url, options, origin) => {
       retries: 50,
       retryDelay: () => 10000,
       retryCondition: (error) => {
-        const retryInfo = {};
-
-        // User agent and error code
-        retryInfo.userAgent =
-          options && options.headers
-            ? options.headers["User-Agent"]
-            : "No User-Agent specified";
-        retryInfo.errorCode = error.response
-          ? error.response.status
-          : "Network Error";
-
-        // IP Address
-        if (error.response && error.response.headers["x-forwarded-for"]) {
-          retryInfo.ipAddress = error.response.headers["x-forwarded-for"];
-        }
-
-        // Request headers
-        if (options && options.headers) {
-          retryInfo.requestHeaders = options.headers;
-        }
-
-        // Response headers
-        if (error.response && error.response.headers) {
-          retryInfo.responseHeaders = error.response.headers;
-        }
+        const retryInfo = {
+          origin: origin || "No Origin specified",
+          userAgent:
+            options?.headers?.["User-Agent"] || "No User-Agent specified",
+          errorCode: error.response?.status || "Network Error",
+          ipAddress: error.response?.headers?.["x-forwarded-for"] || "N/A",
+          requestHeaders: options?.headers,
+          responseHeaders: error.response?.headers,
+        };
 
         if (retryInfo.errorCode !== 404) {
           console.log(
-            `Retrying due to error:\n`,
-            `Error Code: ${retryInfo.errorCode}\n`,
-            `User-Agent: ${retryInfo.userAgent}\n`,
-            `IP Address: ${retryInfo.ipAddress || "N/A"}`,
-            `Request Headers: ${JSON.stringify(retryInfo.requestHeaders, null, 2)}\n`,
-            `Response Headers: ${JSON.stringify(retryInfo.responseHeaders, null, 2)}\n`,
+            `Retrying due to error:\n` +
+              `Origin: ${retryInfo.origin}\n` +
+              `Error Code: ${retryInfo.errorCode}\n` +
+              `User-Agent: ${retryInfo.userAgent}\n` +
+              `IP Address: ${retryInfo.ipAddress}\n` +
+              `Request Headers: ${JSON.stringify(retryInfo.requestHeaders, null, 2)}\n` +
+              `Response Headers: ${JSON.stringify(retryInfo.responseHeaders, null, 2)}`,
           );
         }
 
