@@ -59,6 +59,10 @@ const compareUsersRating = async (
     const response = await axios.get(apiUrl);
 
     if (response.status !== 200) {
+      if (response.status > 500) {
+        console.error(`API: ${apiUrl} cannot be reached, aborting.`);
+        process.exit(1);
+      }
       return isEqualObj;
     }
 
