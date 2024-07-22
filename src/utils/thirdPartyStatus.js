@@ -1,12 +1,16 @@
 const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
+const { config } = require("../config");
 const { generateUserAgent } = require("./generateUserAgent");
 const { logErrors } = require("./logErrors");
 
 const isThirdPartyServiceOK = async (service) => {
   try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    axiosRetry(axios, {
+      retries: config.retries,
+      retryDelay: () => config.retryDelay,
+    });
     const options = {
       headers: {
         "User-Agent": generateUserAgent(),

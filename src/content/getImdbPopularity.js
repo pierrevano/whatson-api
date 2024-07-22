@@ -14,7 +14,10 @@ const { logErrors } = require("../utils/logErrors");
  */
 const getImdbPopularity = async (imdbHomepage, allocineURL, item_type) => {
   try {
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    axiosRetry(axios, {
+      retries: config.retries,
+      retryDelay: () => config.retryDelay,
+    });
     const options = {
       headers: {
         "User-Agent": generateUserAgent(),

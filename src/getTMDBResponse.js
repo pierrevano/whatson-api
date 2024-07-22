@@ -17,7 +17,10 @@ const getTMDBResponse = async (allocineHomepage, tmdbId) => {
       : "movie";
     const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}`;
 
-    axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
+    axiosRetry(axios, {
+      retries: config.retries,
+      retryDelay: () => config.retryDelay,
+    });
     const options = { validateStatus: (status) => status < 500 };
     const { data, status } = await axios.get(url, options);
 

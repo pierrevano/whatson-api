@@ -17,8 +17,8 @@ const getCheerioContent = async (url, options, origin) => {
     const startTime = Date.now();
 
     axiosRetry(axios, {
-      retries: 5,
-      retryDelay: () => 2000,
+      retries: config.retries,
+      retryDelay: () => config.retryDelay,
       retryCondition: (error) => {
         const retryInfo = {
           origin: origin || "No Origin specified",
