@@ -78,7 +78,7 @@ const config = {
     "ratings_average",
     "updated_at",
   ],
-  margin: 50,
+  margin: 10,
   maxResponseTime: 5000,
   minimumNumberOfItems: {
     default: 25,
