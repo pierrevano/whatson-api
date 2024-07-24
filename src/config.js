@@ -223,6 +223,7 @@ const config = {
     "FlixFling",
     "Showtime",
     "Max",
+    "Sundance Now Amazon Channel",
   ],
 
   /* Search settings */
