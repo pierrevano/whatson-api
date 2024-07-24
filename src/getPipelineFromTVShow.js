@@ -19,50 +19,68 @@ const getPipelineFromTVShow = (
   pipeline,
   seasons_number,
   status,
+  isItemsNew,
 ) => {
-  const item_status = { status: { $in: status.split(",").map(capitalize) } };
   const item_type_tvshow = { item_type: "tvshow" };
   const seasons_number_first = {
     seasons_number: { $in: seasons_number.split(",").map(Number) },
   };
-  const seasons_number_last = {
-    seasons_number: { $gt: config.maxSeasonsNumber },
-  };
 
   if (item_type) {
-    const match_item_type_tvshow = {
+    pipeline.push({
       $match: { $and: [is_active_item, item_type_tvshow] },
-    };
-    pipeline.push(match_item_type_tvshow);
+    });
   }
 
   if (seasons_number) {
     if (seasons_number > config.maxSeasonsNumber) {
-      const match_item_type_tvshow_and_seasons_number_more_than_max = {
+      pipeline.push({
         $match: {
           $and: [
             is_active_item,
             item_type_tvshow,
-            { $or: [seasons_number_first, seasons_number_last] },
+            {
+              $or: [
+                seasons_number_first,
+                {
+                  seasons_number: { $gt: config.maxSeasonsNumber },
+                },
+              ],
+            },
           ],
         },
-      };
-      pipeline.push(match_item_type_tvshow_and_seasons_number_more_than_max);
+      });
     } else {
-      const match_item_type_tvshow_and_seasons_number = {
+      pipeline.push({
         $match: {
           $and: [is_active_item, item_type_tvshow, seasons_number_first],
         },
-      };
-      pipeline.push(match_item_type_tvshow_and_seasons_number);
+      });
     }
   }
 
   if (status) {
-    const match_status = {
-      $match: { $and: [is_active_item, item_status, item_type_tvshow] },
-    };
-    pipeline.push(match_status);
+    pipeline.push({
+      $match: {
+        $and: [
+          is_active_item,
+          { status: { $in: status.split(",").map(capitalize) } },
+          item_type_tvshow,
+        ],
+      },
+    });
+  }
+
+  if (isItemsNew) {
+    const currentYear = new Date().getFullYear();
+    pipeline.push({
+      $match: {
+        $or: [
+          { releaseDateAsDate: { $gte: new Date(`${currentYear}-01-01`) } },
+          { seasons_number: { $in: [1, 2] } },
+        ],
+      },
+    });
   }
 
   return pipeline;

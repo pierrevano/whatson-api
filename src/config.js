@@ -41,7 +41,7 @@ const config = {
   minimumActiveItems: 150,
   page: 1,
   retries: 20,
-  retryDelay: 3000,
+  retryDelay: 5000,
   userAgent:
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
 

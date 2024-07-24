@@ -135,7 +135,8 @@ const getItems = async (
     },
   ];
 
-  if (release_date.split(",").includes("new")) {
+  const isItemsNew = release_date.split(",").includes("new");
+  if (item_type === "movie" && isItemsNew) {
     matchConditions.push({
       releaseDateAsDate: { $gte: sixMonthsAgo },
     });
@@ -187,6 +188,7 @@ const getItems = async (
       pipeline,
       seasons_number,
       status,
+      isItemsNew,
     );
   } else if (movies_ids) {
     pipeline.push(match_in_movies_ids);

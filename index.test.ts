@@ -102,7 +102,9 @@ function checkItemProperties(items) {
       ? expect(!isNaN(new Date(item.release_date).getTime())).toBe(true)
       : null;
 
-    item.item_type === "tvshow" ? expect(item.release_date).toBeNull() : null;
+    item.is_active === true && item.status && item.status !== "Soon"
+      ? expect(item.release_date).not.toBeNull()
+      : null;
 
     item.is_active === true
       ? expect(
@@ -999,6 +1001,19 @@ const params = {
         expect(releaseDate.getTime()).toBeGreaterThanOrEqual(
           severalYearsAgo.getTime(),
         );
+      });
+    },
+  },
+
+  should_return_new_tvshow_items: {
+    query: `?item_type=tvshow&release_date=everything,new&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        const releaseYear = new Date(item.release_date).getFullYear();
+        const currentYear = new Date().getFullYear();
+        expect(releaseYear).toBeLessThanOrEqual(currentYear);
+
+        expect([1, 2]).toContain(item.seasons_number);
       });
     },
   },

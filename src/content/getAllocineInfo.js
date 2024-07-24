@@ -67,7 +67,7 @@ const getAllocineInfo = async (
     releaseDate =
       !compare && allocineHomepage.includes(config.baseURLTypeFilms)
         ? convertFrenchDateToISOString(frenchDateStr)
-        : null;
+        : convertFrenchDateToISOString(frenchDateStr, true);
 
     allocineFirstInfo = {
       allocineTitle: title,

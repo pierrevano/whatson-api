@@ -20,13 +20,24 @@ const monthMap = {
 /**
  * Converts a French date string to an ISO 8601 date string.
  *
- * @param {string} frenchDateStr - The date string in French format (e.g., "12 mars 2023", "juin 1960", or "1960").
- * @returns {string|null} - The ISO 8601 formatted date string (e.g., "2023-03-12T00:00:00.000Z") or null if the date string is unknown.
- * @throws Will throw an error if the input date string is invalid or if the month is not recognized.
+ * @param {string} frenchDateStr - The date string in French format (e.g., "12 mars 2023", "juin 1960", "1960", "Depuis 2024", "2020 - 2024").
+ * @param {boolean} [isTVShow=false] - If true, it will handle special cases for TV shows and ensure the year is less or equal than the current year.
+ * @returns {string|null} - The ISO 8601 formatted date string (e.g., "2023-03-12T00:00:00.000Z") or null if the date string is unknown or invalid.
+ * @throws Will throw an error if the input date string format is invalid or if the month is not recognized.
  */
-function convertFrenchDateToISOString(frenchDateStr) {
+function convertFrenchDateToISOString(frenchDateStr, isTVShow = false) {
   if (/Date de sortie inconnue|Prochainement/.test(frenchDateStr)) {
     return null;
+  }
+
+  if (isTVShow) {
+    const yearMatch = frenchDateStr.match(/\b(\d{4})\b/);
+    const currentYear = new Date().getFullYear();
+    if (yearMatch && parseInt(yearMatch[1]) <= currentYear) {
+      return `${yearMatch[1]}-01-01T00:00:00.000Z`;
+    } else {
+      return null;
+    }
   }
 
   const parseDate = (regex) => {

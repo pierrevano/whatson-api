@@ -402,7 +402,9 @@ do
         echo "Title: $TITLE"
 
         NATIONALITY=$(curl -s https://www.allocine.fr$URL | grep -A2 -m1 "what light" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
-        echo "Nationality: $NATIONALITY"
+        if [[ $TYPE == "movie" ]]; then
+          echo "Nationality: $NATIONALITY"
+        fi
 
         # Get original title for IMDb
         ORIGINAL_TITLE=$(cat temp_allocine_url | grep -A1 "Titre original" | tail -1 | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/&#039;/'"'"'/' | sed 's/\&amp;/\&/g' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
@@ -476,8 +478,16 @@ do
           fi
 
           STATUS=$(curl -s https://www.allocine.fr$URL | grep "label-info-full label-status" | cut -d'>' -f2 | cut -d'<' -f1)
+          if [[ $TYPE == "tvshow" ]]; then
+            echo "Status: $STATUS"
+          fi
+
           if [[ $SKIP -eq 0 ]]; then
             if [[ $KIDS_MOVIE -eq 1 ]] || [[ $STATUS == "À venir" ]]; then
+              if [[ $KIDS_MOVIE -eq 1 ]]; then
+                echo "This is a kids movie."
+              fi
+
               echo "Skipping: https://www.allocine.fr$URL"
               IMDB_ID="skip"
             else
