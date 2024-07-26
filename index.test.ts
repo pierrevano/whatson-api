@@ -112,9 +112,12 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
-    item.status !== "Soon"
-      ? expect(item.ratings_average).toBeGreaterThan(0)
-      : null;
+    if (item.status !== "Soon") {
+      if (item.ratings_average === 0) {
+        console.log(item);
+      }
+      expect(item.ratings_average).toBeGreaterThan(0);
+    }
 
     item.item_type === "tvshow" && item.platforms_links
       ? expect(
