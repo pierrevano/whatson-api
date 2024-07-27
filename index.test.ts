@@ -96,9 +96,7 @@ function checkItemProperties(items) {
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
 
-    item.is_active === true &&
-    item.item_type === "movie" &&
-    item.release_date !== null
+    item.is_active === true && item.release_date !== null
       ? expect(!isNaN(new Date(item.release_date).getTime())).toBe(true)
       : null;
 
@@ -972,7 +970,7 @@ const params = {
     },
   },
 
-  should_return_new_items_when_filtered_by_release_date: {
+  should_return_new_items_movie_when_filtered_by_release_date: {
     query: `?item_type=movie&is_active=true&release_date=everything,new&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
@@ -985,6 +983,24 @@ const params = {
         expect(releaseDate).not.toBeNaN();
         expect(releaseDate.getTime()).toBeGreaterThanOrEqual(
           sixMonthsAgo.getTime(),
+        );
+      });
+    },
+  },
+
+  should_return_new_items_tvshow_when_filtered_by_release_date: {
+    query: `?item_type=tvshow&is_active=true&release_date=everything,new&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("release_date");
+
+        const releaseDate = new Date(item.release_date);
+        const eighteenMonthsAgo = new Date();
+        eighteenMonthsAgo.setMonth(eighteenMonthsAgo.getMonth() - 18);
+        expect(releaseDate).toBeInstanceOf(Date);
+        expect(releaseDate).not.toBeNaN();
+        expect(releaseDate.getTime()).toBeGreaterThanOrEqual(
+          eighteenMonthsAgo.getTime(),
         );
       });
     },
@@ -1004,19 +1020,6 @@ const params = {
         expect(releaseDate.getTime()).toBeGreaterThanOrEqual(
           severalYearsAgo.getTime(),
         );
-      });
-    },
-  },
-
-  should_return_new_tvshow_items: {
-    query: `?item_type=tvshow&release_date=everything,new&limit=${config.maxLimitRemote}`,
-    expectedResult: (items) => {
-      items.forEach((item) => {
-        const releaseYear = new Date(item.release_date).getFullYear();
-        const currentYear = new Date().getFullYear();
-        expect(releaseYear).toBeLessThanOrEqual(currentYear);
-
-        expect([1, 2]).toContain(item.seasons_number);
       });
     },
   },

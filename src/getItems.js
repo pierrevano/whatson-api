@@ -122,9 +122,6 @@ const getItems = async (
       )
     : parseFloat(minimum_ratings);
 
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
   const matchConditions = [
     {
       ratings_average: {
@@ -135,10 +132,14 @@ const getItems = async (
     },
   ];
 
-  const isItemsNew = release_date.split(",").includes("new");
-  if (item_type === "movie" && isItemsNew) {
+  if (release_date.split(",").includes("new")) {
+    const sixOrEighteenMonthsAgo = new Date();
+    item_type === "movie"
+      ? sixOrEighteenMonthsAgo.setMonth(sixOrEighteenMonthsAgo.getMonth() - 6)
+      : sixOrEighteenMonthsAgo.setMonth(sixOrEighteenMonthsAgo.getMonth() - 18);
+
     matchConditions.push({
-      releaseDateAsDate: { $gte: sixMonthsAgo },
+      releaseDateAsDate: { $gte: sixOrEighteenMonthsAgo },
     });
   }
 
@@ -188,7 +189,6 @@ const getItems = async (
       pipeline,
       seasons_number,
       status,
-      isItemsNew,
     );
   } else if (movies_ids) {
     pipeline.push(match_in_movies_ids);

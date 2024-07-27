@@ -19,7 +19,6 @@ const getPipelineFromTVShow = (
   pipeline,
   seasons_number,
   status,
-  isItemsNew,
 ) => {
   const item_type_tvshow = { item_type: "tvshow" };
   const seasons_number_first = {
@@ -66,18 +65,6 @@ const getPipelineFromTVShow = (
           is_active_item,
           { status: { $in: status.split(",").map(capitalize) } },
           item_type_tvshow,
-        ],
-      },
-    });
-  }
-
-  if (isItemsNew) {
-    const currentYear = new Date().getFullYear();
-    pipeline.push({
-      $match: {
-        $or: [
-          { releaseDateAsDate: { $gte: new Date(`${currentYear}-01-01`) } },
-          { seasons_number: { $in: [1, 2] } },
         ],
       },
     });
