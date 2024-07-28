@@ -11,8 +11,6 @@ const getStatus = async (allocineHomepage, status) => {
 
   try {
     switch (status) {
-      case "À venir":
-        return "Soon";
       case "Annulée":
         return "Canceled";
       case "En cours":

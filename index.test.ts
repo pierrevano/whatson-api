@@ -100,7 +100,7 @@ function checkItemProperties(items) {
       ? expect(!isNaN(new Date(item.release_date).getTime())).toBe(true)
       : null;
 
-    item.is_active === true && item.status && item.status !== "Soon"
+    item.is_active === true && item.status
       ? expect(item.release_date).not.toBeNull()
       : null;
 
@@ -110,12 +110,10 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
-    if (item.status !== "Soon") {
-      if (item.ratings_average === 0) {
-        console.log(item);
-      }
-      expect(item.ratings_average).toBeGreaterThan(0);
+    if (item.ratings_average === 0) {
+      console.log(item);
     }
+    expect(item.ratings_average).toBeGreaterThan(0);
 
     item.item_type === "tvshow" && item.platforms_links
       ? expect(
@@ -591,11 +589,11 @@ const params = {
   },
 
   ongoing_and_canceled_tvshows: {
-    query: "?item_type=tvshow&is_active=true,false&status=canceled,soon",
+    query: "?item_type=tvshow&is_active=true,false&status=canceled,ended",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("status");
-        expect(["Canceled", "Soon"]).toContain(item.status);
+        expect(["Canceled", "Ended"]).toContain(item.status);
       }),
   },
 

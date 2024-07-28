@@ -27,7 +27,7 @@ Retrieves detailed information about either a movie or a tvshow based on the pro
 - **platforms:** Platforms filters (URI encoded platforms names)
 - **release_date:** Release date filters (everything,new)
 - **seasons_number:** Number of seasons (1,2,3,4,5 and 5 means 5+) (only valid for tvshows)
-- **status:** TV show's status filters (canceled,ended,ongoing,pilot,soon,unknown) (only valid for tvshows)
+- **status:** TV show's status filters (canceled,ended,ongoing,pilot,unknown) (only valid for tvshows)
 - **ratings_filters:** Ratings filters by source (allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users)
 - **page:** Page number
 - **limit:** Page items limit

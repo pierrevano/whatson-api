@@ -416,6 +416,16 @@ do
         # Get title encoded characters URL
         TITLE_URL_ENCODED=$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -f $URL_ESCAPE_FILE_PATH)
 
+        STATUS=$(curl -s https://www.allocine.fr$URL | grep "label-info-full label-status" | cut -d'>' -f2 | cut -d'<' -f1)
+        if [[ $TYPE == "tvshow" ]]; then
+          echo "Status: $STATUS"
+        fi
+
+        if [[ $STATUS == "À venir" ]]; then
+          data_not_found
+          break
+        fi
+
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
           if [[ $PROMPT == "recheck" ]]; then
@@ -477,16 +487,9 @@ do
             SKIP=0
           fi
 
-          STATUS=$(curl -s https://www.allocine.fr$URL | grep "label-info-full label-status" | cut -d'>' -f2 | cut -d'<' -f1)
-          if [[ $TYPE == "tvshow" ]]; then
-            echo "Status: $STATUS"
-          fi
-
           if [[ $SKIP -eq 0 ]]; then
-            if [[ $KIDS_MOVIE -eq 1 ]] || [[ $STATUS == "À venir" ]]; then
-              if [[ $KIDS_MOVIE -eq 1 ]]; then
-                echo "This is a kids movie."
-              fi
+            if [[ $KIDS_MOVIE -eq 1 ]]; then
+              echo "This is a kids movie."
 
               echo "Skipping: https://www.allocine.fr$URL"
               IMDB_ID="skip"
