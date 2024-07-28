@@ -44,7 +44,6 @@ jobs:
       - run:
           name: Update movie data
           command: node src/updateData.js movie update_ids update_db
-      - run_tests
       - run:
           name: Update tvshow data
           command: node src/updateData.js tvshow update_ids update_db

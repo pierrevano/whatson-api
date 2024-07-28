@@ -52,6 +52,10 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
     }
   } catch (error) {
     logErrors(error, metacriticHomepage, "getMetacriticRating");
+
+    return {
+      error: error,
+    };
   }
 
   return metacriticObj;

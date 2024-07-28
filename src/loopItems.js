@@ -2,6 +2,7 @@ const axios = require("axios");
 
 // const { controlData } = require("./controlData");
 const { getAllocineInfo } = require("./content/getAllocineInfo");
+const { getMetacriticRating } = require("./content/getMetacriticRating");
 const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
@@ -131,6 +132,19 @@ const loopItems = async (
         true,
       );
 
+      let errorMetacritic = false;
+      try {
+        const { error: errorMetacritic } = await getMetacriticRating(
+          metacriticHomepage,
+          metacriticId,
+        );
+
+        if (errorMetacritic.includes("403")) {
+          console.log(errorMetacritic);
+          errorMetacritic = true;
+        }
+      } catch (error) {}
+
       // Determine if user ratings are equal and fetch the data
       if (!error) {
         const getIsEqualValue = !force
@@ -149,7 +163,7 @@ const loopItems = async (
           : false;
         if (!getIsEqualValue) getIsEqualValue.isEqual = false;
         const data =
-          !force && getIsEqualValue.isEqual
+          (!force && getIsEqualValue.isEqual) || errorMetacritic
             ? getIsEqualValue.data
             : (createJsonCounter++,
               await createJSON(
