@@ -29,6 +29,7 @@ const getCheerioContent = async (url, options, origin) => {
           requestHeaders: options?.headers,
           responseHeaders: error.response?.headers,
         };
+
         if (retryInfo.errorCode !== 404) {
           console.log(
             `Retrying due to error:\n` +
@@ -40,33 +41,19 @@ const getCheerioContent = async (url, options, origin) => {
               `Response Headers: ${JSON.stringify(retryInfo.responseHeaders, null, 2)}`,
           );
         }
-        // Retry only on network errors, 403 to use the proxy later, or server errors except for 404.
+
+        // Retry only on network errors or server errors except for 404.
         return (
           !error.response ||
-          [403, 500, 502, 503, 504].includes(error.response.status)
+          (error.response.status !== 404 && error.response.status >= 500)
         );
       },
     });
 
-    const fetchContent = async (targetUrl) => {
-      const response = await axios.get(targetUrl, options);
-      if (response.status !== 200) {
-        throw new Error("Failed to retrieve data.");
-      }
-      return response;
-    };
+    const response = await axios.get(url, options);
 
-    let response;
-    try {
-      response = await fetchContent(url);
-    } catch (error) {
-      if (error.response && error.response.status === 403) {
-        const proxyUrl = `${config.corsURL}/${url}`;
-        console.log(`403 encountered. Retrying with proxy URL: ${proxyUrl}`);
-        response = await fetchContent(proxyUrl);
-      } else {
-        throw error;
-      }
+    if (response.status !== 200) {
+      throw new Error("Failed to retrieve data.");
     }
 
     const $ = cheerio.load(response.data);

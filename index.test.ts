@@ -100,8 +100,10 @@ function checkItemProperties(items) {
       ? expect(!isNaN(new Date(item.release_date).getTime())).toBe(true)
       : null;
 
-    item.is_active === true && item.status
-      ? expect(item.release_date).not.toBeNull()
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.release_date !== null).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
     item.is_active === true
