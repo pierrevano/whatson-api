@@ -48,7 +48,8 @@ const logErrors = (error, item, origin) => {
       errorMsg &&
       !(
         errorMsg.startsWith(config.baseURLBetaseriesFilm) ||
-        errorMsg.startsWith(config.baseURLBetaseriesSerie)
+        errorMsg.startsWith(config.baseURLBetaseriesSerie) ||
+        (errorMsg.includes("403") && errorMsg.includes("getMetacriticRating"))
       )
     ) {
       process.exit(1);
