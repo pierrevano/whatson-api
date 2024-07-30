@@ -21,7 +21,7 @@ const getTraktRating = async (traktHomepage, traktId) => {
     };
 
     if (isNotNull(traktId)) {
-      $ = await getCheerioContent(
+      const $ = await getCheerioContent(
         `${traktHomepage}`,
         options,
         "getTraktRating",
@@ -29,8 +29,7 @@ const getTraktRating = async (traktHomepage, traktId) => {
       let usersRating = parseInt(
         $(".trakt-rating .rating").text().replace("%", ""),
       );
-      if (isNaN(usersRating)) usersRating = null;
-
+      if (isNaN(usersRating) || usersRating === 0) usersRating = null;
       let tagline = $("#tagline").text();
       if (!tagline) tagline = null;
 

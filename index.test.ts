@@ -32,34 +32,28 @@ function countLines(filename) {
 }
 
 /**
- * Validates if a given input can be converted to a number and it has no more than two decimal places.
- *
- * @param {string|number} input - The input to test for its convertibility to a number with decimals.
- * @returns {boolean} Returns true if the input can be converted to a number and it has no more than two decimal places, otherwise returns false.
- */
-function isNumberWithDecimals(input) {
-  const num = Number(input);
-
-  if (isNaN(num)) {
-    return false;
-  }
-
-  return Number.isInteger(num * 100);
-}
-
-/**
  * This function checks if an item's property falls within a certain range and validates if the property value is a number with decimals.
+ * If 'isStrict' is true, it checks if the property's value is greater than the minimum rating instead of greater than or equal to.
  *
  * @param {Object} item - The object to inspect.
  * @param {string} property - The property of the item to inspect.
  * @param {number} minRating - The minimum acceptable value for the item's property.
  * @param {number} maxRating - The maximum acceptable value for the item's property.
+ * @param {boolean} [isStrict=false] - Whether the minimum value check should be strict (greater than) or inclusive
  */
-function checkRatings(item, property, minRating, maxRating) {
-  if (item && item[property]) {
-    expect(item[property]).toBeGreaterThanOrEqual(minRating);
+function checkRatings(item, property, minRating, maxRating, isStrict = false) {
+  if (item && item[property] !== null) {
+    if (isStrict) {
+      try {
+        expect(item[property]).toBeGreaterThan(minRating);
+      } catch (error) {
+        console.log(item);
+        throw error;
+      }
+    } else {
+      expect(item[property]).toBeGreaterThanOrEqual(minRating);
+    }
     expect(item[property]).toBeLessThanOrEqual(maxRating);
-    expect(isNumberWithDecimals(item[property])).toBeTruthy;
   }
 }
 
@@ -405,12 +399,14 @@ const params = {
             ratingType: "users_rating",
             min: config.ratingsValues.minimum.allocine,
             max: config.ratingsValues.maximum.allocine,
+            isStrict: true,
           },
           {
             source: item.allocine,
             ratingType: "critics_rating",
             min: config.ratingsValues.minimum.allocine,
             max: config.ratingsValues.maximum.allocine,
+            isStrict: true,
           },
           {
             source: item.betaseries,
@@ -423,6 +419,7 @@ const params = {
             ratingType: "users_rating",
             min: config.ratingsValues.minimum.imdb,
             max: config.ratingsValues.maximum.imdb,
+            isStrict: true,
           },
           {
             source: item.metacritic,
@@ -465,12 +462,14 @@ const params = {
             ratingType: "users_rating",
             min: config.ratingsValues.minimum.tmdb,
             max: config.ratingsValues.maximum.tmdb,
+            isStrict: true,
           },
           {
             source: item.trakt,
             ratingType: "users_rating",
             min: config.ratingsValues.minimum.trakt,
             max: config.ratingsValues.maximum.trakt,
+            isStrict: true,
           },
         ];
 
@@ -480,6 +479,7 @@ const params = {
             ratingItem.ratingType,
             ratingItem.min,
             ratingItem.max,
+            ratingItem.isStrict,
           );
         }
       }),

@@ -192,8 +192,14 @@ const loopItems = async (
                 tmdbHomepage,
               ));
 
-        // Adding item last `updated_at` date
-        data.updated_at = new Date().toISOString();
+        if (!errorMetacritic) {
+          // Update `updated_at` date when there is no Metacritic error
+          data.updated_at = new Date().toISOString();
+        } else {
+          console.log(
+            "Metacritic error occurred, `updated_at` date not updated.",
+          );
+        }
 
         // Perform upsert operation on the database with the fetched data
         await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
