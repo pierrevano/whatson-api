@@ -22,6 +22,7 @@ const getCheerioContent = async (url, options, origin) => {
       retryCondition: (error) => {
         const retryInfo = {
           origin: origin || "No Origin specified",
+          url: url || "No URL specified",
           userAgent:
             options?.headers?.["User-Agent"] || "No User-Agent specified",
           errorCode: error.response?.status || "Network Error",
@@ -34,6 +35,7 @@ const getCheerioContent = async (url, options, origin) => {
           console.log(
             `Retrying due to error:\n` +
               `Origin: ${retryInfo.origin}\n` +
+              `URL: ${retryInfo.url}\n` +
               `Error Code: ${retryInfo.errorCode}\n` +
               `User-Agent: ${retryInfo.userAgent}\n` +
               `IP Address: ${retryInfo.ipAddress}\n` +
