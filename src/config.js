@@ -31,7 +31,7 @@ const config = {
 
   /* Global settings */
   corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev",
-  limit: 20,
+  limit: 15,
   maximumThreshold: {
     default: 30,
     metacritic_or_rotten_tomatoes: 95,
