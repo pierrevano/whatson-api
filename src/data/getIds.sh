@@ -204,7 +204,7 @@ fetch_id () {
   if [[ $PROMPT == "recheck" ]] && [[ $id == "null" ]] && \
     { [[ -z $(eval echo \$$service_name"_CHECK") ]] || [[ $(eval echo \$$service_name"_CHECK") == "null" ]]; } && \
     { [[ $service_name != "LETTERBOXD" ]] || [[ $TYPE != "tvshow" ]]; } && \
-    { [[ $nationality != "France" ]] && [[ $TYPE == "movie" ]]; } && \
+    [[ $nationality != "France" ]] && \
     { [[ $PROMPT_SERVICE_NAME == $service_name ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
       open -a $BROWSER_PATH "https://www.allocine.fr$URL"
       open -a $BROWSER_PATH $service_url
