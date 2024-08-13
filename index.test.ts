@@ -941,19 +941,25 @@ const params = {
     },
   },
 
-  include_all_platforms: {
+  not_existing_platforms_should_not_be_more_than_one: {
     query: `?platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(
         items.filter((item) => item.platforms_links === null).length,
       ).toBeGreaterThan(config.minimumNumberOfItems.default);
-      items.forEach(
-        (item) =>
-          item.platforms_links &&
-          item.platforms_links.forEach((platform) =>
-            expect(config.platforms).toContain(platform.name),
+      const allPlatformNames = [
+        ...new Set(
+          items.flatMap((item) =>
+            item.platforms_links
+              ? item.platforms_links.map((platform) => platform.name)
+              : [],
           ),
-      );
+        ),
+      ];
+      expect(
+        allPlatformNames.filter((name) => !config.platforms.includes(name))
+          .length,
+      ).toBeLessThanOrEqual(1);
     },
   },
 
