@@ -942,7 +942,7 @@ const params = {
   },
 
   not_existing_platforms_should_not_be_more_than_one: {
-    query: `?platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimitRemote}`,
+    query: `?is_active=true&item_type=movie,tvshow&platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(
         items.filter((item) => item.platforms_links === null).length,
