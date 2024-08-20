@@ -116,6 +116,12 @@ const loopItems = async (
             }
           }
         } catch (error) {
+          if (error.response.status === 503) {
+            throw new Error(
+              "Render service has been suspended. Please re-enable it.",
+            );
+          }
+
           throw new Error(`Error fetching data: ${error}`);
         }
       }
