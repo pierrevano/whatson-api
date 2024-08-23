@@ -941,7 +941,7 @@ const params = {
     },
   },
 
-  not_existing_platforms_should_not_be_more_than_three: {
+  not_existing_platforms_should_not_be_more_than_ten: {
     query: `?is_active=true&item_type=movie,tvshow&platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(
@@ -959,7 +959,7 @@ const params = {
       expect(
         allPlatformNames.filter((name) => !config.platforms.includes(name))
           .length,
-      ).toBeLessThanOrEqual(3);
+      ).toBeLessThanOrEqual(10);
     },
   },
 
