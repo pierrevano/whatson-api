@@ -93,15 +93,15 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
             season: season,
             episode: episodeNumber,
             title: episodeTitle || null,
-            id: episodeId || null,
-            url: `${config.baseURLIMDB}${episodeId}/` || null,
+            id: episodeId,
+            url: `${config.baseURLIMDB}${episodeId}/`,
             users_rating: parseFloat(episodeRating) || null,
           });
         });
     });
 
     /*
-     * We cannot parse more than 50 episodes at once with Cheerio, so I prefer to return `null`.
+     * We cannot parse more than 50 episodes at once on IMDb with Cheerio, so I prefer to return `null`.
      * Ideally, it should be parsed with Puppeteer or Playwright to get all episodes.
      */
     if (episodesDetails.length === 50) episodesDetails = null;
