@@ -531,7 +531,7 @@ const params = {
         expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("movie");
 
-        expect(item).not.toHaveProperty("critics_rating_details");
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
         expect(item).not.toHaveProperty("episodes_details");
       }),
   },
