@@ -30,6 +30,8 @@ const getItems = async (
   release_date_query,
   seasons_number_query,
   status_query,
+  critics_rating_details_query,
+  episodes_details_query,
 ) => {
   const id = isNaN(id_path) ? "" : id_path;
   const is_active =
@@ -63,6 +65,9 @@ const getItems = async (
   const seasons_number =
     typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
   const status = typeof status_query !== "undefined" ? status_query : "";
+  const critics_rating_details =
+    critics_rating_details_query === "true" ? true : false;
+  const episodes_details = episodes_details_query === "true" ? true : false;
 
   const addFields_popularity_and_ratings = {
     $addFields: {
@@ -159,8 +164,17 @@ const getItems = async (
       title: 1,
     },
   };
-  const remove_sort_popularity_and_release_date = {
-    $project: { sortAvgField: 0, releaseDateAsDate: 0 },
+
+  // Dynamically build the remove_keys object based on query parameters
+  const remove_keys = {
+    $project: {
+      releaseDateAsDate: 0,
+      sortAvgField: 0,
+      ...(critics_rating_details
+        ? {}
+        : { "allocine.critics_rating_details": 0 }),
+      ...(episodes_details ? {} : { episodes_details: 0 }),
+    },
   };
 
   const facet = {
@@ -169,7 +183,7 @@ const getItems = async (
         addFields_popularity_and_ratings,
         match_min_ratings_and_release_date,
         sort_popularity_and_ratings,
-        remove_sort_popularity_and_release_date,
+        remove_keys,
         skip_results,
         limit_results,
       ],

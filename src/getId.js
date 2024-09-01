@@ -27,6 +27,11 @@ const getId = async (req, res) => {
     const ratings_filters_query = req.query.ratings_filters;
     const url = `${req.headers["host"]}${req.url}`;
     const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
+    const critics_rating_details =
+      req.query.critics_rating_details === "true" ? true : false;
+    const episodes_details =
+      req.query.episodes_details === "true" ? true : false;
+
     if (id_path && ratings_filters_query) {
       try {
         const { items } = await getItems(
@@ -46,9 +51,13 @@ const getId = async (req, res) => {
       }
     } else {
       try {
-        const query = { id: id_path, item_type: item_type };
-        const items = await collectionData.findOne(query);
+        // Dynamically build the projection object based on query parameters
+        let projection = {};
+        if (!episodes_details) projection.episodes_details = 0;
+        if (!critics_rating_details) projection.critics_rating_details = 0;
 
+        const query = { id: id_path, item_type: item_type };
+        const items = await collectionData.findOne(query, { projection });
         res.status(200).json(items);
       } catch (error) {
         res.status(400).send(error);

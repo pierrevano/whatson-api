@@ -4,6 +4,7 @@ const {
 const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getBetaseriesRating } = require("./content/getBetaseriesRating");
+const { getEpisodesDetails } = require("./content/getEpisodesDetails");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
 const { getImdbRating } = require("./content/getImdbRating");
 const { getLetterboxdRating } = require("./content/getLetterboxdRating");
@@ -95,6 +96,11 @@ const createJSON = async (
     imdbHomepage,
     allocineURL,
     item_type,
+  );
+  const episodesDetails = await getEpisodesDetails(
+    allocineHomepage,
+    imdbId,
+    imdbHomepage,
   );
   const mojoValues = await getObjectByImdbId(
     mojoBoxOfficeArray,
@@ -236,6 +242,7 @@ const createJSON = async (
     tagline: traktRating && traktRating.tagline,
     platforms_links: platformsLinks,
     seasons_number: allocineFirstInfo.seasonsNumber,
+    episodes_details: episodesDetails,
     status: allocineFirstInfo.status,
     allocine: allocineObj,
     betaseries: betaseriesObj,

@@ -82,6 +82,7 @@ Example of an item returned:
     "critics_rating": "number", // Rating given by AlloCiné critics
     "critics_number": "number", // Number of AlloCiné critics who rated
     "critics_rating_details": [
+      // To display this key, add the query parameter `critics_rating_details=true`
       {
         "critic_name": "string", // Name of the critic
         "critic_rating": "number" // Rating given by the critic
@@ -114,6 +115,17 @@ Example of an item returned:
   ],
   "release_date": "string", // Release date of the item
   "seasons_number": "number", // Number of seasons available
+  "episodes_details": [
+    // To display this key, add the query parameter `episodes_details=true`
+    {
+      "season": "number", // Season number of the episode
+      "episode": "number", // Episode number within the season
+      "title": "string", // Title of the episode
+      "id": "string", // IMDb specific identifier
+      "url": "string", // URL to the IMDb page
+      "users_rating": "number" // Rating given by IMDb users
+    }
+  ],
   "status": "string", // Current status of the item (e.g., ongoing, ended, etc.)
   "tagline": "string", // Tagline of the item
   "title": "string", // Title of the item

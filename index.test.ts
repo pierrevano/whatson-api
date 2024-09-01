@@ -154,6 +154,32 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer)
       : null;
 
+    item.item_type === "tvshow" && item.is_active === true
+      ? expect(
+          items.filter((item) => item.episodes_details).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+    item.item_type === "tvshow" &&
+    item.is_active === true &&
+    item.episodes_details &&
+    item.episodes_details.length > 0 &&
+    item.episodes_details[0]
+      ? expect(
+          items.filter(
+            (item) =>
+              item.episodes_details &&
+              item.episodes_details.length > 0 &&
+              item.episodes_details[0] &&
+              typeof item.episodes_details[0].season === "number" &&
+              typeof item.episodes_details[0].episode === "number" &&
+              typeof item.episodes_details[0].title === "string" &&
+              typeof item.episodes_details[0].id === "string" &&
+              typeof item.episodes_details[0].url === "string" &&
+              typeof item.episodes_details[0].users_rating === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+
     /* Popularity */
     item.is_active === true
       ? expect(
@@ -349,6 +375,13 @@ function checkItemProperties(items) {
 }
 
 function checkTypes(item, schema) {
+  // Check for extra keys in the item that are not in the schema
+  Object.keys(item).forEach((key) => {
+    if (!schema.hasOwnProperty(key)) {
+      throw new Error(`Unexpected key '${key}' present in the item.`);
+    }
+  });
+
   Object.keys(schema).forEach((key) => {
     // Check if the key from schema exists on the item
     if (item.hasOwnProperty(key)) {
@@ -486,7 +519,7 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: "",
+    query: "?critics_rating_details=true&episodes_details=true",
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, schema)),
   },
@@ -497,6 +530,9 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("movie");
+
+        expect(item).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
       }),
   },
 
@@ -848,22 +884,22 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie&is_active=true&critics_rating_details=true&episodes_details=true&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&limit=${higherLimit}`,
+    query: `?item_type=movie&is_active=false&critics_rating_details=true&episodes_details=true&limit=${higherLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&critics_rating_details=true&episodes_details=true&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&limit=${higherLimit}`,
+    query: `?item_type=tvshow&is_active=false&critics_rating_details=true&episodes_details=true&limit=${higherLimit}`,
     expectedResult: checkItemProperties,
   },
 
@@ -1026,6 +1062,32 @@ const params = {
         expect(releaseDate.getTime()).toBeGreaterThanOrEqual(
           severalYearsAgo.getTime(),
         );
+      });
+    },
+  },
+
+  should_return_correct_episodes_details_values: {
+    query: `?item_type=movie,tvshow&is_active=true&episodes_details=true&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        if (item.episodes_details) {
+          if (item.item_type === "movie") {
+            expect(item.episodes_details).toBeNull();
+          } else if (item.item_type === "tvshow") {
+            let lastGlobalEpisodeNumber = -1;
+            item.episodes_details.forEach((episode) => {
+              if (episode && episode.season && episode.episode) {
+                const currentGlobalEpisodeNumber = parseInt(
+                  `${String(episode.season)}${String(episode.episode).padStart(2, "0")}`,
+                );
+                expect(currentGlobalEpisodeNumber).toBeGreaterThan(
+                  lastGlobalEpisodeNumber,
+                );
+                lastGlobalEpisodeNumber = currentGlobalEpisodeNumber;
+              }
+            });
+          }
+        }
       });
     },
   },

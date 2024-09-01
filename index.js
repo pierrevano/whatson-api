@@ -31,6 +31,8 @@ app.get("/", async (req, res) => {
     const release_date_query = req.query.release_date;
     const seasons_number_query = req.query.seasons_number;
     const status_query = req.query.status;
+    const critics_rating_details_query = req.query.critics_rating_details;
+    const episodes_details_query = req.query.episodes_details;
 
     let { items, limit, page } = await getItems(
       cinema_id_query,
@@ -46,6 +48,8 @@ app.get("/", async (req, res) => {
       release_date_query,
       seasons_number_query,
       status_query,
+      critics_rating_details_query,
+      episodes_details_query,
     );
     const results = items[0].results;
     const total_results = items[0].total_results[0].total_results;
