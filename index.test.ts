@@ -647,7 +647,7 @@ const params = {
   cinema_id_should_be_ignored: {
     query: "?cinema_id=undefined&is_active=true,false&limit=200",
     expectedResult: (items) =>
-      items.forEach((item) => {
+      items.forEach((_) => {
         expect(items.length).toBe(200);
       }),
   },
@@ -702,13 +702,30 @@ const params = {
   },
 
   correct_tmdb_id_returned: {
-    query: "/tvshow/87108?ratings_filters=all&allData=true",
+    query:
+      "/tvshow/87108?ratings_filters=all&critics_rating_details=true&episodes_details=true&allData=true",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.id).toBe(87108);
       expect(data.ratings_average).toBeGreaterThan(0);
+
+      expect(Array.isArray(data.allocine.critics_rating_details)).toBeTruthy();
+      expect(Array.isArray(data.episodes_details)).toBeTruthy();
     },
   },
+
+  correct_tmdb_id_returned_without_critics_rating_details_and_episodes_details:
+    {
+      query: "/tvshow/87108?ratings_filters=all&allData=true",
+      expectedResult: (data) => {
+        expect(typeof data).toBe("object");
+        expect(data.id).toBe(87108);
+        expect(data.ratings_average).toBeGreaterThan(0);
+
+        expect(data.allocine).not.toHaveProperty("critics_rating_details");
+        expect(data).not.toHaveProperty("episodes_details");
+      },
+    },
 
   correct_tmdb_id_returned_on_search: {
     query: "?tmdbid=87108",
