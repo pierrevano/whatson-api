@@ -180,6 +180,10 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
+    item.item_type === "tvshow" && item.is_active === true
+      ? expect(item.status).not.toBeNull()
+      : null;
+
     /* Popularity */
     item.is_active === true
       ? expect(

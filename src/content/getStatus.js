@@ -1,3 +1,5 @@
+const { appendFile } = require("fs");
+
 const { config } = require("../config");
 const { logErrors } = require("../utils/logErrors");
 
@@ -23,7 +25,12 @@ const getStatus = async (allocineHomepage, status) => {
         return "Unknown";
       default:
         console.error(`Unrecognized status: ${status}`);
-        process.exit(1);
+        appendFile(
+          "temp_error.log",
+          `${new Date().toISOString()} - ${allocineHomepage} - Unrecognized status: ${status}\n`,
+          () => {},
+        );
+        return null;
     }
   } catch (error) {
     logErrors(error, status, "getStatus");
