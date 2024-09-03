@@ -239,6 +239,9 @@ function checkItemProperties(items) {
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* BetaSeries */
+    item.betaseries && item.is_active === true
+      ? expect(item.betaseries.id).not.toBeNull()
+      : null;
     item.betaseries
       ? expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(
           config.minimumNumberOfItems.betaseries,
@@ -252,6 +255,9 @@ function checkItemProperties(items) {
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Metacritic */
+    item.metacritic && item.is_active === true
+      ? expect(item.metacritic.id).not.toBeNull()
+      : null;
     item.is_active === true && item.metacritic
       ? expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(
           config.minimumNumberOfItems.metacritic,
@@ -271,6 +277,9 @@ function checkItemProperties(items) {
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Rotten Tomatoes */
+    item.rotten_tomatoes && item.is_active === true
+      ? expect(item.rotten_tomatoes.id).not.toBeNull()
+      : null;
     item.rotten_tomatoes
       ? expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(
           config.minimumNumberOfItems.rottenTomatoes,
@@ -292,6 +301,9 @@ function checkItemProperties(items) {
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* Letterboxd */
+    item.letterboxd && item.is_active === true
+      ? expect(item.letterboxd.id).not.toBeNull()
+      : null;
     item.letterboxd
       ? expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(
           config.minimumNumberOfItems.letterboxd,
@@ -309,6 +321,9 @@ function checkItemProperties(items) {
     item.item_type === "tvshow" ? expect(item.letterboxd).toBeNull() : null; // No tvshows on Letterboxd (yet).
 
     /* SensCritique */
+    item.senscritique && item.is_active === true
+      ? expect(item.senscritique.id).not.toBeNull()
+      : null;
     item.senscritique
       ? expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(
           config.minimumNumberOfItems.senscritique,
@@ -328,6 +343,9 @@ function checkItemProperties(items) {
       : null;
 
     /* TMDB */
+    item.tmdb && item.is_active === true
+      ? expect(item.tmdb.id).not.toBeNull()
+      : null;
     item.tmdb
       ? expect(Object.keys(item.tmdb).length).toBeGreaterThanOrEqual(
           config.minimumNumberOfItems.tmdb,
@@ -343,6 +361,9 @@ function checkItemProperties(items) {
       : null;
 
     /* Trakt */
+    item.trakt && item.is_active === true
+      ? expect(item.trakt.id).not.toBeNull()
+      : null;
     item.trakt
       ? expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(
           config.minimumNumberOfItems.trakt,

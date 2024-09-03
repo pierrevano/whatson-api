@@ -162,7 +162,7 @@ const createJSON = async (
 
   /* Creates a Letterboxd object if the letterboxd rating is not null. */
   const letterboxdObj =
-    letterboxdRating !== null
+    letterboxdRating !== null && letterboxdRating.id
       ? {
           id: letterboxdRating.id,
           url: letterboxdRating.url,
@@ -172,7 +172,7 @@ const createJSON = async (
 
   /* Creates a Metacritic object if the metacritic rating is not null. */
   const metacriticObj =
-    metacriticRating !== null
+    metacriticRating !== null && metacriticRating.id
       ? {
           id: metacriticRating.id,
           url: metacriticRating.url,
@@ -183,7 +183,7 @@ const createJSON = async (
 
   /* Creates a Rotten Tomatoes object if the rotten_tomatoes rating is not null. */
   const rottenTomatoesObj =
-    rottenTomatoesRating !== null
+    rottenTomatoesRating !== null && rottenTomatoesRating.id
       ? {
           id: rottenTomatoesRating.id,
           url: rottenTomatoesRating.url,
@@ -194,7 +194,7 @@ const createJSON = async (
 
   /* Creates a SensCritique object if the sensCritique rating is not null. */
   const sensCritiqueObj =
-    sensCritiqueRating !== null
+    sensCritiqueRating !== null && sensCritiqueRating.id
       ? {
           id: sensCritiqueRating.id,
           url: sensCritiqueRating.url,
@@ -204,7 +204,7 @@ const createJSON = async (
 
   /* Creates a TMDB object if the TMDB rating is not null. */
   const tmdbObj =
-    tmdbRating !== null
+    tmdbRating !== null && tmdbRating.id
       ? {
           id: tmdbRating.id,
           url: tmdbRating.url,
@@ -214,7 +214,7 @@ const createJSON = async (
 
   /* Creates a Trakt object if the trakt rating is not null. */
   const traktObj =
-    traktRating !== null
+    traktRating !== null && traktRating.id
       ? {
           id: traktRating.id,
           url: traktRating.url,

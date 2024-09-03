@@ -1,3 +1,5 @@
+const { appendFile } = require("fs");
+
 const { config } = require("../config");
 
 function isErrorPresent(errorMsg, error, item) {
@@ -21,6 +23,17 @@ function isErrorPresent(errorMsg, error, item) {
 
 const logErrors = (error, item, origin) => {
   let errorMsg = `${item} - ${origin} - ${error}`;
+
+  if (
+    errorMsg.includes("AxiosError: Request failed with status code 404") ||
+    errorMsg.includes("Error: Failed to retrieve data.")
+  ) {
+    appendFile(
+      "temp_error.log",
+      `${new Date().toISOString()} - ${errorMsg}\n`,
+      () => {},
+    );
+  }
 
   if (error instanceof RangeError) {
     console.log(
