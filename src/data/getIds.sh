@@ -488,12 +488,12 @@ do
               echo "Skipping: https://www.allocine.fr$URL"
               IMDB_ID="skip"
             else
-              open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-              open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-              echo "Enter the IMDb ID:"
               if [[ $STATUS == "À venir" ]]; then
                 IMDB_ID=null
               else
+                open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+                open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+                echo "Enter the IMDb ID:"
                 read IMDB_ID
               fi
             fi
