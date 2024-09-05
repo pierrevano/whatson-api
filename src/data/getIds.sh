@@ -421,11 +421,6 @@ do
           echo "Status: $STATUS"
         fi
 
-        if [[ $STATUS == "À venir" ]]; then
-          data_not_found
-          break
-        fi
-
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
           if [[ $PROMPT == "recheck" ]]; then
@@ -446,7 +441,6 @@ do
             [[ $TRAKT_ID == "null" ]]; then
               get_other_ids
             fi
-
           else
             IMDB_ID=null
             METACRITIC_ID=null
@@ -459,7 +453,7 @@ do
           echo "wikiUrl: $WIKI_URL"
 
           IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo ">tt[0-9]+<" | cut -d'<' -f1 | cut -d'>' -f2 | head -1)
-          if [[ -z $IMDB_ID ]]; then
+          if [[ -z $IMDB_ID ]] || [[ $STATUS == "À venir" ]]; then
             IMDB_ID=null
           fi
           echo "IMDb ID: $IMDB_ID"
@@ -497,7 +491,11 @@ do
               open -a $BROWSER_PATH "https://www.allocine.fr$URL"
               open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
               echo "Enter the IMDb ID:"
-              read IMDB_ID
+              if [[ $STATUS == "À venir" ]]; then
+                IMDB_ID=null
+              else
+                read IMDB_ID
+              fi
             fi
 
             if [[ $IMDB_ID == "skip" ]]; then
