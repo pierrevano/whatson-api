@@ -452,7 +452,11 @@ do
         else
           echo "wikiUrl: $WIKI_URL"
 
-          IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo ">tt[0-9]+<" | cut -d'<' -f1 | cut -d'>' -f2 | head -1)
+          IMDB_ID=$IMDB_CHECK
+          if [[ -z $IMDB_ID ]]; then
+            IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo ">tt[0-9]+<" | cut -d'<' -f1 | cut -d'>' -f2 | head -1)
+          fi
+
           if [[ -z $IMDB_ID ]] || [[ $STATUS == "À venir" ]]; then
             IMDB_ID=null
           fi
@@ -515,7 +519,9 @@ do
         if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { [[ $PROMPT == "recheck" ]] && [[ $KIDS_MOVIE -eq 1 ]] && [[ -z $MIN_RATING ]]; }; then
           data_not_found
         else
-          if { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && [[ $PROMPT == "recheck" ]]; then
+          if [[ $STATUS == "À venir" ]]; then
+            IMDB_ID=null
+          elif { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && [[ $PROMPT == "recheck" ]]; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
             open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
             echo "Enter the IMDb ID:"
@@ -524,68 +530,67 @@ do
 
           if [[ $IMDB_ID == "null" ]]; then
             data_not_found
-            break
-          fi
+          else
+            echo "imdbId URL: https://www.imdb.com/title/$IMDB_ID/"
 
-          echo "imdbId URL: https://www.imdb.com/title/$IMDB_ID/"
-
-          BETASERIES_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE" | cut -d'/' -f5 | sed 's/"//g')
-          echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
-          echo "BetaSeries ID: $BETASERIES_ID"
-
-          if [[ $BETASERIES_ID == "null" ]]; then
-            BETASERIES_ID=$BETASERIES_CHECK
-
-            if [[ -z $BETASERIES_ID ]]; then
-              BETASERIES_ID=null
-            fi
-          fi
-
-          if { [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; } || { [[ $BETASERIES_ID == "null" ]] && [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
-            open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-            open -a $BROWSER_PATH "https://betaseries.com"
-            echo "Enter the BetaSeries ID:"
-            read BETASERIES_ID
-          fi
-
-          THEMOVIEDB_ID=$(curl -s https://api.themoviedb.org/3/find/$IMDB_ID\?api_key=$THEMOVIEDB_API_KEY\&external_source=imdb_id | jq "$JQ_COMMAND_RESULTS" | jq '.[] .id')
-          echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
-
-          if [[ -z $THEMOVIEDB_ID ]]; then
-            THEMOVIEDB_ID=$THEMOVIEDB_CHECK
-          fi
-
-          if [[ -z $THEMOVIEDB_ID ]]; then
-            THEMOVIEDB_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE_TMDB")
-
-            if [[ $THEMOVIEDB_ID == "0" ]]; then
-              THEMOVIEDB_ID=null
-            fi
-
+            BETASERIES_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE" | cut -d'/' -f5 | sed 's/"//g')
             echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
-            echo "The Movie Database ID: $THEMOVIEDB_ID"
-          fi
+            echo "BetaSeries ID: $BETASERIES_ID"
 
-          if [[ -z $THEMOVIEDB_ID ]] || [[ $THEMOVIEDB_ID == "null" ]]; then
-            if [[ $PROMPT == "recheck" ]] || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
-              open -a $BROWSER_PATH "https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED"
-              echo "Enter the The Movie Database ID:"
-              read THEMOVIEDB_ID
+            if [[ $BETASERIES_ID == "null" ]]; then
+              BETASERIES_ID=$BETASERIES_CHECK
 
-              if [[ $THEMOVIEDB_ID != "null" ]] && [[ $BETASERIES_ID != "null" ]]; then
-                data_found
-              elif [[ $THEMOVIEDB_ID != "null" ]] && [[ $BETASERIES_ID == "null" ]]; then
-                betaseries_to_null
+              if [[ -z $BETASERIES_ID ]]; then
+                BETASERIES_ID=null
+              fi
+            fi
+
+            if { [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; } || { [[ $BETASERIES_ID == "null" ]] && [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
+              open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+              open -a $BROWSER_PATH "https://betaseries.com"
+              echo "Enter the BetaSeries ID:"
+              read BETASERIES_ID
+            fi
+
+            THEMOVIEDB_ID=$(curl -s https://api.themoviedb.org/3/find/$IMDB_ID\?api_key=$THEMOVIEDB_API_KEY\&external_source=imdb_id | jq "$JQ_COMMAND_RESULTS" | jq '.[] .id')
+            echo "Downloading from: https://api.themoviedb.org/3/find/$IMDB_ID?api_key=$THEMOVIEDB_API_KEY&external_source=imdb_id"
+
+            if [[ -z $THEMOVIEDB_ID ]]; then
+              THEMOVIEDB_ID=$THEMOVIEDB_CHECK
+            fi
+
+            if [[ -z $THEMOVIEDB_ID ]]; then
+              THEMOVIEDB_ID=$(curl -s https://api.betaseries.com/$BETASERIES_TYPE\?key\=$BETASERIES_API_KEY\&imdb_id\=$IMDB_ID | jq "$JQ_COMMAND_TYPE_TMDB")
+
+              if [[ $THEMOVIEDB_ID == "0" ]]; then
+                THEMOVIEDB_ID=null
+              fi
+
+              echo "Downloading from: https://api.betaseries.com/$BETASERIES_TYPE?key=$BETASERIES_API_KEY&imdb_id=$IMDB_ID"
+              echo "The Movie Database ID: $THEMOVIEDB_ID"
+            fi
+
+            if [[ -z $THEMOVIEDB_ID ]] || [[ $THEMOVIEDB_ID == "null" ]]; then
+              if [[ $PROMPT == "recheck" ]] || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
+                open -a $BROWSER_PATH "https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED"
+                echo "Enter the The Movie Database ID:"
+                read THEMOVIEDB_ID
+
+                if [[ $THEMOVIEDB_ID != "null" ]] && [[ $BETASERIES_ID != "null" ]]; then
+                  data_found
+                elif [[ $THEMOVIEDB_ID != "null" ]] && [[ $BETASERIES_ID == "null" ]]; then
+                  betaseries_to_null
+                else
+                  data_not_found
+                fi
               else
                 data_not_found
               fi
+            elif [[ $BETASERIES_ID == "null" ]]; then
+              betaseries_to_null
             else
-              data_not_found
+              data_found
             fi
-          elif [[ $BETASERIES_ID == "null" ]]; then
-            betaseries_to_null
-          else
-            data_found
           fi
         fi
 
