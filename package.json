@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "2.7.2",
+  "version": "2.7.3",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -42,6 +42,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongodb": "^6.8.0",
+    "newrelic": "^12.3.1",
     "prettier": "^3.3.3",
     "shelljs": "^0.8.5",
     "vercel": "^35.2.3"

@@ -214,8 +214,6 @@ const getItems = async (
 
   pipeline.push(facet);
 
-  console.log(pipeline);
-
   const data = await collectionData.aggregate(pipeline);
   const items = await data.toArray();
 

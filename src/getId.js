@@ -1,4 +1,5 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
+require("newrelic");
 
 const { config } = require("./config");
 const { getItems } = require("./getItems");
