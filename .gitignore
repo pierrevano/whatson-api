@@ -3,6 +3,7 @@
 .prettierignore
 .vscode
 junit.xml
+newrelic_agent.log
 node_modules
 package-lock.json
 reports/*
