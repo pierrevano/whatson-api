@@ -52,7 +52,7 @@ const config = {
   /* Tests settings */
   baseURLLocal: "http://localhost:8081",
   baseURLRemote: process.env.WHATSON_API_URL,
-  maxLimitLocal: 3000,
+  maxLimitLocal: 2000,
   maxLimitRemote: 400,
   checkItemsNumber: true,
   keysToCheck: [

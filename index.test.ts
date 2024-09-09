@@ -706,9 +706,10 @@ const params = {
 
   no_items_found_on_page_3: {
     query: "?item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
-    expectedResult: (data) => {
+    expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
       expect(data.message).toBe("No items have been found for page 3.");
+      expect(response.status).toBe(404);
     },
   },
 
@@ -778,8 +779,10 @@ const params = {
 
   correct_data_to_null_returned_if_undefined: {
     query: "/movie/undefined?allData=true",
-    expectedResult: (data) => {
-      expect(data).toBeNull;
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe("No items have been found.");
+      expect(response.status).toBe(404);
     },
   },
 
@@ -802,9 +805,10 @@ const params = {
 
   no_items_found_for_invalid_query: {
     query: "?title=some invalid value to be tested&allData=true",
-    expectedResult: (data) => {
+    expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
       expect(data.message).toBe("No items have been found.");
+      expect(response.status).toBe(404);
     },
   },
 
@@ -1148,12 +1152,16 @@ describe("What's on? API tests", () => {
 
       console.log(`Calling ${apiCall}`);
 
-      const response = await axios.get(apiCall);
+      const response = await axios.get(apiCall, {
+        validateStatus: function (status) {
+          return status <= 500;
+        },
+      });
       const data = response.data;
       const items = data && data.results;
 
       if (query.includes("allData=true")) {
-        expectedResult(data);
+        expectedResult(data, response);
       } else {
         expectedResult(items);
       }

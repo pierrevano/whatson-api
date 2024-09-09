@@ -56,7 +56,7 @@ const getId = async (req, res) => {
 
         res.status(200).json(results);
       } catch (error) {
-        res.status(400).send(error);
+        res.status(500).json({ error: error.message });
       }
     } else {
       try {
@@ -68,13 +68,18 @@ const getId = async (req, res) => {
 
         const query = { id: id_path, item_type: item_type };
         const items = await collectionData.findOne(query, { projection });
-        res.status(200).json(items);
+
+        if (items) {
+          res.status(200).json(items);
+        } else {
+          res.status(404).json({ message: "No items have been found." });
+        }
       } catch (error) {
-        res.status(400).send(error);
+        res.status(500).json({ error: error.message });
       }
     }
   } catch (error) {
-    res.status(400).send(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
