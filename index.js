@@ -1,5 +1,6 @@
 require("dotenv").config();
-require("newrelic");
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const newrelic = require("newrelic");
 
 const express = require("express");
 const app = express();
@@ -9,6 +10,14 @@ const { config } = require("./src/config");
 const { getItems } = require("./src/getItems");
 const findId = require("./src/findId");
 const getId = require("./src/getId");
+
+const uri = `mongodb+srv://${config.mongoDbCredentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, {
+  serverApi: ServerApiVersion.v1,
+});
+
+const database = client.db(config.dbName);
+const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
 /**
  * Handles a GET request to the root endpoint and returns a JSON object containing
@@ -34,6 +43,18 @@ app.get("/", async (req, res) => {
     const status_query = req.query.status;
     const critics_rating_details_query = req.query.critics_rating_details;
     const episodes_details_query = req.query.episodes_details;
+    const api_key_query = req.query.api_key;
+
+    const internal_api_key = await collectionNameApiKey.findOne({
+      name: "internal_api_key",
+    });
+
+    if (api_key_query === internal_api_key.value) {
+      const transaction = newrelic.getTransaction();
+      transaction.ignore();
+    } else {
+      newrelic.addCustomAttributes(req.query);
+    }
 
     let { items, limit, page } = await getItems(
       cinema_id_query,

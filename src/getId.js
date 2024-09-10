@@ -1,5 +1,5 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
-require("newrelic");
+const newrelic = require("newrelic");
 
 const { config } = require("./config");
 const { getItems } = require("./getItems");
@@ -11,6 +11,7 @@ const client = new MongoClient(uri, {
 
 const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
+const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
 /**
  * Retrieves an item's ID from the database based on the given parameters.
@@ -30,6 +31,18 @@ const getId = async (req, res) => {
     const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
     const critics_rating_details_query = req.query.critics_rating_details;
     const episodes_details_query = req.query.episodes_details;
+    const api_key_query = req.query.api_key;
+
+    const internal_api_key = await collectionNameApiKey.findOne({
+      name: "internal_api_key",
+    });
+
+    if (api_key_query === internal_api_key.value) {
+      const transaction = newrelic.getTransaction();
+      transaction.ignore();
+    } else {
+      newrelic.addCustomAttributes(req.query);
+    }
 
     if (id_path && ratings_filters_query) {
       try {
