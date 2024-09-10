@@ -448,7 +448,7 @@ function checkTypes(item, schema) {
  * @param {string} source - The source from which the id is expected.
  * @param {number} expectedId - The expected id value.
  */
-function checkSingleItemId(items, source, expectedId) {
+function checkSingleItemId(items, expectedId) {
   expect(items.length).toBe(1);
   expect(items[0].tmdb.id).toBe(expectedId);
 }
@@ -827,55 +827,55 @@ const params = {
   should_return_allocine_id_on_search: {
     query: "?allocineid=304508",
     expectedResult: (items) => {
-      checkSingleItemId(items, "allocine", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
   should_return_betaseries_id_on_search: {
     query: "?betaseriesid=132011-emilia-perez&allocineid=304508",
     expectedResult: (items) => {
-      checkSingleItemId(items, "betaseries", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
   should_return_imdb_id_on_search: {
     query: "?imdbid=tt20221436&letterboxdid=unknown",
     expectedResult: (items) => {
-      checkSingleItemId(items, "imdb", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
   should_return_letterboxd_id_on_search: {
     query: "?letterboxdid=emilia-perez",
     expectedResult: (items) => {
-      checkSingleItemId(items, "letterboxd", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
   should_return_metacritic_id_on_search: {
     query: "?metacriticid=emilia-perez&unknown",
     expectedResult: (items) => {
-      checkSingleItemId(items, "metacritic", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
   should_return_rottentomatoes_id_on_search: {
     query: "?rottentomatoesid=emilia_perez",
     expectedResult: (items) => {
-      checkSingleItemId(items, "rottentomatoes", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
   should_return_senscritique_id_on_search: {
     query: "?senscritiqueid=54313969",
     expectedResult: (items) => {
-      checkSingleItemId(items, "senscritique", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
   should_return_trakt_id_on_search: {
     query: "?traktid=emilia-perez-2024",
     expectedResult: (items) => {
-      checkSingleItemId(items, "trakt", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
   should_return_tmdb_id_on_search: {
     query: "?tmdbid=974950",
     expectedResult: (items) => {
-      checkSingleItemId(items, "tmdb", 974950);
+      checkSingleItemId(items, 974950);
     },
   },
 
