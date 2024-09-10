@@ -205,6 +205,7 @@ fetch_id () {
     { [[ -z $(eval echo \$$service_name"_CHECK") ]] || [[ $(eval echo \$$service_name"_CHECK") == "null" ]]; } && \
     { [[ $service_name != "LETTERBOXD" ]] || [[ $TYPE != "tvshow" ]]; } && \
     [[ $nationality != "France" ]] && \
+    [[ $STATUS != "À venir" ]] && \
     { [[ $PROMPT_SERVICE_NAME == $service_name ]] || [[ $PROMPT_SERVICE_NAME == "all" ]]; }; then
       open -a $BROWSER_PATH "https://www.allocine.fr$URL"
       open -a $BROWSER_PATH $service_url
@@ -358,7 +359,7 @@ do
         DUPLICATE=1
 
         if [[ $MIN_RATING ]]; then
-          QUERY_WHATSON_API="$WHATSON_API_URL/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all"
+          QUERY_WHATSON_API="$WHATSON_API_URL/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all&api_key=$INTERNAL_API_KEY"
           echo "Querying: $QUERY_WHATSON_API"
 
           ITEM=$(curl -s $QUERY_WHATSON_API)

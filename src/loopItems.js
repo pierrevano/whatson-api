@@ -98,7 +98,7 @@ const loopItems = async (
         try {
           const item_type_api = item_type === "movie" ? "movie" : "tvshow";
           const response = await axios.get(
-            `${config.baseURLRemote}/${item_type_api}/${tmdbId}`,
+            `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${process.env.INTERNAL_API_KEY}`,
           );
 
           if (response && response.data && response.data.updated_at) {
