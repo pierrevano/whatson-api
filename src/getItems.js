@@ -12,7 +12,6 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-/* Connecting to the database and the collection. */
 const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 

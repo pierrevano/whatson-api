@@ -235,9 +235,9 @@ const config = {
     "metacriticid",
     "rottentomatoesid",
     "senscritiqueid",
-    "traktid",
-    "tmdbid",
     "title",
+    "tmdbid",
+    "traktid",
   ],
 };
 

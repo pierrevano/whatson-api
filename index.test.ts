@@ -442,6 +442,18 @@ function checkTypes(item, schema) {
 }
 
 /**
+ * Checks if a single item's id matches the expected value.
+ *
+ * @param {Array} items - The array of items returned from the API.
+ * @param {string} source - The source from which the id is expected.
+ * @param {number} expectedId - The expected id value.
+ */
+function checkSingleItemId(items, source, expectedId) {
+  expect(items.length).toBe(1);
+  expect(items[0].tmdb.id).toBe(expectedId);
+}
+
+/**
  * An object containing various query parameters and their expected results.
  * @param {object} params - An object containing various query parameters and their expected results.
  * @returns None
@@ -812,6 +824,61 @@ const params = {
     },
   },
 
+  should_return_allocine_id_on_search: {
+    query: "?allocineid=304508",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "allocine", 974950);
+    },
+  },
+  should_return_betaseries_id_on_search: {
+    query: "?betaseriesid=132011-emilia-perez&allocineid=304508",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "betaseries", 974950);
+    },
+  },
+  should_return_imdb_id_on_search: {
+    query: "?imdbid=tt20221436&letterboxdid=unknown",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "imdb", 974950);
+    },
+  },
+  should_return_letterboxd_id_on_search: {
+    query: "?letterboxdid=emilia-perez",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "letterboxd", 974950);
+    },
+  },
+  should_return_metacritic_id_on_search: {
+    query: "?metacriticid=emilia-perez&unknown",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "metacritic", 974950);
+    },
+  },
+  should_return_rottentomatoes_id_on_search: {
+    query: "?rottentomatoesid=emilia_perez",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "rottentomatoes", 974950);
+    },
+  },
+  should_return_senscritique_id_on_search: {
+    query: "?senscritiqueid=54313969",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "senscritique", 974950);
+    },
+  },
+  should_return_trakt_id_on_search: {
+    query: "?traktid=emilia-perez-2024",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "trakt", 974950);
+    },
+  },
+  should_return_tmdb_id_on_search: {
+    query: "?tmdbid=974950",
+    expectedResult: (items) => {
+      checkSingleItemId(items, "tmdb", 974950);
+    },
+  },
+
   ascending_popularity_average: {
     query: "?item_type=tvshow",
     expectedResult: (items) => {
@@ -890,7 +957,7 @@ const params = {
     query: "?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5",
     expectedResult: async (items) => {
       const response = await axios.get(
-        `${baseURL}?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5,1`,
+        `${baseURL}?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5,1&api_key=${process.env.INTERNAL_API_KEY}`,
       );
       const data = response.data;
       const itemsFromExtraCall = data.results;
@@ -907,7 +974,7 @@ const params = {
     query: "?ratings_filters=all",
     expectedResult: async (items) => {
       const response = await axios.get(
-        `${baseURL}?ratings_filters=${config.ratings_filters}`,
+        `${baseURL}?ratings_filters=${config.ratings_filters}&api_key=${process.env.INTERNAL_API_KEY}`,
       );
       const results = response.data.results;
 
@@ -1148,8 +1215,9 @@ describe("What's on? API tests", () => {
 
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     async function fetchItemsData() {
-      const apiCall = `${baseURL}${query}`;
+      const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${process.env.INTERNAL_API_KEY}`;
 
+      console.log("Test name:", name);
       console.log(`Calling ${apiCall}`);
 
       const response = await axios.get(apiCall, {
@@ -1181,7 +1249,7 @@ describe("What's on? API tests", () => {
     async () => {
       const start = new Date().valueOf();
 
-      await axios.get(baseURL);
+      await axios.get(`${baseURL}?api_key=${process.env.INTERNAL_API_KEY}`);
 
       const end = new Date().valueOf();
       const responseTime = end - start;

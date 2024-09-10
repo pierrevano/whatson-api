@@ -1,4 +1,5 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
+require("newrelic");
 
 const { config } = require("./config");
 
@@ -7,7 +8,6 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-/* Connecting to the database */
 const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 
@@ -28,11 +28,11 @@ const findId = async (json) => {
     imdbid: "imdb.id",
     letterboxdid: "letterboxd.id",
     metacriticid: "metacritic.id",
-    rottentomatoesid: "rottentomatoes.id",
+    rottentomatoesid: "rotten_tomatoes.id",
     senscritiqueid: "senscritique.id",
-    traktid: "trakt.id",
-    tmdbid: "id",
     title: null,
+    tmdbid: "id",
+    traktid: "trakt.id",
   };
 
   let query = {};
@@ -41,7 +41,7 @@ const findId = async (json) => {
       const mappedKey = keysMapping[key];
       query[mappedKey != null ? mappedKey : key] = ["title"].includes(key)
         ? { $regex: json[key], $options: "i" }
-        : ["allocineid", "tmdbid"].includes(key)
+        : ["allocineid", "senscritiqueid", "tmdbid"].includes(key)
           ? parseInt(json[key])
           : json[key];
       break;
