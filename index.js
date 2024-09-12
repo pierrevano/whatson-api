@@ -19,6 +19,15 @@ const client = new MongoClient(uri, {
 const database = client.db(config.dbName);
 const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
+app.use((_, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept",
+  );
+  next();
+});
+
 /**
  * Handles a GET request to the root endpoint and returns a JSON object containing
  * items that match the given query parameters.

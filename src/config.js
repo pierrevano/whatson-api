@@ -17,6 +17,8 @@ const baseURL = {
   tmdb: "https://www.themoviedb.org",
   trakt: "https://trakt.tv",
   vercel: "https://www.vercel-status.com",
+  whatsonAPI: "https://whatson-api.onrender.com",
+  whatsonAPICircleCI: "https://whatson-api-circleci.onrender.com",
 };
 
 const config = {
@@ -43,8 +45,18 @@ const config = {
   page: 1,
   retries: 20,
   retryDelay: 5000,
-  userAgent:
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+  userAgentChrome:
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/537.36",
+  userAgentChromeAlt:
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/537.36",
+  userAgentFirefox:
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:117.0) Gecko/20100101 Firefox/117.0",
+  userAgentFirefoxAlt:
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 11.5; rv:117.0) Gecko/20100101 Firefox/117.0",
+  userAgentSafari:
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/606.1.15",
+  userAgentSafariAlt:
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/538.36",
 
   /* CircleCI settings */
   circleLimitPerDay: 1500,
@@ -110,6 +122,8 @@ const config = {
 
   /* Services settings */
   services: [
+    { name: "What's on? API", url: baseURL.whatsonAPI },
+    { name: "What's on? API CircleCI", url: baseURL.whatsonAPICircleCI },
     { name: "Render", url: baseURL.render },
     { name: "Vercel", url: baseURL.vercel },
 
