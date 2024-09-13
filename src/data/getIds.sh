@@ -644,9 +644,13 @@ DATE=$(date '+%Y-%m-%d %H:%M:%S')
 echo "Last update was on: $DATE"
 echo $DATE > $UPDATED_AT_FILE_PATH
 
-cd $FILMS_ASSETS_PATH
-vercel --prod --token=$VERCEL_TOKEN
-echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
+if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{print $1}') -ge 5000 ]]; then
+  cd $FILMS_ASSETS_PATH
+  vercel --prod --token=$VERCEL_TOKEN
+  echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
+else
+  echo "The file either doesn't exist, is empty, or has fewer than 5000 lines."
+fi
 
 # Add ending message with duration
 DATA_DURATION=$SECONDS
