@@ -25,9 +25,19 @@ By default, when no query parameters are added (or when all are used), the resul
 
 1. Sort by Popularity: The items are first sorted by their calculated average popularity, with higher popularity values appearing first.
 2. Sort by Ratings: Among items with the same popularity, sorting is then based on their average ratings, with higher ratings appearing first.
-   _If you want to sort by ratings only, you must set the popularity parameter to none._
 3. Sort by Title: If items have the same popularity and ratings, they are further sorted alphabetically by their title in ascending order.
-   _You must have at least one popularity or one rating parameter to obtain results._
+
+_If you want to sort by ratings only, you must set the popularity parameter to `none`._
+_You must have at least one popularity or one rating parameter to obtain results._
+
+#### Active items
+
+Active items are fetched from 2 different links:
+
+1. For movies: https://www.allocine.fr/film/aucinema
+2. For tvshows: https://www.allocine.fr/series/top
+
+_These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
 > https://whatson-api.onrender.com/?popularity_filters=allocine_popularity,imdb_popularity&ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users&item_type=movie,tvshow&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&is_active=true,false&critics_rating_details=<boolean>&episodes_details=<boolean>&page=<integer>&limit=<integer>
@@ -35,7 +45,7 @@ By default, when no query parameters are added (or when all are used), the resul
 
 | Parameter              | Value                                                                                                                                                                                 | Description                                                |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| popularity_filters     | allocine_popularity,imdb_popularity                                                                                                                                                   | Popularity filters source                                  |
+| popularity_filters     | allocine_popularity,imdb_popularity                                                                                                                                                   | Popularity filters source (or _none_ to disable it)        |
 | ratings_filters        | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users | Ratings filters source (or _all_ for every values)         |
 | item_type              | movie,tvshow                                                                                                                                                                          | The type of the item (_movie_, _tvshow_ or both)           |
 | minimum_ratings        | 0,1,2,2.5,3,3.5,4,4.5                                                                                                                                                                 | Minimum ratings to return                                  |
