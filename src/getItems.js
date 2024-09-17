@@ -1,7 +1,6 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { config } = require("./config");
-const { getMoviesIds } = require("./getMoviesIds");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
 const { getRatingsFilters } = require("./getRatingsFilters");
@@ -16,7 +15,6 @@ const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 
 const getItems = async (
-  cinema_id_query,
   id_path,
   is_active_query,
   item_type_query,
@@ -38,10 +36,6 @@ const getItems = async (
   const item_type =
     typeof item_type_query !== "undefined" ? item_type_query : "movie";
   const limit = isNaN(limit_query) ? config.limit : limit_query;
-  const movies_ids =
-    typeof cinema_id_query !== "undefined"
-      ? await getMoviesIds(cinema_id_query)
-      : "";
   const minimum_ratings =
     typeof minimum_ratings_query !== "undefined" ? minimum_ratings_query : "";
   const page = isNaN(page_query) ? config.page : page_query;
@@ -109,9 +103,6 @@ const getItems = async (
       : item_type_default;
 
   const match_id = { $match: { id: id } };
-  const match_in_movies_ids = {
-    $match: { "allocine.id": { $in: movies_ids } },
-  };
   const match_item_type = {
     $match: { $and: [item_type_default, is_active_item] },
   };
@@ -203,8 +194,6 @@ const getItems = async (
       seasons_number,
       status,
     );
-  } else if (movies_ids) {
-    pipeline.push(match_in_movies_ids);
   } else {
     pipeline.push(match_item_type);
   }

@@ -36,29 +36,35 @@ const compareUsersRating = async (
   tmdbId,
   compare,
 ) => {
-  const users_rating = (
-    await getAllocineInfo(allocineHomepage, betaseriesHomepage, tmdbId, compare)
-  ).allocineUsersRating;
-
-  const allocinePopularity = (
-    await getAllocinePopularity(allocineURL, item_type)
-  ).popularity;
-
-  const imdbPopularity = (
-    await getImdbPopularity(imdbHomepage, allocineURL, item_type)
-  ).popularity;
-
-  const mojoValues = await getObjectByImdbId(
-    mojoBoxOfficeArray,
-    imdbId,
-    item_type,
-  );
-
   const isEqualObj = { isEqual: false };
+
   const item_type_api = item_type === "movie" ? "movie" : "tvshow";
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${process.env.INTERNAL_API_KEY}`;
 
   try {
+    const users_rating = (
+      await getAllocineInfo(
+        allocineHomepage,
+        betaseriesHomepage,
+        tmdbId,
+        compare,
+      )
+    ).allocineUsersRating;
+
+    const allocinePopularity = (
+      await getAllocinePopularity(allocineURL, item_type)
+    ).popularity;
+
+    const imdbPopularity = (
+      await getImdbPopularity(imdbHomepage, allocineURL, item_type)
+    ).popularity;
+
+    const mojoValues = await getObjectByImdbId(
+      mojoBoxOfficeArray,
+      imdbId,
+      item_type,
+    );
+
     const response = await axios.get(apiUrl);
 
     if (response.status !== 200) {
@@ -100,14 +106,14 @@ const compareUsersRating = async (
           isEqual: true,
           data: dataWithoutId,
         };
-      } else {
-        return isEqualObj;
       }
-    } else {
-      return isEqualObj;
     }
+
+    return isEqualObj;
   } catch (error) {
     logErrors(error, apiUrl, "compareUsersRating");
+
+    return isEqualObj;
   }
 };
 

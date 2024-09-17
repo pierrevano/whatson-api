@@ -7,6 +7,7 @@ const getRatingsFilters = async (ratings_filters_query) => {
   // ratings_filters query info
   const ratings_filters_array = ratings_filters_query.split(",");
   let ratings_filters = [];
+
   if (ratings_filters_array.includes("all")) {
     // prettier-ignore
     ratings_filters = [

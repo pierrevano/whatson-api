@@ -37,7 +37,6 @@ app.use((_, res, next) => {
  */
 app.get("/", async (req, res) => {
   try {
-    const cinema_id_query = req.query.cinema_id;
     const id_path = parseInt(req.params.id);
     const is_active_query = req.query.is_active;
     const item_type_query = req.query.item_type;
@@ -66,7 +65,6 @@ app.get("/", async (req, res) => {
     }
 
     let { items, limit, page } = await getItems(
-      cinema_id_query,
       id_path,
       is_active_query,
       item_type_query,

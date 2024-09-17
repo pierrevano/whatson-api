@@ -23,7 +23,6 @@ const collectionNameApiKey = database.collection(config.collectionNameApiKey);
  */
 const getId = async (req, res) => {
   try {
-    const cinema_id_query = req.query.cinema_id;
     const id_path = parseInt(req.params.id);
     const item_type_query = req.query.item_type;
     const ratings_filters_query = req.query.ratings_filters;
@@ -47,7 +46,6 @@ const getId = async (req, res) => {
     if (id_path && ratings_filters_query) {
       try {
         const { items } = await getItems(
-          cinema_id_query,
           id_path,
           undefined,
           item_type_query,

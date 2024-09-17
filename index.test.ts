@@ -725,6 +725,15 @@ const params = {
     },
   },
 
+  no_items_found_when_providing_wrong_popularity_and_ratings: {
+    query: "?popularity_filters=&ratings_filters=wrong_values&allData=true",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe("No items have been found.");
+      expect(response.status).toBe(404);
+    },
+  },
+
   same_files_line_number_as_remote: {
     query: "?item_type=movie,tvshow&is_active=true,false&allData=true",
     expectedResult: (items) => {
