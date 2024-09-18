@@ -573,7 +573,9 @@ do
 
             if [[ -z $THEMOVIEDB_ID ]] || [[ $THEMOVIEDB_ID == "null" ]]; then
               if [[ $PROMPT == "recheck" ]] || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
-                open -a $BROWSER_PATH "https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED"
+                media_type=$(curl -s https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED | jq '.results[0].media_type' | cut -d'"' -f2)
+                id=$(curl -s https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED | jq '.results[0].id')
+                open -a $BROWSER_PATH "https://www.themoviedb.org/$media_type/$id"
                 echo "Enter the The Movie Database ID:"
                 read THEMOVIEDB_ID
 
