@@ -88,7 +88,9 @@ function checkItemProperties(items) {
     expect(item.title).not.toBeNull();
 
     expect(item.image).not.toBeNull();
-    expect(item.image).toMatch(/\.(jpg|jpeg|png|gif)(\?[a-zA-Z0-9=&]*)?$/i);
+    expect(item.image).toMatch(
+      /\.(jpg|jpeg|png|gif|jfif)(\?[a-zA-Z0-9=&]*)?$/i,
+    );
 
     item.is_active === true && item.release_date !== null
       ? expect(!isNaN(new Date(item.release_date).getTime())).toBe(true)
