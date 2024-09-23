@@ -15,7 +15,7 @@ const getTMDBResponse = async (allocineHomepage, tmdbId) => {
     const type = allocineHomepage.includes(config.baseURLTypeSeries)
       ? "tv"
       : "movie";
-    const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}`;
+    const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}&append_to_response=credits`;
 
     axiosRetry(axios, {
       retries: config.retries,
@@ -23,6 +23,11 @@ const getTMDBResponse = async (allocineHomepage, tmdbId) => {
     });
     const options = { validateStatus: (status) => status < 500 };
     const { data, status } = await axios.get(url, options);
+
+    if (status !== 200) {
+      console.error("Something is wrong with The Movie Database API.");
+      process.exit(1);
+    }
 
     return { data, status };
   } catch (error) {

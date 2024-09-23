@@ -1,5 +1,7 @@
 const { config } = require("../config");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getDirectors } = require("./getDirectors");
+const { getGenres } = require("./getGenres");
 const { getImageFromTMDB } = require("./getImageFromTMDB");
 const { getSeasonsNumber } = require("./getSeasonsNumber");
 const { getStatus } = require("./getStatus");
@@ -35,6 +37,11 @@ const getAllocineInfo = async (
     );
 
     const title = $('meta[property="og:title"]').attr("content");
+
+    const directors = !compare
+      ? await getDirectors(allocineHomepage, tmdbId)
+      : null;
+    const genres = !compare ? await getGenres(allocineHomepage, tmdbId) : null;
 
     let image = $('meta[property="og:image"]').attr("content");
     if (image.includes("empty_portrait"))
@@ -73,6 +80,8 @@ const getAllocineInfo = async (
       allocineTitle: title,
       allocineImage: image,
       allocineUsersRating: allocineUsersRating,
+      directors: directors,
+      genres: genres,
       seasonsNumber: seasonsNumber,
       status: status,
       trailer: trailer,

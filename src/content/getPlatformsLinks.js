@@ -1,9 +1,9 @@
 const axios = require("axios");
-const fs = require("fs");
 
 const { config } = require("../config");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
+const { writeItemsNumber } = require("../utils/writeItemsNumber");
 
 const platformsNamesCount = {};
 
@@ -33,21 +33,6 @@ const processSvods = (svods) => {
   }
 
   return platformsLinks;
-};
-
-/**
- * Writes the platforms names count to a file.
- */
-const writePlatformsNamesCount = (allocineHomepage) => {
-  const sortedPlatformsNames = Object.entries(platformsNamesCount)
-    .sort((a, b) => b[1] - a[1])
-    .map(([platformName, count]) => `${platformName}: ${count}`)
-    .join("\n");
-
-  const type = allocineHomepage.includes(config.baseURLTypeSeries)
-    ? "tvshow"
-    : "movie";
-  fs.writeFileSync(`./temp_platforms_names_${type}.txt`, sortedPlatformsNames);
 };
 
 /**
@@ -85,7 +70,11 @@ const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
 
       if (platformsLinks && platformsLinks.length === 0) platformsLinks = null;
 
-      writePlatformsNamesCount(allocineHomepage);
+      writeItemsNumber(
+        allocineHomepage,
+        platformsNamesCount,
+        "platforms_names",
+      );
     }
   } catch (error) {
     logErrors(error, allocineHomepage, "getPlatformsLinks");

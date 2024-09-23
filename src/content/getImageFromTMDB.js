@@ -8,17 +8,17 @@ const { logErrors } = require("../utils/logErrors");
  * @returns {Promise<string|null>} - A promise that resolves with the image path or null if there was an error.
  */
 const getImageFromTMDB = async (allocineHomepage, tmdbId) => {
-  let image_path = null;
+  let imagePath = null;
 
   try {
-    const { data, status } = await getTMDBResponse(allocineHomepage, tmdbId);
-    image_path = data.poster_path || data.profile_path;
-    if (status !== 200) image_path = null;
+    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
+
+    imagePath = data?.poster_path || data?.profile_path || null;
   } catch (error) {
     logErrors(error, allocineHomepage, "getImageFromTMDB");
   }
 
-  return image_path;
+  return imagePath;
 };
 
 module.exports = { getImageFromTMDB };

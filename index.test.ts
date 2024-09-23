@@ -66,6 +66,8 @@ function checkRatings(item, property, minRating, maxRating, isStrict = false) {
 function checkItemProperties(items) {
   return items.forEach((item) => {
     /* Common */
+    expect(Object.keys(item).length).toEqual(config.keysToCheck.length);
+
     config.keysToCheck.forEach((key) => {
       item.is_active === true ? expect(item).toHaveProperty(key) : null;
       item.is_active === true
@@ -86,6 +88,19 @@ function checkItemProperties(items) {
     expect(["movie", "tvshow"]).toContain(item.item_type);
 
     expect(item.title).not.toBeNull();
+
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.directors && item.directors.length > 0)
+            .length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.genres && item.genres.length > 0).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
 
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(
@@ -768,6 +783,7 @@ const params = {
       query: "/tvshow/87108?ratings_filters=all&allData=true",
       expectedResult: (data) => {
         expect(typeof data).toBe("object");
+        expect(Object.keys(data).length).toEqual(config.keysToCheck.length - 1);
         expect(data.id).toBe(87108);
         expect(data.ratings_average).toBeGreaterThan(0);
 

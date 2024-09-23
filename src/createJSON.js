@@ -236,14 +236,19 @@ const createJSON = async (
     item_type: item_type,
     is_active: isActive,
     title: allocineFirstInfo.allocineTitle,
+
+    directors: allocineFirstInfo.directors,
+    genres: allocineFirstInfo.genres,
     image: allocineFirstInfo.allocineImage,
     release_date: allocineFirstInfo && allocineFirstInfo.releaseDate,
-    trailer: allocineFirstInfo.trailer,
     tagline: traktRating && traktRating.tagline,
+    trailer: allocineFirstInfo.trailer,
+
+    episodes_details: episodesDetails,
     platforms_links: platformsLinks,
     seasons_number: allocineFirstInfo.seasonsNumber,
-    episodes_details: episodesDetails,
     status: allocineFirstInfo.status,
+
     allocine: allocineObj,
     betaseries: betaseriesObj,
     imdb: imdbObj,
@@ -253,6 +258,7 @@ const createJSON = async (
     senscritique: sensCritiqueObj,
     tmdb: tmdbObj,
     trakt: traktObj,
+
     mojo: mojoObj,
   };
 
