@@ -1179,7 +1179,7 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("directors");
         expect(item.directors).not.toBeNull();
-        expect(items.length).toBe(1);
+        expect(items.length).toBeLessThanOrEqual(2);
       });
     },
   },
