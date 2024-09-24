@@ -4,7 +4,7 @@ const { config } = require("./config");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
 const { getRatingsFilters } = require("./getRatingsFilters");
-const { getPipelineByPlatformNames } = require("./getPipelineByPlatformNames");
+const { getPipelineByNames } = require("./getPipelineByNames");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -15,6 +15,10 @@ const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 
 const getItems = async (
+  critics_rating_details_query,
+  directors_query,
+  episodes_details_query,
+  genres_query,
   id_path,
   is_active_query,
   item_type_query,
@@ -27,9 +31,13 @@ const getItems = async (
   release_date_query,
   seasons_number_query,
   status_query,
-  critics_rating_details_query,
-  episodes_details_query,
 ) => {
+  const critics_rating_details =
+    critics_rating_details_query === "true" ? true : false;
+  const directors =
+    typeof directors_query !== "undefined" ? directors_query : "";
+  const episodes_details = episodes_details_query === "true" ? true : false;
+  const genres = typeof genres_query !== "undefined" ? genres_query : "";
   const id = isNaN(id_path) ? "" : id_path;
   const is_active =
     typeof is_active_query !== "undefined" ? is_active_query : true;
@@ -58,9 +66,6 @@ const getItems = async (
   const seasons_number =
     typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
   const status = typeof status_query !== "undefined" ? status_query : "";
-  const critics_rating_details =
-    critics_rating_details_query === "true" ? true : false;
-  const episodes_details = episodes_details_query === "true" ? true : false;
 
   const addFields_popularity_and_ratings = {
     $addFields: {
@@ -198,7 +203,11 @@ const getItems = async (
     pipeline.push(match_item_type);
   }
 
-  if (!id) getPipelineByPlatformNames(is_active_item, platforms, pipeline);
+  if (!id) {
+    getPipelineByNames(directors, pipeline, "directors", is_active_item);
+    getPipelineByNames(genres, pipeline, "genres", is_active_item);
+    getPipelineByNames(platforms, pipeline, "platforms_links", is_active_item);
+  }
 
   pipeline.push(facet);
 

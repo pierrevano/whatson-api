@@ -46,6 +46,10 @@ const getId = async (req, res) => {
     if (id_path && ratings_filters_query) {
       try {
         const { items } = await getItems(
+          critics_rating_details_query,
+          undefined,
+          episodes_details_query,
+          undefined,
           id_path,
           undefined,
           item_type_query,
@@ -58,8 +62,6 @@ const getId = async (req, res) => {
           undefined,
           undefined,
           undefined,
-          critics_rating_details_query,
-          episodes_details_query,
         );
         const filteredResults = items[0].results.filter((result) => {
           return result.item_type === item_type;

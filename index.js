@@ -37,6 +37,11 @@ app.use((_, res, next) => {
  */
 app.get("/", async (req, res) => {
   try {
+    const api_key_query = req.query.api_key;
+    const critics_rating_details_query = req.query.critics_rating_details;
+    const directors_query = req.query.directors;
+    const episodes_details_query = req.query.episodes_details;
+    const genres_query = req.query.genres;
     const id_path = parseInt(req.params.id);
     const is_active_query = req.query.is_active;
     const item_type_query = req.query.item_type;
@@ -49,9 +54,6 @@ app.get("/", async (req, res) => {
     const release_date_query = req.query.release_date;
     const seasons_number_query = req.query.seasons_number;
     const status_query = req.query.status;
-    const critics_rating_details_query = req.query.critics_rating_details;
-    const episodes_details_query = req.query.episodes_details;
-    const api_key_query = req.query.api_key;
 
     const internal_api_key = await collectionNameApiKey.findOne({
       name: "internal_api_key",
@@ -65,6 +67,10 @@ app.get("/", async (req, res) => {
     }
 
     let { items, limit, page } = await getItems(
+      critics_rating_details_query,
+      directors_query,
+      episodes_details_query,
+      genres_query,
       id_path,
       is_active_query,
       item_type_query,
@@ -77,11 +83,10 @@ app.get("/", async (req, res) => {
       release_date_query,
       seasons_number_query,
       status_query,
-      critics_rating_details_query,
-      episodes_details_query,
     );
-    const results = items[0].results;
-    const total_results = items[0].total_results[0].total_results;
+    const results = items && items.length > 0 ? items[0].results : [];
+    const total_results =
+      results.length > 0 ? items[0].total_results[0].total_results : 0;
 
     let json = {
       page: page,
@@ -114,11 +119,7 @@ app.get("/", async (req, res) => {
       }
     }
 
-    if (page > Math.ceil(total_results / limit)) {
-      res
-        .status(404)
-        .json({ message: `No items have been found for page ${page}.` });
-    } else if (json.results.length === 0) {
+    if (json.results.length === 0) {
       res.status(404).json({ message: "No items have been found." });
     } else {
       res.status(200).json(json);

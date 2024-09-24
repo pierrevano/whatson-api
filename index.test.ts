@@ -733,11 +733,21 @@ const params = {
     },
   },
 
+  higher_total_results_than_results: {
+    query:
+      "?item_type=movie,tvshow&is_active=true,false&limit=500&allData=true",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("page");
+      expect(data.page).toBe(1);
+      expect(data.total_results).toBeGreaterThan(data.results.length);
+    },
+  },
+
   no_items_found_on_page_3: {
     query: "?item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
     expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
-      expect(data.message).toBe("No items have been found for page 3.");
+      expect(data.message).toBe("No items have been found.");
       expect(response.status).toBe(404);
     },
   },
@@ -1139,12 +1149,61 @@ const params = {
     },
   },
 
-  should_return_no_values_when_platform_contains_all: {
+  should_return_correct_value_when_platform_contains_all: {
     query: `?platforms=${encodeURIComponent("allAndSomeOtherWords,Netflix")}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");
         expect(item.platforms_links).not.toBeNull();
+        expect(
+          item.platforms_links.some((platform) => platform.name === "Netflix"),
+        ).toBeTruthy();
+      });
+    },
+  },
+
+  only_genres_drama: {
+    query: `?item_type=tvshow&genres=${encodeURIComponent("Drama")}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("genres");
+        expect(item.genres).not.toBeNull();
+        expect(item.genres.some((genre) => genre === "Drama")).toBeTruthy();
+      });
+    },
+  },
+
+  only_directors_xxx: {
+    query: `?item_type=tvshow&directors=xxx`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("directors");
+        expect(item.directors).not.toBeNull();
+        expect(items.length).toBe(1);
+      });
+    },
+  },
+
+  should_not_return_directors_values: {
+    query: `?item_type=tvshow&directors=wrong_value&allData=true`,
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe("No items have been found.");
+      expect(response.status).toBe(404);
+    },
+  },
+
+  only_genres_drama_and_platforms_netflix: {
+    query: `?item_type=tvshow&genres=${encodeURIComponent("Drama")}&platforms=${encodeURIComponent("Netflix")}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("genres");
+        expect(item).toHaveProperty("platforms_links");
+
+        expect(item.genres).not.toBeNull();
+        expect(item.platforms_links).not.toBeNull();
+
+        expect(item.genres.some((genre) => genre === "Drama")).toBeTruthy();
         expect(
           item.platforms_links.some((platform) => platform.name === "Netflix"),
         ).toBeTruthy();
@@ -1242,6 +1301,20 @@ describe("What's on? API tests", () => {
 
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     async function fetchItemsData() {
+      if (query.includes("directors=xxx")) {
+        const apiCallDirectors = `${baseURL}?api_key=${process.env.INTERNAL_API_KEY}`;
+        const responseDirectors = await axios.get(apiCallDirectors, {
+          validateStatus: function (status) {
+            return status <= 500;
+          },
+        });
+        const dataDirectors = responseDirectors.data;
+        const itemsDirectors = dataDirectors && dataDirectors.results;
+        const directorName = itemsDirectors[0].directors[0];
+
+        query = `?directors=${encodeURIComponent(directorName)}`;
+      }
+
       const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${process.env.INTERNAL_API_KEY}`;
 
       console.log("Test name:", name);
