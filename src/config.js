@@ -111,9 +111,9 @@ const config = {
   ],
   margin: 10,
   maxResponseTime: 5000,
+  maxNullValues: 500,
   minimumNumberOfItems: {
     default: 25,
-    maxNullValues: 500,
     mojo: 15,
     popularity: 15,
     trailer: 50,

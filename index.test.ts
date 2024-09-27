@@ -680,10 +680,10 @@ const params = {
       const result = countNullValues(items);
 
       expect(result.totalMovieNullCount).toBeLessThanOrEqual(
-        config.minimumNumberOfItems.maxNullValues,
+        config.maxNullValues,
       );
       expect(result.totalTVShowNullCount).toBeLessThanOrEqual(
-        config.minimumNumberOfItems.maxNullValues,
+        config.maxNullValues,
       );
     },
   },
