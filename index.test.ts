@@ -458,6 +458,32 @@ function checkTypes(item, schema) {
   });
 }
 
+const countNullValues = (items) => {
+  const countNullsForItems = (items, shouldExcludeKey) => {
+    const keysToConsider = shouldExcludeKey
+      ? config.ratingsKeys.filter((key) => key !== "letterboxd")
+      : config.ratingsKeys;
+
+    return items.reduce((totalNullCount, item) => {
+      const nullCount = keysToConsider.reduce((count, key) => {
+        return count + (item[key] === null ? 1 : 0);
+      }, 0);
+      return totalNullCount + nullCount;
+    }, 0);
+  };
+
+  const movieItems = items.filter((item) => item.item_type === "movie");
+  const tvshowItems = items.filter((item) => item.item_type === "tvshow");
+
+  const totalMovieNullCount = countNullsForItems(movieItems, false);
+  const totalTVShowNullCount = countNullsForItems(tvshowItems, true);
+
+  return {
+    totalMovieNullCount,
+    totalTVShowNullCount,
+  };
+};
+
 /**
  * Checks if a single item's id matches the expected value.
  *
@@ -646,6 +672,20 @@ const params = {
           item.is_active === true || item.is_active === false,
         ).toBeTruthy();
       }),
+  },
+
+  should_limit_null_values_for_specific_keys_in_active_movies_and_tvshows: {
+    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      const result = countNullValues(items);
+
+      expect(result.totalMovieNullCount).toBeLessThanOrEqual(
+        config.minimumNumberOfItems.maxNullValues,
+      );
+      expect(result.totalTVShowNullCount).toBeLessThanOrEqual(
+        config.minimumNumberOfItems.maxNullValues,
+      );
+    },
   },
 
   only_tvshows_with_1_and_2_seasons: {
