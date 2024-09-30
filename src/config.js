@@ -31,6 +31,7 @@ const config = {
   dbName: "whatson",
   collectionName: "data",
   collectionNameApiKey: "apikey",
+  collectionNamePreferences: "preferences",
 
   /* Global settings */
   corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev",

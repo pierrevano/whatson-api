@@ -18,6 +18,9 @@ const client = new MongoClient(uri, {
 
 const database = client.db(config.dbName);
 const collectionNameApiKey = database.collection(config.collectionNameApiKey);
+const collectionNamePreferences = database.collection(
+  config.collectionNamePreferences,
+);
 
 app.use((_, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -137,6 +140,39 @@ app.get("/movie/:id", async (req, res) => {
 /* A route that is used to get the data for a specific tvshow. */
 app.get("/tvshow/:id", async (req, res) => {
   await getId(req, res);
+});
+
+/* A route to get user preferences */
+app.get("/preferences/:sub", async (req, res) => {
+  try {
+    const { sub } = req.params;
+    const preferences = await collectionNamePreferences.findOne({ sub });
+
+    if (!preferences) {
+      res.status(404).json({ message: "Preferences not found." });
+    } else {
+      res.status(200).json(preferences);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/* A route to save or update user preferences */
+app.post("/preferences/:sub", async (req, res) => {
+  try {
+    const { sub } = req.params;
+    const preferences = req.body;
+
+    const filter = { sub };
+    const updateDoc = { $set: preferences };
+    const options = { upsert: true };
+
+    await collectionNamePreferences.updateOne(filter, updateDoc, options);
+    res.status(200).json({ message: "Preferences updated successfully." });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 /* Starting the server on the port defined in the PORT variable. */

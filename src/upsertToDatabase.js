@@ -13,8 +13,8 @@ const upsertToDatabase = async (data, collectionData, isEqual) => {
     console.log();
 
     const filter = { _id: b64Encode(data.allocine.url) };
-    const options = { upsert: true };
     const updateDoc = { $set: data };
+    const options = { upsert: true };
 
     await collectionData.updateOne(filter, updateDoc, options);
   } catch (error) {
