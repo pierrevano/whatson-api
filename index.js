@@ -31,6 +31,8 @@ app.use((_, res, next) => {
   next();
 });
 
+app.use(express.json());
+
 /**
  * Handles a GET request to the root endpoint and returns a JSON object containing
  * items that match the given query parameters.
@@ -164,7 +166,7 @@ app.post("/preferences/:sub", async (req, res) => {
     const { sub } = req.params;
     const preferences = req.body;
 
-    const filter = { sub };
+    const filter = { sub: sub };
     const updateDoc = { $set: preferences };
     const options = { upsert: true };
 
