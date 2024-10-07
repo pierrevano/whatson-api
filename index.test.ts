@@ -1034,7 +1034,7 @@ const params = {
     query: "?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5",
     expectedResult: async (items) => {
       const response = await axios.get(
-        `${baseURL}?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5,1&api_key=${process.env.INTERNAL_API_KEY}`,
+        `${baseURL}?item_type=tvshow&popularity_filters=none&minimum_ratings=3.5,1&api_key=${config.internalApiKey}`,
       );
       const data = response.data;
       const itemsFromExtraCall = data.results;
@@ -1051,7 +1051,7 @@ const params = {
     query: "?ratings_filters=all",
     expectedResult: async (items) => {
       const response = await axios.get(
-        `${baseURL}?ratings_filters=${config.ratings_filters}&api_key=${process.env.INTERNAL_API_KEY}`,
+        `${baseURL}?ratings_filters=${config.ratings_filters}&api_key=${config.internalApiKey}`,
       );
       const results = response.data.results;
 
@@ -1330,6 +1330,44 @@ const params = {
       });
     },
   },
+
+  should_return_not_found_preferences: {
+    query:
+      "/preferences/email@example_not_found.com?digest=744cc19085112f8c8b8c9745c5861cf6f95cda7e9b0f424f79e6ee5c7c830344&allData=true",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe("Preferences not found.");
+      expect(response.status).toBe(404);
+    },
+  },
+
+  should_return_unauthorized_access_if_invalid_digest: {
+    query:
+      "/preferences/email@example.com?digest=wrong_digest_value&allData=true",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe("Invalid digest.");
+      expect(response.status).toBe(403);
+    },
+  },
+
+  should_return_unauthorized_access_if_no_digest: {
+    query: "/preferences/email@example.com?allData=true",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe("Invalid digest.");
+      expect(response.status).toBe(403);
+    },
+  },
+
+  should_return_user_preferences: {
+    query:
+      "/preferences/email@example.com?digest=5a7f9c5cf06afb1efd1d7a276d52ddd3a2b7269d413a3ffd1bad8b85dd305215&allData=true",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("email");
+      expect(response.status).toBe(200);
+    },
+  },
 };
 
 /**
@@ -1342,7 +1380,7 @@ describe("What's on? API tests", () => {
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     async function fetchItemsData() {
       if (query.includes("directors=xxx")) {
-        const apiCallDirectors = `${baseURL}?api_key=${process.env.INTERNAL_API_KEY}`;
+        const apiCallDirectors = `${baseURL}?api_key=${config.internalApiKey}`;
         const responseDirectors = await axios.get(apiCallDirectors, {
           validateStatus: function (status) {
             return status <= 500;
@@ -1355,7 +1393,7 @@ describe("What's on? API tests", () => {
         query = `?directors=${encodeURIComponent(directorName)}`;
       }
 
-      const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${process.env.INTERNAL_API_KEY}`;
+      const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
 
       console.log("Test name:", name);
       console.log(`Calling ${apiCall}`);
@@ -1371,7 +1409,7 @@ describe("What's on? API tests", () => {
       if (query.includes("allData=true")) {
         expectedResult(data, response);
       } else {
-        expectedResult(items);
+        expectedResult(items, null);
       }
     }
 
@@ -1389,7 +1427,7 @@ describe("What's on? API tests", () => {
     async () => {
       const start = new Date().valueOf();
 
-      await axios.get(`${baseURL}?api_key=${process.env.INTERNAL_API_KEY}`);
+      await axios.get(`${baseURL}?api_key=${config.internalApiKey}`);
 
       const end = new Date().valueOf();
       const responseTime = end - start;

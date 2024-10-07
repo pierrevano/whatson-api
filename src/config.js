@@ -24,6 +24,8 @@ const baseURL = {
 const config = {
   /* Credentials */
   betaseriesApiKey: process.env.BETASERIES_API_KEY,
+  digestSecretValue: process.env.DIGEST_SECRET_VALUE,
+  internalApiKey: process.env.INTERNAL_API_KEY,
   mongoDbCredentials: process.env.CREDENTIALS,
   tmdbApiKey: process.env.THEMOVIEDB_API_KEY,
 
@@ -116,7 +118,7 @@ const config = {
   minimumNumberOfItems: {
     default: 25,
     mojo: 15,
-    popularity: 15,
+    popularity: 10,
     trailer: 50,
     senscritiqueItems: 3,
     traktItems: 3,

@@ -13,7 +13,7 @@ const { logErrors } = require("../utils/logErrors");
  */
 const getTotalSeasons = async (imdbId) => {
   try {
-    const apiUrl = `${config.baseURLRemote}/?imdbId=${imdbId}&api_key=${process.env.INTERNAL_API_KEY}`;
+    const apiUrl = `${config.baseURLRemote}/?imdbId=${imdbId}&api_key=${config.internalApiKey}`;
     const response = await axios.get(apiUrl);
 
     // Check if the status code is 200
