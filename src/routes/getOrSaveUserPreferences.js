@@ -1,6 +1,6 @@
 const { config } = require("../config");
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const crypto = require("crypto");
+const Hashes = require("jshashes");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -11,17 +11,28 @@ const collectionNamePreferences = database.collection(
   config.collectionNamePreferences,
 );
 
-function createDigest(email) {
-  const combined = email + config.digestSecretValue;
-  return crypto.createHash("sha256").update(combined).digest("hex");
-}
+/**
+ * Hashes an email combined with a secret using SHA-256.
+ *
+ * @param {string} email - The email address to be hashed.
+ * @param {string} secret - The secret key to be combined with the email.
+ * @returns {string} The resulting SHA-256 hash in hexadecimal format.
+ */
+const createHashForEmail = (email, secret) => {
+  const combined = email + secret;
+  const SHA256 = new Hashes.SHA256();
+  return SHA256.hex(combined);
+};
 
 const getUserPreferences = async (req, res) => {
   try {
     const { email } = req.params;
     const { digest } = req.query;
 
-    const calculatedDigest = createDigest(email);
+    const calculatedDigest = createHashForEmail(
+      email,
+      config.digestSecretValue,
+    );
 
     if (calculatedDigest !== digest) {
       return res.status(403).json({ message: "Invalid digest." });
@@ -45,7 +56,10 @@ const saveOrUpdateUserPreferences = async (req, res) => {
     const { digest } = req.query;
     const preferences = req.body;
 
-    const calculatedDigest = createDigest(email);
+    const calculatedDigest = createHashForEmail(
+      email,
+      config.digestSecretValue,
+    );
 
     if (calculatedDigest !== digest) {
       return res.status(403).json({ message: "Invalid digest." });
