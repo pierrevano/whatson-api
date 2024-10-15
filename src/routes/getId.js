@@ -3,7 +3,7 @@ const { config } = require("../config");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const newrelic = require("newrelic");
 
-const uri = `mongodb+srv://${config.mongoDbCredentials}@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });

@@ -30,6 +30,8 @@ const config = {
   tmdbApiKey: process.env.THEMOVIEDB_API_KEY,
 
   /* Database settings */
+  mongoDbCredentialsLastPart:
+    "@cluster0.yxe57eq.mongodb.net/?retryWrites=true&w=majority",
   dbName: "whatson",
   collectionName: "data",
   collectionNameApiKey: "apikey",
@@ -114,7 +116,7 @@ const config = {
   ],
   margin: 10,
   maxResponseTime: 5000,
-  maxNullValues: 500,
+  maxNullValues: 600,
   minimumNumberOfItems: {
     default: 25,
     mojo: 15,
