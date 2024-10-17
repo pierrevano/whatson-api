@@ -97,6 +97,10 @@ const getItems = async (req, res) => {
 
     if (json.results.length === 0) {
       res.status(404).json({ message: "No items have been found." });
+    } else if (limit > config.maxMongodbItemsLimit) {
+      res.status(400).json({
+        message: `Limit should be lower than ${config.maxMongodbItemsLimit}`,
+      });
     } else {
       res.status(200).json(json);
     }

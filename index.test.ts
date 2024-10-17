@@ -616,6 +616,18 @@ const params = {
       }),
   },
 
+  should_fallback_to_default_movies_items_if_incorrect_query_parameter: {
+    query: `?invalid_parameter=invalid_value&api_key=${config.internalApiKey}`,
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
+      }),
+  },
+
   only_movies: {
     query: "?item_type=movie",
     expectedResult: (items) =>
@@ -746,10 +758,28 @@ const params = {
       }),
   },
 
-  custom_limit_value: {
+  custom_limit_value_to_1: {
+    query: "?limit=1",
+    expectedResult: (items) => {
+      expect(items.length).toBe(1);
+    },
+  },
+
+  custom_limit_value_to_5: {
     query: "?limit=5",
     expectedResult: (items) => {
       expect(items.length).toBe(5);
+    },
+  },
+
+  limit_is_higher_than_max_mongodb_items_limit: {
+    query: `?limit=${parseInt(config.maxMongodbItemsLimit) + 1}&allData=true`,
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe(
+        `Limit should be lower than ${config.maxMongodbItemsLimit}`,
+      );
+      expect(response.status).toBe(400);
     },
   },
 
@@ -768,6 +798,7 @@ const params = {
     query: "?item_type=tvshow&seasons_number=1,2&page=2&limit=20&allData=true",
     expectedResult: (data) => {
       expect(data).toHaveProperty("page");
+      expect(data).toHaveProperty("total_pages");
       expect(data.page).toBe(2);
       expect(data.results.length).toBe(20);
     },
@@ -1004,6 +1035,17 @@ const params = {
 
   correct_none_popularity_order: {
     query: "?item_type=tvshow&popularity_filters=none,imdb_popularity",
+    expectedResult: (items) => {
+      for (let i = 1; i < items.length; i++) {
+        expect(items[i].ratings_average).toBeLessThanOrEqual(
+          items[i - 1].ratings_average,
+        );
+      }
+    },
+  },
+
+  popularity_filters_with_wrong_value: {
+    query: "?item_type=tvshow&popularity_filters=wrong_value",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
         expect(items[i].ratings_average).toBeLessThanOrEqual(
@@ -1251,6 +1293,15 @@ const params = {
     },
   },
 
+  should_not_return_any_items_on_wrong_genres_and_platforms: {
+    query: "?genres=wrong_value&platforms=wrong_value&allData=true",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe("No items have been found.");
+      expect(response.status).toBe(404);
+    },
+  },
+
   should_return_new_items_movie_when_filtered_by_release_date: {
     query: `?item_type=movie&is_active=true&release_date=everything,new&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
@@ -1426,15 +1477,22 @@ describe("What's on? API tests", () => {
     "api_response_time_should_be_within_an_acceptable_range",
     async () => {
       const start = new Date().valueOf();
-
       await axios.get(`${baseURL}?api_key=${config.internalApiKey}`);
-
       const end = new Date().valueOf();
-      const responseTime = end - start;
+      expect(end - start).toBeLessThan(config.maxResponseTime);
+    },
+    config.timeout,
+  );
 
-      const maxResponseTime = config.maxResponseTime;
-
-      expect(responseTime).toBeLessThan(maxResponseTime);
+  test(
+    "api_response_time_should_be_within_an_acceptable_range_on_important_limit",
+    async () => {
+      const start = new Date().valueOf();
+      await axios.get(
+        `${baseURL}?item_type=movie,tvshow&limit=${config.maxMongodbItemsLimit}&api_key=${config.internalApiKey}`,
+      );
+      const end = new Date().valueOf();
+      expect(end - start).toBeLessThan(config.maxResponseTime);
     },
     config.timeout,
   );

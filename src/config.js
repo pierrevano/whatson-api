@@ -72,6 +72,7 @@ const config = {
   baseURLRemote: process.env.WHATSON_API_URL,
   maxLimitLocal: 2000,
   maxLimitRemote: 500,
+  maxMongodbItemsLimit: 6500,
   checkItemsNumber: true,
   keysToCheck: [
     "_id",
