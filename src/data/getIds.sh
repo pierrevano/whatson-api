@@ -57,6 +57,33 @@ else
   exit 1
 fi
 
+# Loading the env variables
+if [[ $SOURCE != "circleci" ]]; then
+  source .env
+fi
+echo "SOURCE: $SOURCE"
+echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
+echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
+echo "VERCEL_ORG_ID: $VERCEL_ORG_ID"
+echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
+echo "VERCEL_TOKEN: $VERCEL_TOKEN"
+echo "WHATSON_API_URL: $WHATSON_API_URL"
+echo "----------------------------------------------------------------------------------------------------"
+if [[ -z $BETASERIES_API_KEY ]]; then
+  exit 1
+fi
+
+# Check if What's on? API is up
+status_code=$(curl -o /dev/null -s -w "%{http_code}" "$WHATSON_API_URL")
+if [[ "$status_code" -ne 200 ]]; then
+  echo "Error: Received status code $status_code from $WHATSON_API_URL."
+  echo "----------------------------------------------------------------------------------------------------"
+  exit 1
+else
+  echo "Correct status code $status_code from $WHATSON_API_URL."
+  echo "----------------------------------------------------------------------------------------------------"
+fi
+
 if [[ $SOURCE == "circleci" ]]; then
   curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
   echo "Downloading $BASE_URL_ASSETS/$FILMS_FILE_NAME to $FILMS_IDS_FILE_PATH"
@@ -98,22 +125,6 @@ if [[ $DUPLICATES_LINES_NB ]]; then
   echo "DUPLICATES_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
   echo $DUPLICATES_LINES_NB
-  exit 1
-fi
-
-# Loading the env variables
-if [[ $SOURCE != "circleci" ]]; then
-  source .env
-fi
-echo "SOURCE: $SOURCE"
-echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
-echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
-echo "VERCEL_ORG_ID: $VERCEL_ORG_ID"
-echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
-echo "VERCEL_TOKEN: $VERCEL_TOKEN"
-echo "WHATSON_API_URL: $WHATSON_API_URL"
-echo "----------------------------------------------------------------------------------------------------"
-if [[ -z $BETASERIES_API_KEY ]]; then
   exit 1
 fi
 
