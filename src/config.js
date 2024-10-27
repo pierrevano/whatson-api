@@ -38,7 +38,7 @@ const config = {
   collectionNamePreferences: "preferences",
 
   /* Global settings */
-  corsURL: "https://cors-sites-aafe82ad9d0c.fly.dev",
+  IPinfo: "https://ipinfo.io/country",
   limit: 15,
   maximumThreshold: {
     default: 30,

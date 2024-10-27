@@ -11,17 +11,26 @@ const isThirdPartyServiceOK = async (service) => {
       retries: config.retries,
       retryDelay: () => config.retryDelay,
     });
+
     const options = {
       headers: {
         "User-Agent": generateUserAgent(),
       },
     };
+
     const response = await axios.get(service, options);
-    return response.status === 200;
+
+    return {
+      success: response.status === 200,
+      data: response.data,
+    };
   } catch (error) {
     logErrors(error, service, null);
 
-    return false;
+    return {
+      success: false,
+      data: null,
+    };
   }
 };
 

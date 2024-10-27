@@ -19,8 +19,34 @@ const checkDbIds = require("./checkDbIds");
 const isThirdPartyServiceOK = require("./utils/thirdPartyStatus");
 const loopItems = require("./loopItems");
 
+async function checkCountryCode() {
+  try {
+    const { success, data } = await isThirdPartyServiceOK(config.IPinfo);
+
+    if (success) {
+      if (data.trim() !== "FR") {
+        console.log("Please disable any VPN first.");
+        process.exit(1);
+      } else {
+        console.log(`Country code is ${data.trim()}, continuing...`);
+        console.log(
+          "----------------------------------------------------------------------------------------------------",
+        );
+      }
+    } else {
+      console.error("Failed to fetch country code. Aborting.");
+      process.exit(1);
+    }
+  } catch (error) {
+    console.error("Error fetching country code:", error);
+    process.exit(1);
+  }
+}
+
 async function checkStatus(service) {
-  if (await isThirdPartyServiceOK(service.url)) {
+  const { success } = await isThirdPartyServiceOK(service.url);
+
+  if (success) {
     console.log(`${service.name}'s status is OK, continuing...`);
   } else {
     console.error(`${service.name}'s status is not OK. Aborting.`);
@@ -29,6 +55,10 @@ async function checkStatus(service) {
 }
 
 (async () => {
+  if (getNodeVarsValues.environment === "local") {
+    await checkCountryCode();
+  }
+
   if (getNodeVarsValues.skip_services !== "skip_services") {
     const ids = [1, 2, 3];
     for (const id of ids) {

@@ -7,7 +7,6 @@ newrelic_agent.log
 node_modules
 package-lock.json
 reports/*
-run.sh
 src/assets/.!*!films_ids.txt
 src/assets/.!*!series_ids.txt
 src/assets/.vercel
@@ -16,3 +15,4 @@ src/assets/skip_ids_*.txt
 src/assets/updated_at.txt
 src/controlData.js
 temp_*
+update_db.sh
