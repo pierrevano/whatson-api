@@ -1,7 +1,9 @@
+const { appendFile } = require("fs");
 const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("./config");
+const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
 const { logErrors } = require("../src/utils/logErrors");
 
 /**
@@ -12,6 +14,8 @@ const { logErrors } = require("../src/utils/logErrors");
  */
 const getTMDBResponse = async (allocineHomepage, tmdbId) => {
   try {
+    const startTime = Date.now();
+
     const type = allocineHomepage.includes(config.baseURLTypeSeries)
       ? "tv"
       : "movie";
@@ -24,9 +28,32 @@ const getTMDBResponse = async (allocineHomepage, tmdbId) => {
     const options = { validateStatus: (status) => status < 500 };
     const { data, status } = await axios.get(url, options);
 
-    if (status !== 200) {
+    const endTime = Date.now();
+    const executionTime = endTime - startTime;
+    console.log(
+      `getTMDBResponse - ${url}:`,
+      status,
+      "- Execution time:",
+      executionTime + "ms",
+    );
+
+    if (
+      status !== 200 &&
+      (getNodeVarsValues.get_ids !== "no_update_ids" ||
+        getNodeVarsValues.is_not_active !== "no_active")
+    ) {
       console.error("Something is wrong with The Movie Database API.");
       process.exit(1);
+    } else if (
+      status !== 200 &&
+      getNodeVarsValues.get_ids === "no_update_ids" &&
+      getNodeVarsValues.is_not_active === "no_active"
+    ) {
+      appendFile(
+        "temp_error.log",
+        `${new Date().toISOString()} - ${url}: ${status}\n`,
+        () => {},
+      );
     }
 
     return { data, status };

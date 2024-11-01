@@ -10,6 +10,9 @@ parameters:
   all_second:
     type: boolean
     default: false
+  force:
+    type: boolean
+    default: false
 
 commands:
   setup_env:
@@ -69,6 +72,18 @@ jobs:
       - run:
           name: Update all tvshow data all
           command: npm run update-tvshow-data-all
+  force:
+    docker:
+      - image: cimg/node:20.5.1
+    steps:
+      - setup_env
+      - run:
+          name: Force update movie data
+          command: node src/updateData.js movie update_ids update_db no_local active no_check_db_ids 0 no_check_data force
+      - run:
+          name: Force update tvshow data
+          command: node src/updateData.js tvshow update_ids update_db no_local active no_check_db_ids 0 no_check_data force
+      - run_tests
 
 workflows:
   build:
@@ -83,3 +98,7 @@ workflows:
     when: << pipeline.parameters.all_second >>
     jobs:
       - build_all_second
+  force:
+    when: << pipeline.parameters.force >>
+    jobs:
+      - force
