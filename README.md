@@ -4,6 +4,10 @@ Companion to [What's on?](https://github.com/pierrevano/whatson)
 
 ---
 
+⚠️ This API is currently running on Render's free tier. If you'd like to keep it active at all times, please consider making a small donation here: [buymeacoffee.com/pierreschelde](https://buymeacoffee.com/pierreschelde).
+
+---
+
 ## IDs files available below
 
 - Movies: https://whatson-assets.vercel.app/films_ids.txt
