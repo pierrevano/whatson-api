@@ -116,13 +116,16 @@ const loopItems = async (
             }
           }
         } catch (error) {
-          if (error.response.status === 503) {
+          const status = error.response.status;
+          if (status === 404) {
+            console.log("Item not found in database, continuing...");
+          } else if (status === 503) {
             throw new Error(
               "Render service has been suspended. Please re-enable it.",
             );
+          } else {
+            throw new Error(`Error fetching data: ${error}`);
           }
-
-          throw new Error(`Error fetching data: ${error}`);
         }
       }
 

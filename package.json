@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "2.80.2",
+  "version": "2.80.31",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -31,7 +31,8 @@
     "update-movie-data-first-half": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(true));\" | xargs -I {} node src/updateData.js movie no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7",
     "update-movie-data-second-half": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(false));\" | xargs -I {} node src/updateData.js movie no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7",
     "update-tvshow-data-all": "node -e \"const { getDateValue } = require('./src/utils/getDateValue'); console.log(getDateValue(true));\" | xargs -I {} node src/updateData.js tvshow no_update_ids update_db circleci no_active no_check_db_ids {} no_check_data no_force mojo check_services no_delete 7",
-    "update-all-ids": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data force && node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data force && npm run test",
+    "update-all-ids": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data && node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data && npm run test",
+    "update-all-ids-force": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data force && node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data force && npm run test",
     "update-all-active-ids": "node src/updateData.js movie no_update_ids update_db local active no_check_db_ids 0 no_check_data force && node src/updateData.js tvshow no_update_ids update_db local active no_check_db_ids 0 no_check_data force && npm run test"
   },
   "author": "Pierre Vanoverschelde",
