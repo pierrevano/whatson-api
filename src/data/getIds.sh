@@ -74,15 +74,24 @@ if [[ -z $BETASERIES_API_KEY ]]; then
 fi
 
 # Check if What's on? API is up
-status_code=$(curl -o /dev/null -s -w "%{http_code}" "$WHATSON_API_URL")
-if [[ "$status_code" -ne 200 ]]; then
-  echo "Error: Received status code $status_code from $WHATSON_API_URL."
-  echo "----------------------------------------------------------------------------------------------------"
-  exit 1
-else
-  echo "Correct status code $status_code from $WHATSON_API_URL."
-  echo "----------------------------------------------------------------------------------------------------"
-fi
+while true; do
+  status_code=$(curl -o /dev/null -s -w "%{http_code}" "$WHATSON_API_URL")
+
+  if [[ "$status_code" -eq 200 ]]; then
+    echo "Correct status code $status_code from $WHATSON_API_URL."
+    echo "----------------------------------------------------------------------------------------------------"
+    break
+  elif [[ "$status_code" -gt 500 ]]; then
+    echo "Critical Error: Received status code $status_code from $WHATSON_API_URL. Aborting."
+    echo "----------------------------------------------------------------------------------------------------"
+    exit 1
+  else
+    echo "Error: Received status code $status_code from $WHATSON_API_URL. Retrying..."
+    echo "----------------------------------------------------------------------------------------------------"
+  fi
+
+  sleep 5
+done
 
 if [[ $SOURCE == "circleci" ]]; then
   curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
@@ -433,6 +442,14 @@ do
           echo "Status: $STATUS"
         fi
 
+        USERS_RATINGS_FOUND=1
+        if [[ $PROMPT == "stop" ]]; then
+          USERS_RATINGS_FOUND=$(curl -s https://www.allocine.fr$URL | grep "\"stareval-note\"" | wc -l | awk '{print $1}')
+          if [[ $USERS_RATINGS_FOUND -eq 0 ]]; then
+            echo "No users ratings."
+          fi
+        fi
+
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
           if [[ $PROMPT == "recheck" ]]; then
@@ -469,7 +486,7 @@ do
             IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo ">tt[0-9]+<" | cut -d'<' -f1 | cut -d'>' -f2 | head -1)
           fi
 
-          if [[ -z $IMDB_ID ]] || [[ $STATUS == "À venir" ]]; then
+          if [[ -z $IMDB_ID ]] || [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -eq 0 ]]; then
             IMDB_ID=null
           fi
           echo "IMDb ID: $IMDB_ID"
@@ -504,7 +521,7 @@ do
               echo "Skipping: https://www.allocine.fr$URL"
               IMDB_ID="skip"
             else
-              if [[ $STATUS == "À venir" ]]; then
+              if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -eq 0 ]]; then
                 IMDB_ID=null
               else
                 open -a $BROWSER_PATH "https://www.allocine.fr$URL"
@@ -531,7 +548,7 @@ do
         if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { [[ $PROMPT == "recheck" ]] && [[ $KIDS_MOVIE -eq 1 ]] && [[ -z $MIN_RATING ]]; }; then
           data_not_found
         else
-          if [[ $STATUS == "À venir" ]]; then
+          if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -eq 0 ]]; then
             IMDB_ID=null
           elif { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && [[ $PROMPT == "recheck" ]]; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
