@@ -201,12 +201,16 @@ const loopItems = async (
                 tmdbHomepage,
               ));
 
-        if (!errorMetacritic) {
-          // Update `updated_at` date when there is no Metacritic error
+        if (!errorMetacritic && !getIsEqualValue.isEqual) {
+          /*
+           * Update `updated_at` date only when
+           * - There is no Metacritic error
+           * - And data is not fetched from the database
+           */
           data.updated_at = new Date().toISOString();
         } else {
           console.log(
-            "Metacritic error occurred, `updated_at` date not updated.",
+            `The 'updated_at' date was not modified because 'errorMetacritic' is: ${errorMetacritic} and 'isEqual' is: ${getIsEqualValue.isEqual}`,
           );
         }
 

@@ -1163,17 +1163,19 @@ const params = {
     },
   },
 
-  items_updated_within_last_month: {
+  items_updated_within_last_2_months: {
     query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const today = new Date();
-      const monthAgoDate = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const dateInThePast = new Date(
+        today.getTime() - 60 * 24 * 60 * 60 * 1000,
+      );
 
       items.forEach((item) => {
         expect(item).toHaveProperty("updated_at");
         let itemDate = new Date(item.updated_at);
         expect(itemDate.getTime()).toBeGreaterThanOrEqual(
-          monthAgoDate.getTime(),
+          dateInThePast.getTime(),
         );
       });
     },
