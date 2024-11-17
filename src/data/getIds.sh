@@ -307,7 +307,20 @@ do
   while [[ $FILMS_INDEX_NUMBER -le $FILMS_NUMBER ]]
   do
     # Get AlloCiné film url
-    URL=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4)
+    if [[ $PROMPT == "allocine" ]]; then
+      echo "Enter the AlloCiné URL:"
+      read URL
+      URL=$(echo $URL | sed 's/https:\/\/www.allocine.fr//')
+
+      URL_FOUND=$(grep $URL $FILMS_IDS_FILE_PATH | wc -l | awk '{print $1}')
+      if [[ $URL_FOUND -eq 1 ]]; then
+        echo "URL is already existing in $FILMS_IDS_FILE_PATH"
+        grep $URL $FILMS_IDS_FILE_PATH
+        exit 1
+      fi
+    else
+      URL=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4)
+    fi
 
     # Sometimes AlloCiné is displaying a default top series list starting by this ID. If `true`, abording.
     if [[ $URL == $DEFAULT_FIRST_SHOW ]] && [[ $PAGES_INDEX_NUMBER -eq 1 ]] && [[ $FILMS_INDEX_NUMBER -eq 1 ]]; then
@@ -629,6 +642,10 @@ do
 
         echo "----------------------------------------------------------------------------------------------------"
 
+        if [[ $PROMPT == "allocine" ]]; then
+          exit 1
+        fi
+
         count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
         if [[ $count -eq 2 ]] && [[ $PROMPT == "recheck" ]]; then
             echo "Number of lines found for $URL: $count"
@@ -674,7 +691,7 @@ DATE=$(date '+%Y-%m-%d %H:%M:%S')
 echo "Last update was on: $DATE"
 echo $DATE > $UPDATED_AT_FILE_PATH
 
-if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{print $1}') -ge 5000 ]]; then
+if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{print $1}') -ge 6000 ]]; then
   cd $FILMS_ASSETS_PATH
   vercel --prod --token=$VERCEL_TOKEN
   echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"

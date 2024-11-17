@@ -4,6 +4,7 @@ const { config } = require("./config");
 const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
+const { getImdbRating } = require("./content/getImdbRating");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { logErrors } = require("./utils/logErrors");
 
@@ -42,7 +43,7 @@ const compareUsersRating = async (
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${config.internalApiKey}`;
 
   try {
-    const users_rating = (
+    const allocine_users_rating = (
       await getAllocineInfo(
         allocineHomepage,
         betaseriesHomepage,
@@ -50,6 +51,7 @@ const compareUsersRating = async (
         compare,
       )
     ).allocineUsersRating;
+    const imdb_users_rating = await getImdbRating(imdbHomepage);
 
     const allocinePopularity = (
       await getAllocinePopularity(allocineURL, item_type)
@@ -101,7 +103,10 @@ const compareUsersRating = async (
         return isEqualObj;
       }
 
-      if (dataWithoutId.allocine.users_rating === users_rating) {
+      if (
+        dataWithoutId.allocine.users_rating === allocine_users_rating &&
+        dataWithoutId.imdb.users_rating === imdb_users_rating
+      ) {
         return {
           isEqual: true,
           data: dataWithoutId,
