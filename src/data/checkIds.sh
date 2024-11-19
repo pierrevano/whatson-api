@@ -266,93 +266,87 @@ elif [[ $1 == "update" ]]; then
 elif [[ $1 == "check_dataset" ]]; then
   git update-index --no-assume-unchanged $FILMS_IDS_FILE_PATH
 
-  if [[ $3 == "force" ]]; then
-    echo "Running command: $GET_IDS_FILE_PATH local $2"
-    echo "----------------------------------------------------------------------------------------------------"
-    bash $GET_IDS_FILE_PATH local $2
-  else
-    ERROR=$(git diff --unified=0 -- $FILMS_IDS_FILE_PATH \
-      | grep '^[+-]' \
-      | grep -Ev '^(--- a/|\+\+\+ b/)' \
-      | timeout 3600 awk -v baseurlAllocine="$BASE_URL" \
-        -v baseurlImdb="$BASE_URL_IMDB" \
-        -v baseurlBetaseries="$BASE_URL_BETASERIES" \
-        -v baseurlMetacritic="$BASE_URL_METACRITIC" \
-        -v baseurlLetterboxd="$BASE_URL_LETTERBOXD" \
-        -v baseurlSenscritique="$BASE_URL_SENSCRITIQUE" \
-        -v baseurlTrakt="$BASE_URL_TRAKT" \
-        -v filmIdsFilePath="$FILMS_IDS_FILE_PATH" -F',' '{
-        sub(/^[+-]/,"")
-        data[$1] = (data[$1] ? data[$1] FS : "") $0
-      }
-      END {
-        urls[1]=baseurlAllocine
-        urls[2]=baseurlImdb
-        urls[3]=baseurlBetaseries
-        urls[5]=baseurlMetacritic
-        urls[7]=baseurlLetterboxd
-        urls[8]=baseurlSenscritique
-        urls[9]=baseurlTrakt
+  ERROR=$(git diff --unified=0 -- $FILMS_IDS_FILE_PATH \
+    | grep '^[+-]' \
+    | grep -Ev '^(--- a/|\+\+\+ b/)' \
+    | timeout 3600 awk -v baseurlAllocine="$BASE_URL" \
+      -v baseurlImdb="$BASE_URL_IMDB" \
+      -v baseurlBetaseries="$BASE_URL_BETASERIES" \
+      -v baseurlMetacritic="$BASE_URL_METACRITIC" \
+      -v baseurlLetterboxd="$BASE_URL_LETTERBOXD" \
+      -v baseurlSenscritique="$BASE_URL_SENSCRITIQUE" \
+      -v baseurlTrakt="$BASE_URL_TRAKT" \
+      -v filmIdsFilePath="$FILMS_IDS_FILE_PATH" -F',' '{
+      sub(/^[+-]/,"")
+      data[$1] = (data[$1] ? data[$1] FS : "") $0
+    }
+    END {
+      urls[1]=baseurlAllocine
+      urls[2]=baseurlImdb
+      urls[3]=baseurlBetaseries
+      urls[5]=baseurlMetacritic
+      urls[7]=baseurlLetterboxd
+      urls[8]=baseurlSenscritique
+      urls[9]=baseurlTrakt
 
-        print "Only last values changed for: " filmIdsFilePath
+      print "Only last values changed for: " filmIdsFilePath
 
-        for(key in data) {
-          split(data[key], lines, FS)
-          if (length(lines) <= 10) continue
-          if (lines[1] == lines[1+10] && lines[2] == lines[2+10] && lines[3] == lines[3+10] && lines[4] == lines[4+10] && lines[5] == lines[5+10] && lines[6] == lines[6+10] && lines[7] == lines[7+10] && lines[8] == lines[8+10] && lines[9] == lines[9+10] && lines[10] != lines[10+10]) continue
-          for(i=1; i<=10; i++) {
-            print "Other values changed for: " filmIdsFilePath
+      for(key in data) {
+        split(data[key], lines, FS)
+        if (length(lines) <= 10) continue
+        if (lines[1] == lines[1+10] && lines[2] == lines[2+10] && lines[3] == lines[3+10] && lines[4] == lines[4+10] && lines[5] == lines[5+10] && lines[6] == lines[6+10] && lines[7] == lines[7+10] && lines[8] == lines[8+10] && lines[9] == lines[9+10] && lines[10] != lines[10+10]) continue
+        for(i=1; i<=10; i++) {
+          print "Other values changed for: " filmIdsFilePath
 
-            if (lines[i] != "null" && lines[i+10] == "null") {
-              print "------------------------------------------------------------"
-              print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
-              print "Details:"
-              print "- " lines[1] "," lines[2] "," lines[3] "," lines[4] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10]
-              print "+ " lines[1+10] "," lines[2+10] "," lines[3+10] "," lines[4+10] "," lines[5+10] "," lines[6+10] "," lines[7+10] "," lines[8+10] "," lines[9+10] "," lines[10+10]
-              print "------------------------------------------------------------"
-              exit
-            }
+          if (lines[i] != "null" && lines[i+10] == "null") {
+            print "------------------------------------------------------------"
+            print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
+            print "Details:"
+            print "- " lines[1] "," lines[2] "," lines[3] "," lines[4] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10]
+            print "+ " lines[1+10] "," lines[2+10] "," lines[3+10] "," lines[4+10] "," lines[5+10] "," lines[6+10] "," lines[7+10] "," lines[8+10] "," lines[9+10] "," lines[10+10]
+            print "------------------------------------------------------------"
+            exit
+          }
 
-            for(j=1; j<=7; j++) {
-              if (lines[j] != "null" && lines[j] != "") {
-                if (j == 4) j=5
-                url = urls[j] lines[j]
+          for(j=1; j<=7; j++) {
+            if (lines[j] != "null" && lines[j] != "") {
+              if (j == 4) j=5
+              url = urls[j] lines[j]
 
-                cmd = ("curl -A \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36\" -o /dev/null -s -w \"%{http_code}\" " url)
-                cmd | getline http_status_code
-                close(cmd)
+              cmd = ("curl -A \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36\" -o /dev/null -s -w \"%{http_code}\" " url)
+              cmd | getline http_status_code
+              close(cmd)
 
-                if (http_status_code > 400) {
-                  print "------------------------------------------------------------"
-                  print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
-                  print "IMDb ID: " urls[2] lines[2]
-                  print lines[1] "," lines[2] "," lines[3] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9]
-                  print "------------------------------------------------------------"
-                  exit
-                }
+              if (http_status_code > 400) {
+                print "------------------------------------------------------------"
+                print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
+                print "IMDb ID: " urls[2] lines[2]
+                print lines[1] "," lines[2] "," lines[3] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9]
+                print "------------------------------------------------------------"
+                exit
               }
             }
           }
         }
-      }')
+      }
+    }')
 
-    case "$ERROR" in
-      "Only last values changed for: ./src/assets/films_ids.txt")
-        echo "$ERROR"
-        git update-index --assume-unchanged src/assets/films_ids.txt
-        ;;
+  case "$ERROR" in
+    "Only last values changed for: ./src/assets/films_ids.txt")
+      echo "$ERROR"
+      git update-index --assume-unchanged src/assets/films_ids.txt
+      ;;
 
-      "Only last values changed for: ./src/assets/series_ids.txt")
-        echo "$ERROR"
-        git update-index --assume-unchanged src/assets/series_ids.txt
-        ;;
+    "Only last values changed for: ./src/assets/series_ids.txt")
+      echo "$ERROR"
+      git update-index --assume-unchanged src/assets/series_ids.txt
+      ;;
 
-      *------------------------------------------------------------*)
-        echo "$ERROR"
-        exit 1
-        ;;
-    esac
-  fi
+    *------------------------------------------------------------*)
+      echo "$ERROR"
+      exit 1
+      ;;
+  esac
 elif [[ $1 == "check_imdb" ]]; then
   rm -f $FILMS_IDS_FILE_PATH_TEMP
 

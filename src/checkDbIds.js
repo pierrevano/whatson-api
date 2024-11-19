@@ -69,7 +69,7 @@ const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
               "----------------------------------------------------------------------------------------------------",
             );
 
-            process.exit(0);
+            process.exit(1);
           }
         },
       );
