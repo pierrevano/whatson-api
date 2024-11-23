@@ -122,7 +122,7 @@ const config = {
     default: 25,
     mojo: 15,
     popularity: 10,
-    trailer: 50,
+    trailer: 20,
     senscritiqueItems: 3,
     traktItems: 3,
     platformsLinksMovies: 5,

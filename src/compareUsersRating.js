@@ -56,7 +56,6 @@ const compareUsersRating = async (
     const allocinePopularity = (
       await getAllocinePopularity(allocineURL, item_type)
     ).popularity;
-
     const imdbPopularity = (
       await getImdbPopularity(imdbHomepage, allocineURL, item_type)
     ).popularity;
@@ -96,9 +95,13 @@ const compareUsersRating = async (
       dataWithoutId.imdb.popularity = imdbPopularity;
       dataWithoutId.mojo = mojoObj;
 
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+
       if (
-        dataWithoutId.allocine.users_rating !== null &&
-        dataWithoutId.imdb.users_rating === null
+        (dataWithoutId.allocine.users_rating !== null &&
+          dataWithoutId.imdb.users_rating === null) ||
+        new Date(dataWithoutId.updated_at) <= lastMonth
       ) {
         return isEqualObj;
       }
