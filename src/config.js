@@ -39,6 +39,8 @@ const config = {
 
   /* Global settings */
   IPinfo: "https://ipinfo.io/country",
+  webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
+
   limit: 15,
   maximumThreshold: {
     default: 30,

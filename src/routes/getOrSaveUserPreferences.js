@@ -1,6 +1,8 @@
-const { config } = require("../config");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const axios = require("axios");
 const Hashes = require("jshashes");
+
+const { config } = require("../config");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -75,6 +77,38 @@ const saveOrUpdateUserPreferences = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+/**
+ * Watches the 'preferences' collection for new document insertions and triggers a webhook.
+ * Logs any errors and indicates when the stream closes.
+ */
+const watchForNewUserCreated = () => {
+  try {
+    const changeStream = collectionNamePreferences.watch();
+
+    changeStream.on("change", async (change) => {
+      if (change.operationType === "insert") {
+        try {
+          await axios.post(config.webhooksURL);
+        } catch (error) {
+          console.error("Error sending notification:", error.message);
+        }
+      }
+    });
+
+    changeStream.on("error", (error) => {
+      console.error("Change stream error:", error);
+    });
+
+    changeStream.on("close", () => {
+      console.log("Change stream closed.");
+    });
+  } catch (error) {
+    console.error("Error setting up change stream:", error);
+  }
+};
+
+watchForNewUserCreated();
 
 module.exports = {
   getUserPreferences,
