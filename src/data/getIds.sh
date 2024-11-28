@@ -392,6 +392,15 @@ do
         DUPLICATE=1
 
         if [[ $MIN_RATING ]]; then
+          if [[ $PAGES_INDEX_NUMBER -gt 1 ]]; then
+            echo "----------------------------------------------------------------------------------------------------"
+            echo "First page has been checked, do you want to continue?"
+            echo "----------------------------------------------------------------------------------------------------"
+            read answer
+            if [[ $answer != "yes" && $answer != "y" ]]; then
+              exit 1
+            fi
+          fi
           QUERY_WHATSON_API="$WHATSON_API_URL/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all&api_key=$INTERNAL_API_KEY"
           echo "Querying: $QUERY_WHATSON_API"
 
