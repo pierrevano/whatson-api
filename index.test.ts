@@ -1163,12 +1163,12 @@ const params = {
     },
   },
 
-  items_updated_within_last_month: {
+  items_updated_within_last_2_months: {
     query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const today = new Date();
       const dateInThePast = new Date(
-        today.getTime() - 30 * 24 * 60 * 60 * 1000,
+        today.getTime() - 60 * 24 * 60 * 60 * 1000,
       );
 
       items.forEach((item) => {

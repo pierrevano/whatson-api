@@ -466,8 +466,8 @@ do
 
         USERS_RATINGS_FOUND=1
         if [[ $PROMPT == "stop" ]]; then
-          USERS_RATINGS_FOUND=$(curl -s https://www.allocine.fr$URL | grep "\"stareval-note\"" | wc -l | awk '{print $1}')
-          if [[ $USERS_RATINGS_FOUND -eq 0 ]]; then
+          USERS_RATINGS_FOUND=$(curl -s https://www.allocine.fr$URL | grep "\"stareval-review" | wc -l | awk '{print $1}')
+          if [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
             echo "No users ratings."
           fi
         fi
@@ -508,7 +508,7 @@ do
             IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo ">tt[0-9]+<" | cut -d'<' -f1 | cut -d'>' -f2 | head -1)
           fi
 
-          if [[ -z $IMDB_ID ]] || [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -eq 0 ]]; then
+          if [[ -z $IMDB_ID ]] || [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
             IMDB_ID=null
           fi
           echo "IMDb ID: $IMDB_ID"
@@ -543,7 +543,7 @@ do
               echo "Skipping: https://www.allocine.fr$URL"
               IMDB_ID="skip"
             else
-              if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -eq 0 ]]; then
+              if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
                 IMDB_ID=null
               else
                 open -a $BROWSER_PATH "https://www.allocine.fr$URL"
@@ -570,7 +570,7 @@ do
         if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { [[ $PROMPT == "recheck" ]] && [[ $KIDS_MOVIE -eq 1 ]] && [[ -z $MIN_RATING ]]; }; then
           data_not_found
         else
-          if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -eq 0 ]]; then
+          if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
             IMDB_ID=null
           elif { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && [[ $PROMPT == "recheck" ]]; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
