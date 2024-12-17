@@ -20,7 +20,7 @@ commands:
       - checkout
       - run:
           name: Install npm globally
-          command: sudo npm install -g npm
+          command: sudo npm install -g npm@9.8.0
       - run:
           name: Install dependencies
           command: npm install
