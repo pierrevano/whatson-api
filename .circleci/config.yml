@@ -19,8 +19,8 @@ commands:
     steps:
       - checkout
       - run:
-          name: Install npm to the latest version
-          command: sudo npm install -g npm@latest
+          name: Install npm globally
+          command: sudo npm install -g npm
       - run:
           name: Install dependencies
           command: npm install
