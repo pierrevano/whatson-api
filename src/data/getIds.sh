@@ -322,7 +322,7 @@ do
       URL=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4)
     fi
 
-    # Sometimes AlloCiné is displaying a default top series list starting by this ID. If `true`, abording.
+    # Sometimes AlloCiné is displaying a default top series list starting by this ID. If `true`, aborting.
     if [[ $URL == $DEFAULT_FIRST_SHOW ]] && [[ $PAGES_INDEX_NUMBER -eq 1 ]] && [[ $FILMS_INDEX_NUMBER -eq 1 ]]; then
       echo "First URL is: $URL"
       echo "Not updating tvshows as the top list is not correct."
@@ -464,7 +464,7 @@ do
           echo "Status: $STATUS"
         fi
 
-        USERS_RATINGS_FOUND=1
+        USERS_RATINGS_FOUND=2
         if [[ $PROMPT == "stop" ]]; then
           USERS_RATINGS_FOUND=$(curl -s https://www.allocine.fr$URL | grep "\"stareval-review" | wc -l | awk '{print $1}')
           if [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
