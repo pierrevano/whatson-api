@@ -95,7 +95,19 @@ const getItems = async (req, res) => {
       }
     }
 
-    if (json.results.length === 0) {
+    if (
+      json.results.length === 0 &&
+      (!item_type_query ||
+        !["movie", "tvshow", "movie,tvshow", "tvshow,movie"].includes(
+          item_type_query.toLowerCase(),
+        )) &&
+      config.keysToCheckForSearch.every((key) => !req.query.hasOwnProperty(key))
+    ) {
+      res.status(404).json({
+        message:
+          "Item type must be either 'movie', 'tvshow', or 'movie,tvshow'.",
+      });
+    } else if (json.results.length === 0) {
       res.status(404).json({ message: "No items have been found." });
     } else if (limit > config.maxMongodbItemsLimit) {
       res.status(400).json({
