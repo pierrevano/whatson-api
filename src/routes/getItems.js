@@ -99,7 +99,7 @@ const getItems = async (req, res) => {
       json.results.length === 0 &&
       (!item_type_query ||
         !["movie", "tvshow", "movie,tvshow", "tvshow,movie"].includes(
-          item_type_query.toLowerCase(),
+          item_type_query,
         )) &&
       config.keysToCheckForSearch.every((key) => !req.query.hasOwnProperty(key))
     ) {

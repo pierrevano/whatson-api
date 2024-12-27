@@ -561,6 +561,17 @@ const params = {
     },
   },
 
+  not_lowercase_item_type_present: {
+    query: "?item_type=moviE&allData=true",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data.message).toBe(
+        "Item type must be either 'movie', 'tvshow', or 'movie,tvshow'.",
+      );
+      expect(response.status).toBe(404);
+    },
+  },
+
   only_active_items: {
     query: "?is_active=true",
     expectedResult: (items) =>
