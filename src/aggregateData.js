@@ -34,37 +34,53 @@ const aggregateData = async (
   const critics_rating_details =
     critics_rating_details_query === "true" ? true : false;
   const directors =
-    typeof directors_query !== "undefined" ? directors_query : "";
+    typeof directors_query !== "undefined" && directors_query
+      ? directors_query
+      : "";
   const episodes_details = episodes_details_query === "true" ? true : false;
-  const genres = typeof genres_query !== "undefined" ? genres_query : "";
+  const genres =
+    typeof genres_query !== "undefined" && genres_query ? genres_query : "";
   const id = isNaN(id_path) ? "" : id_path;
   const is_active =
-    typeof is_active_query !== "undefined" ? is_active_query : true;
+    typeof is_active_query !== "undefined" && is_active_query
+      ? is_active_query
+      : true;
   const item_type =
-    typeof item_type_query !== "undefined" ? item_type_query : "movie";
+    typeof item_type_query !== "undefined" && item_type_query
+      ? item_type_query
+      : "movie";
   const limit = isNaN(limit_query) ? config.limit : limit_query;
   const minimum_ratings =
-    typeof minimum_ratings_query !== "undefined" ? minimum_ratings_query : "";
+    typeof minimum_ratings_query !== "undefined" && minimum_ratings_query
+      ? minimum_ratings_query
+      : "";
   const page = isNaN(page_query) ? config.page : page_query;
   const platforms =
-    typeof platforms_query !== "undefined" ? platforms_query : "";
+    typeof platforms_query !== "undefined" && platforms_query
+      ? platforms_query
+      : "";
   const popularity_filters_query_value =
-    typeof popularity_filters_query !== "undefined"
+    typeof popularity_filters_query !== "undefined" && popularity_filters_query
       ? popularity_filters_query
       : "all";
   const popularity_filters = await getPopularityFilters(
     popularity_filters_query_value,
   );
   const ratings_filters_query_value =
-    typeof ratings_filters_query !== "undefined"
+    typeof ratings_filters_query !== "undefined" && ratings_filters_query
       ? ratings_filters_query
       : "all";
   const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
   const release_date =
-    typeof release_date_query !== "undefined" ? release_date_query : "";
+    typeof release_date_query !== "undefined" && release_date_query
+      ? release_date_query
+      : "";
   const seasons_number =
-    typeof seasons_number_query !== "undefined" ? seasons_number_query : "";
-  const status = typeof status_query !== "undefined" ? status_query : "";
+    typeof seasons_number_query !== "undefined" && seasons_number_query
+      ? seasons_number_query
+      : "";
+  const status =
+    typeof status_query !== "undefined" && status_query ? status_query : "";
 
   const addFields_popularity_and_ratings = {
     $addFields: {

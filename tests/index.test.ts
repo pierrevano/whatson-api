@@ -539,17 +539,6 @@ const params = {
       }),
   },
 
-  no_item_type_present: {
-    query: "?item_type=&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe(
-        "Item type must be either 'movie', 'tvshow', or 'movie,tvshow'.",
-      );
-      expect(response.status).toBe(404);
-    },
-  },
-
   wrong_item_type_present: {
     query: "?item_type=movies&allData=true",
     expectedResult: (data, response) => {
