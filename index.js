@@ -12,19 +12,13 @@ const {
 } = require("./src/routes/getOrSaveUserPreferences");
 const { sendInternalError } = require("./src/utils/sendRequest");
 
-app.use((err, _, res, next) => {
-  if (!err) {
-    // Handle CORS headers for all requests
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept",
-    );
-    return next();
-  }
-
-  // Handle errors
-  sendInternalError(res, err);
+app.use((_, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept",
+  );
+  next();
 });
 
 app.use(express.json());
