@@ -1,7 +1,9 @@
+const newrelic = require("newrelic");
+
 const { aggregateData } = require("../aggregateData");
 const { config } = require("../config");
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const newrelic = require("newrelic");
+const { sendInternalError, sendRequest } = require("../utils/sendRequest");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -57,11 +59,16 @@ const getId = async (req, res) => {
         const filteredResults = items[0].results.filter((result) => {
           return result.item_type === item_type;
         });
-        const results = filteredResults[0];
-
-        res.status(200).json(results);
+        await sendRequest(
+          req,
+          res,
+          filteredResults[0],
+          item_type_query,
+          null,
+          config,
+        );
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        await sendInternalError(res, error);
       }
     } else {
       try {
@@ -74,17 +81,13 @@ const getId = async (req, res) => {
         const query = { id: id_path, item_type: item_type };
         const items = await collectionData.findOne(query, { projection });
 
-        if (items) {
-          res.status(200).json(items);
-        } else {
-          res.status(404).json({ message: "No items have been found." });
-        }
+        await sendRequest(req, res, items, item_type_query, null, config);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        await sendInternalError(res, error);
       }
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    await sendInternalError(res, error);
   }
 };
 

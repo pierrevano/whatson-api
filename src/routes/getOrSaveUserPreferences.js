@@ -3,6 +3,10 @@ const axios = require("axios");
 const Hashes = require("jshashes");
 
 const { config } = require("../config");
+const {
+  sendInternalError,
+  sendPreferencesRequest,
+} = require("../utils/sendRequest");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -36,19 +40,15 @@ const getUserPreferences = async (req, res) => {
       config.digestSecretValue,
     );
 
-    if (calculatedDigest !== digest) {
-      return res.status(403).json({ message: "Invalid digest." });
-    }
-
-    const preferences = await collectionNamePreferences.findOne({ email });
-
-    if (!preferences) {
-      res.status(404).json({ message: "Preferences not found." });
-    } else {
-      res.status(200).json(preferences);
-    }
+    await sendPreferencesRequest(
+      res,
+      calculatedDigest,
+      digest,
+      collectionNamePreferences,
+      email,
+    );
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    await sendInternalError(res, error);
   }
 };
 
@@ -63,18 +63,17 @@ const saveOrUpdateUserPreferences = async (req, res) => {
       config.digestSecretValue,
     );
 
-    if (calculatedDigest !== digest) {
-      return res.status(403).json({ message: "Invalid digest." });
-    }
-
-    const filter = { email };
-    const updateDoc = { $set: preferences };
-    const options = { upsert: true };
-
-    await collectionNamePreferences.updateOne(filter, updateDoc, options);
-    res.status(200).json({ message: "Preferences updated successfully." });
+    await sendPreferencesRequest(
+      res,
+      calculatedDigest,
+      digest,
+      collectionNamePreferences,
+      email,
+      preferences,
+      true,
+    );
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    await sendInternalError(res, error);
   }
 };
 

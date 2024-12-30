@@ -1,8 +1,10 @@
+const newrelic = require("newrelic");
+
 const { aggregateData } = require("../aggregateData");
 const { config } = require("../config");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const { sendInternalError, sendRequest } = require("../utils/sendRequest");
 const findId = require("../findId");
-const newrelic = require("newrelic");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -95,29 +97,9 @@ const getItems = async (req, res) => {
       }
     }
 
-    if (
-      json.results.length === 0 &&
-      (!item_type_query ||
-        !["movie", "tvshow", "movie,tvshow", "tvshow,movie"].includes(
-          item_type_query,
-        )) &&
-      config.keysToCheckForSearch.every((key) => !req.query.hasOwnProperty(key))
-    ) {
-      res.status(404).json({
-        message:
-          "Item type must be either 'movie', 'tvshow', or 'movie,tvshow'.",
-      });
-    } else if (json.results.length === 0) {
-      res.status(404).json({ message: "No items have been found." });
-    } else if (limit > config.maxMongodbItemsLimit) {
-      res.status(400).json({
-        message: `Limit should be lower than ${config.maxMongodbItemsLimit}`,
-      });
-    } else {
-      res.status(200).json(json);
-    }
+    await sendRequest(req, res, json, item_type_query, limit, config);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    await sendInternalError(res, error);
   }
 };
 

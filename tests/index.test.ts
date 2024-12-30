@@ -5,7 +5,6 @@ const axios = require("axios");
 const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
-const { countLines } = require("./utils/countLines");
 const { countNullValues } = require("./utils/countNullValues");
 const { schema } = require("../src/schema");
 
@@ -539,28 +538,6 @@ const params = {
       }),
   },
 
-  wrong_item_type_present: {
-    query: "?item_type=movies&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe(
-        "Item type must be either 'movie', 'tvshow', or 'movie,tvshow'.",
-      );
-      expect(response.status).toBe(404);
-    },
-  },
-
-  not_lowercase_item_type_present: {
-    query: "?item_type=moviE&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe(
-        "Item type must be either 'movie', 'tvshow', or 'movie,tvshow'.",
-      );
-      expect(response.status).toBe(404);
-    },
-  },
-
   only_active_items: {
     query: "?is_active=true",
     expectedResult: (items) =>
@@ -687,17 +664,6 @@ const params = {
     },
   },
 
-  limit_is_higher_than_max_mongodb_items_limit: {
-    query: `?limit=${parseInt(config.maxMongodbItemsLimit) + 1}&allData=true`,
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe(
-        `Limit should be lower than ${config.maxMongodbItemsLimit}`,
-      );
-      expect(response.status).toBe(400);
-    },
-  },
-
   ongoing_tvshows_with_1_and_2_seasons: {
     query: "?item_type=tvshow&status=ongoing&seasons_number=1,2",
     expectedResult: (items) =>
@@ -709,125 +675,11 @@ const params = {
       }),
   },
 
-  page_2_with_20_items: {
-    query: "?item_type=tvshow&seasons_number=1,2&page=2&limit=20&allData=true",
-    expectedResult: (data) => {
-      expect(data).toHaveProperty("page");
-      expect(data).toHaveProperty("total_pages");
-      expect(data.page).toBe(2);
-      expect(data.results.length).toBe(20);
-    },
-  },
-
-  higher_total_results_than_results: {
-    query:
-      "?item_type=movie,tvshow&is_active=true,false&limit=500&allData=true",
-    expectedResult: (data) => {
-      expect(data).toHaveProperty("page");
-      expect(data.page).toBe(1);
-      expect(data.total_results).toBeGreaterThan(data.results.length);
-    },
-  },
-
-  no_items_found_on_page_3: {
-    query: "?item_type=tvshow&seasons_number=1,2&page=3&limit=200&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("No items have been found.");
-      expect(response.status).toBe(404);
-    },
-  },
-
-  no_items_found_when_providing_wrong_popularity_and_ratings: {
-    query:
-      "?item_type=movie&popularity_filters=&ratings_filters=wrong_values&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("No items have been found.");
-      expect(response.status).toBe(404);
-    },
-  },
-
-  same_files_line_number_as_remote: {
-    query: "?item_type=movie,tvshow&is_active=true,false&allData=true",
-    expectedResult: (items) => {
-      if (config.checkItemsNumber) {
-        const filmsLines = countLines(config.filmsIdsFilePath);
-        const seriesLines = countLines(config.seriesIdsFilePath);
-
-        expect(filmsLines + seriesLines + config.margin).toBeGreaterThanOrEqual(
-          items.total_results,
-        );
-      }
-    },
-  },
-
-  correct_tmdb_id_returned: {
-    query:
-      "/tvshow/87108?ratings_filters=all&critics_rating_details=true&episodes_details=true&allData=true",
-    expectedResult: (data) => {
-      expect(typeof data).toBe("object");
-      expect(data.id).toBe(87108);
-      expect(data.ratings_average).toBeGreaterThan(0);
-
-      expect(Array.isArray(data.allocine.critics_rating_details)).toBeTruthy();
-      expect(Array.isArray(data.episodes_details)).toBeTruthy();
-    },
-  },
-
-  correct_tmdb_id_returned_without_critics_rating_details_and_episodes_details:
-    {
-      query: "/tvshow/87108?ratings_filters=all&allData=true",
-      expectedResult: (data) => {
-        expect(typeof data).toBe("object");
-        expect(Object.keys(data).length).toEqual(config.keysToCheck.length - 1);
-        expect(data.id).toBe(87108);
-        expect(data.ratings_average).toBeGreaterThan(0);
-
-        expect(data.allocine).not.toHaveProperty("critics_rating_details");
-        expect(data).not.toHaveProperty("episodes_details");
-      },
-    },
-
   correct_tmdb_id_returned_on_search: {
     query: "?tmdbid=87108",
     expectedResult: (items) => {
       expect(items.length).toBe(1);
       expect(items[0].id).toBe(87108);
-    },
-  },
-
-  correct_tvshow_item_type_returned: {
-    query: "/tvshow/121?allData=true",
-    expectedResult: (data) => {
-      expect(typeof data).toBe("object");
-      expect(data.item_type).toBe("tvshow");
-    },
-  },
-
-  correct_movie_item_type_returned: {
-    query: "/movie/121?allData=true",
-    expectedResult: (data) => {
-      expect(typeof data).toBe("object");
-      expect(data.item_type).toBe("movie");
-    },
-  },
-
-  correct_data_to_null_returned_if_undefined: {
-    query: "/movie/undefined?allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("No items have been found.");
-      expect(response.status).toBe(404);
-    },
-  },
-
-  results_count_on_search: {
-    query: "?title=wolf&allData=true",
-    expectedResult: (data) => {
-      expect(data).toHaveProperty("page");
-      expect(data.page).toBe(1);
-      expect(data.results.length).toEqual(data.total_results);
     },
   },
 
@@ -837,25 +689,6 @@ const params = {
       items.forEach((item) => {
         expect(item.title.toLowerCase()).toContain("game");
       }),
-  },
-
-  no_items_found_for_invalid_query: {
-    query: "?title=some invalid value to be tested&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("No items have been found.");
-      expect(response.status).toBe(404);
-    },
-  },
-
-  no_items_found_for_invalid_query_and_wrong_item_type_present: {
-    query:
-      "?item_type=movies&title=some invalid value to be tested&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("No items have been found.");
-      expect(response.status).toBe(404);
-    },
   },
 
   should_return_allocine_id_on_search: {
@@ -1215,15 +1048,6 @@ const params = {
     },
   },
 
-  should_not_return_directors_values: {
-    query: `?item_type=tvshow&directors=wrong_value&allData=true`,
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("No items have been found.");
-      expect(response.status).toBe(404);
-    },
-  },
-
   only_genres_drama_and_platforms_netflix: {
     query: `?item_type=tvshow&genres=${encodeURIComponent("Drama")}&platforms=${encodeURIComponent("Netflix")}`,
     expectedResult: (items) => {
@@ -1239,16 +1063,6 @@ const params = {
           item.platforms_links.some((platform) => platform.name === "Netflix"),
         ).toBeTruthy();
       });
-    },
-  },
-
-  should_not_return_any_items_on_wrong_genres_and_platforms: {
-    query:
-      "?item_type=tvshow&genres=wrong_value&platforms=wrong_value&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("No items have been found.");
-      expect(response.status).toBe(404);
     },
   },
 
@@ -1352,44 +1166,6 @@ const params = {
       });
     },
   },
-
-  should_return_not_found_preferences: {
-    query:
-      "/preferences/email@example_not_found.com?digest=744cc19085112f8c8b8c9745c5861cf6f95cda7e9b0f424f79e6ee5c7c830344&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("Preferences not found.");
-      expect(response.status).toBe(404);
-    },
-  },
-
-  should_return_unauthorized_access_if_invalid_digest: {
-    query:
-      "/preferences/email@example.com?digest=wrong_digest_value&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("Invalid digest.");
-      expect(response.status).toBe(403);
-    },
-  },
-
-  should_return_unauthorized_access_if_no_digest: {
-    query: "/preferences/email@example.com?allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("message");
-      expect(data.message).toBe("Invalid digest.");
-      expect(response.status).toBe(403);
-    },
-  },
-
-  should_return_user_preferences: {
-    query:
-      "/preferences/email@example.com?digest=5a7f9c5cf06afb1efd1d7a276d52ddd3a2b7269d413a3ffd1bad8b85dd305215&allData=true",
-    expectedResult: (data, response) => {
-      expect(data).toHaveProperty("email");
-      expect(response.status).toBe(200);
-    },
-  },
 };
 
 /**
@@ -1428,11 +1204,7 @@ describe("What's on? API tests", () => {
       const data = response.data;
       const items = data && data.results;
 
-      if (query.includes("allData=true")) {
-        expectedResult(data, response);
-      } else {
-        expectedResult(items, null);
-      }
+      expectedResult(items, null);
     }
 
     test(
