@@ -991,25 +991,26 @@ const params = {
     },
   },
 
-  not_existing_platforms_should_not_be_more_than_ten: {
+  not_existing_platforms_should_not_be_more_than_3: {
     query: `?is_active=true&item_type=movie,tvshow&platforms=${encodeURIComponent("all,Netflix,Canal+")}&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(
         items.filter((item) => item.platforms_links === null).length,
       ).toBeGreaterThan(config.minimumNumberOfItems.default);
-      const allPlatformNames = [
-        ...new Set(
-          items.flatMap((item) =>
-            item.platforms_links
-              ? item.platforms_links.map((platform) => platform.name)
-              : [],
-          ),
-        ),
-      ];
-      expect(
-        allPlatformNames.filter((name) => !config.platforms.includes(name))
-          .length,
-      ).toBeLessThanOrEqual(10);
+
+      const allPlatformNames = items.flatMap((item) =>
+        item.platforms_links
+          ? item.platforms_links.map((platform) => platform.name)
+          : [],
+      );
+      const platformCounts = allPlatformNames.reduce((counts, name) => {
+        counts[name] = (counts[name] || 0) + 1;
+        return counts;
+      }, {});
+      const excludedPlatforms = Object.keys(platformCounts).filter(
+        (name) => !config.platforms.includes(name) && platformCounts[name] > 3,
+      );
+      expect(excludedPlatforms.length).toBe(0);
     },
   },
 

@@ -69,7 +69,7 @@ const sendPreferencesRequest = async (
 };
 
 const sendInternalError = async (res, error) => {
-  return sendResponse(res, 500, { error: error.message });
+  return sendResponse(res, 500, { message: error.message });
 };
 
 module.exports = { sendInternalError, sendPreferencesRequest, sendRequest };

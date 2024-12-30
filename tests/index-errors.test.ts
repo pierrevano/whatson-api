@@ -244,6 +244,28 @@ const params = {
       expect(response.status).toBe(200);
     },
   },
+
+  invalid_path: {
+    query: "/invalid-path",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        `Invalid endpoint: /invalid-path&api_key=${config.internalApiKey}. Allowed endpoints are: '/', '/movie/:id', '/tvshow/:id'.`,
+      );
+      expect(data.code).toBe(500);
+    },
+  },
+
+  limit_is_zero: {
+    query: "?item_type=movie,tvshow&limit=0",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("the limit must be positive");
+      expect(data.code).toBe(500);
+    },
+  },
 };
 
 /**
