@@ -20,7 +20,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "Item type must be either 'movie', 'tvshow', or 'movie,tvshow'.",
+        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
       );
       expect(data.code).toBe(404);
     },
@@ -32,7 +32,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "Item type must be either 'movie', 'tvshow', or 'movie,tvshow'.",
+        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
       );
       expect(data.code).toBe(404);
     },
@@ -44,7 +44,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `Limit should be lower than ${config.maxMongodbItemsLimit}`,
+        `Limit exceeds maximum allowed (${config.maxMongodbItemsLimit}). Please reduce the limit.`,
       );
       expect(data.code).toBe(400);
     },
@@ -70,21 +70,23 @@ const params = {
   },
 
   no_items_found_on_page_3: {
-    query: "?item_type=tvshow&seasons_number=1,2&page=3&limit=200",
+    query:
+      "?item_type=tvshow&is_active=true&seasons_number=1,2&page=3&limit=200",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No items have been found.");
+      expect(data.message).toBe("No matching items found.");
       expect(data.code).toBe(404);
     },
   },
 
   no_items_found_when_providing_wrong_popularity_and_ratings: {
-    query: "?item_type=movie&popularity_filters=&ratings_filters=wrong_values",
+    query:
+      "?item_type=movie&is_active=true,false&popularity_filters=&ratings_filters=wrong_values",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No items have been found.");
+      expect(data.message).toBe("No matching items found.");
       expect(data.code).toBe(404);
     },
   },
@@ -151,7 +153,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No items have been found.");
+      expect(data.message).toBe("No matching items found.");
       expect(data.code).toBe(404);
     },
   },
@@ -170,7 +172,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No items have been found.");
+      expect(data.message).toBe("No matching items found.");
       expect(data.code).toBe(404);
     },
   },
@@ -180,27 +182,28 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No items have been found.");
+      expect(data.message).toBe("No matching items found.");
       expect(data.code).toBe(404);
     },
   },
 
   should_not_return_directors_values: {
-    query: `?item_type=tvshow&directors=wrong_value`,
+    query: `?item_type=tvshow&is_active=true,false&directors=wrong_value`,
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No items have been found.");
+      expect(data.message).toBe("No matching items found.");
       expect(data.code).toBe(404);
     },
   },
 
   should_not_return_any_items_on_wrong_genres_and_platforms: {
-    query: "?item_type=tvshow&genres=wrong_value&platforms=wrong_value",
+    query:
+      "?item_type=tvshow&is_active=true,false&genres=wrong_value&platforms=wrong_value",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No items have been found.");
+      expect(data.message).toBe("No matching items found.");
       expect(data.code).toBe(404);
     },
   },
@@ -211,7 +214,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("Preferences not found.");
+      expect(data.message).toBe("Preferences not found for the given email.");
       expect(data.code).toBe(404);
     },
   },
@@ -221,7 +224,9 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("Invalid digest.");
+      expect(data.message).toBe(
+        "Unauthorized access: The provided digest is invalid.",
+      );
       expect(data.code).toBe(403);
     },
   },
@@ -231,7 +236,9 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("Invalid digest.");
+      expect(data.message).toBe(
+        "Unauthorized access: The provided digest is invalid.",
+      );
       expect(data.code).toBe(403);
     },
   },
@@ -264,6 +271,30 @@ const params = {
       expect(data).toHaveProperty("code");
       expect(data.message).toBe("the limit must be positive");
       expect(data.code).toBe(500);
+    },
+  },
+
+  no_items_found_with_is_active_error_message: {
+    query: "?item_type=movie&directors=some_wrong_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+      );
+      expect(data.code).toBe(404);
+    },
+  },
+
+  no_items_found_with_is_active_error_message_and_empty_value: {
+    query: "?item_type=movie&directors=some_wrong_value&is_active_item=",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+      );
+      expect(data.code).toBe(404);
     },
   },
 };

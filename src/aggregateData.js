@@ -229,7 +229,12 @@ const aggregateData = async (
   const data = await collectionData.aggregate(pipeline);
   const items = await data.toArray();
 
-  return { items: items, limit: limit, page: page };
+  return {
+    items: items,
+    limit: limit,
+    page: page,
+    is_active_item: is_active_item,
+  };
 };
 
 module.exports = { aggregateData };

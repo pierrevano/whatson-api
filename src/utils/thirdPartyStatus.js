@@ -16,8 +16,10 @@ const isThirdPartyServiceOK = async (service) => {
       headers: {
         "User-Agent": generateUserAgent(),
       },
+      timeout: 60000,
     };
 
+    console.log(`Calling service: ${service}`);
     const response = await axios.get(service, options);
 
     return {

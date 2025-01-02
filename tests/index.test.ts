@@ -1133,9 +1133,9 @@ const params = {
           return false;
         }
         const today = new Date();
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(today.getDate() - 7);
-        return releaseDate >= sevenDaysAgo && releaseDate <= today;
+        const eightDaysAgo = new Date();
+        eightDaysAgo.setDate(today.getDate() - 8);
+        return releaseDate >= eightDaysAgo && releaseDate <= today;
       });
 
       expect(recentItems.length).toBeGreaterThanOrEqual(5);

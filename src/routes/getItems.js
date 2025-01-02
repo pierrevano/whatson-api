@@ -44,7 +44,7 @@ const getItems = async (req, res) => {
       newrelic.addCustomAttributes(req.query);
     }
 
-    let { items, limit, page } = await aggregateData(
+    let { items, limit, page, is_active_item } = await aggregateData(
       critics_rating_details_query,
       directors_query,
       episodes_details_query,
@@ -97,7 +97,15 @@ const getItems = async (req, res) => {
       }
     }
 
-    await sendRequest(req, res, json, item_type_query, limit, config);
+    await sendRequest(
+      req,
+      res,
+      json,
+      item_type_query,
+      limit,
+      config,
+      is_active_item,
+    );
   } catch (error) {
     await sendInternalError(res, error);
   }
