@@ -297,6 +297,16 @@ const params = {
       expect(data.code).toBe(404);
     },
   },
+
+  invalid_imdbId_should_return_404: {
+    query: "?imdbId=wrong_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("No matching items found.");
+      expect(data.code).toBe(404);
+    },
+  },
 };
 
 /**

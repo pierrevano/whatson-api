@@ -709,6 +709,12 @@ const params = {
       checkSingleItemId(items, 974950);
     },
   },
+  should_return_imdb_id_case_sensitive_on_search: {
+    query: "?imdbId=tt20221436&letterboxdid=unknown",
+    expectedResult: (items) => {
+      checkSingleItemId(items, 974950);
+    },
+  },
   should_return_letterboxd_id_on_search: {
     query: "?letterboxdid=emilia-perez",
     expectedResult: (items) => {

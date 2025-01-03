@@ -35,9 +35,11 @@ const sendRequest = (
     "movie,tvshow",
     "tvshow,movie",
   ].includes(item_type_query);
-  const isQuerySearchKeyMissing = keysToCheckForSearch.every(
-    (key) => !req.query.hasOwnProperty(key),
-  );
+  const isQuerySearchKeyMissing = keysToCheckForSearch.every((key) => {
+    return !Object.keys(req.query).some(
+      (queryKey) => queryKey.toLowerCase() === key.toLowerCase(),
+    );
+  });
 
   if (
     areNoResults &&
