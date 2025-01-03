@@ -37,6 +37,10 @@ const config = {
   collectionNameApiKey: "apikey",
   collectionNamePreferences: "preferences",
 
+  /* Rate limit settings */
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+  max: 500,
+
   /* Global settings */
   IPinfo: "https://ipinfo.io/country",
   webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
