@@ -1,3 +1,5 @@
+const newrelic = require("newrelic");
+
 const sendResponse = (res, statusCode, data) => {
   if (statusCode === 200) {
     return res.status(statusCode).json(data);
@@ -6,6 +8,12 @@ const sendResponse = (res, statusCode, data) => {
       ...data,
       code: statusCode,
     };
+
+    newrelic.noticeError(new Error(data.message || "Unknown error"), {
+      statusCode,
+      response: responseWithCode,
+    });
+
     return res.status(statusCode).json(responseWithCode);
   }
 };
@@ -46,7 +54,11 @@ const sendRequest = (
     const isActiveUndefinedOrMissing =
       !req.query.is_active || typeof req.query.is_active === "undefined";
     const isRootPath = req.path === "/";
-    const errorMessage = `No matching items found.${isActiveUndefinedOrMissing && isQuerySearchKeyMissing && isRootPath ? ` Ensure 'is_active' is correctly set (currently ${is_active_item.is_active}).` : ""}`;
+    const errorMessage = `No matching items found.${
+      isActiveUndefinedOrMissing && isQuerySearchKeyMissing && isRootPath
+        ? ` Ensure 'is_active' is correctly set (currently ${is_active_item.is_active}).`
+        : ""
+    }`;
 
     return sendResponse(res, 404, { message: errorMessage });
   }
@@ -80,24 +92,39 @@ const sendPreferencesRequest = async (
     const updateDoc = { $set: preferences };
     const options = { upsert: true };
 
-    await collectionNamePreferences.updateOne(filter, updateDoc, options);
-    return sendResponse(res, 200, {
-      message: "Preferences have been successfully updated.",
-    });
-  } else {
-    const preferences = await collectionNamePreferences.findOne({ email });
+    try {
+      await collectionNamePreferences.updateOne(filter, updateDoc, options);
 
-    if (!preferences) {
-      return sendResponse(res, 404, {
-        message: "Preferences not found for the given email.",
+      return sendResponse(res, 200, {
+        message: "Preferences have been successfully updated.",
       });
-    } else {
-      return sendResponse(res, 200, preferences);
+    } catch (error) {
+      newrelic.noticeError(error);
+
+      return sendResponse(res, 500, { message: error.message });
+    }
+  } else {
+    try {
+      const preferences = await collectionNamePreferences.findOne({ email });
+
+      if (!preferences) {
+        return sendResponse(res, 404, {
+          message: "Preferences not found for the given email.",
+        });
+      } else {
+        return sendResponse(res, 200, preferences);
+      }
+    } catch (error) {
+      newrelic.noticeError(error);
+
+      return sendResponse(res, 500, { message: error.message });
     }
   }
 };
 
 const sendInternalError = async (res, error) => {
+  newrelic.noticeError(error);
+
   return sendResponse(res, 500, { message: error.message });
 };
 
