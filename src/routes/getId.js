@@ -16,6 +16,9 @@ const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
 const getId = async (req, res) => {
   try {
+    const api_key_query = req.query.api_key || "api_key_not_provided";
+    req.query.api_key = api_key_query;
+
     const id_path = parseInt(req.params.id);
     const item_type_query = req.query.item_type;
     const ratings_filters_query = req.query.ratings_filters;
@@ -23,7 +26,6 @@ const getId = async (req, res) => {
     const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
     const critics_rating_details_query = req.query.critics_rating_details;
     const episodes_details_query = req.query.episodes_details;
-    const api_key_query = req.query.api_key || "api_key_not_provided";
 
     const internal_api_key = await collectionNameApiKey.findOne({
       name: "internal_api_key",
