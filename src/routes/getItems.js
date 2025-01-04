@@ -15,7 +15,7 @@ const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
 const getItems = async (req, res) => {
   try {
-    const api_key_query = req.query.api_key;
+    const api_key_query = req.query.api_key || "api_key_not_provided";
     const critics_rating_details_query = req.query.critics_rating_details;
     const directors_query = req.query.directors;
     const episodes_details_query = req.query.episodes_details;
