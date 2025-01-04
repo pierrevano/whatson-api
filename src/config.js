@@ -39,7 +39,7 @@ const config = {
 
   /* Rate limit settings */
   windowMs: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-  max: 100,
+  max: 50,
 
   /* Global settings */
   IPinfo: "https://ipinfo.io/country",
