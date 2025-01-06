@@ -1,12 +1,9 @@
-let newrelic;
-if (process.env.NODE_ENV !== "test") {
-  newrelic = require("newrelic");
-}
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { aggregateData } = require("../aggregateData");
 const { config } = require("../config");
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const { sendInternalError, sendRequest } = require("../utils/sendRequest");
+const sendToNewRelic = require("../utils/sendToNewRelic");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -34,12 +31,7 @@ const getId = async (req, res) => {
       name: "internal_api_key",
     });
 
-    if (api_key_query === internal_api_key.value) {
-      const transaction = newrelic.getTransaction();
-      transaction.ignore();
-    } else {
-      newrelic.addCustomAttributes(req.query);
-    }
+    sendToNewRelic(req, api_key_query, internal_api_key);
 
     if (id_path && ratings_filters_query) {
       try {

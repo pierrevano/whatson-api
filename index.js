@@ -1,10 +1,5 @@
 require("dotenv").config();
 
-let newrelic;
-if (process.env.NODE_ENV !== "test") {
-  newrelic = require("newrelic");
-}
-
 const express = require("express");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
 
@@ -19,6 +14,7 @@ const {
 } = require("./src/routes/getOrSaveUserPreferences");
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
+const sendToNewRelic = require("./src/utils/sendToNewRelic");
 
 // Setting CORS headers
 app.use((_, res, next) => {
@@ -57,7 +53,7 @@ const limiter = (req, res, next) => {
       };
       res.set(rateLimitHeaders);
 
-      newrelic.addCustomAttributes(rateLimitHeaders);
+      sendToNewRelic(req, null, null, rateLimitHeaders);
 
       next(); // Allow the request if within the limit
     })
@@ -67,7 +63,7 @@ const limiter = (req, res, next) => {
       };
       res.set(rateLimitHeaders);
 
-      newrelic.addCustomAttributes(rateLimitHeaders);
+      sendToNewRelic(req, null, null, rateLimitHeaders);
 
       sendResponse(res, 429, {
         message:

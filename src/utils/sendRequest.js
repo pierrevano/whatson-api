@@ -1,7 +1,4 @@
-let newrelic;
-if (process.env.NODE_ENV !== "test") {
-  newrelic = require("newrelic");
-}
+const newrelic = require("newrelic");
 
 const sendResponse = (res, statusCode, data) => {
   if (statusCode === 200) {
@@ -12,10 +9,12 @@ const sendResponse = (res, statusCode, data) => {
       code: statusCode,
     };
 
-    newrelic.noticeError(new Error(data.message || "Unknown error"), {
-      statusCode,
-      response: responseWithCode,
-    });
+    if (process.env.NEW_RELIC_AGENT !== "false") {
+      newrelic.noticeError(new Error(data.message || "Unknown error"), {
+        statusCode,
+        response: responseWithCode,
+      });
+    }
 
     return res.status(statusCode).json(responseWithCode);
   }
@@ -104,7 +103,9 @@ const sendPreferencesRequest = async (
         message: "Preferences have been successfully updated.",
       });
     } catch (error) {
-      newrelic.noticeError(error);
+      if (process.env.NEW_RELIC_AGENT !== "false") {
+        newrelic.noticeError(error);
+      }
 
       return sendResponse(res, 500, { message: error.message });
     }
@@ -120,7 +121,9 @@ const sendPreferencesRequest = async (
         return sendResponse(res, 200, preferences);
       }
     } catch (error) {
-      newrelic.noticeError(error);
+      if (process.env.NEW_RELIC_AGENT !== "false") {
+        newrelic.noticeError(error);
+      }
 
       return sendResponse(res, 500, { message: error.message });
     }
@@ -128,7 +131,9 @@ const sendPreferencesRequest = async (
 };
 
 const sendInternalError = async (res, error) => {
-  newrelic.noticeError(error);
+  if (process.env.NEW_RELIC_AGENT !== "false") {
+    newrelic.noticeError(error);
+  }
 
   return sendResponse(res, 500, { message: error.message });
 };
