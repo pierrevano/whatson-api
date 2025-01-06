@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
-const rateLimit = require("express-rate-limit");
+const { RateLimiterMemory } = require("rate-limiter-flexible");
 
 const app = express();
 const PORT = process.env.PORT || 8081;
@@ -15,6 +15,7 @@ const {
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
 
+// Setting CORS headers
 app.use((_, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -26,17 +27,41 @@ app.use((_, res, next) => {
 
 app.use(express.json());
 
-const limiter = rateLimit({
-  windowMs: config.windowMs,
-  max: config.max,
-  handler: (req, res) => {
-    sendResponse(res, 429, {
-      message:
-        "Too many requests. Please try again later. If you need an API key for higher limits, contact me on: https://pierrevano.github.io",
-    });
-  },
-  skip: (req) => req.query.api_key === config.internalApiKey,
+// Initialize rate limiter with in-memory storage
+const rateLimiter = new RateLimiterMemory({
+  points: config.points, // maximum number of requests
+  duration: config.duration, // window duration in seconds
+  blockDuration: config.blockDuration, // block duration in seconds if rate limit is exceeded
 });
+
+// Middleware to apply rate limiting
+const limiter = (req, res, next) => {
+  if (req.query.api_key === config.internalApiKey) {
+    return next(); // Ignore rate limiting for internal API key
+  }
+
+  rateLimiter
+    .consume(req.ip)
+    .then((rateLimiterRes) => {
+      res.set({
+        "X-RateLimit-Limit": config.points,
+        "X-RateLimit-Remaining": rateLimiterRes.remainingPoints,
+        "X-RateLimit-Reset": new Date(
+          Date.now() + rateLimiterRes.msBeforeNext,
+        ).toISOString(),
+      });
+      next(); // Allow the request if within the limit
+    })
+    .catch((rateLimiterRes) => {
+      res.set({
+        "Retry-After": Math.ceil(rateLimiterRes.msBeforeNext / 1000),
+      });
+      sendResponse(res, 429, {
+        message:
+          "Too many requests. Please try again later. If you need an API key for higher limits, contact me on: https://pierrevano.github.io",
+      });
+    });
+};
 
 // Apply the rate limiter to all routes
 app.use(limiter);

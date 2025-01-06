@@ -38,8 +38,9 @@ const config = {
   collectionNamePreferences: "preferences",
 
   /* Rate limit settings */
-  windowMs: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-  max: 50,
+  points: 50,
+  duration: 24 * 60 * 60, // 24 hours in seconds
+  blockDuration: 900, // 15 minutes in seconds
 
   /* Global settings */
   IPinfo: "https://ipinfo.io/country",
@@ -151,8 +152,14 @@ const config = {
 
   /* Services settings */
   services: [
-    { name: "What's on? API", url: baseURL.whatsonAPI },
-    { name: "What's on? API CircleCI", url: baseURL.whatsonAPICircleCI },
+    {
+      name: "What's on? API",
+      url: `${baseURL.whatsonAPI}?api_key=${process.env.INTERNAL_API_KEY}`,
+    },
+    {
+      name: "What's on? API CircleCI",
+      url: `${baseURL.whatsonAPICircleCI}?api_key=${process.env.INTERNAL_API_KEY}`,
+    },
     { name: "Render", url: baseURL.render },
     { name: "Vercel", url: baseURL.vercel },
 

@@ -1,3 +1,5 @@
+process.env.NODE_ENV = "test";
+
 require("dotenv").config();
 
 const axios = require("axios");
@@ -133,7 +135,7 @@ const params = {
     },
 
   correct_tvshow_item_type_returned: {
-    query: "/tvshow/121",
+    query: "/tvshow/121?parameter_to_ignore",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.item_type).toBe("tvshow");
@@ -141,7 +143,7 @@ const params = {
   },
 
   correct_movie_item_type_returned: {
-    query: "/movie/121",
+    query: "/movie/121?parameter_to_ignore",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.item_type).toBe("movie");
@@ -149,7 +151,7 @@ const params = {
   },
 
   correct_data_to_null_returned_if_undefined: {
-    query: "/movie/undefined",
+    query: "/movie/undefined?parameter_to_ignore",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -232,7 +234,7 @@ const params = {
   },
 
   should_return_unauthorized_access_if_no_digest: {
-    query: "/preferences/email@example.com",
+    query: "/preferences/email@example.com?parameter_to_ignore",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -253,12 +255,12 @@ const params = {
   },
 
   invalid_path: {
-    query: "/invalid-path",
+    query: "/invalid-path?parameter_to_ignore",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `Invalid endpoint: /invalid-path&api_key=${config.internalApiKey}. Allowed endpoints are: '/', '/movie/:id', '/tvshow/:id'.`,
+        `Invalid endpoint: /invalid-path?parameter_to_ignore&api_key=${config.internalApiKey}. Allowed endpoints are: '/', '/movie/:id', '/tvshow/:id'.`,
       );
       expect(data.code).toBe(500);
     },
@@ -340,5 +342,55 @@ describe("What's on? API tests", () => {
       },
       config.timeout,
     );
+  });
+
+  function generateRandomIp() {
+    return Array.from({ length: 4 }, () =>
+      Math.floor(Math.random() * 256),
+    ).join(".");
+  }
+
+  test("Rate Limiting should apply headers on successful requests", async () => {
+    // Send 1 request without API key
+    const responses = await Promise.all(
+      Array.from({ length: 1 }).map(() =>
+        axios.get(baseURL, {
+          headers: {
+            "X-Forwarded-For": generateRandomIp(),
+          },
+          validateStatus: (status) => status < 500,
+        }),
+      ),
+    );
+
+    const successfulResponse = responses.find(
+      (response) => response.status === 200,
+    );
+
+    expect(successfulResponse).toBeDefined();
+    expect(successfulResponse.headers).toHaveProperty("x-ratelimit-limit");
+    expect(successfulResponse.headers).toHaveProperty("x-ratelimit-remaining");
+    expect(successfulResponse.headers).not.toHaveProperty("retry-after");
+  });
+
+  test("Rate Limiting should return 429 when limits are exceeded", async () => {
+    // Send enough requests to potentially reach the limit
+    const responses = await Promise.all(
+      Array.from({ length: config.points + 1 }).map(() =>
+        axios.get(baseURL, { validateStatus: (status) => status < 500 }),
+      ),
+    );
+
+    const limitedResponse = responses.find(
+      (response) => response.status === 429,
+    );
+
+    expect(limitedResponse).toBeDefined();
+    expect(limitedResponse.headers).not.toHaveProperty("x-ratelimit-limit");
+    expect(limitedResponse.headers).not.toHaveProperty("x-ratelimit-remaining");
+    expect(limitedResponse.headers).toHaveProperty("retry-after");
+
+    const retryAfter = parseInt(limitedResponse.headers["retry-after"], 10);
+    expect(retryAfter).toBeGreaterThan(0);
   });
 });

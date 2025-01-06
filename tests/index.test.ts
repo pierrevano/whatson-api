@@ -1,3 +1,5 @@
+process.env.NODE_ENV = "test";
+
 require("dotenv").config();
 
 const axios = require("axios");
@@ -509,7 +511,7 @@ const params = {
   },
 
   should_fallback_to_default_movies_items_if_incorrect_query_parameter: {
-    query: `?invalid_parameter=invalid_value&api_key=${config.internalApiKey}`,
+    query: `?invalid_parameter=invalid_value`,
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");

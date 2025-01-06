@@ -1,4 +1,7 @@
-const newrelic = require("newrelic");
+let newrelic;
+if (process.env.NODE_ENV !== "test") {
+  newrelic = require("newrelic");
+}
 
 const sendResponse = (res, statusCode, data) => {
   if (statusCode === 200) {
