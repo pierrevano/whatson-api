@@ -51,9 +51,15 @@ const limiter = (req, res, next) => {
           Date.now() + rateLimiterRes.msBeforeNext,
         ).toISOString(),
       };
+
+      const newRelicAttributes = {
+        rate_limit_limit: config.points,
+        rate_limit_remaining: rateLimiterRes.remainingPoints,
+      };
+
       res.set(rateLimitHeaders);
 
-      sendToNewRelic(req, null, null, rateLimitHeaders);
+      sendToNewRelic(req, null, null, newRelicAttributes);
 
       next(); // Allow the request if within the limit
     })
@@ -61,9 +67,15 @@ const limiter = (req, res, next) => {
       const rateLimitHeaders = {
         "Retry-After": Math.ceil(rateLimiterRes.msBeforeNext / 1000),
       };
+
+      const newRelicAttributes = {
+        rate_limit_limit: config.points,
+        rate_limit_remaining: 0,
+      };
+
       res.set(rateLimitHeaders);
 
-      sendToNewRelic(req, null, null, rateLimitHeaders);
+      sendToNewRelic(req, null, null, newRelicAttributes);
 
       sendResponse(res, 429, {
         message:

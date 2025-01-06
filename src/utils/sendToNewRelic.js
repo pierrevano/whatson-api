@@ -13,13 +13,12 @@ function sendToNewRelic(
   if (isInternalApiKeyValid || isAgentDisabled) {
     const transaction = newrelic.getTransaction();
     transaction.ignore();
-  } else {
-    if (rateLimitHeaders) {
-      newrelic.addCustomAttributes(rateLimitHeaders);
-    } else {
-      newrelic.addCustomAttributes(req.query);
-    }
+    return;
   }
+
+  const attributes = rateLimitHeaders ? rateLimitHeaders : req.query;
+  console.log("New Relic custom attributes:", attributes);
+  newrelic.addCustomAttributes(attributes);
 }
 
 module.exports = sendToNewRelic;
