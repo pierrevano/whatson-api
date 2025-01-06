@@ -1,5 +1,10 @@
 require("dotenv").config();
 
+let newrelic;
+if (process.env.NODE_ENV !== "test") {
+  newrelic = require("newrelic");
+}
+
 const express = require("express");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
 
@@ -43,19 +48,27 @@ const limiter = (req, res, next) => {
   rateLimiter
     .consume(req.ip)
     .then((rateLimiterRes) => {
-      res.set({
+      const rateLimitHeaders = {
         "X-RateLimit-Limit": config.points,
         "X-RateLimit-Remaining": rateLimiterRes.remainingPoints,
         "X-RateLimit-Reset": new Date(
           Date.now() + rateLimiterRes.msBeforeNext,
         ).toISOString(),
-      });
+      };
+      res.set(rateLimitHeaders);
+
+      newrelic.addCustomAttributes(rateLimitHeaders);
+
       next(); // Allow the request if within the limit
     })
     .catch((rateLimiterRes) => {
-      res.set({
+      const rateLimitHeaders = {
         "Retry-After": Math.ceil(rateLimiterRes.msBeforeNext / 1000),
-      });
+      };
+      res.set(rateLimitHeaders);
+
+      newrelic.addCustomAttributes(rateLimitHeaders);
+
       sendResponse(res, 429, {
         message:
           "Too many requests. Please try again later. If you need an API key for higher limits, contact me on: https://pierrevano.github.io",
