@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const cors = require("cors");
 const express = require("express");
+const path = require("path");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
 
 const app = express();
@@ -23,26 +24,32 @@ app.use(cors());
 // Handle pre-flight requests
 app.options("*", cors());
 
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(express.json());
 
 // Initialize rate limiter with in-memory storage
-const rateLimiter = new RateLimiterMemory({
-  points: config.points, // maximum number of requests
-  duration: config.duration, // window duration in seconds
-  blockDuration: config.blockDuration, // block duration in seconds if rate limit is exceeded
-});
+const createRateLimiter = (points) =>
+  new RateLimiterMemory({
+    points: points, // maximum number of requests
+    duration: config.duration, // window duration in seconds
+    blockDuration: config.blockDuration, // block duration in seconds if rate limit is exceeded
+  });
 
 // Middleware to apply rate limiting
+const defaultLimiter = createRateLimiter(config.points);
+const higherLimiter = createRateLimiter(config.higher_points);
+
 const limiter = (req, res, next) => {
-  if (req.query.api_key === config.internalApiKey) {
-    return next(); // Ignore rate limiting for internal API key
-  }
+  const isInternalApiKeyValid = req.query.api_key === config.internalApiKey;
+  const rateLimiter = isInternalApiKeyValid ? higherLimiter : defaultLimiter;
 
   rateLimiter
     .consume(req.ip)
     .then((rateLimiterRes) => {
       const rateLimitHeaders = {
-        "X-RateLimit-Limit": config.points,
+        "X-RateLimit-Limit":
+          rateLimiterRes.remainingPoints + rateLimiterRes.consumedPoints,
         "X-RateLimit-Remaining": rateLimiterRes.remainingPoints,
         "X-RateLimit-Reset": new Date(
           Date.now() + rateLimiterRes.msBeforeNext,
@@ -50,7 +57,6 @@ const limiter = (req, res, next) => {
       };
 
       console.log("Rate Limit Headers:", rateLimitHeaders);
-      console.log("Request Query:", req.query);
 
       res.set(rateLimitHeaders);
 
@@ -64,7 +70,6 @@ const limiter = (req, res, next) => {
       };
 
       console.log("Rate Limit Headers on error:", rateLimitHeaders);
-      console.log("Request Query on error:", req.query);
 
       res.set(rateLimitHeaders);
 

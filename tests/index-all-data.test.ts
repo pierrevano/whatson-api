@@ -4,6 +4,7 @@ const axios = require("axios");
 
 const { config } = require("../src/config");
 const { countLines } = require("./utils/countLines");
+const { generateRandomIp } = require("./utils/generateRandomIp");
 
 const baseURL =
   process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
@@ -324,6 +325,9 @@ describe("What's on? API tests", () => {
       console.log(`Calling ${apiCall}`);
 
       const response = await axios.get(apiCall, {
+        headers: {
+          "X-Forwarded-For": generateRandomIp(),
+        },
         validateStatus: (status) => status <= 500,
       });
       const data = response.data;
@@ -339,12 +343,6 @@ describe("What's on? API tests", () => {
       config.timeout,
     );
   });
-
-  function generateRandomIp() {
-    return Array.from({ length: 4 }, () =>
-      Math.floor(Math.random() * 256),
-    ).join(".");
-  }
 
   test("Rate Limiting should apply headers on successful requests", async () => {
     // Send 1 request without API key
