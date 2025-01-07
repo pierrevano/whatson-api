@@ -12,21 +12,24 @@ function sendToNewRelic(
   internal_api_key,
   rateLimitHeaders,
 ) {
+  const isInternalApiKeyValid =
+    internal_api_key && api_key_query === internal_api_key.value;
+  console.log("Internal API Key validity:", isInternalApiKeyValid);
+
+  const attributes = rateLimitHeaders ? rateLimitHeaders : req.query;
+  console.log("New Relic custom attributes:", attributes);
+
   if (!newrelic) {
     console.log("New Relic is not enabled.");
     return;
   }
 
-  const isInternalApiKeyValid =
-    internal_api_key && api_key_query === internal_api_key.value;
   if (isInternalApiKeyValid) {
     const transaction = newrelic.getTransaction();
     transaction.ignore();
     return;
   }
 
-  const attributes = rateLimitHeaders ? rateLimitHeaders : req.query;
-  console.log("New Relic custom attributes:", attributes);
   newrelic.addCustomAttributes(attributes);
 }
 
