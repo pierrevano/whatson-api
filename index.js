@@ -41,7 +41,10 @@ const defaultLimiter = createRateLimiter(config.points);
 const higherLimiter = createRateLimiter(config.higher_points);
 
 const limiter = (req, res, next) => {
-  const isInternalApiKeyValid = req.query.api_key === config.internalApiKey;
+  const isInternalApiKeyValid =
+    req.query.api_key !== undefined &&
+    config.internalApiKey !== undefined &&
+    req.query.api_key === config.internalApiKey;
   console.log("Query parameters:", req.query);
   console.log("Internal API key:", config.internalApiKey);
   console.log("API key validity:", isInternalApiKeyValid);
