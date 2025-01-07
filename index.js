@@ -54,6 +54,9 @@ const limiter = (req, res, next) => {
 
       res.set(rateLimitHeaders);
 
+      console.log("Rate Limit Headers:", rateLimitHeaders);
+      console.log("Request Query:", req.query);
+
       sendToNewRelic(req, null, null, rateLimitHeaders);
 
       next(); // Allow the request if within the limit
@@ -64,6 +67,9 @@ const limiter = (req, res, next) => {
       };
 
       res.set(rateLimitHeaders);
+
+      console.log("Rate Limit Headers on error:", rateLimitHeaders);
+      console.log("Request Query on error:", req.query);
 
       sendToNewRelic(req, null, null, rateLimitHeaders);
 
