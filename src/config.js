@@ -39,9 +39,9 @@ const config = {
 
   /* Rate limit settings */
   higher_points: 100000,
-  points: 50,
+  points: 100,
   duration: 24 * 60 * 60, // 24 hours in seconds
-  blockDuration: 900, // 15 minutes in seconds
+  blockDuration: 24 * 60 * 60, // 24 hours in seconds
 
   /* Global settings */
   IPinfo: "https://ipinfo.io/country",
