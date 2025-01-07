@@ -14,7 +14,7 @@ const {
 } = require("./src/routes/getOrSaveUserPreferences");
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
-const sendToNewRelic = require("./src/utils/sendToNewRelic");
+const { sendToNewRelic } = require("./src/utils/sendToNewRelic");
 
 // Setting CORS headers
 app.use((_, res, next) => {
@@ -52,14 +52,9 @@ const limiter = (req, res, next) => {
         ).toISOString(),
       };
 
-      const newRelicAttributes = {
-        rate_limit_limit: config.points,
-        rate_limit_remaining: rateLimiterRes.remainingPoints,
-      };
-
       res.set(rateLimitHeaders);
 
-      sendToNewRelic(req, null, null, newRelicAttributes);
+      sendToNewRelic(req, null, null, rateLimitHeaders);
 
       next(); // Allow the request if within the limit
     })
@@ -68,14 +63,9 @@ const limiter = (req, res, next) => {
         "Retry-After": Math.ceil(rateLimiterRes.msBeforeNext / 1000),
       };
 
-      const newRelicAttributes = {
-        rate_limit_limit: config.points,
-        rate_limit_remaining: 0,
-      };
-
       res.set(rateLimitHeaders);
 
-      sendToNewRelic(req, null, null, newRelicAttributes);
+      sendToNewRelic(req, null, null, rateLimitHeaders);
 
       sendResponse(res, 429, {
         message:
