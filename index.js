@@ -40,19 +40,31 @@ const createRateLimiter = (points) =>
 const defaultLimiter = createRateLimiter(config.points);
 const higherLimiter = createRateLimiter(config.higher_points);
 
+const getRateLimiterKey = (req) => {
+  const forwardedFor = req.headers["x-forwarded-for"];
+  const ip = req.ip;
+  const userAgent = req.headers["user-agent"] || "unknown";
+
+  const ipOrForwardedFor = forwardedFor
+    ? forwardedFor.split(",")[0].trim()
+    : ip;
+
+  console.log("Rate limiter key:", `${ipOrForwardedFor}-${userAgent}`);
+  return `${ipOrForwardedFor}-${userAgent}`;
+};
+
 const limiter = (req, res, next) => {
   const isInternalApiKeyValid =
     req.query.api_key !== undefined &&
     config.internalApiKey !== undefined &&
     req.query.api_key === config.internalApiKey;
-  console.log("Query parameters:", req.query);
   console.log("Internal API key:", config.internalApiKey);
   console.log("API key validity:", isInternalApiKeyValid);
 
   const rateLimiter = isInternalApiKeyValid ? higherLimiter : defaultLimiter;
 
   rateLimiter
-    .consume(req.ip)
+    .consume(getRateLimiterKey(req))
     .then((rateLimiterRes) => {
       const rateLimitHeaders = {
         "X-RateLimit-Limit":
