@@ -100,17 +100,14 @@ const limiter = (req, res, next) => {
     });
 };
 
-// Apply the rate limiter to all routes
-app.use(limiter);
-
 /* A route that is used to get the data for all items. */
-app.get("/", getItems);
+app.get("/", limiter, getItems);
 
 /* A route that is used to get the data for a specific movie. */
-app.get("/movie/:id", getId);
+app.get("/movie/:id", limiter, getId);
 
 /* A route that is used to get the data for a specific tvshow. */
-app.get("/tvshow/:id", getId);
+app.get("/tvshow/:id", limiter, getId);
 
 /* A route to get user preferences */
 app.get("/preferences/:email", getUserPreferences);
