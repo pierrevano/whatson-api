@@ -49,7 +49,6 @@ const getRateLimiterKey = (req) => {
     ? forwardedFor.split(",")[0].trim()
     : ip;
 
-  console.log("Rate limiter key:", `${ipOrForwardedFor}-${userAgent}`);
   return `${ipOrForwardedFor}-${userAgent}`;
 };
 
