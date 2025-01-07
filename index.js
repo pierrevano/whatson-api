@@ -49,10 +49,10 @@ const limiter = (req, res, next) => {
         ).toISOString(),
       };
 
-      res.set(rateLimitHeaders);
-
       console.log("Rate Limit Headers:", rateLimitHeaders);
       console.log("Request Query:", req.query);
+
+      res.set(rateLimitHeaders);
 
       sendToNewRelic(req, null, null, rateLimitHeaders);
 
@@ -63,10 +63,10 @@ const limiter = (req, res, next) => {
         "Retry-After": Math.ceil(rateLimiterRes.msBeforeNext / 1000),
       };
 
-      res.set(rateLimitHeaders);
-
       console.log("Rate Limit Headers on error:", rateLimitHeaders);
       console.log("Request Query on error:", req.query);
+
+      res.set(rateLimitHeaders);
 
       sendToNewRelic(req, null, null, rateLimitHeaders);
 
