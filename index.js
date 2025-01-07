@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const cors = require("cors");
 const express = require("express");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
 
@@ -16,15 +17,11 @@ const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
 const { sendToNewRelic } = require("./src/utils/sendToNewRelic");
 
-// Setting CORS headers
-app.use((_, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept",
-  );
-  next();
-});
+// Use CORS middleware
+app.use(cors());
+
+// Handle pre-flight requests
+app.options("*", cors());
 
 app.use(express.json());
 
