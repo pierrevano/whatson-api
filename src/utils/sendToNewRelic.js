@@ -14,8 +14,6 @@ function sendToNewRelic(
 ) {
   const isInternalApiKeyValid =
     internal_api_key && api_key_query === internal_api_key.value;
-  console.log("Internal API Key validity:", isInternalApiKeyValid);
-
   const attributes = rateLimitHeaders ? rateLimitHeaders : req.query;
   console.log("New Relic custom attributes:", attributes);
 
