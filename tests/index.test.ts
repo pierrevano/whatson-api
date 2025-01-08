@@ -6,7 +6,6 @@ const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
 const { countNullValues } = require("./utils/countNullValues");
-const { generateRandomIp } = require("./utils/generateRandomIp");
 const { schema } = require("../src/schema");
 
 const baseURL =
@@ -1188,9 +1187,6 @@ describe("What's on? API tests", () => {
       if (query.includes("directors=xxx")) {
         const apiCallDirectors = `${baseURL}?api_key=${config.internalApiKey}`;
         const responseDirectors = await axios.get(apiCallDirectors, {
-          headers: {
-            "X-Forwarded-For": generateRandomIp(),
-          },
           validateStatus: (status) => status <= 500,
         });
         const dataDirectors = responseDirectors.data;
@@ -1206,9 +1202,6 @@ describe("What's on? API tests", () => {
       console.log(`Calling ${apiCall}`);
 
       const response = await axios.get(apiCall, {
-        headers: {
-          "X-Forwarded-For": generateRandomIp(),
-        },
         validateStatus: (status) => status <= 500,
       });
       const data = response.data;
@@ -1230,11 +1223,7 @@ describe("What's on? API tests", () => {
     "api_response_time_should_be_within_an_acceptable_range",
     async () => {
       const start = new Date().valueOf();
-      await axios.get(`${baseURL}?api_key=${config.internalApiKey}`, {
-        headers: {
-          "X-Forwarded-For": generateRandomIp(),
-        },
-      });
+      await axios.get(`${baseURL}?api_key=${config.internalApiKey}`);
       const end = new Date().valueOf();
       expect(end - start).toBeLessThan(config.maxResponseTime);
     },
@@ -1247,11 +1236,6 @@ describe("What's on? API tests", () => {
       const start = new Date().valueOf();
       await axios.get(
         `${baseURL}?item_type=movie,tvshow&limit=${config.maxMongodbItemsLimit}&api_key=${config.internalApiKey}`,
-        {
-          headers: {
-            "X-Forwarded-For": generateRandomIp(),
-          },
-        },
       );
       const end = new Date().valueOf();
       expect(end - start).toBeLessThan(config.maxResponseTime);

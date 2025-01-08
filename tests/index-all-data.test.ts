@@ -325,9 +325,6 @@ describe("What's on? API tests", () => {
       console.log(`Calling ${apiCall}`);
 
       const response = await axios.get(apiCall, {
-        headers: {
-          "X-Forwarded-For": generateRandomIp(),
-        },
         validateStatus: (status) => status <= 500,
       });
       const data = response.data;

@@ -40,8 +40,8 @@ By default, when no query parameters are added (or when all are used), the resul
 
 Active items are fetched from 2 different links:
 
-1. For movies: https://www.allocine.fr/film/aucinema
-2. For tvshows: https://www.allocine.fr/series/top
+1. For movies: https://www.allocine.fr/film/aucinema/
+2. For tvshows: https://www.allocine.fr/series/top/
 
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 

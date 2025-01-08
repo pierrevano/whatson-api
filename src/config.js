@@ -38,8 +38,8 @@ const config = {
   collectionNamePreferences: "preferences",
 
   /* Rate limit settings */
-  higher_points: 100000,
   points: 100,
+  higher_points: 10000,
   duration: 24 * 60 * 60, // 24 hours in seconds
   blockDuration: 24 * 60 * 60, // 24 hours in seconds
 
@@ -178,8 +178,8 @@ const config = {
 
   /* URLs and paths settings */
   baseURLAllocine: baseURL.allocine,
-  baseURLAllocineFilms: `${baseURL.allocine}/film/aucinema`,
-  baseURLAllocineSeries: `${baseURL.allocine}/series/top`,
+  baseURLAllocineFilms: `${baseURL.allocine}/film/aucinema/`,
+  baseURLAllocineSeries: `${baseURL.allocine}/series/top/`,
   baseURLAssets: baseURL.assets,
   baseURLBetaseriesAPIFilms: `${baseURL.betaseriesAPI}/movies/movie`,
   baseURLBetaseriesAPISeries: `${baseURL.betaseriesAPI}/shows/display`,

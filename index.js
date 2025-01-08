@@ -62,6 +62,10 @@ const limiter = (req, res, next) => {
 
   const rateLimiter = isInternalApiKeyValid ? higherLimiter : defaultLimiter;
 
+  if (isInternalApiKeyValid) {
+    return next(); // Ignore rate limiting for internal API key
+  }
+
   rateLimiter
     .consume(getRateLimiterKey(req))
     .then((rateLimiterRes) => {
