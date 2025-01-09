@@ -15,6 +15,24 @@ parameters:
     default: false
 
 commands:
+  ping_service:
+    steps:
+      - run:
+          name: Ping service
+          command: |
+            if [[ -z "$WHATSON_API_URL" ]]; then
+              echo "Error: WHATSON_API_URL environment variable is not set."
+              exit 1
+            fi
+
+            echo "Calling: $WHATSON_API_URL"
+
+            if ! curl -sf "$WHATSON_API_URL" > /dev/null; then
+              echo "Error: Failed to reach $WHATSON_API_URL"
+              exit 1
+            fi
+
+            echo "Service ping successful."
   setup_env:
     steps:
       - checkout
@@ -43,6 +61,7 @@ jobs:
     docker:
       - image: cimg/node:20.5.1
     steps:
+      - ping_service
       - setup_env
       - run:
           name: Update movie data
@@ -56,6 +75,7 @@ jobs:
       - image: cimg/node:20.5.1
     parallelism: 30
     steps:
+      - ping_service
       - setup_env
       - run:
           name: Update all movie data first half
@@ -65,6 +85,7 @@ jobs:
       - image: cimg/node:20.5.1
     parallelism: 30
     steps:
+      - ping_service
       - setup_env
       - run:
           name: Update all movie data second half
@@ -76,6 +97,7 @@ jobs:
     docker:
       - image: cimg/node:20.5.1
     steps:
+      - ping_service
       - setup_env
       - run:
           name: Force update movie data

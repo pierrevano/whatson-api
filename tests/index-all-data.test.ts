@@ -6,8 +6,8 @@ const { config } = require("../src/config");
 const { countLines } = require("./utils/countLines");
 const { generateRandomIp } = require("./utils/generateRandomIp");
 
-const baseURL =
-  process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
+const isRemoteSource = process.env.SOURCE === "remote";
+const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
 
 /**
  * An object containing various query parameters and their expected results.
@@ -364,24 +364,29 @@ describe("What's on? API tests", () => {
     expect(successfulResponse.headers).not.toHaveProperty("retry-after");
   });
 
-  test("Rate Limiting should return 429 when limits are exceeded", async () => {
-    // Send enough requests to potentially reach the limit
-    const responses = await Promise.all(
-      Array.from({ length: config.points + 1 }).map(() =>
-        axios.get(baseURL, { validateStatus: (status) => status <= 500 }),
-      ),
-    );
+  (isRemoteSource ? test.skip : test)(
+    "Rate Limiting should return 429 when limits are exceeded",
+    async () => {
+      // Send enough requests to potentially reach the limit
+      const responses = await Promise.all(
+        Array.from({ length: config.points + 1 }).map(() =>
+          axios.get(baseURL, { validateStatus: (status) => status <= 500 }),
+        ),
+      );
 
-    const limitedResponse = responses.find(
-      (response) => response.status === 429,
-    );
+      const limitedResponse = responses.find(
+        (response) => response.status === 429,
+      );
 
-    expect(limitedResponse).toBeDefined();
-    expect(limitedResponse.headers).not.toHaveProperty("x-ratelimit-limit");
-    expect(limitedResponse.headers).not.toHaveProperty("x-ratelimit-remaining");
-    expect(limitedResponse.headers).toHaveProperty("retry-after");
+      expect(limitedResponse).toBeDefined();
+      expect(limitedResponse.headers).not.toHaveProperty("x-ratelimit-limit");
+      expect(limitedResponse.headers).not.toHaveProperty(
+        "x-ratelimit-remaining",
+      );
+      expect(limitedResponse.headers).toHaveProperty("retry-after");
 
-    const retryAfter = parseInt(limitedResponse.headers["retry-after"], 10);
-    expect(retryAfter).toBeGreaterThan(0);
-  });
+      const retryAfter = parseInt(limitedResponse.headers["retry-after"], 10);
+      expect(retryAfter).toBeGreaterThan(0);
+    },
+  );
 });
