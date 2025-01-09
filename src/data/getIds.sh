@@ -17,7 +17,7 @@ TYPE=$2
 URL_ESCAPE_FILE_PATH=./src/utils/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
-REGEX_IDS="^\/.*\=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),(TRUE|FALSE)$"
+REGEX_IDS="^\/\S+\/fiche\S+_gen_c\S+=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
 DEFAULT_FIRST_SHOW=/series/ficheserie_gen_cserie=28295.html
 
@@ -61,6 +61,7 @@ fi
 if [[ $SOURCE != "circleci" ]]; then
   source .env
 fi
+
 echo "SOURCE: $SOURCE"
 echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
 echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
@@ -69,7 +70,9 @@ echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
 echo "VERCEL_TOKEN: $VERCEL_TOKEN"
 echo "WHATSON_API_URL: $WHATSON_API_URL"
 echo "----------------------------------------------------------------------------------------------------"
+
 if [[ -z $BETASERIES_API_KEY ]]; then
+  echo "Error: BETASERIES_API_KEY is not set. Please set it in the environment variables."
   exit 1
 fi
 
