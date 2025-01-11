@@ -156,6 +156,15 @@ function checkItemProperties(items) {
           ).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
+    item.item_type === "tvshow" && item.is_active === true
+      ? expect(
+          items.filter((item) => item.last_episode).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+    expect(
+      items.filter((item) => item.item_type === "movie" && item.last_episode)
+        .length,
+    ).toBe(0);
 
     item.item_type === "tvshow" && item.is_active === true
       ? expect(item.status).not.toBeNull()
@@ -1167,6 +1176,46 @@ const params = {
                 );
                 lastGlobalEpisodeNumber = currentGlobalEpisodeNumber;
               }
+            });
+          }
+        }
+      });
+    },
+  },
+
+  should_match_last_episode_details: {
+    query: `?item_type=tvshow&is_active=true&episodes_details=true&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        if (item.episodes_details && item.last_episode) {
+          // Find the last episode details from episodes_details
+          const lastEpisodeDetail =
+            item.episodes_details[item.episodes_details.length - 1];
+
+          // Ensure that the relevant fields match the last_episode
+          if (lastEpisodeDetail) {
+            expect(lastEpisodeDetail.title).toBe(item.last_episode.title);
+            expect(lastEpisodeDetail.episode).toBe(item.last_episode.episode);
+            expect(lastEpisodeDetail.season).toBe(item.last_episode.season);
+            expect(lastEpisodeDetail.id).toBe(item.last_episode.id);
+            expect(lastEpisodeDetail.url).toBe(item.last_episode.url);
+            expect(lastEpisodeDetail.users_rating).toBe(
+              item.last_episode.users_rating,
+            );
+
+            const airDatePattern = /^\d{4}-\d{2}-\d{2}$/;
+            expect(item.last_episode.air_date).toMatch(airDatePattern);
+
+            [
+              "title",
+              "episode",
+              "season",
+              "id",
+              "url",
+              "users_rating",
+              "air_date",
+            ].forEach((key) => {
+              expect(item.last_episode[key]).not.toBe("");
             });
           }
         }

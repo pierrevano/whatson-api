@@ -143,6 +143,18 @@ Example of an item returned:
       "users_rating": "number" // Rating given by IMDb users
     }
   ],
+  "last_episode": {
+    /* Information related to the most recent episode */
+    "title": "string", // Title of the most recent episode
+    "description": "string", // Description of the most recent episode
+    "air_date": "string", // Air date of the most recent episode
+    "episode": "number", // Episode number within the season
+    "episode_type": "string", // Type of the episode
+    "season": "number", // Season number of the most recent episode
+    "id": "string", // IMDb specific identifier for the most recent episode
+    "url": "string", // URL to the IMDb page of the most recent episode
+    "users_rating": "number" // Rating given by IMDb users for the most recent episode
+  },
   "platforms_links": [
     {
       "name": "string", // Name of the streaming platform

@@ -7,6 +7,7 @@ const { getBetaseriesRating } = require("./content/getBetaseriesRating");
 const { getEpisodesDetails } = require("./content/getEpisodesDetails");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
 const { getImdbRating } = require("./content/getImdbRating");
+const { getLastEpisode } = require("./content/getLastEpisode");
 const { getLetterboxdRating } = require("./content/getLetterboxdRating");
 const { getMetacriticRating } = require("./content/getMetacriticRating");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
@@ -101,6 +102,12 @@ const createJSON = async (
     allocineHomepage,
     imdbId,
     imdbHomepage,
+  );
+  const lastEpisode = await getLastEpisode(
+    allocineHomepage,
+    imdbHomepage,
+    imdbId,
+    tmdbId,
   );
   const mojoValues = await getObjectByImdbId(
     mojoBoxOfficeArray,
@@ -245,6 +252,7 @@ const createJSON = async (
     trailer: allocineFirstInfo.trailer,
 
     episodes_details: episodesDetails,
+    last_episode: lastEpisode,
     platforms_links: platformsLinks,
     seasons_number: allocineFirstInfo.seasonsNumber,
     status: allocineFirstInfo.status,
