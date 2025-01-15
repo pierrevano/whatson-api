@@ -18,13 +18,14 @@ const {
 const { getSensCritiqueRating } = require("./content/getSensCritiqueRating");
 const { getTmdbRating } = require("./content/getTmdbRating");
 const { getTraktRating } = require("./content/getTraktRating");
+const { getTVTimeRating } = require("./content/getTVTimeRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
  * @param {Object} allocineCriticsDetails - The AlloCiné critics details
  * @param {string} allocineURL - The AlloCiné URL
  * @param {string} allocineHomepage - The AlloCiné homepage URL
- * @param {string} allocineId - The AlloCiné ID
+ * @param {number} allocineId - The AlloCiné ID
  * @param {string} betaseriesHomepage - The BetaSeries homepage URL
  * @param {string} betaseriesId - The BetaSeries ID
  * @param {string} imdbHomepage - The IMDb homepage URL
@@ -38,11 +39,13 @@ const { getTraktRating } = require("./content/getTraktRating");
  * @param {string} letterboxdHomepage - The Letterboxd homepage URL
  * @param {string} letterboxdId - The Letterboxd ID
  * @param {string} sensCritiqueHomepage - The SensCritique homepage URL
- * @param {string} sensCritiqueId - The SensCritique ID
+ * @param {number} sensCritiqueId - The SensCritique ID
  * @param {string} traktHomepage - The Trakt homepage URL
  * @param {string} traktId - The Trakt ID
  * @param {number} tmdbId - TMDB ID
  * @param {string} tmdbHomepage - TMDB homepage URL
+ * @param {string} tvtimeHomepage - TV Time homepage URL
+ * @param {number} tvtimeId - TV Time ID
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
  */
 const createJSON = async (
@@ -69,6 +72,8 @@ const createJSON = async (
   mojoBoxOfficeArray,
   tmdbId,
   tmdbHomepage,
+  tvtimeHomepage,
+  tvtimeId,
 ) => {
   const allocineFirstInfo = await getAllocineInfo(
     allocineHomepage,
@@ -136,6 +141,7 @@ const createJSON = async (
     tmdbId,
   );
   const traktRating = await getTraktRating(traktHomepage, traktId);
+  const tvtimeRating = await getTVTimeRating(tvtimeHomepage, tvtimeId);
 
   /* Creating an object called allocineObj. */
   const allocineObj = {
@@ -188,7 +194,7 @@ const createJSON = async (
         }
       : null;
 
-  /* Creates a Rotten Tomatoes object if the rotten_tomatoes rating is not null. */
+  /* Creates a Rotten Tomatoes object if the rottenTomatoes rating is not null. */
   const rottenTomatoesObj =
     rottenTomatoesRating !== null && rottenTomatoesRating.id
       ? {
@@ -229,6 +235,16 @@ const createJSON = async (
         }
       : null;
 
+  /* Creates a TV Time object if the tvtime rating is not null. */
+  const tvtimeObj =
+    tvtimeRating !== null && tvtimeRating.id
+      ? {
+          id: tvtimeRating.id,
+          url: tvtimeRating.url,
+          users_rating: tvtimeRating.usersRating,
+        }
+      : null;
+
   const mojoObj =
     mojoValues !== null
       ? {
@@ -266,6 +282,7 @@ const createJSON = async (
     senscritique: sensCritiqueObj,
     tmdb: tmdbObj,
     trakt: traktObj,
+    tv_time: tvtimeObj,
 
     mojo: mojoObj,
   };

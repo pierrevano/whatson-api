@@ -113,6 +113,12 @@ const schema = {
     url: "string", // URL to the Trakt page
     users_rating: "number", // Rating given by Trakt users
   },
+  tv_time: {
+    /* Information related to TV Time platform */
+    id: "number", // TV Time specific identifier
+    url: "string", // URL to the TV Time page
+    users_rating: "number", // Rating given by TV Time users
+  },
 
   mojo: {
     /* Information related to Box Office Mojo platform */

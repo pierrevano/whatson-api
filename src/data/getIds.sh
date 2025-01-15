@@ -17,8 +17,8 @@ TYPE=$2
 URL_ESCAPE_FILE_PATH=./src/utils/urlEscape.sed
 UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
-REGEX_IDS="^\/\S+\/fiche\S+_gen_c\S+=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),(TRUE|FALSE)$"
-REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
+REGEX_IDS="^\/\S+\/fiche\S+_gen_c\S+=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),([0-9]+|null),(TRUE|FALSE)$"
+REGEX_IDS_COMMAS="^([^,]*,){10}[^,]*$"
 DEFAULT_FIRST_SHOW=/series/ficheserie_gen_cserie=28295.html
 
 # Define alternative base variables
@@ -170,6 +170,7 @@ set_default_values_if_empty () {
   [[ -z $LETTERBOXD_ID ]] && LETTERBOXD_ID=null
   [[ -z $SENSCRITIQUE_ID ]] && SENSCRITIQUE_ID=null
   [[ -z $TRAKT_ID ]] && TRAKT_ID=null
+  [[ -z $THETVDB_ID ]] && THETVDB_ID=null
 }
 
 # A function that is called when the data is not found.
@@ -180,7 +181,7 @@ data_not_found () {
 
   set_default_values_if_empty
 
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID,$THETVDB_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ❌"
 }
 
@@ -188,7 +189,7 @@ betaseries_to_null () {
   set_default_values_if_empty
 
   echo "BetaSeries is null but the rest is fine."
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID,$THETVDB_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
@@ -196,7 +197,7 @@ betaseries_to_null () {
 data_found () {
   set_default_values_if_empty
 
-  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID"
+  echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID,$THETVDB_ID"
   echo "page: $PAGES_INDEX_NUMBER/$PAGES_NUMBER - item: $FILMS_INDEX_NUMBER/$FILMS_NUMBER - title: $TITLE ✅"
 }
 
@@ -248,12 +249,14 @@ get_other_ids () {
   LETTERBOXD_ID=$(fetch_id "$WIKI_URL" "https://letterboxd.com" "LETTERBOXD")
   SENSCRITIQUE_ID=$(fetch_id "$WIKI_URL" "https://www.senscritique.com" "SENSCRITIQUE")
   TRAKT_ID=$(fetch_id "$WIKI_URL" "https://trakt.tv" "TRAKT")
+  THETVDB_ID=$(fetch_id "$WIKI_URL" "https://thetvdb.com" "THETVDB")
 
   echo "Metacritic ID: $METACRITIC_ID"
   echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
   echo "Letterboxd ID: $LETTERBOXD_ID"
   echo "SensCritique ID: $SENSCRITIQUE_ID"
   echo "Trakt ID: $TRAKT_ID"
+  echo "TheTVDB ID: $THETVDB_ID"
 }
 
 remove_files
@@ -376,6 +379,7 @@ do
     LETTERBOXD_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f7)
     SENSCRITIQUE_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f8)
     TRAKT_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f9)
+    THETVDB_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f10)
 
     if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "recheck" ]]; then
       URL_FILE=$TEMP_URLS_FILE_PATH
@@ -391,7 +395,7 @@ do
       echo $URL >> $TEMP_URLS_FILE_PATH
 
       if [[ $PROMPT == "recheck" ]] && [[ $THEMOVIEDB_CHECK ]]; then
-        services=("imdb" "betaseries" "metacritic" "rottentomatoes" "letterboxd" "senscritique" "trakt")
+        services=("imdb" "betaseries" "metacritic" "rottentomatoes" "letterboxd" "senscritique" "trakt" "thetvdb")
         DUPLICATE=1
 
         if [[ $MIN_RATING ]]; then
@@ -486,13 +490,15 @@ do
             LETTERBOXD_ID=$LETTERBOXD_CHECK
             SENSCRITIQUE_ID=$SENSCRITIQUE_CHECK
             TRAKT_ID=$TRAKT_CHECK
+            THETVDB_ID=$THETVDB_CHECK
 
             if [[ $IMDB_ID == "null" ]] || \
             [[ $METACRITIC_ID == "null" ]] || \
             [[ $ROTTEN_TOMATOES_ID == "null" ]] || \
             [[ $LETTERBOXD_ID == "null" ]] || \
             [[ $SENSCRITIQUE_ID == "null" ]] || \
-            [[ $TRAKT_ID == "null" ]]; then
+            [[ $TRAKT_ID == "null" ]] || \
+            [[ $THETVDB_ID == "null" ]]; then
               get_other_ids
             fi
           else
@@ -502,6 +508,7 @@ do
             LETTERBOXD_ID=null
             SENSCRITIQUE_ID=null
             TRAKT_ID=null
+            THETVDB_ID=null
           fi
         else
           echo "wikiUrl: $WIKI_URL"
@@ -519,7 +526,7 @@ do
           get_other_ids
         fi
 
-        if [[ $METACRITIC_ID == "null" ]] && [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $LETTERBOXD_ID == "null" ]] && [[ $SENSCRITIQUE_ID == "null" ]] && [[ $TRAKT_ID == "null" ]]; then
+        if [[ $METACRITIC_ID == "null" ]] && [[ $ROTTEN_TOMATOES_ID == "null" ]] && [[ $LETTERBOXD_ID == "null" ]] && [[ $SENSCRITIQUE_ID == "null" ]] && [[ $TRAKT_ID == "null" ]] && [[ $THETVDB_ID == "null" ]]; then
           WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
           if [[ $WIKI_URL ]]; then
             get_other_ids
@@ -650,7 +657,7 @@ do
           fi
         fi
 
-        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID,TRUE" >> $FILMS_IDS_FILE_PATH
+        echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID,$THETVDB_ID,TRUE" >> $FILMS_IDS_FILE_PATH
 
         echo "----------------------------------------------------------------------------------------------------"
 

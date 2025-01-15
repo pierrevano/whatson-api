@@ -349,7 +349,7 @@ describe("What's on? API tests", () => {
           headers: {
             "X-Forwarded-For": generateRandomIp(),
           },
-          validateStatus: (status) => status <= 500,
+          validateStatus: (status) => status < 500,
         }),
       ),
     );
@@ -370,7 +370,7 @@ describe("What's on? API tests", () => {
       // Send enough requests to potentially reach the limit
       const responses = await Promise.all(
         Array.from({ length: config.points + 1 }).map(() =>
-          axios.get(baseURL, { validateStatus: (status) => status <= 500 }),
+          axios.get(baseURL, { validateStatus: (status) => status < 500 }),
         ),
       );
 

@@ -3,10 +3,11 @@ BASE_URL=https://www.allocine.fr
 GET_IDS_FILE_PATH=./src/data/getIds.sh
 MAX_INDEX=350000
 PROPERTY=P345
-REGEX_IDS="^\/.*\=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),(TRUE|FALSE)$"
-REGEX_IDS_COMMAS="^([^,]*,){9}[^,]*$"
+REGEX_IDS="^\/\S+\/fiche\S+_gen_c\S+=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),([0-9]+|null),(TRUE|FALSE)$"
+REGEX_IDS_COMMAS="^([^,]*,){10}[^,]*$"
 BASE_URL_IMDB=https://www.imdb.com/title/
 BASE_URL_LETTERBOXD=https://letterboxd.com/film/
+BASE_URL_TVTIME=https://www.tvtime.com/show/
 
 if [[ $2 == "movie" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/films_ids.txt
@@ -138,6 +139,17 @@ get_other_ids () {
     TRAKT_ID=null
   fi
   echo "Trakt ID: $TRAKT_ID"
+
+  THETVDB_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://thetvdb.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+  THETVDB_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://thetvdb.com" | wc -l | awk '{print $1}')
+  if [[ $THETVDB_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
+    THETVDB_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://thetvdb.com" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
+  fi
+  THETVDB_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://thetvdb.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
+  if [[ -z $THETVDB_ID ]] || [[ $THETVDB_ID_DEPRECATED -eq 1 ]]; then
+    THETVDB_ID=null
+  fi
+  echo "THETVDB ID: $THETVDB_ID"
 }
 
 if [[ $1 == "check" ]]; then
@@ -168,6 +180,7 @@ if [[ $1 == "check" ]]; then
       LETTERBOXD_ID_FROM_FILE=$(echo $LINE | cut -d',' -f7)
       SENSCRITIQUE_ID_FROM_FILE=$(echo $LINE | cut -d',' -f8)
       TRAKT_ID_FROM_FILE=$(echo $LINE | cut -d',' -f9)
+      THETVDB_ID_FROM_FILE=$(echo $LINE | cut -d',' -f10)
 
       WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID_FROM_FILE%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/' | head -1)
       if [[ $WIKI_URL ]]; then
@@ -193,8 +206,11 @@ if [[ $1 == "check" ]]; then
         TRAKT_ID_TO_USE=$(check_id "$TRAKT_ID" "$TRAKT_ID_FROM_FILE")
         FOUND_TRAKT=$(is_id_found "$TRAKT_ID" "$TRAKT_ID_FROM_FILE")
 
-        if [[ $FOUND_ALLOCINE -eq 1 ]] || [[ $FOUND_METACRITIC -eq 1 ]] || [[ $FOUND_ROTTEN_TOMATOES -eq 1 ]] || [[ $FOUND_LETTERBOXD -eq 1 ]] || [[ $FOUND_SENSCRITIQUE -eq 1 ]] || [[ $FOUND_TRAKT -eq 1 ]]; then
-          echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_TO_USE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
+        THETVDB_ID_TO_USE=$(check_id "$THETVDB_ID" "$THETVDB_ID_FROM_FILE")
+        FOUND_THETVDB=$(is_id_found "$THETVDB_ID" "$THETVDB_ID_FROM_FILE")
+
+        if [[ $FOUND_ALLOCINE -eq 1 ]] || [[ $FOUND_METACRITIC -eq 1 ]] || [[ $FOUND_ROTTEN_TOMATOES -eq 1 ]] || [[ $FOUND_LETTERBOXD -eq 1 ]] || [[ $FOUND_SENSCRITIQUE -eq 1 ]] || [[ $FOUND_TRAKT -eq 1 ]] || [[ $FOUND_THETVDB -eq 1 ]]; then
+          echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_TO_USE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,$THETVDB_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
         fi
       fi
     fi
@@ -273,9 +289,11 @@ elif [[ $1 == "check_dataset" ]]; then
       -v baseurlImdb="$BASE_URL_IMDB" \
       -v baseurlBetaseries="$BASE_URL_BETASERIES" \
       -v baseurlMetacritic="$BASE_URL_METACRITIC" \
+      -v baseurlRottenTomatoes="$BASE_URL_ROTTEN_TOMATOES" \
       -v baseurlLetterboxd="$BASE_URL_LETTERBOXD" \
       -v baseurlSenscritique="$BASE_URL_SENSCRITIQUE" \
       -v baseurlTrakt="$BASE_URL_TRAKT" \
+      -v baseurlTvtime="$BASE_URL_TVTIME" \
       -v filmIdsFilePath="$FILMS_IDS_FILE_PATH" -F',' '{
       sub(/^[+-]/,"")
       data[$1] = (data[$1] ? data[$1] FS : "") $0
@@ -285,30 +303,33 @@ elif [[ $1 == "check_dataset" ]]; then
       urls[2]=baseurlImdb
       urls[3]=baseurlBetaseries
       urls[5]=baseurlMetacritic
+      urls[6]=baseurlRottenTomatoes
       urls[7]=baseurlLetterboxd
       urls[8]=baseurlSenscritique
       urls[9]=baseurlTrakt
+      urls[10]=baseurlTvtime
 
       print "Only last values changed for: " filmIdsFilePath
 
-      for(key in data) {
+      for (key in data) {
         split(data[key], lines, FS)
-        if (length(lines) <= 10) continue
-        if (lines[1] == lines[1+10] && lines[2] == lines[2+10] && lines[3] == lines[3+10] && lines[4] == lines[4+10] && lines[5] == lines[5+10] && lines[6] == lines[6+10] && lines[7] == lines[7+10] && lines[8] == lines[8+10] && lines[9] == lines[9+10] && lines[10] != lines[10+10]) continue
-        for(i=1; i<=10; i++) {
+
+        if (lines[1] == lines[1+10] && lines[2] == lines[2+10] && lines[3] == lines[3+10] && lines[4] == lines[4+10] && lines[5] == lines[5+10] && lines[6] == lines[6+10] && lines[7] == lines[7+10] && lines[8] == lines[8+10] && lines[9] == lines[9+10] && lines[10] != lines[10+10] && lines[11] != lines[11+10]) continue
+
+        for(i=1; i<=11; i++) {
           print "Other values changed for: " filmIdsFilePath
 
           if (lines[i] != "null" && lines[i+10] == "null") {
             print "------------------------------------------------------------"
             print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
             print "Details:"
-            print "- " lines[1] "," lines[2] "," lines[3] "," lines[4] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10]
-            print "+ " lines[1+10] "," lines[2+10] "," lines[3+10] "," lines[4+10] "," lines[5+10] "," lines[6+10] "," lines[7+10] "," lines[8+10] "," lines[9+10] "," lines[10+10]
+            print "- " lines[1] "," lines[2] "," lines[3] "," lines[4] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10] "," lines[11]
+            print "+ " lines[1+10] "," lines[2+10] "," lines[3+10] "," lines[4+10] "," lines[5+10] "," lines[6+10] "," lines[7+10] "," lines[8+10] "," lines[9+10] "," lines[10+10] "," lines[11+10]
             print "------------------------------------------------------------"
             exit
           }
 
-          for(j=1; j<=7; j++) {
+          for(j=1; j<=11; j++) {
             if (lines[j] != "null" && lines[j] != "") {
               if (j == 4) j=5
               url = urls[j] lines[j]
@@ -317,11 +338,11 @@ elif [[ $1 == "check_dataset" ]]; then
               cmd | getline http_status_code
               close(cmd)
 
-              if (http_status_code > 400) {
+              if (http_status_code != 200 && http_status_code < 301 && http_status_code > 308) {
                 print "------------------------------------------------------------"
                 print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
                 print "IMDb ID: " urls[2] lines[2]
-                print lines[1] "," lines[2] "," lines[3] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9]
+                print lines[1] "," lines[2] "," lines[3] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10]
                 print "------------------------------------------------------------"
                 exit
               }

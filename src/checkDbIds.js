@@ -25,6 +25,7 @@ const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
           letterboxdId: el.letterboxd ? el.letterboxd.id : null,
           senscritiqueId: el.senscritique ? el.senscritique.id : null,
           traktId: el.trakt ? el.trakt.id : null,
+          tvtimeId: el.tv_time ? el.tv_time.id : null,
         };
       })
       .toArray();
@@ -35,7 +36,7 @@ const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
 
     let dataToWrite = idsOnlyInDb
       .map((element) => {
-        return `${element.allocineUrl},${element.imdbId},${element.betaseriesId},${element.tmdbId},${element.metacriticId},${element.rottenTomatoesId},${element.letterboxdId},${element.senscritiqueId},${element.traktId},FALSE\n`;
+        return `${element.allocineUrl},${element.imdbId},${element.betaseriesId},${element.tmdbId},${element.metacriticId},${element.rottenTomatoesId},${element.letterboxdId},${element.senscritiqueId},${element.traktId},${element.tvtimeId},FALSE\n`;
       })
       .join("");
 

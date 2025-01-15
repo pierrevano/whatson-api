@@ -367,6 +367,25 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.traktItems)
       : null;
 
+    /* TV Time */
+    item.tv_time && item.is_active === true
+      ? expect(item.tv_time.id).not.toBeNull()
+      : null;
+    item.tv_time
+      ? expect(Object.keys(item.tv_time).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.tvtime,
+        )
+      : null;
+    item.is_active === true && item.item_type === "tvshow"
+      ? expect(
+          items.filter(
+            (item) =>
+              item.tv_time && typeof item.tv_time.users_rating === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+    item.item_type === "movie" ? expect(item.tv_time).toBeNull() : null; // No tv_time information for movie item type.
+
     /* Mojo */
     item.is_active === true && item.item_type === "movie"
       ? expect(
@@ -1236,7 +1255,7 @@ describe("What's on? API tests", () => {
       if (query.includes("directors=xxx")) {
         const apiCallDirectors = `${baseURL}?api_key=${config.internalApiKey}`;
         const responseDirectors = await axios.get(apiCallDirectors, {
-          validateStatus: (status) => status <= 500,
+          validateStatus: (status) => status < 500,
         });
         const dataDirectors = responseDirectors.data;
         const itemsDirectors = dataDirectors && dataDirectors.results;
@@ -1251,7 +1270,7 @@ describe("What's on? API tests", () => {
       console.log(`Calling ${apiCall}`);
 
       const response = await axios.get(apiCall, {
-        validateStatus: (status) => status <= 500,
+        validateStatus: (status) => status < 500,
       });
       const data = response.data;
       const items = data && data.results;

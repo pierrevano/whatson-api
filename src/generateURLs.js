@@ -3,7 +3,7 @@
  * @param {string} item_type - The type of item (movie or series).
  * @param {object} config - The configuration object containing base URLs for different websites.
  * @param {object} json - The JSON data containing information about the item.
- * @returns {object} - An object containing URLs for AlloCiné, IMDb, BetaSeries, Metacritic, Rotten Tomatoes, Letterboxd, SensCritique, Trakt, The Movie Database, and an isActive flag.
+ * @returns {object} - An object containing URLs for AlloCiné, IMDb, BetaSeries, Metacritic, Rotten Tomatoes, Letterboxd, SensCritique, Trakt, TV Time, The Movie Database, and an isActive flag.
  * @throws {Error} - If an invalid AlloCiné URL is provided or if The Movie Database ID is not found.
  */
 const generateURLs = (item_type, config, json) => {
@@ -73,6 +73,10 @@ const generateURLs = (item_type, config, json) => {
       ? `${config.baseURLTraktFilm}${traktId}`
       : `${config.baseURLTraktSerie}${traktId}`;
 
+  const tvtimeId = item_type === "tvshow" ? parseInt(json.THETVDB_ID) : null;
+  const tvtimeHomepage =
+    item_type === "tvshow" ? `${config.baseURLTVTimeSerie}${tvtimeId}` : null;
+
   const isActive = json.IS_ACTIVE === "TRUE";
 
   // If the Movie Database ID is not found, log an error and exit.
@@ -97,6 +101,7 @@ const generateURLs = (item_type, config, json) => {
     senscritique: { id: sensCritiqueId, homepage: sensCritiqueHomepage },
     tmdb: { id: tmdbId, homepage: tmdbHomepage },
     trakt: { id: traktId, homepage: traktHomepage },
+    tv_time: { id: tvtimeId, homepage: tvtimeHomepage },
     is_active: isActive,
   };
 };

@@ -90,6 +90,10 @@ const loopItems = async (
       const traktId = urls.trakt.id;
       const traktHomepage = urls.trakt.homepage;
 
+      /* Handle TV Time related data */
+      const tvtimeId = urls.tv_time.id;
+      const tvtimeHomepage = urls.tv_time.homepage;
+
       // Determine if the URL is active
       const isActive = urls.is_active;
 
@@ -199,6 +203,8 @@ const loopItems = async (
                 mojoBoxOfficeArray,
                 tmdbId,
                 tmdbHomepage,
+                tvtimeHomepage,
+                tvtimeId,
               ));
 
         if (!errorMetacritic && !getIsEqualValue.isEqual) {

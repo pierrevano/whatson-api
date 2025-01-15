@@ -16,6 +16,7 @@ const baseURL = {
   tmdbAPI: "https://api.themoviedb.org/3",
   tmdb: "https://www.themoviedb.org",
   trakt: "https://trakt.tv",
+  tvtime: "https://www.tvtime.com",
   vercel: "https://www.vercel-status.com",
   whatsonAPI: "https://whatson-api.onrender.com",
   whatsonAPICircleCI: "https://whatson-api-circleci.onrender.com",
@@ -111,6 +112,7 @@ const config = {
     "tmdb",
     "trailer",
     "trakt",
+    "tv_time",
     "updated_at",
   ],
   ratingsKeys: [
@@ -123,10 +125,11 @@ const config = {
     "senscritique",
     "tmdb",
     "trakt",
+    "tv_time",
   ],
   margin: 10,
   maxResponseTime: 5000,
-  maxNullValues: 600,
+  maxNullValues: 650,
   minimumNumberOfItems: {
     default: 25,
     mojo: 15,
@@ -145,11 +148,12 @@ const config = {
     senscritique: 3,
     tmdb: 3,
     trakt: 3,
+    tvtime: 3,
   },
   maximumIsActiveItems: 400,
   maxPopularityDiff: 20,
   ratings_filters:
-    "allocine_critics,allocine_users,betaseries_users,imdb_users,letterboxd_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,senscritique_users,tmdb_users,trakt_users",
+    "allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users",
   timeout: 500000,
 
   /* Services settings */
@@ -174,6 +178,7 @@ const config = {
     { name: "Letterboxd", url: baseURL.letterboxd },
     { name: "SensCritique", url: baseURL.senscritique },
     { name: "Trakt", url: baseURL.trakt },
+    { name: "TV Time", url: baseURL.tvtime },
     { name: "Mojo", url: baseURL.mojo },
   ],
 
@@ -203,6 +208,7 @@ const config = {
   baseURLTMDBAPI: baseURL.tmdbAPI,
   baseURLTraktFilm: `${baseURL.trakt}/movies/`,
   baseURLTraktSerie: `${baseURL.trakt}/shows/`,
+  baseURLTVTimeSerie: `${baseURL.tvtime}/show/`,
   baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
   baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
   endURLCriticDetails: "/critiques/presse/",
@@ -236,6 +242,7 @@ const config = {
       senscritique: 0,
       tmdb: 0,
       trakt: 0,
+      tvtime: 0,
     },
 
     maximum: {
@@ -249,6 +256,7 @@ const config = {
       senscritique: 10,
       tmdb: 10,
       trakt: 100,
+      tvtime: 10,
     },
   },
 
@@ -291,6 +299,7 @@ const config = {
     "title",
     "tmdbid",
     "traktid",
+    "tvtimeid",
   ],
 };
 

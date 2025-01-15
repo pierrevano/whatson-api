@@ -22,7 +22,8 @@ const getRatingsFilters = async (ratings_filters_query) => {
       { $divide: ["$letterboxd.users_rating", 1] },
       { $divide: ["$senscritique.users_rating", 2] },
       { $divide: ["$tmdb.users_rating", 2] },
-      { $divide: ["$trakt.users_rating", 20] }
+      { $divide: ["$trakt.users_rating", 20] },
+      { $divide: ["$tv_time.users_rating", 2] }
     ];
   } else {
     const ratingsDivisors = {
@@ -44,6 +45,7 @@ const getRatingsFilters = async (ratings_filters_query) => {
       senscritique_users: { path: "$senscritique.users_rating", divisor: 2 },
       tmdb_users: { path: "$tmdb.users_rating", divisor: 2 },
       trakt_users: { path: "$trakt.users_rating", divisor: 20 },
+      tvtime_users: { path: "$tv_time.users_rating", divisor: 2 },
     };
 
     ratings_filters_array.forEach((filter) => {
