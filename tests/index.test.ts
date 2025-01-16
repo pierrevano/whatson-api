@@ -773,6 +773,12 @@ const params = {
       checkSingleItemId(items, 974950);
     },
   },
+  should_return_tvtime_id_on_search: {
+    query: "?tvtimeid=383275",
+    expectedResult: (items) => {
+      checkSingleItemId(items, 93405);
+    },
+  },
   should_return_tmdb_id_on_search: {
     query: "?tmdbid=974950",
     expectedResult: (items) => {

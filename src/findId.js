@@ -41,7 +41,7 @@ const findId = async (json) => {
       const mappedKey = keysMapping[key];
       query[mappedKey != null ? mappedKey : key] = ["title"].includes(key)
         ? { $regex: json[key], $options: "i" }
-        : ["allocineid", "senscritiqueid", "tmdbid"].includes(key)
+        : ["allocineid", "senscritiqueid", "tvtimeid", "tmdbid"].includes(key)
           ? parseInt(json[key])
           : json[key];
       break;
