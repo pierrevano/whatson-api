@@ -294,7 +294,9 @@ elif [[ $1 == "check_dataset" ]]; then
       -v baseurlSenscritique="$BASE_URL_SENSCRITIQUE" \
       -v baseurlTrakt="$BASE_URL_TRAKT" \
       -v baseurlTvtime="$BASE_URL_TVTIME" \
-      -v filmIdsFilePath="$FILMS_IDS_FILE_PATH" -F',' '{
+      -v filmIdsFilePath="$FILMS_IDS_FILE_PATH" \
+      -v isTvshow="$2" \
+      -v skipValues="$3" -F',' '{
       sub(/^[+-]/,"")
       data[$1] = (data[$1] ? data[$1] FS : "") $0
     }
@@ -307,24 +309,29 @@ elif [[ $1 == "check_dataset" ]]; then
       urls[7]=baseurlLetterboxd
       urls[8]=baseurlSenscritique
       urls[9]=baseurlTrakt
-      urls[10]=baseurlTvtime
+
+      if (isTvshow == "tvshow") {
+        urls[10] = baseurlTvtime
+      }
+
+      split(skipValues, skipArray, ",")
 
       print "Only last values changed for: " filmIdsFilePath
 
       for (key in data) {
         split(data[key], lines, FS)
 
-        if (lines[1] == lines[1+10] && lines[2] == lines[2+10] && lines[3] == lines[3+10] && lines[4] == lines[4+10] && lines[5] == lines[5+10] && lines[6] == lines[6+10] && lines[7] == lines[7+10] && lines[8] == lines[8+10] && lines[9] == lines[9+10] && lines[10] != lines[10+10] && lines[11] != lines[11+10]) continue
+        if (lines[1] == lines[1+11] && lines[2] == lines[2+11] && lines[3] == lines[3+11] && lines[4] == lines[4+11] && lines[5] == lines[5+11] && lines[6] == lines[6+11] && lines[7] == lines[7+11] && lines[8] == lines[8+11] && lines[9] == lines[9+11] && lines[10] != lines[10+11] && lines[11] != lines[11+11]) continue
 
         for(i=1; i<=11; i++) {
           print "Other values changed for: " filmIdsFilePath
 
-          if (lines[i] != "null" && lines[i+10] == "null") {
+          if (lines[i] != "null" && lines[i+11] == "null") {
             print "------------------------------------------------------------"
             print "In URL " key ", item at position " (i-1) " changed from string to null between '-' and '+' line."
             print "Details:"
             print "- " lines[1] "," lines[2] "," lines[3] "," lines[4] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10] "," lines[11]
-            print "+ " lines[1+10] "," lines[2+10] "," lines[3+10] "," lines[4+10] "," lines[5+10] "," lines[6+10] "," lines[7+10] "," lines[8+10] "," lines[9+10] "," lines[10+10] "," lines[11+10]
+            print "+ " lines[1+11] "," lines[2+11] "," lines[3+11] "," lines[4+11] "," lines[5+11] "," lines[6+11] "," lines[7+11] "," lines[8+11] "," lines[9+11] "," lines[10+11] "," lines[11+11]
             print "------------------------------------------------------------"
             exit
           }
@@ -334,15 +341,23 @@ elif [[ $1 == "check_dataset" ]]; then
               if (j == 4) j=5
               url = urls[j] lines[j]
 
+              shouldSkip = 0
+              for (k in skipArray) {
+                if (url == skipArray[k]) {
+                  shouldSkip = 1
+                  break
+                }
+              }
+
               cmd = ("curl -A \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36\" -o /dev/null -s -w \"%{http_code}\" " url)
               cmd | getline http_status_code
               close(cmd)
 
-              if (http_status_code != 200 && http_status_code < 301 && http_status_code > 308) {
+              if (http_status_code != 000 && http_status_code != 200 && !(http_status_code >= 300 && http_status_code < 400) && shouldSkip != 1) {
                 print "------------------------------------------------------------"
                 print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
                 print "IMDb ID: " urls[2] lines[2]
-                print lines[1] "," lines[2] "," lines[3] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10]
+                print lines[1] "," lines[2] "," lines[3] "," lines[4] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10] "," lines[11]
                 print "------------------------------------------------------------"
                 exit
               }

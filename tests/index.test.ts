@@ -8,12 +8,11 @@ const { config } = require("../src/config");
 const { countNullValues } = require("./utils/countNullValues");
 const { schema } = require("../src/schema");
 
-const baseURL =
-  process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
-const higherLimit =
-  process.env.SOURCE === "remote"
-    ? config.maxLimitRemote
-    : config.maxLimitLocal;
+const isRemoteSource = process.env.SOURCE === "remote";
+const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
+const higherLimit = isRemoteSource
+  ? config.maxLimitRemote
+  : config.maxLimitLocal;
 
 /**
  * Validates properties and metrics of a list of items against predefined expectations.
@@ -1245,6 +1244,63 @@ const params = {
           }
         }
       });
+    },
+  },
+
+  validate_all_urls: {
+    query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    expectedResult: async (items) => {
+      if (isRemoteSource) return;
+
+      const urlsToCheck = items.flatMap((item) => {
+        const urls = [];
+
+        // Add platform links
+        if (item.platforms_links) {
+          urls.push(
+            ...item.platforms_links.map((platform) => platform.link_url),
+          );
+        }
+
+        config.ratingsKeys.forEach((source) => {
+          if (item[source] && item[source].url) {
+            urls.push(item[source].url);
+          }
+        });
+
+        // Add last episode URL
+        if (item.last_episode && item.last_episode.url) {
+          urls.push(item.last_episode.url);
+        }
+
+        // Add episodes details URLs
+        if (item.episodes_details) {
+          urls.push(
+            ...item.episodes_details
+              .filter((episode) => episode.url)
+              .map((episode) => episode.url),
+          );
+        }
+
+        return urls;
+      });
+
+      // Remove duplicates
+      const uniqueUrls = [...new Set(urlsToCheck)];
+
+      // Validate each URL
+      for (let url of uniqueUrls) {
+        try {
+          const urlResponse = await axios.get(url, {
+            validateStatus: (status) => status === 403,
+            timeout: config.timeout,
+          });
+          expect(urlResponse.status).toBe(200);
+        } catch (error) {
+          console.error(`URL failed: ${url}`, error.message);
+          throw new Error(`Failed URL: ${url}`);
+        }
+      }
     },
   },
 };
