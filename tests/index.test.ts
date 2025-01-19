@@ -1293,7 +1293,6 @@ const params = {
         try {
           const urlResponse = await axios.get(url, {
             validateStatus: (status) => status === 403,
-            timeout: config.timeout,
           });
           expect(urlResponse.status).toBe(200);
         } catch (error) {
