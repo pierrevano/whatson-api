@@ -129,7 +129,7 @@ const config = {
   ],
   margin: 10,
   maxResponseTime: 5000,
-  maxNullValues: 650,
+  maxNullValues: 600,
   minimumNumberOfItems: {
     default: 25,
     mojo: 15,

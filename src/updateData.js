@@ -9,7 +9,6 @@ const client = new MongoClient(uri, {
 });
 
 const { b64Encode } = require("./utils/b64EncodeAndDecode");
-const { countNullElements } = require("./countNullElements");
 const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
 const { getMojoBoxOffice } = require("./content/getMojoBoxOffice");
 const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
@@ -194,7 +193,10 @@ async function checkStatus(service) {
       mojoBoxOfficeArray,
       getNodeVarsValues.check_data,
     );
-    await countNullElements(collectionData, newOrUpdatedItems);
+    console.log(`Number of new or updated items: ${newOrUpdatedItems}`);
+
+    const documents = await collectionData.estimatedDocumentCount();
+    console.log(`Number of documents in the collection: ${documents}`);
   } catch (error) {
     throw new Error(`Global: ${error}`);
   } finally {
