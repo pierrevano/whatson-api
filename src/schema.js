@@ -119,6 +119,12 @@ const schema = {
     url: "string", // URL to the TV Time page
     users_rating: "number", // Rating given by TV Time users
   },
+  thetvdb: {
+    /* Information related to TheTVDB platform */
+    id: "number", // TheTVDB specific identifier
+    slug: "string", // Slug for the identifier on TheTVDB
+    url: "string", // URL to TheTVDB page
+  },
 
   mojo: {
     /* Information related to Box Office Mojo platform */

@@ -31,12 +31,18 @@ const loopItems = async (
   jsonArray,
   mojoBoxOfficeArray,
   check_data,
+  max_index,
 ) => {
   let createJsonCounter = (itemCounter = 0);
 
   // Loop through jsonArray with the given start index
   for (let index = index_to_start; index < jsonArray.length; index++) {
     try {
+      if (max_index && index === max_index) {
+        console.log(`Maximum index ${max_index} processed, aborting.`);
+        process.exit(0);
+      }
+
       const json = jsonArray[index];
 
       // Log the progress in terms of percentage
@@ -94,16 +100,20 @@ const loopItems = async (
       const tvtimeId = urls.tv_time.id;
       const tvtimeHomepage = urls.tv_time.homepage;
 
+      /* Handle TheTVDB related data */
+      const theTvdbId = urls.thetvdb.id;
+      const theTvdbHomepage = urls.thetvdb.homepage;
+
       // Determine if the URL is active
       const isActive = urls.is_active;
 
       const checkDate = getNodeVarsValues.check_date;
       if (parseInt(checkDate) >= 0) {
+        const item_type_api = item_type === "movie" ? "movie" : "tvshow";
+        const apiCall = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${config.internalApiKey}`;
+
         try {
-          const item_type_api = item_type === "movie" ? "movie" : "tvshow";
-          const response = await axios.get(
-            `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${config.internalApiKey}`,
-          );
+          const response = await axios.get(apiCall);
 
           if (response && response.data && response.data.updated_at) {
             const { updated_at } = response.data;
@@ -122,7 +132,9 @@ const loopItems = async (
         } catch (error) {
           const status = error.response.status;
           if (status === 404) {
-            console.log("Item not found in database, continuing...");
+            console.log(
+              `Item called on ${apiCall} not found in database, continuing...`,
+            );
           } else if (status === 503) {
             throw new Error(
               "Render service has been suspended. Please re-enable it.",
@@ -205,6 +217,8 @@ const loopItems = async (
                 tmdbHomepage,
                 tvtimeHomepage,
                 tvtimeId,
+                theTvdbHomepage,
+                theTvdbId,
               ));
 
         if (!errorMetacritic && !getIsEqualValue.isEqual) {

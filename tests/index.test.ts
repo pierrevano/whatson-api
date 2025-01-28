@@ -48,25 +48,21 @@ function checkItemProperties(items) {
 
     expect(item.title).not.toBeNull();
 
-    item.is_active === true
-      ? expect(
-          items.filter((item) => item.directors && item.directors.length > 0)
-            .length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
-      : null;
+    expect(
+      items.filter((item) => item.directors && item.directors.length > 0)
+        .length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    item.is_active === true
-      ? expect(
-          items.filter((item) => item.genres && item.genres.length > 0).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
-      : null;
+    expect(
+      items.filter((item) => item.genres && item.genres.length > 0).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(
       /\.(jpg|jpeg|png|gif|jfif)(\?[a-zA-Z0-9=&]*)?$/i,
     );
 
-    item.is_active === true && item.release_date !== null
+    item.release_date !== null
       ? expect(!isNaN(new Date(item.release_date).getTime())).toBe(true)
       : null;
 
@@ -385,6 +381,23 @@ function checkItemProperties(items) {
       : null;
     item.item_type === "movie" ? expect(item.tv_time).toBeNull() : null; // No tv_time information for movie item type.
 
+    /* TheTVDB */
+    item.thetvdb && item.is_active === true
+      ? expect(item.thetvdb.id).not.toBeNull()
+      : null;
+    item.thetvdb
+      ? expect(Object.keys(item.thetvdb).length).toBeGreaterThanOrEqual(
+          config.minimumNumberOfItems.thetvdb,
+        )
+      : null;
+    item.is_active === true
+      ? expect(
+          items.filter(
+            (item) => item.thetvdb && typeof item.thetvdb.slug === "string",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+
     /* Mojo */
     item.is_active === true && item.item_type === "movie"
       ? expect(
@@ -501,6 +514,13 @@ const params = {
             ratingType: "users_rating",
             min: config.ratingsValues.minimum.trakt,
             max: config.ratingsValues.maximum.trakt,
+            isStrict: true,
+          },
+          {
+            source: item.tv_time,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.tvtime,
+            max: config.ratingsValues.maximum.tvtime,
             isStrict: true,
           },
         ];
@@ -767,7 +787,13 @@ const params = {
     },
   },
   should_return_trakt_id_on_search: {
-    query: "?traktid=emilia-perez-2024",
+    query: "?traktid=783557",
+    expectedResult: (items) => {
+      checkSingleItemId(items, 974950);
+    },
+  },
+  should_return_tmdb_id_on_search: {
+    query: "?tmdbid=974950",
     expectedResult: (items) => {
       checkSingleItemId(items, 974950);
     },
@@ -778,10 +804,10 @@ const params = {
       checkSingleItemId(items, 93405);
     },
   },
-  should_return_tmdb_id_on_search: {
-    query: "?tmdbid=974950",
+  should_return_thetvdb_id_on_search: {
+    query: "?thetvdbid=383275",
     expectedResult: (items) => {
-      checkSingleItemId(items, 974950);
+      checkSingleItemId(items, 93405);
     },
   },
 

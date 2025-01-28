@@ -16,7 +16,7 @@ const collectionData = database.collection(config.collectionName);
  * If a key is found in the input JSON, it is used to form a query which is then executed against the MongoDB collection.
  *
  * @param {Object} json - The JSON object that contains the data to search for. Valid keys include 'title', 'allocineid',
- * 'betaseriesid', 'imdbid', 'metacriticid', 'rottentomatoesid', 'letterboxdid', 'senscritiqueid', 'traktid', 'tvtimeid', 'tmdbid'.
+ * 'betaseriesid', 'imdbid', 'letterboxdid', 'metacriticid', 'rottentomatoesid', 'senscritiqueid', 'thetvdbid', 'tmdbid', 'traktid', 'tvtimeid'.
  * @returns {Object} An object containing two properties: 'results' which is an array of matching documents from the database,
  *  and 'total_results', which is the total count of matching documents.
  */
@@ -33,6 +33,7 @@ const findId = async (json) => {
     tmdbid: "id",
     traktid: "trakt.id",
     tvtimeid: "tv_time.id",
+    thetvdbid: "thetvdb.id",
   };
 
   let query = {};
@@ -41,7 +42,13 @@ const findId = async (json) => {
       const mappedKey = keysMapping[key];
       query[mappedKey != null ? mappedKey : key] = ["title"].includes(key)
         ? { $regex: json[key], $options: "i" }
-        : ["allocineid", "senscritiqueid", "tvtimeid", "tmdbid"].includes(key)
+        : [
+              "allocineid",
+              "senscritiqueid",
+              "thetvdbid",
+              "tmdbid",
+              "tvtimeid",
+            ].includes(key)
           ? parseInt(json[key])
           : json[key];
       break;

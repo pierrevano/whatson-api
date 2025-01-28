@@ -3,7 +3,7 @@
  * @param {string} item_type - The type of item (movie or series).
  * @param {object} config - The configuration object containing base URLs for different websites.
  * @param {object} json - The JSON data containing information about the item.
- * @returns {object} - An object containing URLs for AlloCiné, IMDb, BetaSeries, Metacritic, Rotten Tomatoes, Letterboxd, SensCritique, Trakt, TV Time, The Movie Database, and an isActive flag.
+ * @returns {object} - An object containing URLs for AlloCiné, BetaSeries, IMDb, Letterboxd, Metacritic, RottenTomatoes, SensCritique, TheMovieDatabase, TheTVDB, Trakt, TVTime, and an isActive flag.
  * @throws {Error} - If an invalid AlloCiné URL is provided or if The Movie Database ID is not found.
  */
 const generateURLs = (item_type, config, json) => {
@@ -73,9 +73,15 @@ const generateURLs = (item_type, config, json) => {
       ? `${config.baseURLTraktFilm}${traktId}`
       : `${config.baseURLTraktSerie}${traktId}`;
 
-  const tvtimeId = item_type === "tvshow" ? parseInt(json.THETVDB_ID) : null;
+  const theTvdbId = parseInt(json.THETVDB_ID);
+  const theTvdbHomepage =
+    item_type === "movie"
+      ? `${config.baseURLTheTVDBFilm}`
+      : `${config.baseURLTheTVDBSerie}`;
+
+  const tvtimeId = item_type === "tvshow" ? theTvdbId : null;
   const tvtimeHomepage =
-    item_type === "tvshow" ? `${config.baseURLTVTimeSerie}${tvtimeId}` : null;
+    item_type === "tvshow" ? `${config.baseURLTVTimeSerie}${theTvdbId}` : null;
 
   const isActive = json.IS_ACTIVE === "TRUE";
 
@@ -102,6 +108,7 @@ const generateURLs = (item_type, config, json) => {
     tmdb: { id: tmdbId, homepage: tmdbHomepage },
     trakt: { id: traktId, homepage: traktHomepage },
     tv_time: { id: tvtimeId, homepage: tvtimeHomepage },
+    thetvdb: { id: theTvdbId, homepage: theTvdbHomepage },
     is_active: isActive,
   };
 };

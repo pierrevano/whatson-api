@@ -84,6 +84,7 @@ The query parameters provided below are solely for item search purposes and must
 | tmdbId           | _integer_ | The Movie Database ID of the movie or tvshow |
 | traktId          | _string_  | Trakt ID of the movie or tvshow              |
 | tvtimeId         | _integer_ | TV Time ID of the tvshow                     |
+| thetvdbId        | _integer_ | TheTVDB ID of the movie or tvshow            |
 
 #### Responses:
 
@@ -237,6 +238,12 @@ Example of an item returned:
     "id": "number", // TV Time specific identifier
     "url": "string", // URL to the TV Time page
     "users_rating": "number" // Rating given by TV Time users
+  },
+  "thetvdb": {
+    /* Information related to TheTVDB platform */
+    "id": "number", // TheTVDB specific identifier
+    "slug": "string", // Slug for the identifier on TheTVDB
+    "url": "string" // URL to TheTVDB page
   },
 
   "mojo": {

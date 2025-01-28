@@ -108,11 +108,19 @@ const getNodeVarsValues = {
   check_date: node_vars[12],
 
   /*
+   * Do we want to limit the number of items
+   * processed in a single batch? This parameter is used
+   * to control the batch size during processing.
+   * If not set, it is ignored.
+   */
+  max_index: node_vars[13],
+
+  /*
    * Do we want to update a specific item
    * in the dataset? The ID to specify should
    * be an IMDb ID. If not set, it is ignored.
    */
-  check_id: node_vars[13],
+  check_id: node_vars[14],
 };
 
 module.exports = { getNodeVarsValues };

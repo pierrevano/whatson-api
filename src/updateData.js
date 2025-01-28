@@ -163,6 +163,7 @@ async function checkStatus(service) {
   }
 
   const index_to_start = getNodeVarsValues.index_to_start || 0;
+  const max_index = parseInt(getNodeVarsValues.max_index) || null;
 
   console.time("Duration");
 
@@ -192,11 +193,22 @@ async function checkStatus(service) {
       jsonArraySortedHighestToLowest,
       mojoBoxOfficeArray,
       getNodeVarsValues.check_data,
+      max_index,
     );
     console.log(`Number of new or updated items: ${newOrUpdatedItems}`);
 
     const documents = await collectionData.estimatedDocumentCount();
     console.log(`Number of documents in the collection: ${documents}`);
+
+    const movieCount = await collectionData.countDocuments({
+      item_type: "movie",
+    });
+    console.log(`Number of movie documents in the collection: ${movieCount}`);
+
+    const tvShowCount = await collectionData.countDocuments({
+      item_type: "tvshow",
+    });
+    console.log(`Number of tvshow documents in the collection: ${tvShowCount}`);
   } catch (error) {
     throw new Error(`Global: ${error}`);
   } finally {

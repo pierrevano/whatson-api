@@ -16,6 +16,7 @@ const {
   getRottenTomatoesRating,
 } = require("./content/getRottenTomatoesRating");
 const { getSensCritiqueRating } = require("./content/getSensCritiqueRating");
+const { getTheTvdbSlug } = require("./content/getTheTvdbSlug");
 const { getTmdbRating } = require("./content/getTmdbRating");
 const { getTraktRating } = require("./content/getTraktRating");
 const { getTVTimeRating } = require("./content/getTVTimeRating");
@@ -46,6 +47,8 @@ const { getTVTimeRating } = require("./content/getTVTimeRating");
  * @param {string} tmdbHomepage - TMDB homepage URL
  * @param {string} tvtimeHomepage - TV Time homepage URL
  * @param {number} tvtimeId - TV Time ID
+ * @param {string} theTvdbHomepage - TheTVDB homepage URL
+ * @param {number} theTvdbId - TheTVDB ID
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
  */
 const createJSON = async (
@@ -74,6 +77,8 @@ const createJSON = async (
   tmdbHomepage,
   tvtimeHomepage,
   tvtimeId,
+  theTvdbHomepage,
+  theTvdbId,
 ) => {
   const allocineFirstInfo = await getAllocineInfo(
     allocineHomepage,
@@ -142,6 +147,7 @@ const createJSON = async (
   );
   const traktRating = await getTraktRating(traktHomepage, traktId);
   const tvtimeRating = await getTVTimeRating(tvtimeHomepage, tvtimeId);
+  const theTvdbSlug = await getTheTvdbSlug(allocineHomepage, theTvdbId);
 
   /* Creating an object called allocineObj. */
   const allocineObj = {
@@ -215,6 +221,16 @@ const createJSON = async (
         }
       : null;
 
+  /* Creating an object called theTvdbObj. */
+  const theTvdbObj =
+    theTvdbSlug !== null
+      ? {
+          id: theTvdbId,
+          slug: theTvdbSlug,
+          url: `${theTvdbHomepage}${theTvdbSlug}`,
+        }
+      : null;
+
   /* Creates a TMDB object if the TMDB rating is not null. */
   const tmdbObj =
     tmdbRating !== null && tmdbRating.id
@@ -280,6 +296,7 @@ const createJSON = async (
     metacritic: metacriticObj,
     rotten_tomatoes: rottenTomatoesObj,
     senscritique: sensCritiqueObj,
+    thetvdb: theTvdbObj,
     tmdb: tmdbObj,
     trakt: traktObj,
     tv_time: tvtimeObj,
