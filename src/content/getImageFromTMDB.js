@@ -2,23 +2,28 @@ const { getTMDBResponse } = require("../getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the image path for a movie or tvshow from The Movie Database (TMDB) API.
+ * Retrieves the full image URL for a movie or tvshow from The Movie Database (TMDB) API.
  * @param {string} allocineHomepage - The homepage of the movie or tvshow on AlloCiné.
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
- * @returns {Promise<string|null>} - A promise that resolves with the image path or null if there was an error.
+ * @returns {Promise<string|null>} - A promise that resolves with the full image URL or null if there was an error.
  */
 const getImageFromTMDB = async (allocineHomepage, tmdbId) => {
-  let imagePath = null;
+  let image = null;
+  const baseURL = "https://image.tmdb.org/t/p/w1280";
 
   try {
     const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 
-    imagePath = data?.poster_path || data?.profile_path || null;
+    const imagePath = data?.poster_path || data?.profile_path || null;
+
+    if (imagePath) {
+      image = `${baseURL}${imagePath}`;
+    }
   } catch (error) {
     logErrors(error, allocineHomepage, "getImageFromTMDB");
   }
 
-  return imagePath;
+  return image;
 };
 
 module.exports = { getImageFromTMDB };

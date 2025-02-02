@@ -43,10 +43,7 @@ const getAllocineInfo = async (
       : null;
     const genres = !compare ? await getGenres(allocineHomepage, tmdbId) : null;
 
-    let image = $('meta[property="og:image"]').attr("content");
-    if (image.includes("empty_portrait"))
-      image = await getImageFromTMDB(allocineHomepage, tmdbId);
-    if (!image) image = $('meta[property="og:image"]').attr("content");
+    const image = await getImageFromTMDB(allocineHomepage, tmdbId);
 
     let allocineUsersRating = parseFloat(
       $(".stareval-note").eq(1).text().replace(",", "."),
@@ -78,7 +75,7 @@ const getAllocineInfo = async (
 
     allocineFirstInfo = {
       allocineTitle: title,
-      allocineImage: image,
+      image: image,
       allocineUsersRating: allocineUsersRating,
       directors: directors,
       genres: genres,

@@ -18,6 +18,7 @@ const baseURL = {
   tmdb: "https://www.themoviedb.org",
   tmdbAPI: "https://api.themoviedb.org/3",
   trakt: "https://trakt.tv",
+  traktAPI: "https://api.trakt.tv",
   tvtime: "https://www.tvtime.com",
   vercel: "https://www.vercel-status.com",
   whatsonAPI: "https://whatson-api.onrender.com",
@@ -30,6 +31,7 @@ const config = {
   digestSecretValue: process.env.DIGEST_SECRET_VALUE,
   internalApiKey: process.env.INTERNAL_API_KEY,
   mongoDbCredentials: process.env.CREDENTIALS,
+  traktApiKey: process.env.TRAKT_API_KEY,
   theTvdbApiKey: process.env.THETVDB_API_KEY,
   tmdbApiKey: process.env.THEMOVIEDB_API_KEY,
 
@@ -215,6 +217,7 @@ const config = {
   baseURLTMDBAPI: baseURL.tmdbAPI,
   baseURLTMDBFilm: `${baseURL.tmdb}/movie/`,
   baseURLTMDBSerie: `${baseURL.tmdb}/tv/`,
+  baseURLTraktAPI: baseURL.traktAPI,
   baseURLTraktFilm: `${baseURL.trakt}/movies/`,
   baseURLTraktSerie: `${baseURL.trakt}/shows/`,
   baseURLTVTimeSerie: `${baseURL.tvtime}/show/`,

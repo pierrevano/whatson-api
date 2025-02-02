@@ -145,7 +145,11 @@ const createJSON = async (
     tmdbHomepage,
     tmdbId,
   );
-  const traktRating = await getTraktRating(traktHomepage, traktId);
+  const traktRating = await getTraktRating(
+    traktHomepage,
+    traktId,
+    allocineHomepage,
+  );
   const tvtimeRating = await getTVTimeRating(tvtimeHomepage, tvtimeId);
   const theTvdbSlug = await getTheTvdbSlug(allocineHomepage, theTvdbId);
 
@@ -278,7 +282,7 @@ const createJSON = async (
 
     directors: allocineFirstInfo.directors,
     genres: allocineFirstInfo.genres,
-    image: allocineFirstInfo.allocineImage,
+    image: allocineFirstInfo.image,
     release_date: allocineFirstInfo && allocineFirstInfo.releaseDate,
     tagline: traktRating && traktRating.tagline,
     trailer: allocineFirstInfo.trailer,

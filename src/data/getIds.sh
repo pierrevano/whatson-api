@@ -20,6 +20,7 @@ USER_AGENT="$((RANDOM % 1000000000000))"
 REGEX_IDS="^\/\S+\/fiche\S+_gen_c\S+=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),([0-9]+|null),(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){10}[^,]*$"
 DEFAULT_FIRST_SHOW=/series/ficheserie_gen_cserie=28295.html
+SEPARATOR="------------------------------------------------------------------------------------------------------------------------"
 
 # Define alternative base variables
 if [[ $TYPE == "movie" ]]; then
@@ -69,7 +70,7 @@ echo "VERCEL_ORG_ID: $VERCEL_ORG_ID"
 echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
 echo "VERCEL_TOKEN: $VERCEL_TOKEN"
 echo "WHATSON_API_URL: $WHATSON_API_URL"
-echo "----------------------------------------------------------------------------------------------------"
+echo $SEPARATOR
 
 if [[ -z $BETASERIES_API_KEY ]]; then
   echo "Error: BETASERIES_API_KEY is not set. Please set it in the environment variables."
@@ -82,15 +83,15 @@ while true; do
 
   if [[ "$status_code" -eq 200 ]]; then
     echo "Correct status code $status_code from $WHATSON_API_URL."
-    echo "----------------------------------------------------------------------------------------------------"
+    echo $SEPARATOR
     break
   elif [[ "$status_code" -gt 500 ]]; then
     echo "Critical Error: Received status code $status_code from $WHATSON_API_URL. Aborting."
-    echo "----------------------------------------------------------------------------------------------------"
+    echo $SEPARATOR
     exit 1
   else
     echo "Error: Received status code $status_code from $WHATSON_API_URL. Retrying..."
-    echo "----------------------------------------------------------------------------------------------------"
+    echo $SEPARATOR
   fi
 
   sleep 5
@@ -290,18 +291,23 @@ do
     FILM_ID=1
 
     echo "Downloading from: $BASE_URL"
+    echo $SEPARATOR
 
   # Get AlloCiné second until second to last page
   elif [[ $PAGES_INDEX_NUMBER -lt $PAGES_NUMBER ]]; then
     curl -s $BASE_URL\?page\=$PAGES_INDEX_NUMBER > temp_baseurl
 
+    echo $SEPARATOR
     echo "Downloading from: $BASE_URL?page=$PAGES_INDEX_NUMBER"
+    echo $SEPARATOR
 
   # Get AlloCiné last page
   elif [[ $PAGES_INDEX_NUMBER -eq $PAGES_NUMBER ]]; then
     curl -s $BASE_URL\?page\=$PAGES_INDEX_NUMBER > temp_baseurl
 
+    echo $SEPARATOR
     echo "Downloading from: $BASE_URL?page=$PAGES_INDEX_NUMBER"
+    echo $SEPARATOR
 
     FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
     if [[ $FILMS_NUMBER -gt 15 ]]; then
@@ -400,9 +406,9 @@ do
 
         if [[ $MIN_RATING ]]; then
           if [[ $PAGES_INDEX_NUMBER -gt 1 ]]; then
-            echo "----------------------------------------------------------------------------------------------------"
+            echo $SEPARATOR
             echo "First page has been checked, do you want to continue?"
-            echo "----------------------------------------------------------------------------------------------------"
+            echo $SEPARATOR
             read answer
             if [[ $answer != "yes" && $answer != "y" ]]; then
               exit 1
@@ -414,9 +420,9 @@ do
           ITEM=$(curl -s $QUERY_WHATSON_API)
 
           if [[ -z $ITEM ]]; then
-            echo "----------------------------------------------------------------------------------------------------"
+            echo $SEPARATOR
             echo "Item not present in the API yet."
-            echo "----------------------------------------------------------------------------------------------------"
+            echo $SEPARATOR
           else
             RATINGS_AVERAGE=$(echo $ITEM | jq '.ratings_average')
             LESS_OR_EQUAL=$(echo "$MIN_RATING<=$RATINGS_AVERAGE" | bc)
@@ -659,7 +665,7 @@ do
 
         echo "$URL,$IMDB_ID,$BETASERIES_ID,$THEMOVIEDB_ID,$METACRITIC_ID,$ROTTEN_TOMATOES_ID,$LETTERBOXD_ID,$SENSCRITIQUE_ID,$TRAKT_ID,$THETVDB_ID,TRUE" >> $FILMS_IDS_FILE_PATH
 
-        echo "----------------------------------------------------------------------------------------------------"
+        echo $SEPARATOR
 
         if [[ $PROMPT == "allocine" ]]; then
           exit 1
@@ -721,4 +727,4 @@ fi
 # Add ending message with duration
 DATA_DURATION=$SECONDS
 echo "Complete in $(($DATA_DURATION / 60)) minutes and $(($DATA_DURATION % 60)) seconds ✅"
-echo "----------------------------------------------------------------------------------------------------"
+echo $SEPARATOR

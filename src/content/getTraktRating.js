@@ -1,5 +1,6 @@
-const { generateUserAgent } = require("../utils/generateUserAgent");
-const { getCheerioContent } = require("../utils/getCheerioContent");
+const axios = require("axios");
+
+const { config } = require("../config");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -10,34 +11,32 @@ const { logErrors } = require("../utils/logErrors");
  * @returns {Promise<Object>} - An object containing the Trakt rating information.
  * @throws {Error} - If there is an error retrieving the Trakt rating.
  */
-const getTraktRating = async (traktHomepage, traktId) => {
+const getTraktRating = async (traktHomepage, traktId, allocineHomepage) => {
   let traktObj = null;
 
   try {
-    const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-      },
-    };
-
     if (isNotNull(traktId)) {
-      const $ = await getCheerioContent(
-        `${traktHomepage}`,
-        options,
-        "getTraktRating",
+      const type = allocineHomepage.includes(config.baseURLTypeSeries)
+        ? "shows"
+        : "movies";
+
+      const response = await axios.get(
+        `${config.baseURLTraktAPI}/${type}/${traktId}?extended=full`,
+        {
+          headers: {
+            "trakt-api-key": config.traktApiKey,
+            "trakt-api-version": 2,
+          },
+        },
       );
-      let usersRating = parseInt(
-        $(".trakt-rating .rating").text().replace("%", ""),
-      );
-      if (isNaN(usersRating) || usersRating === 0) usersRating = null;
-      let tagline = $("#tagline").text();
-      if (!tagline) tagline = null;
+
+      const { rating, tagline } = response.data;
 
       traktObj = {
         id: traktId,
         url: traktHomepage,
-        usersRating: usersRating,
-        tagline: tagline,
+        usersRating: rating ? Math.round(rating * 10) : null,
+        tagline: tagline && tagline.trim() !== "" ? tagline : null,
       };
     }
   } catch (error) {
