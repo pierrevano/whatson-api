@@ -146,9 +146,9 @@ const createJSON = async (
     tmdbId,
   );
   const traktRating = await getTraktRating(
+    allocineHomepage,
     traktHomepage,
     traktId,
-    allocineHomepage,
   );
   const tvtimeRating = await getTVTimeRating(tvtimeHomepage, tvtimeId);
   const theTvdbSlug = await getTheTvdbSlug(allocineHomepage, theTvdbId);

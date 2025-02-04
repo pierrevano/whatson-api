@@ -11,7 +11,7 @@ const { logErrors } = require("../utils/logErrors");
  * @returns {Promise<Object>} - An object containing the Trakt rating information.
  * @throws {Error} - If there is an error retrieving the Trakt rating.
  */
-const getTraktRating = async (traktHomepage, traktId, allocineHomepage) => {
+const getTraktRating = async (allocineHomepage, traktHomepage, traktId) => {
   let traktObj = null;
 
   try {

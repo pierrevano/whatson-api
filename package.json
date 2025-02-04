@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "2.92.0",
+  "version": "2.92.1",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "update-packages": "ncu -u && rm -rf node_modules package-lock.json && npm install",
     "changed-dataset": "git update-index --no-assume-unchanged src/assets/films_ids.txt && git update-index --no-assume-unchanged src/assets/series_ids.txt",
     "unchanged-dataset": "git update-index --assume-unchanged src/assets/films_ids.txt && git update-index --assume-unchanged src/assets/series_ids.txt",
-    "check-dataset": "bash src/data/checkIds.sh check_dataset movie && bash src/data/checkIds.sh check_dataset tvshow",
+    "check-dataset": "bash src/data/checkIds.sh check_dataset movie 0 && bash src/data/checkIds.sh check_dataset tvshow 0",
     "check-local-with-remote-ids": "node src/updateData.js movie no_update_ids update_db local no_active check 0 no_check_data no_force skip_mojo skip_services && node src/updateData.js tvshow no_update_ids update_db local no_active check 0 no_check_data no_force skip_mojo skip_services",
     "update-local-movie": "bash src/data/getIds.sh local movie",
     "update-local-tvshow": "bash src/data/getIds.sh local tvshow",
@@ -46,13 +46,13 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jshashes": "^1.0.8",
-    "mongodb": "^6.12.0",
-    "newrelic": "^12.9.0",
+    "mongodb": "^6.13.0",
+    "newrelic": "^12.11.3",
     "playwright": "^1.50.1",
     "prettier": "^3.4.2",
-    "rate-limiter-flexible": "^5.0.4",
+    "rate-limiter-flexible": "^5.0.5",
     "shelljs": "^0.8.5",
-    "vercel": "^39.2.6"
+    "vercel": "^40.1.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

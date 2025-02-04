@@ -22,6 +22,7 @@ if [[ $2 == "movie" ]]; then
   BASE_URL_SENSCRITIQUE=https://www.senscritique.com/film/-/
   BASE_URL_TRAKT=https://trakt.tv/movies/
   PROPERTY=P1265
+  TRAKT_PATH=".[0].movie.ids."
 elif [[ $2 == "tvshow" ]]; then
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
   FILMS_IDS_ACTIVE_FILE_PATH=./temp_series_ids_active.txt
@@ -35,12 +36,17 @@ elif [[ $2 == "tvshow" ]]; then
   BASE_URL_SENSCRITIQUE=https://www.senscritique.com/serie/-/
   BASE_URL_TRAKT=https://trakt.tv/shows/
   PROPERTY=P1267
+  TRAKT_PATH=".[0].show.ids."
 elif [[ -z $1 ]]; then
   echo "Add 'check' or 'update' first"
   exit 1
 else
   echo "Add 'movie' or 'tvshow' after 'check' or 'update'"
   exit 1
+fi
+
+if [[ $SOURCE != "circleci" ]]; then
+  source .env
 fi
 
 check_id () {
@@ -63,6 +69,29 @@ is_id_found () {
   else
     echo 0
   fi
+}
+
+fetch_from_trakt_search () {
+  local imdb_id=$1
+  local id_type=$2
+
+  response=$(curl -s --location "https://api.trakt.tv/search/imdb/$imdb_id" \
+    --header "trakt-api-key: $TRAKT_API_KEY" \
+    --header "trakt-api-version: 2")
+
+  response_length=$(echo "$response" | jq 'length')
+
+  if [[ "$response_length" -gt 1 ]]; then
+    id=null
+  else
+    id=$(echo "$response" | jq -r "$TRAKT_PATH$id_type")
+  fi
+
+  if [[ -z $id ]]; then
+    id=null
+  fi
+
+  echo "$id"
 }
 
 get_other_ids () {
@@ -138,6 +167,9 @@ get_other_ids () {
   if [[ -z $TRAKT_ID ]] || [[ $TRAKT_ID_DEPRECATED -eq 1 ]]; then
     TRAKT_ID=null
   fi
+  if [[ $TRAKT_ID == "null" ]] && [[ $TRAKT_ID_FROM_FILE == "null" ]]; then
+    TRAKT_ID=$(fetch_from_trakt_search "$IMDB_ID_FROM_FILE" "trakt")
+  fi
   echo "Trakt ID: $TRAKT_ID"
 
   THETVDB_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://thetvdb.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
@@ -148,6 +180,9 @@ get_other_ids () {
   THETVDB_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://thetvdb.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
   if [[ -z $THETVDB_ID ]] || [[ $THETVDB_ID_DEPRECATED -eq 1 ]]; then
     THETVDB_ID=null
+  fi
+  if [[ $THETVDB_ID == "null" ]] && [[ $THETVDB_ID_FROM_FILE == "null" ]]; then
+    THETVDB_ID=$(fetch_from_trakt_search "$IMDB_ID_FROM_FILE" "tvdb")
   fi
   echo "THETVDB ID: $THETVDB_ID"
 }
@@ -282,7 +317,7 @@ elif [[ $1 == "update" ]]; then
 elif [[ $1 == "check_dataset" ]]; then
   git update-index --no-assume-unchanged $FILMS_IDS_FILE_PATH
 
-  ERROR=$(git diff --unified=0 -- $FILMS_IDS_FILE_PATH \
+  ERROR=$(git diff HEAD~$3 HEAD --unified=0 -- $FILMS_IDS_FILE_PATH \
     | grep '^[+-]' \
     | grep -Ev '^(--- a/|\+\+\+ b/)' \
     | timeout 3600 awk -v baseurlAllocine="$BASE_URL" \
@@ -296,7 +331,7 @@ elif [[ $1 == "check_dataset" ]]; then
       -v baseurlTvtime="$BASE_URL_TVTIME" \
       -v filmIdsFilePath="$FILMS_IDS_FILE_PATH" \
       -v isTvshow="$2" \
-      -v skipValues="$3" -F',' '{
+      -v skipValues="$4" -F',' '{
       sub(/^[+-]/,"")
       data[$1] = (data[$1] ? data[$1] FS : "") $0
     }
@@ -313,6 +348,8 @@ elif [[ $1 == "check_dataset" ]]; then
       if (isTvshow == "tvshow") {
         urls[10] = baseurlTvtime
       }
+
+      split(skipValues, skipArray, ",")
 
       print "Only last values changed for: " filmIdsFilePath
 
@@ -332,6 +369,30 @@ elif [[ $1 == "check_dataset" ]]; then
             print "+ " lines[1+11] "," lines[2+11] "," lines[3+11] "," lines[4+11] "," lines[5+11] "," lines[6+11] "," lines[7+11] "," lines[8+11] "," lines[9+11] "," lines[10+11] "," lines[11+11]
             print "------------------------------------------------------------"
             exit
+          }
+          for(j=1; j<=11; j++) {
+            if (lines[j] != "null" && lines[j] != "") {
+              if (j == 4) j=5
+              url = urls[j] lines[j]
+              shouldSkip = 0
+              for (k in skipArray) {
+                if (url == skipArray[k]) {
+                  shouldSkip = 1
+                  break
+                }
+              }
+              cmd = ("curl -A \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36\" -o /dev/null -s -w \"%{http_code}\" " url)
+              cmd | getline http_status_code
+              close(cmd)
+              if (http_status_code != 000 && http_status_code != 200 && !(http_status_code >= 300 && http_status_code < 400) && shouldSkip != 1) {
+                print "------------------------------------------------------------"
+                print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."
+                print "IMDb ID: " urls[2] lines[2]
+                print lines[1] "," lines[2] "," lines[3] "," lines[4] "," lines[5] "," lines[6] "," lines[7] "," lines[8] "," lines[9] "," lines[10] "," lines[11]
+                print "------------------------------------------------------------"
+                exit
+              }
+            }
           }
         }
       }

@@ -38,6 +38,7 @@ if [[ $TYPE == "movie" ]]; then
   METACRITIC_TYPE=movie
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_films.txt
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_films.txt
+  TRAKT_PATH=".[0].movie.ids."
 elif [[ $TYPE == "tvshow" ]]; then
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
@@ -53,6 +54,7 @@ elif [[ $TYPE == "tvshow" ]]; then
   METACRITIC_TYPE=tv
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_series.txt
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_series.txt
+  TRAKT_PATH=".[0].show.ids."
 else
   echo "Item type should be either `movie` or `tvshow`"
   exit 1
@@ -64,11 +66,6 @@ if [[ $SOURCE != "circleci" ]]; then
 fi
 
 echo "SOURCE: $SOURCE"
-echo "BETASERIES_API_KEY: $BETASERIES_API_KEY"
-echo "THEMOVIEDB_API_KEY: $THEMOVIEDB_API_KEY"
-echo "VERCEL_ORG_ID: $VERCEL_ORG_ID"
-echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
-echo "VERCEL_TOKEN: $VERCEL_TOKEN"
 echo "WHATSON_API_URL: $WHATSON_API_URL"
 echo $SEPARATOR
 
@@ -244,6 +241,29 @@ fetch_id () {
   fi
 }
 
+fetch_from_trakt_search () {
+  local imdb_id=$1
+  local id_type=$2
+
+  response=$(curl -s --location "https://api.trakt.tv/search/imdb/$imdb_id" \
+    --header "trakt-api-key: $TRAKT_API_KEY" \
+    --header "trakt-api-version: 2")
+
+  response_length=$(echo "$response" | jq 'length')
+
+  if [[ "$response_length" -gt 1 ]]; then
+    id=null
+  else
+    id=$(echo "$response" | jq -r "$TRAKT_PATH$id_type")
+  fi
+
+  if [[ -z $id ]]; then
+    id=null
+  fi
+
+  echo "$id"
+}
+
 get_other_ids () {
   METACRITIC_ID=$(fetch_id "$WIKI_URL" "https://www.metacritic.com" "METACRITIC" "$NATIONALITY" "$IGNORE_NATIONALITY")
   ROTTEN_TOMATOES_ID=$(fetch_id "$WIKI_URL" "https://www.rottentomatoes.com" "ROTTEN_TOMATOES" "$NATIONALITY" "$IGNORE_NATIONALITY")
@@ -251,6 +271,14 @@ get_other_ids () {
   SENSCRITIQUE_ID=$(fetch_id "$WIKI_URL" "https://www.senscritique.com" "SENSCRITIQUE")
   TRAKT_ID=$(fetch_id "$WIKI_URL" "https://trakt.tv" "TRAKT")
   THETVDB_ID=$(fetch_id "$WIKI_URL" "https://thetvdb.com" "THETVDB")
+
+  if [[ "$TRAKT_ID" == "null" && -n "$IMDB_ID" ]]; then
+    TRAKT_ID=$(fetch_from_trakt_search "$IMDB_ID" "trakt")
+  fi
+
+  if [[ "$THETVDB_ID" == "null" && -n "$IMDB_ID" ]]; then
+    THETVDB_ID=$(fetch_from_trakt_search "$IMDB_ID" "tvdb")
+  fi
 
   echo "Metacritic ID: $METACRITIC_ID"
   echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
@@ -411,7 +439,7 @@ do
             echo $SEPARATOR
             read answer
             if [[ $answer != "yes" && $answer != "y" ]]; then
-              exit 1
+              exit 0
             fi
           fi
           QUERY_WHATSON_API="$WHATSON_API_URL/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all&api_key=$INTERNAL_API_KEY"
