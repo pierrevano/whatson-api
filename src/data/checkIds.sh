@@ -370,10 +370,12 @@ elif [[ $1 == "check_dataset" ]]; then
             print "------------------------------------------------------------"
             exit
           }
+
           for(j=1; j<=11; j++) {
             if (lines[j] != "null" && lines[j] != "") {
               if (j == 4) j=5
               url = urls[j] lines[j]
+
               shouldSkip = 0
               for (k in skipArray) {
                 if (url == skipArray[k]) {
@@ -381,9 +383,11 @@ elif [[ $1 == "check_dataset" ]]; then
                   break
                 }
               }
+
               cmd = ("curl -A \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36\" -o /dev/null -s -w \"%{http_code}\" " url)
               cmd | getline http_status_code
               close(cmd)
+
               if (http_status_code != 000 && http_status_code != 200 && !(http_status_code >= 300 && http_status_code < 400) && shouldSkip != 1) {
                 print "------------------------------------------------------------"
                 print "URL " url " returned an invalid HTTP status code: " http_status_code ". It should return 200."

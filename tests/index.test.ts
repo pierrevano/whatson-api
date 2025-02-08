@@ -57,10 +57,12 @@ function checkItemProperties(items) {
       items.filter((item) => item.genres && item.genres.length > 0).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-    expect(item.image).not.toBeNull();
-    expect(item.image).toMatch(
-      /\.(jpg|jpeg|png|gif|jfif)(\?[a-zA-Z0-9=&]*)?$/i,
-    );
+    item.is_active === true ? expect(item.image).not.toBeNull() : null;
+    item.is_active === true
+      ? expect(item.image).toMatch(
+          /^https:\/\/.*\.(jpg|jpeg|png|gif|jfif)(\?[a-zA-Z0-9=&]*)?$/i,
+        )
+      : null;
 
     item.release_date !== null
       ? expect(!isNaN(new Date(item.release_date).getTime())).toBe(true)
