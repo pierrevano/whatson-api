@@ -744,6 +744,13 @@ DATE=$(date '+%Y-%m-%d %H:%M:%S')
 echo "Last update was on: $DATE"
 echo $DATE > $UPDATED_AT_FILE_PATH
 
+LOCAL_LINES=$(wc -l < "$FILMS_IDS_FILE_PATH" | awk '{print $1}')
+REMOTE_LINES=$(curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" | wc -l | awk '{print $1}')
+if [ "$LOCAL_LINES" -lt "$REMOTE_LINES" ]; then
+  echo "Error: Local file has fewer lines ($LOCAL_LINES) than the remote file ($REMOTE_LINES)"
+  exit 1
+fi
+
 if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{print $1}') -ge 6000 ]]; then
   cd $FILMS_ASSETS_PATH
   vercel --prod --token=$VERCEL_TOKEN
