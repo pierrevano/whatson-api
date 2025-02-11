@@ -775,9 +775,9 @@ const params = {
     },
   },
   should_return_metacritic_id_on_search: {
-    query: "?metacriticid=emilia-perez&unknown",
+    query: "?metacriticid=squid-game&unknown",
     expectedResult: (items) => {
-      checkSingleItemId(items, 974950);
+      checkSingleItemId(items, 93405);
     },
   },
   should_return_rottentomatoes_id_on_search: {
