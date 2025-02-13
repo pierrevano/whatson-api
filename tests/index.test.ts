@@ -114,19 +114,14 @@ function checkItemProperties(items) {
         })
       : null;
 
-    item.trailer ? expect(item.trailer).toMatch(/^https/) : null;
+    item.trailer
+      ? expect(item.trailer).toMatch(
+          /^(https:\/\/(fr\.vid\.web\.acsta\.net.*\.mp4|www\.youtube\.com\/embed.*|www\.dailymotion\.com\/embed.*))$/,
+        )
+      : null;
     expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(
       config.minimumNumberOfItems.trailer,
     );
-    item.is_active === true && item.trailer
-      ? expect(
-          items.filter(
-            (item) =>
-              item.trailer &&
-              item.trailer.startsWith(config.baseURLDailymotion),
-          ).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.trailer)
-      : null;
 
     item.is_active === true && item.item_type === "tvshow"
       ? expect(

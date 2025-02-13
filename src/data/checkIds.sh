@@ -315,6 +315,9 @@ elif [[ $1 == "update" ]]; then
   cat $FILMS_IDS_FILE_PATH | sort -V | uniq > ./temp_ids.txt
   cat ./temp_ids.txt > $FILMS_IDS_FILE_PATH
 elif [[ $1 == "check_dataset" ]]; then
+  echo "Movies to exclude: $EXCLUDED_IDS_MOVIE"
+  echo "TV Shows to exclude: $EXCLUDED_IDS_TVSHOW"
+
   git update-index --no-assume-unchanged $FILMS_IDS_FILE_PATH
 
   ERROR=$(git diff HEAD~$3 HEAD --unified=0 -- $FILMS_IDS_FILE_PATH \
