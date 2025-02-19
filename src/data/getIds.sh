@@ -15,7 +15,6 @@ SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
 TYPE=$2
 URL_ESCAPE_FILE_PATH=./src/utils/urlEscape.sed
-UPDATED_AT_FILE_PATH=./src/assets/updated_at.txt
 USER_AGENT="$((RANDOM % 1000000000000))"
 REGEX_IDS="^\/\S+\/fiche\S+_gen_c\S+=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),([0-9]+|null),(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){10}[^,]*$"
@@ -736,14 +735,6 @@ do
   done
 done
 
-if [[ $PROMPT != "no_delete" ]]; then
-  remove_files
-fi
-
-DATE=$(date '+%Y-%m-%d %H:%M:%S')
-echo "Last update was on: $DATE"
-echo $DATE > $UPDATED_AT_FILE_PATH
-
 LOCAL_LINES=$(wc -l < "$FILMS_IDS_FILE_PATH" | awk '{print $1}')
 REMOTE_LINES=$(curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" | wc -l | awk '{print $1}')
 if [ "$LOCAL_LINES" -lt "$REMOTE_LINES" ]; then
@@ -752,11 +743,13 @@ if [ "$LOCAL_LINES" -lt "$REMOTE_LINES" ]; then
 fi
 
 if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{print $1}') -ge 6000 ]]; then
+  remove_files
+
   cd $FILMS_ASSETS_PATH
   vercel --prod --token=$VERCEL_TOKEN
   echo "Uploading $FILMS_ASSETS_PATH to $BASE_URL_ASSETS"
 else
-  echo "The file either doesn't exist, is empty, or has fewer than 5000 lines."
+  echo "The file either doesn't exist, is empty, or has fewer than 6000 lines."
 fi
 
 # Add ending message with duration
