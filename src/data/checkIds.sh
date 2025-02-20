@@ -97,17 +97,6 @@ fetch_from_trakt_search () {
 get_other_ids () {
   curl -s $WIKI_URL > temp_WIKI_URL_DOWNLOADED
 
-  ALLOCINE_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.allocine.fr" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  ALLOCINE_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.allocine.fr" | wc -l | awk '{print $1}')
-  if [[ $ALLOCINE_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
-    ALLOCINE_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.allocine.fr" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  fi
-  ALLOCINE_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://www.allocine.fr" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
-  if [[ -z $ALLOCINE_ID ]] || [[ $ALLOCINE_ID_DEPRECATED -eq 1 ]]; then
-    ALLOCINE_ID=null
-  fi
-  echo "AlloCiné ID: $ALLOCINE_ID"
-
   METACRITIC_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
   METACRITIC_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | wc -l | awk '{print $1}')
   if [[ $METACRITIC_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
@@ -223,9 +212,6 @@ if [[ $1 == "check" ]]; then
 
         get_other_ids $1 $2
 
-        ALLOCINE_ID_TO_USE=$(check_id "$ALLOCINE_ID" "$ALLOCINE_ID_FROM_FILE")
-        FOUND_ALLOCINE=$(is_id_found "$ALLOCINE_ID" "$ALLOCINE_ID_FROM_FILE")
-
         METACRITIC_ID_TO_USE=$(check_id "$METACRITIC_ID" "$METACRITIC_ID_FROM_FILE")
         FOUND_METACRITIC=$(is_id_found "$METACRITIC_ID" "$METACRITIC_ID_FROM_FILE")
 
@@ -244,8 +230,8 @@ if [[ $1 == "check" ]]; then
         THETVDB_ID_TO_USE=$(check_id "$THETVDB_ID" "$THETVDB_ID_FROM_FILE")
         FOUND_THETVDB=$(is_id_found "$THETVDB_ID" "$THETVDB_ID_FROM_FILE")
 
-        if [[ $FOUND_ALLOCINE -eq 1 ]] || [[ $FOUND_METACRITIC -eq 1 ]] || [[ $FOUND_ROTTEN_TOMATOES -eq 1 ]] || [[ $FOUND_LETTERBOXD -eq 1 ]] || [[ $FOUND_SENSCRITIQUE -eq 1 ]] || [[ $FOUND_TRAKT -eq 1 ]] || [[ $FOUND_THETVDB -eq 1 ]]; then
-          echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_TO_USE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,$THETVDB_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
+        if [[ $FOUND_METACRITIC -eq 1 ]] || [[ $FOUND_ROTTEN_TOMATOES -eq 1 ]] || [[ $FOUND_LETTERBOXD -eq 1 ]] || [[ $FOUND_SENSCRITIQUE -eq 1 ]] || [[ $FOUND_TRAKT -eq 1 ]] || [[ $FOUND_THETVDB -eq 1 ]]; then
+          echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_FROM_FILE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,$THETVDB_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
         fi
       fi
     fi
