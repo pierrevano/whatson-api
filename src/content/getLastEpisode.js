@@ -1,6 +1,7 @@
+const { config } = require("../config");
+const { getEpisodesDetails } = require("./getEpisodesDetails");
 const { getTMDBResponse } = require("../getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
-const { getEpisodesDetails } = require("./getEpisodesDetails");
 
 /**
  * Retrieves details of the last episode to air for a given tvshow from The Movie Database API.
@@ -16,6 +17,8 @@ const getLastEpisode = async (
   imdbId,
   tmdbId,
 ) => {
+  if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
+
   let lastEpisodeDetails = null;
 
   try {

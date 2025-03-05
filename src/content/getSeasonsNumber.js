@@ -1,13 +1,16 @@
+const { config } = require("../config");
 const { getTMDBResponse } = require("../getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the number of seasons for a given movie or tvshow from The Movie Database API.
+ * Retrieves the number of seasons for a given tvshow from The Movie Database API.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the movie or tvshow.
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
  * @returns {Promise<number|null>} - A promise that resolves with the number of seasons, or null if the number cannot be determined.
  */
 const getSeasonsNumber = async (allocineHomepage, tmdbId) => {
+  if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
+
   let seasonsNumber = null;
 
   try {

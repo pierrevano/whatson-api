@@ -114,6 +114,14 @@ function checkItemProperties(items) {
         })
       : null;
 
+    if (item.item_type === "movie") {
+      expect(item.episodes_details).toBeNull();
+      expect(item.last_episode).toBeNull();
+      expect(item.next_episode).toBeNull();
+      expect(item.seasons_number).toBeNull();
+      expect(item.status).toBeNull();
+    }
+
     item.trailer
       ? expect(item.trailer).toMatch(
           /^(https:\/\/(fr\.vid\.web\.acsta\.net.*\.mp4|www\.youtube\.com\/embed.*|www\.dailymotion\.com\/embed.*))$/,
@@ -155,6 +163,16 @@ function checkItemProperties(items) {
       : null;
     expect(
       items.filter((item) => item.item_type === "movie" && item.last_episode)
+        .length,
+    ).toBe(0);
+
+    item.is_active === true && item.item_type === "tvshow"
+      ? expect(
+          items.filter((item) => item.next_episode).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.nextEpisodes)
+      : null;
+    expect(
+      items.filter((item) => item.item_type === "movie" && item.next_episode)
         .length,
     ).toBe(0);
 
@@ -1246,6 +1264,41 @@ const params = {
               expect(item.last_episode[key]).not.toBe("");
             });
           }
+        }
+      });
+    },
+  },
+
+  should_have_next_episode_greater_than_last_episode: {
+    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        if (item.last_episode && item.next_episode) {
+          const lastSeason = item.last_episode.season;
+          const lastEpisode = item.last_episode.episode;
+          const nextSeason = item.next_episode.season;
+          const nextEpisode = item.next_episode.episode;
+
+          const lastCombined = lastSeason * 100 + lastEpisode;
+          const nextCombined = nextSeason * 100 + nextEpisode;
+
+          expect(nextCombined).toBeGreaterThan(lastCombined);
+        }
+      });
+    },
+  },
+
+  should_have_air_date_after_current_date: {
+    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      const currentDate = new Date().getTime();
+      const thresholdDate = currentDate - 48 * 60 * 60 * 1000;
+
+      items.forEach((item) => {
+        if (item.next_episode) {
+          const airDate = new Date(item.next_episode.air_date).getTime();
+          expect(!isNaN(airDate)).toBe(true);
+          expect(airDate).toBeGreaterThan(thresholdDate);
         }
       });
     },

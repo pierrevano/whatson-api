@@ -1,6 +1,4 @@
-const axios = require("axios");
-const axiosRetry = require("axios-retry").default;
-const { config } = require("../config");
+const { getTMDBResponse } = require("../getTMDBResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -17,22 +15,7 @@ const getTmdbRating = async (allocineHomepage, tmdbHomepage, tmdbId) => {
 
   try {
     if (isNotNull(tmdbId)) {
-      const type = allocineHomepage.includes(config.baseURLTypeSeries)
-        ? "tv"
-        : "movie";
-      const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}`;
-
-      axiosRetry(axios, {
-        retries: config.retries,
-        retryDelay: () => config.retryDelay,
-      });
-
-      const options = { validateStatus: (status) => status < 500 };
-      const { data, status } = await axios.get(url, options);
-
-      if (status !== 200) {
-        return tmdbObj;
-      }
+      const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 
       const usersRating = parseFloat(data.vote_average.toFixed(2));
       tmdbObj = {

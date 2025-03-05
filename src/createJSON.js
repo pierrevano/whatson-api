@@ -11,6 +11,7 @@ const { getLastEpisode } = require("./content/getLastEpisode");
 const { getLetterboxdRating } = require("./content/getLetterboxdRating");
 const { getMetacriticRating } = require("./content/getMetacriticRating");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
+const { getNextEpisode } = require("./content/getNextEpisode");
 const { getPlatformsLinks } = require("./content/getPlatformsLinks");
 const {
   getRottenTomatoesRating,
@@ -119,6 +120,7 @@ const createJSON = async (
     imdbId,
     tmdbId,
   );
+  const nextEpisode = await getNextEpisode(allocineHomepage, tmdbId);
   const mojoValues = await getObjectByImdbId(
     mojoBoxOfficeArray,
     imdbId,
@@ -289,6 +291,7 @@ const createJSON = async (
 
     episodes_details: episodesDetails,
     last_episode: lastEpisode,
+    next_episode: nextEpisode,
     platforms_links: platformsLinks,
     seasons_number: allocineFirstInfo.seasonsNumber,
     status: allocineFirstInfo.status,

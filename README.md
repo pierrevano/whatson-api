@@ -157,6 +157,17 @@ Example of an item returned:
     "url": "string", // URL to the IMDb page of the most recent episode
     "users_rating": "number" // Rating given by IMDb users for the most recent episode
   },
+  "next_episode": {
+    /* Information related to the next episode to air */
+    "title": "string", // Title of the next episode to air
+    "description": "string", // Description of the next episode to air
+    "air_date": "string", // Air date of the next episode to air
+    "episode": "number", // Episode number within the season
+    "episode_type": "string", // Type of the episode
+    "season": "number", // Season number of the next episode to air
+    "id": "string", // IMDb specific identifier for the next episode to air
+    "url": "string" // URL to the IMDb page of the next episode to air
+  },
   "platforms_links": [
     {
       "name": "string", // Name of the streaming platform
