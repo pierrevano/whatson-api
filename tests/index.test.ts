@@ -557,7 +557,7 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: "?critics_rating_details=true&episodes_details=true",
+    query: `?item_type=movie,tvshow&is_active=true,false&critics_rating_details=true&episodes_details=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, schema)),
   },
