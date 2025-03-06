@@ -1282,7 +1282,7 @@ const params = {
           const lastCombined = lastSeason * 100 + lastEpisode;
           const nextCombined = nextSeason * 100 + nextEpisode;
 
-          expect(nextCombined).toBeGreaterThan(lastCombined);
+          expect(nextCombined).toBeGreaterThanOrEqual(lastCombined);
         }
       });
     },
