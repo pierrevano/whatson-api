@@ -80,9 +80,6 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
-    if (item.ratings_average === 0) {
-      console.log(item);
-    }
     expect(item.ratings_average).toBeGreaterThan(0);
 
     item.item_type === "tvshow" && item.platforms_links
@@ -1251,15 +1248,6 @@ const params = {
             expect(lastEpisodeDetail.season).toBe(item.last_episode.season);
             expect(lastEpisodeDetail.id).toBe(item.last_episode.id);
             expect(lastEpisodeDetail.url).toBe(item.last_episode.url);
-
-            try {
-              expect(lastEpisodeDetail.users_rating).toBe(
-                item.last_episode.users_rating,
-              );
-            } catch (error) {
-              console.log(lastEpisodeDetail.users_rating);
-              console.log(item.last_episode);
-            }
 
             const airDatePattern = /^\d{4}-\d{2}-\d{2}$/;
             expect(item.last_episode.air_date).toMatch(airDatePattern);
