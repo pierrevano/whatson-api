@@ -2,9 +2,9 @@ const { appendFile } = require("fs");
 const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
-const { config } = require("./config");
-const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
-const { logErrors } = require("../src/utils/logErrors");
+const { config } = require("../config");
+const { getNodeVarsValues } = require("./getNodeVarsValues");
+const { logErrors } = require("./logErrors");
 
 /**
  * Makes an API call to The Movie Database (TMDB) to retrieve information about a movie or tvshow.

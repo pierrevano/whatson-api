@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const { config } = require("../config");
-const { getTMDBResponse } = require("../getTMDBResponse");
+const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**

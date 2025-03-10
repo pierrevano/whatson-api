@@ -1,6 +1,6 @@
 const { config } = require("../config");
 const { getEpisodesDetails } = require("./getEpisodesDetails");
-const { getTMDBResponse } = require("../getTMDBResponse");
+const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -44,19 +44,28 @@ const getLastEpisode = async (
         imdbHomepage,
       );
 
-      const finalEpisodeDetails =
-        Array.isArray(allEpisodesDetails) && allEpisodesDetails.length > 0
-          ? allEpisodesDetails[allEpisodesDetails.length - 1]
-          : null;
+      let episodeDetails = null;
+      if (
+        Array.isArray(allEpisodesDetails) &&
+        allEpisodesDetails.length > 0 &&
+        allEpisodesDetails.some((ep) => ep)
+      ) {
+        // Find the last episode with a non-null users_rating
+        episodeDetails = [...allEpisodesDetails]
+          .reverse()
+          .find((ep) => ep && ep.users_rating !== null);
 
-      const episodeDetails =
-        finalEpisodeDetails &&
-        finalEpisodeDetails.season === season &&
-        finalEpisodeDetails.episode === episode
-          ? finalEpisodeDetails
-          : null;
+        // If no such episode is found, fallback to the last episode
+        if (!episodeDetails) {
+          episodeDetails = allEpisodesDetails[allEpisodesDetails.length - 1];
+        }
+      }
 
-      if (episodeDetails) {
+      if (
+        episodeDetails &&
+        episodeDetails.season === season &&
+        episodeDetails.episode === episode
+      ) {
         lastEpisodeDetails = {
           title: episodeDetails.title,
           description,
@@ -68,8 +77,6 @@ const getLastEpisode = async (
           url: episodeDetails.url,
           users_rating: episodeDetails.users_rating,
         };
-      } else {
-        lastEpisodeDetails = null;
       }
     }
   } catch (error) {

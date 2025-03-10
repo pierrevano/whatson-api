@@ -3,8 +3,10 @@ const axios = require("axios");
 const { config } = require("./config");
 const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
+const { getEpisodesDetails } = require("./content/getEpisodesDetails");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
 const { getImdbRating } = require("./content/getImdbRating");
+const { getLastEpisode } = require("./content/getLastEpisode");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { logErrors } = require("./utils/logErrors");
 
@@ -53,6 +55,18 @@ const compareUsersRating = async (
     ).allocineUsersRating;
     const imdb_users_rating = await getImdbRating(imdbHomepage);
 
+    const episodesDetails = await getEpisodesDetails(
+      allocineHomepage,
+      imdbId,
+      imdbHomepage,
+    );
+    const lastEpisode = await getLastEpisode(
+      allocineHomepage,
+      imdbHomepage,
+      imdbId,
+      tmdbId,
+    );
+
     const allocinePopularity = (
       await getAllocinePopularity(allocineURL, item_type)
     ).popularity;
@@ -91,6 +105,8 @@ const compareUsersRating = async (
       const { _id, ...dataWithoutId } = response.data;
 
       dataWithoutId.is_active = isActive;
+      dataWithoutId.episodes_details = episodesDetails;
+      dataWithoutId.last_episode = lastEpisode;
       dataWithoutId.allocine.popularity = allocinePopularity;
       dataWithoutId.imdb.popularity = imdbPopularity;
       dataWithoutId.mojo = mojoObj;

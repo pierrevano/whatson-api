@@ -1,4 +1,4 @@
-const { getTMDBResponse } = require("../getTMDBResponse");
+const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
