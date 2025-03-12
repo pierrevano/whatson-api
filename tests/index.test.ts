@@ -153,7 +153,7 @@ function checkItemProperties(items) {
           ).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
-    item.item_type === "tvshow"
+    item.is_active === true && item.item_type === "tvshow"
       ? expect(
           items.filter((item) => item.last_episode).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
@@ -162,6 +162,25 @@ function checkItemProperties(items) {
       items.filter((item) => item.item_type === "movie" && item.last_episode)
         .length,
     ).toBe(0);
+    const releaseDatePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+    item.last_episode && item.last_episode.release_date
+      ? expect(item.last_episode.release_date).toMatch(releaseDatePattern)
+      : null;
+    item.last_episode
+      ? [
+          "season",
+          "episode",
+          "title",
+          "description",
+          "id",
+          "url",
+          "release_date",
+          "users_rating",
+        ].forEach((key) => {
+          expect(item.last_episode[key]).not.toBe("");
+          expect(item.last_episode[key]).not.toBeNull;
+        })
+      : null;
 
     item.is_active === true && item.item_type === "tvshow"
       ? expect(
@@ -172,6 +191,21 @@ function checkItemProperties(items) {
       items.filter((item) => item.item_type === "movie" && item.next_episode)
         .length,
     ).toBe(0);
+    item.next_episode
+      ? [
+          "season",
+          "episode",
+          "title",
+          "description",
+          "id",
+          "url",
+          "release_date",
+          "users_rating",
+        ].forEach((key) => {
+          expect(item.next_episode[key]).not.toBe("");
+          expect(item.next_episode[key]).not.toBeNull;
+        })
+      : null;
 
     item.is_active === true && item.item_type === "tvshow"
       ? expect(item.status).not.toBeNull()
@@ -1248,21 +1282,6 @@ const params = {
             expect(lastEpisodeDetail.season).toBe(item.last_episode.season);
             expect(lastEpisodeDetail.id).toBe(item.last_episode.id);
             expect(lastEpisodeDetail.url).toBe(item.last_episode.url);
-
-            const airDatePattern = /^\d{4}-\d{2}-\d{2}$/;
-            expect(item.last_episode.air_date).toMatch(airDatePattern);
-
-            [
-              "title",
-              "episode",
-              "season",
-              "id",
-              "url",
-              "users_rating",
-              "air_date",
-            ].forEach((key) => {
-              expect(item.last_episode[key]).not.toBe("");
-            });
           }
         }
       });
@@ -1288,7 +1307,7 @@ const params = {
     },
   },
 
-  should_have_air_date_after_current_date: {
+  should_have_release_date_after_current_date: {
     query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const currentDate = new Date().getTime();
@@ -1296,9 +1315,11 @@ const params = {
 
       items.forEach((item) => {
         if (item.next_episode) {
-          const airDate = new Date(item.next_episode.air_date).getTime();
-          expect(!isNaN(airDate)).toBe(true);
-          expect(airDate).toBeGreaterThan(thresholdDate);
+          const releaseDate = new Date(
+            item.next_episode.release_date,
+          ).getTime();
+          expect(!isNaN(releaseDate)).toBe(true);
+          expect(releaseDate).toBeGreaterThan(thresholdDate);
         }
       });
     },

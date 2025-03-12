@@ -140,33 +140,36 @@ Example of an item returned:
       "season": "number", // Season number of the episode
       "episode": "number", // Episode number within the season
       "title": "string", // Title of the episode
+      "description": "string", // Description of the episode
       "id": "string", // IMDb specific identifier
       "url": "string", // URL to the IMDb page
+      "release_date": "string", // Release date of the episode
       "users_rating": "number" // Rating given by IMDb users
     }
   ],
   "last_episode": {
     /* Information related to the most recent episode */
+    "season": "number", // Season number of the most recent episode
+    "episode": "number", // Episode number for the most recent episode
+    "episode_type": "string", // Type of the most recent episode
     "title": "string", // Title of the most recent episode
     "description": "string", // Description of the most recent episode
-    "air_date": "string", // Air date of the most recent episode
-    "episode": "number", // Episode number within the season
-    "episode_type": "string", // Type of the episode
-    "season": "number", // Season number of the most recent episode
     "id": "string", // IMDb specific identifier for the most recent episode
     "url": "string", // URL to the IMDb page of the most recent episode
+    "release_date": "string", // Release date of the most recent episode
     "users_rating": "number" // Rating given by IMDb users for the most recent episode
   },
   "next_episode": {
     /* Information related to the next episode to air */
+    "season": "number", // Season number of the next episode to air
+    "episode": "number", // Episode number for the next episode to air
+    "episode_type": "string", // Type of the next episode to air
     "title": "string", // Title of the next episode to air
     "description": "string", // Description of the next episode to air
-    "air_date": "string", // Air date of the next episode to air
-    "episode": "number", // Episode number within the season
-    "episode_type": "string", // Type of the episode
-    "season": "number", // Season number of the next episode to air
     "id": "string", // IMDb specific identifier for the next episode to air
-    "url": "string" // URL to the IMDb page of the next episode to air
+    "url": "string", // URL to the IMDb page of the next episode to air
+    "release_date": "string", // Release date of the next episode to air
+    "users_rating": "number" // Rating given by IMDb users for the next episode to air
   },
   "platforms_links": [
     {

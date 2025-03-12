@@ -1,6 +1,9 @@
 const axios = require("axios");
 
 const { config } = require("../config");
+const {
+  convertImdbDateToISOString,
+} = require("../utils/convertFrenchDateToISOString");
 const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
@@ -71,9 +74,16 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
             : null;
 
           // Split the title to get the actual episode title after "∙"
-          const [_, episodeTitle] = fullTitle
-            .split("∙")
-            .map((part) => part.trim());
+          const [_, episodeTitle] =
+            fullTitle.split("∙").map((part) => part.trim()) || null;
+
+          // Extract episode description
+          const episodeDescription =
+            $(element)
+              .find(".ipc-overflowText .ipc-html-content-inner-div")
+              .eq(titleIndex)
+              .text()
+              .trim() || null;
 
           // Find the parent element that contains the href attribute
           const parentWithHref = $(titleElement).closest(".ipc-title a");
@@ -81,6 +91,14 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
             ? parentWithHref.attr("href").match(/\/title\/(tt\d+)\//)
             : null;
           const episodeId = episodeIdMatch ? episodeIdMatch[1] : null;
+
+          // Find the closest h4 and then get the sibling span for the release date
+          const closestH4 = $(titleElement).closest("h4");
+          const releaseDateText = closestH4
+            .siblings("span")
+            .first()
+            .text()
+            .trim();
 
           // Fetch the rating relative to the found title element
           const episodeRating = $(element)
@@ -92,9 +110,11 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
           episodesDetails.push({
             season: season,
             episode: episodeNumber,
-            title: episodeTitle || null,
+            title: episodeTitle,
+            description: episodeDescription,
             id: episodeId,
             url: `${config.baseURLIMDB}${episodeId}/`,
+            release_date: convertImdbDateToISOString(releaseDateText) || null,
             users_rating: parseFloat(episodeRating) || null,
           });
         });

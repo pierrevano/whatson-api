@@ -4,7 +4,7 @@ const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves details of the last episode to air for a given tvshow from The Movie Database API.
+ * Retrieves details of the last episode to air for a given tvshow and the episode type from The Movie Database API.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {number} tmdbId - TMDB ID for the tvshow.
  * @param {string} imdbId - IMDb ID for the tvshow.
@@ -24,60 +24,47 @@ const getLastEpisode = async (
   try {
     const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 
-    if (data && data.last_episode_to_air) {
-      const {
-        overview: description = null,
-        air_date = null,
-        episode_number: episode = null,
-        episode_type = null,
-        season_number: season = null,
-      } = Object.fromEntries(
-        Object.entries(data.last_episode_to_air).map(([key, value]) => [
-          key,
-          value !== "" ? value : null,
-        ]),
-      );
+    const episode_type =
+      data && data.last_episode_to_air && data.last_episode_to_air.episode_type
+        ? data.last_episode_to_air.episode_type
+        : null;
 
-      const allEpisodesDetails = await getEpisodesDetails(
-        allocineHomepage,
-        imdbId,
-        imdbHomepage,
-      );
+    const allEpisodesDetails = await getEpisodesDetails(
+      allocineHomepage,
+      imdbId,
+      imdbHomepage,
+    );
 
-      let episodeDetails = null;
-      if (
-        Array.isArray(allEpisodesDetails) &&
-        allEpisodesDetails.length > 0 &&
-        allEpisodesDetails.some((ep) => ep)
-      ) {
-        // Find the last episode with a non-null users_rating
-        episodeDetails = [...allEpisodesDetails]
-          .reverse()
-          .find((ep) => ep && ep.users_rating !== null);
+    let lastEpisode = null;
 
-        // If no such episode is found, fallback to the last episode
-        if (!episodeDetails) {
-          episodeDetails = allEpisodesDetails[allEpisodesDetails.length - 1];
-        }
+    if (
+      Array.isArray(allEpisodesDetails) &&
+      allEpisodesDetails.length > 0 &&
+      allEpisodesDetails.some((ep) => ep)
+    ) {
+      // Find the last episode with a non-null users_rating
+      lastEpisode = [...allEpisodesDetails]
+        .reverse()
+        .find((ep) => ep && ep.users_rating !== null);
+
+      // If no such episode is found, fallback to the last episode
+      if (!lastEpisode) {
+        lastEpisode = allEpisodesDetails[allEpisodesDetails.length - 1];
       }
+    }
 
-      if (
-        episodeDetails &&
-        episodeDetails.season === season &&
-        episodeDetails.episode === episode
-      ) {
-        lastEpisodeDetails = {
-          title: episodeDetails.title,
-          description,
-          air_date,
-          episode,
-          episode_type,
-          season,
-          id: episodeDetails.id,
-          url: episodeDetails.url,
-          users_rating: episodeDetails.users_rating,
-        };
-      }
+    if (lastEpisode) {
+      lastEpisodeDetails = {
+        season: lastEpisode.season,
+        episode: lastEpisode.episode,
+        episode_type,
+        title: lastEpisode.title,
+        description: lastEpisode.description,
+        id: lastEpisode.id,
+        url: lastEpisode.url,
+        release_date: lastEpisode.release_date,
+        users_rating: lastEpisode.users_rating,
+      };
     }
   } catch (error) {
     logErrors(error, allocineHomepage, "getLastEpisode");

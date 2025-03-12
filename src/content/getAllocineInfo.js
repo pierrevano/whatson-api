@@ -44,7 +44,10 @@ const getAllocineInfo = async (
     const genres = !compare ? await getGenres(allocineHomepage, tmdbId) : null;
 
     let image = $('meta[property="og:image"]').attr("content");
-    if (!image) image = await getImageFromTMDB(allocineHomepage, tmdbId);
+    if (!image)
+      image = !compare
+        ? await getImageFromTMDB(allocineHomepage, tmdbId)
+        : null;
 
     let allocineUsersRating = parseFloat(
       $(".stareval-note").eq(1).text().replace(",", "."),

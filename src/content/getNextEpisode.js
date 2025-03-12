@@ -1,79 +1,92 @@
-const axios = require("axios");
-
 const { config } = require("../config");
+const { getEpisodesDetails } = require("./getEpisodesDetails");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the next episode to be aired for a specific tvshow based on its TMDB ID.
- * This function fetches data from TMDB and Trakt APIs to determine the next episode.
- *
- * @param {string} allocineHomepage - The AlloCiné homepage URL for the movie or tvshow.
- * @param {number} tmdbId - The TMDB ID of the movie or tvshow.
- * @returns {Promise<Object|null>} - An object containing the next episode information or null if not found.
- * @throws {Error} - If there is an error retrieving the data.
+ * Retrieves details of the next episode to air for a given tvshow and the episode type from The Movie Database API.
+ * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
+ * @param {number} tmdbId - TMDB ID for the tvshow.
+ * @param {string} imdbId - IMDb ID for the tvshow.
+ * @param {string} imdbHomepage - IMDb homepage URL for the tvshow.
+ * @returns {Promise<Object|null>} - A promise that resolves with the details of the next episode or null if the details cannot be determined.
  */
-const getNextEpisode = async (allocineHomepage, tmdbId) => {
+const getNextEpisode = async (
+  allocineHomepage,
+  imdbHomepage,
+  imdbId,
+  tmdbId,
+) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
-  let nextEpisode = null;
+  let nextEpisodeDetails = null;
 
   try {
     const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 
-    const nextEpisodeToAirFromTMDB = data?.next_episode_to_air || null;
+    const episode_type =
+      data && data.next_episode_to_air && data.next_episode_to_air.episode_type
+        ? data.next_episode_to_air.episode_type
+        : null;
 
-    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-    const response = await axios.get(
-      `${config.baseURLTraktAPI}/calendars/all/shows/${today}/7`,
-      {
-        headers: {
-          "trakt-api-key": config.traktApiKey,
-          "trakt-api-version": 2,
-        },
-      },
+    const allEpisodesDetails = await getEpisodesDetails(
+      allocineHomepage,
+      imdbId,
+      imdbHomepage,
     );
 
-    const filteredEpisodes = response.data.filter(
-      (ep) => ep?.show?.ids?.tmdb && ep.show.ids.tmdb === tmdbId,
-    );
+    let lastRatedEpisodeIndex = -1;
 
-    if (filteredEpisodes.length > 0) {
-      const mostRecentEpisode = filteredEpisodes.reduce((latest, current) => {
-        return new Date(current.first_aired) > new Date(latest.first_aired)
-          ? current
-          : latest;
-      });
+    if (
+      Array.isArray(allEpisodesDetails) &&
+      allEpisodesDetails.length > 0 &&
+      allEpisodesDetails.some((ep) => ep?.users_rating !== null)
+    ) {
+      lastRatedEpisodeIndex = allEpisodesDetails.findLastIndex(
+        (ep) => ep?.users_rating !== null,
+      );
+    }
 
-      const title = mostRecentEpisode?.episode?.title ?? null;
-      const description = nextEpisodeToAirFromTMDB?.overview ?? null;
-      const firstAired = mostRecentEpisode?.first_aired ?? null;
-      const episode = mostRecentEpisode?.episode?.number ?? null;
-      const episodeType = nextEpisodeToAirFromTMDB?.episode_type ?? null;
-      const season = mostRecentEpisode?.episode?.season ?? null;
-      const id = mostRecentEpisode?.episode?.ids?.imdb ?? null;
-      const url = id ? `${config.baseURLIMDB}${id}` : null;
+    if (
+      lastRatedEpisodeIndex !== -1 &&
+      lastRatedEpisodeIndex < allEpisodesDetails.length - 1
+    ) {
+      const nextEpisode = allEpisodesDetails[lastRatedEpisodeIndex + 1];
+      if (nextEpisode && nextEpisode.release_date) {
+        const currentDate = new Date();
+        const releaseDate = new Date(nextEpisode.release_date);
 
-      if ([title, firstAired, episode, season, id, url].includes(null)) {
-        nextEpisode = null;
-      } else {
-        nextEpisode = {
-          title: title,
-          description: description,
-          air_date: firstAired,
-          episode: episode,
-          episode_type: episodeType,
-          season: season,
-          id: id,
-          url: url,
-        };
+        const currentDateOnly = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate(),
+        );
+        const releaseDateOnly = new Date(
+          releaseDate.getFullYear(),
+          releaseDate.getMonth(),
+          releaseDate.getDate(),
+        );
+
+        if (releaseDateOnly >= currentDateOnly) {
+          nextEpisodeDetails = {
+            season: nextEpisode.season,
+            episode: nextEpisode.episode,
+            episode_type: episode_type,
+            title: nextEpisode.title,
+            description: nextEpisode.description,
+            id: nextEpisode.id,
+            url: nextEpisode.url,
+            release_date: nextEpisode.release_date,
+            users_rating: nextEpisode.users_rating,
+          };
+        }
       }
     }
   } catch (error) {
-    logErrors(error, tmdbId, "getNextEpisode");
+    logErrors(error, allocineHomepage, "getNextEpisode");
   }
 
-  return nextEpisode;
+  return nextEpisodeDetails;
 };
 
 module.exports = { getNextEpisode };

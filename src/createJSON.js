@@ -120,7 +120,12 @@ const createJSON = async (
     imdbId,
     tmdbId,
   );
-  const nextEpisode = await getNextEpisode(allocineHomepage, tmdbId);
+  const nextEpisode = await getNextEpisode(
+    allocineHomepage,
+    imdbHomepage,
+    imdbId,
+    tmdbId,
+  );
   const mojoValues = await getObjectByImdbId(
     mojoBoxOfficeArray,
     imdbId,

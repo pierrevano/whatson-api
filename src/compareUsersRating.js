@@ -7,6 +7,7 @@ const { getEpisodesDetails } = require("./content/getEpisodesDetails");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
 const { getImdbRating } = require("./content/getImdbRating");
 const { getLastEpisode } = require("./content/getLastEpisode");
+const { getNextEpisode } = require("./content/getNextEpisode");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { logErrors } = require("./utils/logErrors");
 
@@ -45,27 +46,37 @@ const compareUsersRating = async (
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${config.internalApiKey}`;
 
   try {
-    const allocine_users_rating = (
+    const { allocineUsersRating: allocine_users_rating, status } =
       await getAllocineInfo(
         allocineHomepage,
         betaseriesHomepage,
         tmdbId,
         compare,
-      )
-    ).allocineUsersRating;
+      );
     const imdb_users_rating = await getImdbRating(imdbHomepage);
 
-    const episodesDetails = await getEpisodesDetails(
-      allocineHomepage,
-      imdbId,
-      imdbHomepage,
-    );
-    const lastEpisode = await getLastEpisode(
-      allocineHomepage,
-      imdbHomepage,
-      imdbId,
-      tmdbId,
-    );
+    const statusIsOngoingOrUnknown =
+      status && (status === "Ongoing" || status === "Unknown");
+    let episodesDetails, lastEpisode, nextEpisode;
+    if (statusIsOngoingOrUnknown) {
+      episodesDetails = await getEpisodesDetails(
+        allocineHomepage,
+        imdbId,
+        imdbHomepage,
+      );
+      lastEpisode = await getLastEpisode(
+        allocineHomepage,
+        imdbHomepage,
+        imdbId,
+        tmdbId,
+      );
+      nextEpisode = await getNextEpisode(
+        allocineHomepage,
+        imdbHomepage,
+        imdbId,
+        tmdbId,
+      );
+    }
 
     const allocinePopularity = (
       await getAllocinePopularity(allocineURL, item_type)
@@ -105,8 +116,13 @@ const compareUsersRating = async (
       const { _id, ...dataWithoutId } = response.data;
 
       dataWithoutId.is_active = isActive;
-      dataWithoutId.episodes_details = episodesDetails;
-      dataWithoutId.last_episode = lastEpisode;
+
+      if (statusIsOngoingOrUnknown) {
+        dataWithoutId.episodes_details = episodesDetails;
+        dataWithoutId.last_episode = lastEpisode;
+        dataWithoutId.next_episode = nextEpisode;
+      }
+
       dataWithoutId.allocine.popularity = allocinePopularity;
       dataWithoutId.imdb.popularity = imdbPopularity;
       dataWithoutId.mojo = mojoObj;
