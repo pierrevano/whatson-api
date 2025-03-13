@@ -170,6 +170,7 @@ function checkItemProperties(items) {
       ? [
           "season",
           "episode",
+          "episode_type",
           "title",
           "description",
           "id",
@@ -178,7 +179,10 @@ function checkItemProperties(items) {
           "users_rating",
         ].forEach((key) => {
           expect(item.last_episode[key]).not.toBe("");
-          expect(item.last_episode[key]).not.toBeNull;
+
+          if (["season", "episode", "title", "id", "url"].includes(key)) {
+            expect(item.last_episode[key]).not.toBeNull();
+          }
         })
       : null;
 
@@ -195,6 +199,7 @@ function checkItemProperties(items) {
       ? [
           "season",
           "episode",
+          "episode_type",
           "title",
           "description",
           "id",
@@ -203,7 +208,19 @@ function checkItemProperties(items) {
           "users_rating",
         ].forEach((key) => {
           expect(item.next_episode[key]).not.toBe("");
-          expect(item.next_episode[key]).not.toBeNull;
+
+          if (
+            [
+              "season",
+              "episode",
+              "title",
+              "id",
+              "url",
+              "release_date",
+            ].includes(key)
+          ) {
+            expect(item.next_episode[key]).not.toBeNull();
+          }
         })
       : null;
 
