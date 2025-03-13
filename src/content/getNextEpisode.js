@@ -22,13 +22,6 @@ const getNextEpisode = async (
   let nextEpisodeDetails = null;
 
   try {
-    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
-
-    const episode_type =
-      data && data.next_episode_to_air && data.next_episode_to_air.episode_type
-        ? data.next_episode_to_air.episode_type
-        : null;
-
     const allEpisodesDetails = await getEpisodesDetails(
       allocineHomepage,
       imdbId,
@@ -39,7 +32,6 @@ const getNextEpisode = async (
 
     if (
       Array.isArray(allEpisodesDetails) &&
-      allEpisodesDetails.length > 0 &&
       allEpisodesDetails.some((ep) => ep?.users_rating !== null)
     ) {
       lastRatedEpisodeIndex = allEpisodesDetails.findLastIndex(
@@ -52,22 +44,32 @@ const getNextEpisode = async (
       lastRatedEpisodeIndex < allEpisodesDetails.length - 1
     ) {
       const nextEpisode = allEpisodesDetails[lastRatedEpisodeIndex + 1];
+
+      const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
+
+      let episode_type = null;
+      if (data?.next_episode_to_air) {
+        const {
+          season_number,
+          episode_number,
+          episode_type: type,
+        } = data.next_episode_to_air;
+
+        if (
+          season_number === nextEpisode.season &&
+          episode_number === nextEpisode.episode
+        ) {
+          episode_type = type;
+        }
+      }
+
       if (nextEpisode && nextEpisode.release_date) {
-        const currentDate = new Date();
-        const releaseDate = new Date(nextEpisode.release_date);
+        const currentDate = new Date().toISOString().split("T")[0];
+        const releaseDate = new Date(nextEpisode.release_date)
+          .toISOString()
+          .split("T")[0];
 
-        const currentDateOnly = new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          currentDate.getDate(),
-        );
-        const releaseDateOnly = new Date(
-          releaseDate.getFullYear(),
-          releaseDate.getMonth(),
-          releaseDate.getDate(),
-        );
-
-        if (releaseDateOnly >= currentDateOnly) {
+        if (releaseDate >= currentDate) {
           nextEpisodeDetails = {
             season: nextEpisode.season,
             episode: nextEpisode.episode,

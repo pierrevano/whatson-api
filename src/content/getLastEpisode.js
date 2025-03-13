@@ -22,13 +22,6 @@ const getLastEpisode = async (
   let lastEpisodeDetails = null;
 
   try {
-    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
-
-    const episode_type =
-      data && data.last_episode_to_air && data.last_episode_to_air.episode_type
-        ? data.last_episode_to_air.episode_type
-        : null;
-
     const allEpisodesDetails = await getEpisodesDetails(
       allocineHomepage,
       imdbId,
@@ -39,7 +32,6 @@ const getLastEpisode = async (
 
     if (
       Array.isArray(allEpisodesDetails) &&
-      allEpisodesDetails.length > 0 &&
       allEpisodesDetails.some((ep) => ep)
     ) {
       // Find the last episode with a non-null users_rating
@@ -54,6 +46,24 @@ const getLastEpisode = async (
     }
 
     if (lastEpisode) {
+      const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
+
+      let episode_type = null;
+      if (data?.last_episode_to_air) {
+        const {
+          season_number,
+          episode_number,
+          episode_type: type,
+        } = data.last_episode_to_air;
+
+        if (
+          season_number === lastEpisode.season &&
+          episode_number === lastEpisode.episode
+        ) {
+          episode_type = type;
+        }
+      }
+
       lastEpisodeDetails = {
         season: lastEpisode.season,
         episode: lastEpisode.episode,
