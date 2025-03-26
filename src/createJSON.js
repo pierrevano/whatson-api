@@ -116,15 +116,13 @@ const createJSON = async (
   );
   const lastEpisode = await getLastEpisode(
     allocineHomepage,
-    imdbHomepage,
-    imdbId,
     tmdbId,
+    episodesDetails,
   );
   const nextEpisode = await getNextEpisode(
     allocineHomepage,
-    imdbHomepage,
-    imdbId,
     tmdbId,
+    episodesDetails,
   );
   const mojoValues = await getObjectByImdbId(
     mojoBoxOfficeArray,

@@ -66,15 +66,13 @@ const compareUsersRating = async (
       );
       lastEpisode = await getLastEpisode(
         allocineHomepage,
-        imdbHomepage,
-        imdbId,
         tmdbId,
+        episodesDetails,
       );
       nextEpisode = await getNextEpisode(
         allocineHomepage,
-        imdbHomepage,
-        imdbId,
         tmdbId,
+        episodesDetails,
       );
     }
 

@@ -11,23 +11,12 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} imdbHomepage - IMDb homepage URL for the tvshow.
  * @returns {Promise<Object|null>} - A promise that resolves with the details of the last episode or null if the details cannot be determined.
  */
-const getLastEpisode = async (
-  allocineHomepage,
-  imdbHomepage,
-  imdbId,
-  tmdbId,
-) => {
+const getLastEpisode = async (allocineHomepage, tmdbId, allEpisodesDetails) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
   let lastEpisodeDetails = null;
 
   try {
-    const allEpisodesDetails = await getEpisodesDetails(
-      allocineHomepage,
-      imdbId,
-      imdbHomepage,
-    );
-
     let lastEpisode = null;
 
     if (

@@ -306,7 +306,12 @@ elif [[ $1 == "check_dataset" ]]; then
 
   git update-index --no-assume-unchanged $FILMS_IDS_FILE_PATH
 
-  ERROR=$(git diff HEAD~$3 HEAD --unified=0 -- $FILMS_IDS_FILE_PATH \
+  ERROR=$(
+    if [ -n "$3" ]; then
+      git diff "HEAD~$3" HEAD --unified=0 -- "$FILMS_IDS_FILE_PATH"
+    else
+      git diff --unified=0 -- "$FILMS_IDS_FILE_PATH"
+    fi \
     | grep '^[+-]' \
     | grep -Ev '^(--- a/|\+\+\+ b/)' \
     | timeout 3600 awk -v baseurlAllocine="$BASE_URL" \

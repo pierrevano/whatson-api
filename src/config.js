@@ -44,7 +44,7 @@ const config = {
   collectionNamePreferences: "preferences",
 
   /* Rate limit settings */
-  points: 100,
+  points: 1000,
   higher_points: 10000,
   duration: 24 * 60 * 60, // 24 hours in seconds
   blockDuration: 24 * 60 * 60, // 24 hours in seconds
