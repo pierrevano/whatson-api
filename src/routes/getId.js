@@ -24,8 +24,7 @@ const getId = async (req, res) => {
     const ratings_filters_query = req.query.ratings_filters;
     const url = `${req.headers["host"]}${req.url}`;
     const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
-    const critics_rating_details_query = req.query.critics_rating_details;
-    const episodes_details_query = req.query.episodes_details;
+    const append_to_response = req.query.append_to_response;
 
     const internal_api_key = await collectionNameApiKey.findOne({
       name: "internal_api_key",
@@ -36,9 +35,8 @@ const getId = async (req, res) => {
     if (id_path && ratings_filters_query) {
       try {
         const { items } = await aggregateData(
-          critics_rating_details_query,
+          append_to_response,
           undefined,
-          episodes_details_query,
           undefined,
           id_path,
           undefined,
@@ -71,9 +69,20 @@ const getId = async (req, res) => {
       try {
         // Dynamically build the projection object based on query parameters
         let projection = {};
-        if (!critics_rating_details_query === "true")
+        if (
+          !(
+            append_to_response &&
+            append_to_response.split(",").includes("critics_rating_details")
+          )
+        )
           projection.critics_rating_details = 0;
-        if (!episodes_details_query === "true") projection.episodes_details = 0;
+        if (
+          !(
+            append_to_response &&
+            append_to_response.split(",").includes("episodes_details")
+          )
+        )
+          projection.episodes_details = 0;
 
         const query = { id: id_path, item_type: item_type };
         const items = await collectionData.findOne(query, { projection });

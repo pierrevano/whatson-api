@@ -15,7 +15,7 @@ const schema = {
   trailer: "string", // URL to the item's trailer
 
   episodes_details: [
-    // To display this key, add the query parameter `episodes_details=true`
+    // To display this key, add `episodes_details` to the query parameter `append_to_response`
     {
       season: "number", // Season number of the episode
       episode: "number", // Episode number within the season
@@ -68,7 +68,7 @@ const schema = {
     critics_rating: "number", // Rating given by AlloCiné critics
     critics_number: "number", // Number of AlloCiné critics who rated
     critics_rating_details: [
-      // To display this key, add the query parameter `critics_rating_details=true`
+      // To display this key, add `critics_rating_details` to the query parameter `append_to_response`
       {
         critic_name: "string", // Name of the critic
         critic_rating: "number", // Rating given by the critic

@@ -18,9 +18,8 @@ const getItems = async (req, res) => {
     const api_key_query = req.query.api_key || "api_key_not_provided";
     req.query.api_key = api_key_query;
 
-    const critics_rating_details_query = req.query.critics_rating_details;
+    const append_to_response = req.query.append_to_response;
     const directors_query = req.query.directors;
-    const episodes_details_query = req.query.episodes_details;
     const genres_query = req.query.genres;
     const id_path = parseInt(req.params.id);
     const is_active_query = req.query.is_active;
@@ -42,9 +41,8 @@ const getItems = async (req, res) => {
     sendToNewRelic(req, api_key_query, internal_api_key);
 
     let { items, limit, page, is_active_item } = await aggregateData(
-      critics_rating_details_query,
+      append_to_response,
       directors_query,
-      episodes_details_query,
       genres_query,
       id_path,
       is_active_query,

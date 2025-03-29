@@ -507,6 +507,9 @@ do
         USERS_RATINGS_FOUND=2
         if [[ $PROMPT == "stop" ]]; then
           USERS_RATINGS_FOUND=$(curl -s https://www.allocine.fr$URL | grep "\"stareval-review" | wc -l | awk '{print $1}')
+          if [[ $USERS_RATINGS_FOUND -eq 1 ]]; then
+            USERS_RATINGS_FOUND=2
+          fi
           if [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
             echo "No users ratings."
           fi

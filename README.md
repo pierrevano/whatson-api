@@ -46,22 +46,21 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?popularity_filters=allocine_popularity,imdb_popularity&ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&item_type=movie,tvshow&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&is_active=true,false&critics_rating_details=<boolean>&episodes_details=<boolean>&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/?popularity_filters=allocine_popularity,imdb_popularity&ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&item_type=movie,tvshow&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&is_active=true,false&append_to_response=critics_rating_details,episodes_details&page=<integer>&limit=<integer>
 > ```
 
-| Parameter              | Value                                                                                                                                                                                                               | Description                                                |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| popularity_filters     | allocine_popularity,imdb_popularity                                                                                                                                                                                 | Popularity filters source (or _none_ to disable it)        |
-| ratings_filters        | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source (or _all_ for every values)         |
-| item_type              | movie,tvshow                                                                                                                                                                                                        | The type of the item (_movie_, _tvshow_ or both)           |
-| minimum_ratings        | 0,1,2,2.5,3,3.5,4,4.5                                                                                                                                                                                               | Minimum ratings to return                                  |
-| seasons_number         | 1,2,3,4,5                                                                                                                                                                                                           | Number of seasons (5 means 5+) (only valid for tvshows)    |
-| status                 | canceled,ended,ongoing,pilot,unknown                                                                                                                                                                                | TV show's status (only valid for tvshows)                  |
-| is_active              | true,false                                                                                                                                                                                                          | Is the item currently on screens (_true_, _false_ or both) |
-| critics_rating_details | _boolean_                                                                                                                                                                                                           | Should we return critics_rating_details in the response    |
-| episodes_details       | _boolean_                                                                                                                                                                                                           | Should we return episodes_details in the response          |
-| page                   | _integer_                                                                                                                                                                                                           | Page number                                                |
-| limit                  | _integer_                                                                                                                                                                                                           | Page items limit                                           |
+| Parameter          | Value                                                                                                                                                                                                               | Description                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| popularity_filters | allocine_popularity,imdb_popularity                                                                                                                                                                                 | Popularity filters source (or _none_ to disable it)                             |
+| ratings_filters    | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source (or _all_ for every values)                              |
+| item_type          | movie,tvshow                                                                                                                                                                                                        | The type of the item (_movie_, _tvshow_ or both)                                |
+| minimum_ratings    | 0,1,2,2.5,3,3.5,4,4.5                                                                                                                                                                                               | Minimum ratings to return                                                       |
+| seasons_number     | 1,2,3,4,5                                                                                                                                                                                                           | Number of seasons (5 means 5+) (only valid for tvshows)                         |
+| status             | canceled,ended,ongoing,pilot,unknown                                                                                                                                                                                | TV show's status (only valid for tvshows)                                       |
+| is_active          | true,false                                                                                                                                                                                                          | Is the item currently on screens (_true_, _false_ or both)                      |
+| append_to_response | critics_rating_details,episodes_details                                                                                                                                                                             | Should we return critics_rating_details and/or episodes_details in the response |
+| page               | _integer_                                                                                                                                                                                                           | Page number                                                                     |
+| limit              | _integer_                                                                                                                                                                                                           | Page items limit                                                                |
 
 ### Search
 
@@ -99,14 +98,13 @@ The query parameters provided below are solely for item search purposes and must
 Provides detailed information about specific item (movie or tvshow) by its type and unique identifier (TMDB ID).
 
 > ```
-> https://whatson-api.onrender.com/:item_type/:id?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&critics_rating_details=<boolean>&episodes_details=<boolean>
+> https://whatson-api.onrender.com/:item_type/:id?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&append_to_response=critics_rating_details,episodes_details
 > ```
 
-| Parameter              | Value                                                                                                                                                                                                               | Description                                             |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| ratings_filters        | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source                                  |
-| critics_rating_details | _boolean_                                                                                                                                                                                                           | Should we return critics_rating_details in the response |
-| episodes_details       | _boolean_                                                                                                                                                                                                           | Should we return episodes_details in the response       |
+| Parameter          | Value                                                                                                                                                                                                               | Description                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| ratings_filters    | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source                                                          |
+| append_to_response | critics_rating_details,episodes_details                                                                                                                                                                             | Should we return critics_rating_details and/or episodes_details in the response |
 
 #### Responses:
 
@@ -135,7 +133,7 @@ Example of an item returned:
   "trailer": "string", // URL to the item's trailer
 
   "episodes_details": [
-    // To display this key, add the query parameter `episodes_details=true`
+    // To display this key, add `episodes_details` to the query parameter `append_to_response`
     {
       "season": "number", // Season number of the episode
       "episode": "number", // Episode number within the season
@@ -188,7 +186,7 @@ Example of an item returned:
     "critics_rating": "number", // Rating given by AlloCiné critics
     "critics_number": "number", // Number of AlloCiné critics who rated
     "critics_rating_details": [
-      // To display this key, add the query parameter `critics_rating_details=true`
+      // To display this key, add `critics_rating_details` to the query parameter `append_to_response`
       {
         "critic_name": "string", // Name of the critic
         "critic_rating": "number" // Rating given by the critic

@@ -605,7 +605,7 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: `?item_type=movie,tvshow&is_active=true,false&critics_rating_details=true&episodes_details=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, schema)),
   },
@@ -1028,22 +1028,22 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&critics_rating_details=true&episodes_details=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&critics_rating_details=true&episodes_details=true&limit=${higherLimit}`,
+    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details&limit=${higherLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: `?item_type=tvshow&is_active=true&critics_rating_details=true&episodes_details=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&critics_rating_details=true&episodes_details=true&limit=${higherLimit}`,
+    query: `?item_type=tvshow&is_active=false&append_to_response=critics_rating_details,episodes_details&limit=${higherLimit}`,
     expectedResult: checkItemProperties,
   },
 
@@ -1252,7 +1252,7 @@ const params = {
   },
 
   should_return_correct_episodes_details_values: {
-    query: `?item_type=movie,tvshow&is_active=true&episodes_details=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie,tvshow&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details) {
@@ -1278,7 +1278,7 @@ const params = {
   },
 
   should_match_last_episode_details: {
-    query: `?item_type=tvshow&is_active=true&episodes_details=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details && item.last_episode) {

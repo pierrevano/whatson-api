@@ -14,9 +14,8 @@ const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 
 const aggregateData = async (
-  critics_rating_details_query,
+  append_to_response,
   directors_query,
-  episodes_details_query,
   genres_query,
   id_path,
   is_active_query,
@@ -32,12 +31,19 @@ const aggregateData = async (
   status_query,
 ) => {
   const critics_rating_details =
-    critics_rating_details_query === "true" ? true : false;
+    append_to_response &&
+    append_to_response.split(",").includes("critics_rating_details")
+      ? true
+      : false;
   const directors =
     typeof directors_query !== "undefined" && directors_query
       ? directors_query
       : "";
-  const episodes_details = episodes_details_query === "true" ? true : false;
+  const episodes_details =
+    append_to_response &&
+    append_to_response.split(",").includes("episodes_details")
+      ? true
+      : false;
   const genres =
     typeof genres_query !== "undefined" && genres_query ? genres_query : "";
   const id = isNaN(id_path) ? "" : id_path;
