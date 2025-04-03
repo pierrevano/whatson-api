@@ -84,7 +84,7 @@ const config = {
   /* Tests settings */
   baseURLLocal: "http://localhost:8081",
   baseURLRemote: process.env.WHATSON_API_URL,
-  maxLimitLocal: 2000,
+  maxLimitLocal: 1900,
   maxLimitRemote: 500,
   maxMongodbItemsLimit: 6500,
   checkItemsNumber: true,
