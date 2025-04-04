@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "2.94.0",
+  "version": "2.94.1",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -37,7 +37,9 @@
     "check-ids-and-stop-before-update-all-ids": "npm run update-local-stop && npm run update-active-dataset && npm run confirm-dataset && npm run update-all-ids",
     "check-ids-and-stop-before-update-all-ids-force": "npm run update-local-stop && npm run update-active-dataset && npm run confirm-dataset && npm run update-all-ids-force",
     "update-all-ids": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data && node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data && npm run test",
-    "update-all-ids-force": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data force && node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data force && npm run test",
+    "update-all-ids-force-movie": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data force",
+    "update-all-ids-force-tvshow": "node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data force",
+    "update-all-ids-force": "update-all-ids-force-movie && update-all-ids-force-tvshow && npm run test",
     "update-all-active-ids": "node src/updateData.js movie no_update_ids update_db local active no_check_db_ids 0 no_check_data force && node src/updateData.js tvshow no_update_ids update_db local active no_check_db_ids 0 no_check_data force && npm run test"
   },
   "author": "Pierre Vanoverschelde",
@@ -49,10 +51,10 @@
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "jshashes": "^1.0.8",
     "mongodb": "^6.15.0",
-    "newrelic": "^12.16.1",
+    "newrelic": "^12.17.0",
     "prettier": "^3.5.3",
     "rate-limiter-flexible": "^6.2.1",
     "shelljs": "^0.9.2",
