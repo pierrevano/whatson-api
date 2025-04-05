@@ -24,7 +24,22 @@ const sendRequest = (
   config,
   is_active_item,
 ) => {
-  const { keysToCheckForSearch, maxMongodbItemsLimit } = config;
+  const allowedParams = [
+    ...config.allowedQueryParams,
+    ...config.keysToCheckForSearch,
+  ];
+
+  const invalidParams = Object.keys(req.query).filter(
+    (key) => !allowedParams.includes(key.toLowerCase()),
+  );
+
+  if (invalidParams.length > 0) {
+    return sendResponse(res, 400, {
+      message: `Invalid query parameter(s): ${invalidParams.join(", ")}`,
+    });
+  }
+
+  const { keysToCheckForSearch, maxLimit } = config;
   const areNoResults = json && json.results && json.results.length === 0;
   const isValidItemType = [
     "movie",
@@ -62,9 +77,9 @@ const sendRequest = (
     return sendResponse(res, 404, { message: errorMessage });
   }
 
-  if (limit && limit > maxMongodbItemsLimit) {
+  if (limit && limit > maxLimit) {
     return sendResponse(res, 400, {
-      message: `Limit exceeds maximum allowed (${maxMongodbItemsLimit}). Please reduce the limit.`,
+      message: `Limit exceeds maximum allowed (${maxLimit}). Please reduce the limit.`,
     });
   }
 

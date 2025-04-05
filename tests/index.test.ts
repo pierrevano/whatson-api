@@ -10,9 +10,7 @@ const { schema } = require("../src/schema");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
-const higherLimit = isRemoteSource
-  ? config.maxLimitRemote
-  : config.maxLimitLocal;
+const higherLimit = isRemoteSource ? config.maxLimitRemote : config.maxLimit;
 
 /**
  * Validates properties and metrics of a list of items against predefined expectations.
@@ -622,18 +620,6 @@ const params = {
       }),
   },
 
-  should_fallback_to_default_movies_items_if_incorrect_query_parameter: {
-    query: `?invalid_parameter=invalid_value`,
-    expectedResult: (items) =>
-      items.forEach((item) => {
-        expect(item).toHaveProperty("item_type");
-        expect(item.item_type).toBe("movie");
-
-        expect(item.allocine).not.toHaveProperty("critics_rating_details");
-        expect(item).not.toHaveProperty("episodes_details");
-      }),
-  },
-
   only_movies: {
     query: "?item_type=movie",
     expectedResult: (items) =>
@@ -836,7 +822,7 @@ const params = {
     },
   },
   should_return_metacritic_id_on_search: {
-    query: "?metacriticid=squid-game&unknown",
+    query: "?metacriticid=squid-game",
     expectedResult: (items) => {
       checkSingleItemId(items, 93405);
     },
@@ -1403,7 +1389,7 @@ describe("What's on? API tests", () => {
     async () => {
       const start = new Date().valueOf();
       await axios.get(
-        `${baseURL}?item_type=movie,tvshow&limit=${config.maxMongodbItemsLimit}&api_key=${config.internalApiKey}`,
+        `${baseURL}?item_type=movie,tvshow&limit=${config.maxLimit}&api_key=${config.internalApiKey}`,
       );
       const end = new Date().valueOf();
       expect(end - start).toBeLessThan(config.maxResponseTime);

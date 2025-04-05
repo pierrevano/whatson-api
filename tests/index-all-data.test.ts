@@ -40,13 +40,23 @@ const params = {
   },
 
   limit_is_higher_than_max_mongodb_items_limit: {
-    query: `?limit=${parseInt(config.maxMongodbItemsLimit) + 1}`,
+    query: `?item_type=tvshow&is_active=true,false&limit=${parseInt(config.maxLimit) + 1}`,
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `Limit exceeds maximum allowed (${config.maxMongodbItemsLimit}). Please reduce the limit.`,
+        `Limit exceeds maximum allowed (${config.maxLimit}). Please reduce the limit.`,
       );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  wrong_query_parameter: {
+    query: "?invalid_value=invalid_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("Invalid query parameter(s): invalid_value");
       expect(data.code).toBe(400);
     },
   },
@@ -162,7 +172,7 @@ const params = {
     },
 
   correct_tvshow_item_type_returned: {
-    query: "/tvshow/121?parameter_to_ignore",
+    query: "/tvshow/121?is_active",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.item_type).toBe("tvshow");
@@ -170,7 +180,7 @@ const params = {
   },
 
   correct_movie_item_type_returned: {
-    query: "/movie/121?parameter_to_ignore",
+    query: "/movie/121?is_active",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.item_type).toBe("movie");
@@ -178,7 +188,7 @@ const params = {
   },
 
   correct_data_to_null_returned_if_undefined: {
-    query: "/movie/undefined?parameter_to_ignore",
+    query: "/movie/undefined?is_active",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -261,7 +271,7 @@ const params = {
   },
 
   should_return_unauthorized_access_if_no_digest: {
-    query: "/preferences/email@example.com?parameter_to_ignore",
+    query: "/preferences/email@example.com?is_active",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -282,12 +292,12 @@ const params = {
   },
 
   invalid_path: {
-    query: "/invalid-path?parameter_to_ignore",
+    query: "/invalid-path?is_active",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `Invalid endpoint: /invalid-path?parameter_to_ignore&api_key=${config.internalApiKey}. Allowed endpoints are: '/', '/movie/:id', '/tvshow/:id'.`,
+        `Invalid endpoint: /invalid-path?is_active&api_key=${config.internalApiKey}. Allowed endpoints are: '/', '/movie/:id', '/tvshow/:id'.`,
       );
       expect(data.code).toBe(500);
     },
@@ -316,7 +326,7 @@ const params = {
   },
 
   no_items_found_with_is_active_error_message_and_empty_value: {
-    query: "?item_type=movie&directors=some_wrong_value&is_active_item=",
+    query: "?item_type=movie&directors=some_wrong_value&is_active=",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
