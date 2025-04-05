@@ -52,7 +52,7 @@ const params = {
   },
 
   wrong_query_parameter: {
-    query: "?invalid_value=invalid_value",
+    query: "?invalid_value=invalid_value&is_active",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
