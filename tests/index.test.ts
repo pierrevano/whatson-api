@@ -1043,7 +1043,7 @@ const params = {
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&append_to_response=critics_rating_details,episodes_details&limit=${higherLimit}`,
+    query: `?item_type=tvshow&is_active=false&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
