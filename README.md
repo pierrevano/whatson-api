@@ -92,6 +92,7 @@ The query parameters provided below are solely for item search purposes and must
 #### Responses:
 
 - `200` A successful response
+- `400` Invalid query parameters were passed
 - `404` No items have been found
 - `500` Internal server error
 
@@ -113,6 +114,7 @@ Provides detailed information about specific item (movie or tvshow) by its type 
 #### Responses:
 
 - `200` A successful response
+- `400` Invalid query parameters were passed
 - `404` No items have been found
 - `500` Internal server error
 
