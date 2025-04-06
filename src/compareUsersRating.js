@@ -55,24 +55,24 @@ const compareUsersRating = async (
       );
     const imdb_users_rating = await getImdbRating(imdbHomepage);
 
-    const statusIsOngoingOrUnknown =
-      status && (status === "Ongoing" || status === "Unknown");
+    const isTvshowNotEnded = status && status !== "Ended";
     let episodesDetails, lastEpisode, nextEpisode;
-    if (statusIsOngoingOrUnknown) {
+    if (isTvshowNotEnded) {
       episodesDetails = await getEpisodesDetails(
         allocineHomepage,
-        imdbId,
         imdbHomepage,
+        imdbId,
       );
       lastEpisode = await getLastEpisode(
         allocineHomepage,
-        tmdbId,
         episodesDetails,
+        tmdbId,
       );
       nextEpisode = await getNextEpisode(
         allocineHomepage,
-        tmdbId,
         episodesDetails,
+        imdbId,
+        tmdbId,
       );
     }
 
@@ -115,7 +115,7 @@ const compareUsersRating = async (
 
       dataWithoutId.is_active = isActive;
 
-      if (statusIsOngoingOrUnknown) {
+      if (isTvshowNotEnded) {
         dataWithoutId.episodes_details = episodesDetails;
         dataWithoutId.last_episode = lastEpisode;
         dataWithoutId.next_episode = nextEpisode;

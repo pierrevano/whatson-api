@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "2.95.0",
+  "version": "2.95.1",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -36,10 +36,12 @@
     "check-ids-before-update-all-ids-force": "npm run update-local && npm run update-active-dataset && npm run confirm-dataset && npm run update-all-ids-force",
     "check-ids-and-stop-before-update-all-ids": "npm run update-local-stop && npm run update-active-dataset && npm run confirm-dataset && npm run update-all-ids",
     "check-ids-and-stop-before-update-all-ids-force": "npm run update-local-stop && npm run update-active-dataset && npm run confirm-dataset && npm run update-all-ids-force",
-    "update-all-ids": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data && node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data && npm run test",
+    "update-all-ids-movie": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data",
+    "update-all-ids-tvshow": "node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data",
+    "update-all-ids": "npm run update-all-ids-movie && npm run update-all-ids-tvshow && npm run test",
     "update-all-ids-force-movie": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data force",
     "update-all-ids-force-tvshow": "node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data force",
-    "update-all-ids-force": "update-all-ids-force-movie && update-all-ids-force-tvshow && npm run test",
+    "update-all-ids-force": "npm run update-all-ids-force-movie && npm run update-all-ids-force-tvshow && npm run test",
     "update-all-active-ids": "node src/updateData.js movie no_update_ids update_db local active no_check_db_ids 0 no_check_data force && node src/updateData.js tvshow no_update_ids update_db local active no_check_db_ids 0 no_check_data force && npm run test"
   },
   "author": "Pierre Vanoverschelde",

@@ -1327,6 +1327,17 @@ const params = {
       });
     },
   },
+
+  should_not_have_next_episode_when_tvshow_is_ended: {
+    query: `?item_type=tvshow&status=ended&is_active=true,false&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item).toHaveProperty("status");
+        expect(item.status).toBe("Ended");
+        expect(item.next_episode).toBeNull();
+      });
+    },
+  },
 };
 
 /**

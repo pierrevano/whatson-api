@@ -1,5 +1,4 @@
 const { config } = require("../config");
-const { getEpisodesDetails } = require("./getEpisodesDetails");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
@@ -11,7 +10,7 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} imdbHomepage - IMDb homepage URL for the tvshow.
  * @returns {Promise<Object|null>} - A promise that resolves with the details of the last episode or null if the details cannot be determined.
  */
-const getLastEpisode = async (allocineHomepage, tmdbId, allEpisodesDetails) => {
+const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
   let lastEpisodeDetails = null;
@@ -19,18 +18,15 @@ const getLastEpisode = async (allocineHomepage, tmdbId, allEpisodesDetails) => {
   try {
     let lastEpisode = null;
 
-    if (
-      Array.isArray(allEpisodesDetails) &&
-      allEpisodesDetails.some((ep) => ep)
-    ) {
+    if (Array.isArray(episodesDetails) && episodesDetails.some((ep) => ep)) {
       // Find the last episode with a non-null users_rating
-      lastEpisode = [...allEpisodesDetails]
+      lastEpisode = [...episodesDetails]
         .reverse()
         .find((ep) => ep && ep.users_rating !== null);
 
       // If no such episode is found, fallback to the last episode
       if (!lastEpisode) {
-        lastEpisode = allEpisodesDetails[allEpisodesDetails.length - 1];
+        lastEpisode = episodesDetails[episodesDetails.length - 1];
       }
     }
 

@@ -1,6 +1,6 @@
 const { config } = require("../config");
-const { getEpisodesDetails } = require("./getEpisodesDetails");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
+const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -11,7 +11,12 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} imdbHomepage - IMDb homepage URL for the tvshow.
  * @returns {Promise<Object|null>} - A promise that resolves with the details of the next episode or null if the details cannot be determined.
  */
-const getNextEpisode = async (allocineHomepage, tmdbId, allEpisodesDetails) => {
+const getNextEpisode = async (
+  allocineHomepage,
+  episodesDetails,
+  imdbId,
+  tmdbId,
+) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
   let nextEpisodeDetails = null;
@@ -20,19 +25,19 @@ const getNextEpisode = async (allocineHomepage, tmdbId, allEpisodesDetails) => {
     let lastRatedEpisodeIndex = -1;
 
     if (
-      Array.isArray(allEpisodesDetails) &&
-      allEpisodesDetails.some((ep) => ep?.users_rating !== null)
+      Array.isArray(episodesDetails) &&
+      episodesDetails.some((ep) => ep?.users_rating !== null)
     ) {
-      lastRatedEpisodeIndex = allEpisodesDetails.findLastIndex(
+      lastRatedEpisodeIndex = episodesDetails.findLastIndex(
         (ep) => ep?.users_rating !== null,
       );
     }
 
     if (
       lastRatedEpisodeIndex !== -1 &&
-      lastRatedEpisodeIndex < allEpisodesDetails.length - 1
+      lastRatedEpisodeIndex < episodesDetails.length - 1
     ) {
-      const nextEpisode = allEpisodesDetails[lastRatedEpisodeIndex + 1];
+      const nextEpisode = episodesDetails[lastRatedEpisodeIndex + 1];
 
       const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 
@@ -58,7 +63,10 @@ const getNextEpisode = async (allocineHomepage, tmdbId, allEpisodesDetails) => {
           .toISOString()
           .split("T")[0];
 
-        if (releaseDate >= currentDate) {
+        if (
+          releaseDate >= currentDate &&
+          (await getWhatsonResponse(imdbId)).status !== "Ended"
+        ) {
           nextEpisodeDetails = {
             season: nextEpisode.season,
             episode: nextEpisode.episode,
