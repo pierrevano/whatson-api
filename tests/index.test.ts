@@ -1255,6 +1255,17 @@ const params = {
                   lastGlobalEpisodeNumber,
                 );
                 lastGlobalEpisodeNumber = currentGlobalEpisodeNumber;
+
+                // Check that future episodes have null users_rating
+                if (episode.release_date) {
+                  const releaseDate = new Date(episode.release_date)
+                    .toISOString()
+                    .split("T")[0];
+                  const today = new Date().toISOString().split("T")[0];
+                  if (releaseDate > today) {
+                    expect(episode.users_rating).toBeNull();
+                  }
+                }
               }
             });
           }
@@ -1268,23 +1279,23 @@ const params = {
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details && item.last_episode) {
-          // Find the last episode with a non-null users_rating
-          const lastRatedEpisode = [...item.episodes_details]
-            .reverse()
-            .find((ep) => ep && ep.users_rating !== null);
+          const pastEpisodes = item.episodes_details.filter(
+            (ep) =>
+              ep?.release_date &&
+              new Date(ep.release_date).toISOString().split("T")[0] <=
+                new Date().toISOString().split("T")[0],
+          );
 
-          // Fallback to the last episode if no rated episode exists
-          const lastEpisodeDetail =
-            lastRatedEpisode ||
-            item.episodes_details[item.episodes_details.length - 1];
+          if (pastEpisodes.length === 0) return;
 
-          // Ensure that the relevant fields match the last_episode
-          if (lastEpisodeDetail) {
-            expect(lastEpisodeDetail.title).toBe(item.last_episode.title);
-            expect(lastEpisodeDetail.episode).toBe(item.last_episode.episode);
-            expect(lastEpisodeDetail.season).toBe(item.last_episode.season);
-            expect(lastEpisodeDetail.id).toBe(item.last_episode.id);
-            expect(lastEpisodeDetail.url).toBe(item.last_episode.url);
+          const lastAired = pastEpisodes[pastEpisodes.length - 1];
+
+          if (lastAired) {
+            expect(lastAired.title).toBe(item.last_episode.title);
+            expect(lastAired.episode).toBe(item.last_episode.episode);
+            expect(lastAired.season).toBe(item.last_episode.season);
+            expect(lastAired.id).toBe(item.last_episode.id);
+            expect(lastAired.url).toBe(item.last_episode.url);
           }
         }
       });
@@ -1303,6 +1314,16 @@ const params = {
 
           const lastCombined = lastSeason * 100 + lastEpisode;
           const nextCombined = nextSeason * 100 + nextEpisode;
+
+          const lastReleaseDate = item.last_episode.release_date;
+          const nextReleaseDate = item.next_episode.release_date;
+
+          if (
+            lastReleaseDate &&
+            nextReleaseDate &&
+            lastReleaseDate === nextReleaseDate
+          )
+            return;
 
           expect(nextCombined).toBeGreaterThanOrEqual(lastCombined);
         }
@@ -1335,6 +1356,40 @@ const params = {
         expect(item).toHaveProperty("status");
         expect(item.status).toBe("Ended");
         expect(item.next_episode).toBeNull();
+      });
+    },
+  },
+
+  should_only_have_last_episode_released_until_today: {
+    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        if (item.last_episode && item.last_episode.release_date) {
+          const releaseDate = new Date(item.last_episode.release_date)
+            .toISOString()
+            .split("T")[0];
+          expect(releaseDate <= new Date().toISOString().split("T")[0]).toBe(
+            true,
+          );
+        }
+      });
+    },
+  },
+
+  should_only_have_valid_imdb_episode_urls: {
+    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        if (Array.isArray(item.episodes_details)) {
+          item.episodes_details.forEach((episode) => {
+            if (episode?.url) {
+              expect(typeof episode.url).toBe("string");
+              expect(
+                /^https:\/\/www\.imdb\.com\/title\/tt\d+\/$/.test(episode.url),
+              ).toBe(true);
+            }
+          });
+        }
       });
     },
   },

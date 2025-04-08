@@ -19,15 +19,18 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
     let lastEpisode = null;
 
     if (Array.isArray(episodesDetails) && episodesDetails.some((ep) => ep)) {
-      // Find the last episode with a non-null users_rating
-      lastEpisode = [...episodesDetails]
-        .reverse()
-        .find((ep) => ep && ep.users_rating !== null);
+      const pastEpisodes = episodesDetails.filter(
+        (ep) =>
+          ep?.release_date &&
+          new Date(ep.release_date).toISOString().split("T")[0] <=
+            new Date().toISOString().split("T")[0],
+      );
 
-      // If no such episode is found, fallback to the last episode
-      if (!lastEpisode) {
-        lastEpisode = episodesDetails[episodesDetails.length - 1];
-      }
+      // All episodes are in the future, no valid last episode
+      if (pastEpisodes.length === 0) return null;
+
+      // Find the last aired episode
+      lastEpisode = pastEpisodes[pastEpisodes.length - 1];
     }
 
     if (lastEpisode) {

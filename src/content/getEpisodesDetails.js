@@ -25,6 +25,8 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
     };
     const $ = await getCheerioContent(url, options, "parseImdbEpisodes");
 
+    let previousReleaseDate = null;
+
     $(".ipc-page-section section").each((_, element) => {
       $(element)
         .find(".ipc-title__text")
@@ -65,23 +67,40 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
             .first()
             .text()
             .trim();
+          let releaseDate = convertImdbDateToISOString(releaseDateText) || null;
 
-          // Fetch the rating relative to the found title element
-          const episodeRating = $(element)
+          // Ensure release dates are not decreasing
+          if (
+            releaseDate &&
+            previousReleaseDate &&
+            releaseDate < previousReleaseDate
+          ) {
+            releaseDate = null;
+          } else if (releaseDate) {
+            previousReleaseDate = releaseDate;
+          }
+
+          const ratingText = $(element)
             .find(".ipc-rating-star--rating")
             .eq(titleIndex)
             .text()
             .trim();
 
+          const getUsersRating = (date, rating) => {
+            if (!date) return null;
+            const today = new Date().toISOString().split("T")[0];
+            return date > today ? null : parseFloat(rating) || null;
+          };
+
           episodesDetails.push({
-            season: season,
+            season,
             episode: episodeNumber,
             title: episodeTitle,
             description: episodeDescription,
             id: episodeId,
-            url: `${config.baseURLIMDB}${episodeId}/`,
-            release_date: convertImdbDateToISOString(releaseDateText) || null,
-            users_rating: parseFloat(episodeRating) || null,
+            url: episodeId ? `${config.baseURLIMDB}${episodeId}/` : null,
+            release_date: releaseDate,
+            users_rating: getUsersRating(releaseDate, ratingText),
           });
         });
     });
