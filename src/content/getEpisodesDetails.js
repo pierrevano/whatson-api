@@ -129,7 +129,11 @@ const getEpisodesDetails = async (allocineHomepage, imdbHomepage, imdbId) => {
   let episodesDetails = [];
 
   try {
-    const totalSeasons = (await getWhatsonResponse(imdbId)).seasons_number;
+    const response = await getWhatsonResponse(imdbId);
+    const totalSeasons =
+      response && typeof response.seasons_number !== "undefined"
+        ? response.seasons_number
+        : null;
 
     if (totalSeasons) {
       for (let season = 1; season <= totalSeasons; season++) {
