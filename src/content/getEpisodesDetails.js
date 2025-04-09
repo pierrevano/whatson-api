@@ -8,10 +8,10 @@ const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Fetches episode details including ratings for a specific season from the IMDb homepage.
- * @param {string} imdbHomepage - The IMDb homepage URL.
- * @param {number} season - The season number of the show.
- * @returns {Array<Object>} - Array of episode details for the specified season.
+ * Parses episode details for a specific season of a tvshow from its IMDb homepage.
+ * @param {string} imdbHomepage - The IMDb homepage URL for the tvshow.
+ * @param {number} season - The season number to retrieve episode details for.
+ * @returns {Promise<Array<Object>|null>} A promise that resolves to an array of episode detail objects, or null if parsing is incomplete.
  */
 const parseImdbEpisodes = async (imdbHomepage, season) => {
   let episodesDetails = [];
@@ -104,12 +104,6 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
           });
         });
     });
-
-    /*
-     * We cannot parse more than 50 episodes at once on IMDb with Cheerio, so I prefer to return `null`.
-     * Ideally, it should be parsed with Puppeteer or Playwright to get all episodes.
-     */
-    if (episodesDetails.length === 50) episodesDetails = null;
   } catch (error) {
     logErrors(error, url, "parseImdbEpisodes");
   }
@@ -118,10 +112,11 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
 };
 
 /**
- * Gathers IMDb episode rating details across all seasons for a given IMDb title ID.
- * @param {string} imdbId - The IMDb title ID.
- * @param {string} imdbHomepage - The IMDb homepage URL.
- * @returns {Array<Object>} - Array of episode details for all seasons of the show.
+ * Fetches episode details including ratings for all seasons of a tvshow using IMDb and What's On API data.
+ * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
+ * @param {string} imdbHomepage - The IMDb homepage URL for the tvshow.
+ * @param {string} imdbId - The IMDb title ID for the tvshow.
+ * @returns {Promise<Array<Object>|null>} A promise that resolves to an array of episode details across all seasons, or null if no data is available.
  */
 const getEpisodesDetails = async (allocineHomepage, imdbHomepage, imdbId) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
@@ -141,7 +136,16 @@ const getEpisodesDetails = async (allocineHomepage, imdbHomepage, imdbId) => {
           imdbHomepage,
           season,
         );
+
         episodesDetails = episodesDetails.concat(seasonEpisodesDetails);
+
+        /*
+         * We cannot parse more than 50 episodes at once on IMDb with Cheerio, so I prefer to return `null`.
+         * Ideally, it should be parsed with Puppeteer or Playwright to get all episodes.
+         */
+        if (seasonEpisodesDetails.length === 50) {
+          return null;
+        }
       }
     }
   } catch (error) {

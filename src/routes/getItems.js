@@ -77,7 +77,7 @@ const getItems = async (req, res) => {
       }
 
       if (lowerCaseQuery.hasOwnProperty(key)) {
-        const items = await findId(lowerCaseQuery);
+        const items = await findId(lowerCaseQuery, append_to_response);
         const results = items.results;
         const total_results = items.total_results;
 

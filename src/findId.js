@@ -1,6 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { config } = require("./config");
+const { buildProjection } = require("./utils/buildProjection");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -20,7 +21,7 @@ const collectionData = database.collection(config.collectionName);
  * @returns {Object} An object containing two properties: 'results' which is an array of matching documents from the database,
  *  and 'total_results', which is the total count of matching documents.
  */
-const findId = async (json) => {
+const findId = async (json, append_to_response) => {
   const keysMapping = {
     allocineid: "allocine.id",
     betaseriesid: "betaseries.id",
@@ -36,6 +37,7 @@ const findId = async (json) => {
     thetvdbid: "thetvdb.id",
   };
 
+  // Step 1: Build the query object
   let query = {};
   for (let key in keysMapping) {
     if (json.hasOwnProperty(key)) {
@@ -55,12 +57,16 @@ const findId = async (json) => {
     }
   }
 
+  // Step 2: Build the projection object
+  const projection = buildProjection(append_to_response);
+
+  // Step 3: Execute query with projection
   const [results, total_results] = await Promise.all([
-    collectionData.find(query).toArray(),
+    collectionData.find(query, { projection }).toArray(),
     collectionData.countDocuments(query),
   ]);
 
-  return { results: results, total_results: total_results };
+  return { results, total_results };
 };
 
 module.exports = findId;

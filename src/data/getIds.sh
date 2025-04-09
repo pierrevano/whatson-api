@@ -222,7 +222,7 @@ fetch_id () {
 
   CHECK_VALUE=$(eval echo \$$service_name"_CHECK")
 
-  if [[ $PROMPT == "recheck" ]] && [[ $id == "null" ]] && \
+  if { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; } && [[ $id == "null" ]] && \
     { [[ -z $(eval echo \$$service_name"_CHECK") ]] || [[ $(eval echo \$$service_name"_CHECK") == "null" ]]; } && \
     { [[ $service_name != "LETTERBOXD" ]] || [[ $TYPE != "tvshow" ]]; } && \
     [[ $nationality != "France" ]] && \
@@ -233,7 +233,7 @@ fetch_id () {
       read -p "Enter the $service_name ID: " id
   fi
 
-  if [[ $PROMPT == "recheck" ]] && [[ $CHECK_VALUE != "null" ]]; then
+  if { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; } && [[ $CHECK_VALUE != "null" ]]; then
     echo "$CHECK_VALUE"
   else
     echo "$id"
@@ -372,7 +372,11 @@ do
     fi
 
     # Get id
-    FILM_ID=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
+    if [[ $PROMPT == "allocine" ]]; then
+      FILM_ID=$(echo $URL | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
+    else
+      FILM_ID=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
+    fi
 
     # Check if missing shows
     ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
@@ -414,7 +418,7 @@ do
     TRAKT_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f9)
     THETVDB_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f10)
 
-    if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "recheck" ]]; then
+    if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; then
       URL_FILE=$TEMP_URLS_FILE_PATH
       while IFS= read -r TEMP_URLS <&3; do
         if [[ $URL == $TEMP_URLS ]]; then
@@ -427,7 +431,7 @@ do
 
       echo $URL >> $TEMP_URLS_FILE_PATH
 
-      if [[ $PROMPT == "recheck" ]] && [[ $THEMOVIEDB_CHECK ]]; then
+      if { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; } && [[ $THEMOVIEDB_CHECK ]]; then
         services=("imdb" "betaseries" "metacritic" "rottentomatoes" "letterboxd" "senscritique" "trakt" "thetvdb")
         DUPLICATE=1
 
@@ -517,7 +521,7 @@ do
 
         WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
-          if [[ $PROMPT == "recheck" ]]; then
+          if [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; then
             IMDB_ID=$IMDB_CHECK
             BETASERIES_ID=$BETASERIES_CHECK
             THEMOVIEDB_ID=$THEMOVIEDB_CHECK
@@ -613,12 +617,12 @@ do
           fi
         fi
 
-        if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { [[ $PROMPT == "recheck" ]] && [[ $KIDS_MOVIE -eq 1 ]] && [[ -z $MIN_RATING ]]; }; then
+        if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; } && [[ $KIDS_MOVIE -eq 1 ]] && [[ -z $MIN_RATING ]]; }; then
           data_not_found
         else
           if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
             IMDB_ID=null
-          elif { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && [[ $PROMPT == "recheck" ]]; then
+          elif { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; }; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
             open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
             echo "Enter the IMDb ID:"
@@ -642,7 +646,7 @@ do
               fi
             fi
 
-            if { [[ $BETASERIES_ID == "null" ]] && [[ $PROMPT == "recheck" ]]; } || { [[ $BETASERIES_ID == "null" ]] && [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
+            if { [[ $BETASERIES_ID == "null" ]] && { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; }; } || { [[ $BETASERIES_ID == "null" ]] && [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
               open -a $BROWSER_PATH "https://www.allocine.fr$URL"
               open -a $BROWSER_PATH "https://betaseries.com"
               echo "Enter the BetaSeries ID:"
@@ -668,7 +672,7 @@ do
             fi
 
             if [[ -z $THEMOVIEDB_ID ]] || [[ $THEMOVIEDB_ID == "null" ]]; then
-              if [[ $PROMPT == "recheck" ]] || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
+              if { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; } || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
                 media_type=$(curl -s https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED | jq '.results[0].media_type' | cut -d'"' -f2)
                 id=$(curl -s https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED | jq '.results[0].id')
                 open -a $BROWSER_PATH "https://www.themoviedb.org/$media_type/$id"
@@ -702,7 +706,7 @@ do
         fi
 
         count=$(grep -c '^'"$URL"',*' $FILMS_IDS_FILE_PATH)
-        if [[ $count -eq 2 ]] && [[ $PROMPT == "recheck" ]]; then
+        if [[ $count -eq 2 ]] && { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; }; then
             echo "Number of lines found for $URL: $count"
 
             grep '^'"$URL"',*' $FILMS_IDS_FILE_PATH

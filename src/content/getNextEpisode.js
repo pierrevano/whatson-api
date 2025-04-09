@@ -4,12 +4,12 @@ const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves details of the next episode to air for a given tvshow and the episode type from The Movie Database API.
+ * Retrieves details of the next episode to air for a given tvshow, including its episode type from The Movie Database (TMDB) API.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
- * @param {number} tmdbId - TMDB ID for the tvshow.
+ * @param {Array<Object>} episodesDetails - Array of episode objects for the tvshow.
  * @param {string} imdbId - IMDb ID for the tvshow.
- * @param {string} imdbHomepage - IMDb homepage URL for the tvshow.
- * @returns {Promise<Object|null>} - A promise that resolves with the details of the next episode or null if the details cannot be determined.
+ * @param {number} tmdbId - TMDB ID for the tvshow.
+ * @returns {Promise<Object|null>} A promise that resolves to an object containing the next episode's details, or null if no valid next episode is found.
  */
 const getNextEpisode = async (
   allocineHomepage,
@@ -70,7 +70,7 @@ const getNextEpisode = async (
           nextEpisodeDetails = {
             season: nextEpisode.season,
             episode: nextEpisode.episode,
-            episode_type: episode_type,
+            episode_type,
             title: nextEpisode.title,
             description: nextEpisode.description,
             id: nextEpisode.id,

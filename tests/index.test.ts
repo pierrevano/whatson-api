@@ -775,13 +775,64 @@ const params = {
       }),
   },
 
+  correct_tmdb_id_returned_on_path: {
+    query: "/tvshow/87108?append_to_response",
+    expectedResult: (item) => {
+      expect(item.id).toBe(87108);
+      expect(item.allocine).not.toHaveProperty("critics_rating_details");
+      expect(item).not.toHaveProperty("episodes_details");
+    },
+  },
+
+  correct_tmdb_id_returned_on_path_with_critics_rating_details: {
+    query: "/tvshow/87108?append_to_response=critics_rating_details",
+    expectedResult: (item) => {
+      expect(item.id).toBe(87108);
+      expect(item.allocine).toHaveProperty("critics_rating_details");
+      expect(item).not.toHaveProperty("episodes_details");
+    },
+  },
+
+  correct_tmdb_id_returned_on_path_with_episodes_details: {
+    query: "/tvshow/87108?append_to_response=episodes_details",
+    expectedResult: (item) => {
+      expect(item.id).toBe(87108);
+      expect(item.allocine).not.toHaveProperty("critics_rating_details");
+      expect(item).toHaveProperty("episodes_details");
+    },
+  },
+
   correct_tmdb_id_returned_on_search: {
     query: "?tmdbid=87108",
     expectedResult: (items) => {
       expect(items.length).toBe(1);
       expect(items[0].id).toBe(87108);
+      expect(items[0].allocine).not.toHaveProperty("critics_rating_details");
+      expect(items[0]).not.toHaveProperty("episodes_details");
     },
   },
+
+  correct_tmdb_id_returned_on_search_with_append_to_response: {
+    query:
+      "?tmdbid=87108&append_to_response=critics_rating_details,episodes_details",
+    expectedResult: (items) => {
+      expect(items.length).toBe(1);
+      expect(items[0].id).toBe(87108);
+      expect(items[0].allocine).toHaveProperty("critics_rating_details");
+      expect(items[0]).toHaveProperty("episodes_details");
+    },
+  },
+
+  correct_tmdb_id_returned_on_search_with_append_to_response_but_without_critics_rating_details:
+    {
+      query: "?tmdbid=87108&append_to_response=episodes_details",
+      expectedResult: (items) => {
+        expect(items.length).toBe(1);
+        expect(items[0].id).toBe(87108);
+        expect(items[0].allocine).not.toHaveProperty("critics_rating_details");
+        expect(items[0]).toHaveProperty("episodes_details");
+      },
+    },
 
   titles_containing_game_on_search: {
     query: "?title=game",
@@ -1238,7 +1289,7 @@ const params = {
   },
 
   should_return_correct_episodes_details_values: {
-    query: `?item_type=movie,tvshow&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie,tvshow&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details) {
@@ -1275,7 +1326,7 @@ const params = {
   },
 
   should_match_last_episode_details: {
-    query: `?item_type=tvshow&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details && item.last_episode) {
@@ -1331,6 +1382,31 @@ const params = {
     },
   },
 
+  should_have_increasing_episode_order_if_release_dates_differ: {
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        if (Array.isArray(item.episodes_details)) {
+          for (let i = 0; i < item.episodes_details.length - 1; i++) {
+            const current = item.episodes_details[i];
+            const next = item.episodes_details[i + 1];
+
+            if (
+              current.release_date &&
+              next.release_date &&
+              current.release_date !== next.release_date
+            ) {
+              const currentCombined = current.season * 100 + current.episode;
+              const nextCombined = next.season * 100 + next.episode;
+
+              expect(nextCombined).toBeGreaterThan(currentCombined);
+            }
+          }
+        }
+      });
+    },
+  },
+
   should_have_release_date_after_current_date: {
     query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
@@ -1377,7 +1453,7 @@ const params = {
   },
 
   should_only_have_valid_imdb_episode_urls: {
-    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (Array.isArray(item.episodes_details)) {
@@ -1425,7 +1501,7 @@ describe("What's on? API tests", () => {
         validateStatus: (status) => status < 500,
       });
       const data = response.data;
-      const items = data && data.results;
+      const items = query.startsWith("/") ? data : data.results;
 
       expectedResult(items, null);
     }

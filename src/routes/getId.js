@@ -4,6 +4,7 @@ const { aggregateData } = require("../aggregateData");
 const { config } = require("../config");
 const { sendInternalError, sendRequest } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
+const { buildProjection } = require("../utils/buildProjection");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -68,21 +69,7 @@ const getId = async (req, res) => {
     } else {
       try {
         // Dynamically build the projection object based on query parameters
-        let projection = {};
-        if (
-          !(
-            append_to_response &&
-            append_to_response.split(",").includes("critics_rating_details")
-          )
-        )
-          projection.critics_rating_details = 0;
-        if (
-          !(
-            append_to_response &&
-            append_to_response.split(",").includes("episodes_details")
-          )
-        )
-          projection.episodes_details = 0;
+        const projection = buildProjection(append_to_response);
 
         const query = { id: id_path, item_type: item_type };
         const items = await collectionData.findOne(query, { projection });

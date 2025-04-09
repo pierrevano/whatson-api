@@ -3,12 +3,11 @@ const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves details of the last episode to air for a given tvshow and the episode type from The Movie Database API.
+ * Retrieves details of the last episode to have aired for a given tvshow, including its episode type from The Movie Database (TMDB) API.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
+ * @param {Array<Object>} episodesDetails - Array of episode metadata objects for the tvshow.
  * @param {number} tmdbId - TMDB ID for the tvshow.
- * @param {string} imdbId - IMDb ID for the tvshow.
- * @param {string} imdbHomepage - IMDb homepage URL for the tvshow.
- * @returns {Promise<Object|null>} - A promise that resolves with the details of the last episode or null if the details cannot be determined.
+ * @returns {Promise<Object|null>} A promise that resolves to an object containing the last episode's details, or null if no valid episode is found.
  */
 const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
@@ -16,24 +15,33 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
   let lastEpisodeDetails = null;
 
   try {
-    let lastEpisode = null;
-
     if (Array.isArray(episodesDetails) && episodesDetails.some((ep) => ep)) {
+      const today = new Date().toISOString().split("T")[0];
+
       const pastEpisodes = episodesDetails.filter(
         (ep) =>
           ep?.release_date &&
-          new Date(ep.release_date).toISOString().split("T")[0] <=
-            new Date().toISOString().split("T")[0],
+          new Date(ep.release_date).toISOString().split("T")[0] <= today,
       );
 
       // All episodes are in the future, no valid last episode
       if (pastEpisodes.length === 0) return null;
 
-      // Find the last aired episode
-      lastEpisode = pastEpisodes[pastEpisodes.length - 1];
-    }
+      let lastEpisode = pastEpisodes[pastEpisodes.length - 1];
+      const secondToLast = pastEpisodes[pastEpisodes.length - 2];
 
-    if (lastEpisode) {
+      /*
+       * Use the second-to-last episode instead, but only if the most recent
+       * episode airs today and the previous episode has a different release date
+       */
+      if (
+        lastEpisode.release_date === today &&
+        secondToLast &&
+        secondToLast.release_date !== today
+      ) {
+        lastEpisode = secondToLast;
+      }
+
       const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 
       let episode_type = null;
