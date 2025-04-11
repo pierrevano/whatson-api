@@ -4,7 +4,7 @@ Companion to [What's on?](https://github.com/pierrevano/whatson)
 
 ---
 
-⚠️ This API is currently running on Render's free tier. If you'd like to keep it active at all times, please consider making a small donation here: [buymeacoffee.com/pierreschelde](https://buymeacoffee.com/pierreschelde).
+⚠️ This API is currently running on Render's free tier. If you'd like to keep it active at all times, please consider making a small donation here: [buymeacoffee.com/pierreschelde](https://buymeacoffee.com/pierreschelde). For any additional feedback, you can also join the Discord server: https://discord.gg/VcRTbyea.
 
 Note: A rate limit of `1000` requests per day is in place to prevent abuse of the API. An API key can be requested on demand to remove this limit by contacting me at https://pierrevano.github.io.
 
@@ -46,7 +46,7 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&popularity_filters=allocine_popularity,imdb_popularity&item_type=movie,tvshow&is_active=true,false&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&release_date=everything,new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&append_to_response=critics_rating_details,episodes_details&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&popularity_filters=allocine_popularity,imdb_popularity&item_type=movie,tvshow&is_active=true,false&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&release_date=everything,new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&append_to_response=critics_rating_details,episodes_details&filtered_season=<integer>&page=<integer>&limit=<integer>
 > ```
 
 | Parameter          | Value                                                                                                                                                                                                               | Description                                                                     |
@@ -63,6 +63,7 @@ Active items are fetched from 2 different links:
 | genres             | _string_                                                                                                                                                                                                            | TV show's genres (only valid for tvshows; or all for every values)              |
 | platforms          | _string_                                                                                                                                                                                                            | TV show's platforms (only valid for tvshows; or all for every values)           |
 | append_to_response | critics_rating_details,episodes_details                                                                                                                                                                             | Should we return critics_rating_details and/or episodes_details in the response |
+| filtered_season    | _integer_                                                                                                                                                                                                           | Filter episodes on a specific season number                                     |
 | page               | _integer_                                                                                                                                                                                                           | Page number                                                                     |
 | limit              | _integer_                                                                                                                                                                                                           | Page items limit                                                                |
 
@@ -71,23 +72,25 @@ Active items are fetched from 2 different links:
 The query parameters provided below are solely for item search purposes and must be unique.
 
 > ```
-> https://whatson-api.onrender.com/?title=<string>
+> https://whatson-api.onrender.com/?title=<string>&append_to_response=critics_rating_details,episodes_details&filtered_season=<integer>
 > ```
 
-| Parameter        | Value     | Description                                  |
-| ---------------- | --------- | -------------------------------------------- |
-| title            | _string_  | Title of the movie or tvshow                 |
-| allocineId       | _integer_ | AlloCiné ID of the movie or tvshow           |
-| betaseriesId     | _string_  | BetaSeries ID of the movie or tvshow         |
-| imdbId           | _string_  | IMDb ID of the movie or tvshow               |
-| letterboxdId     | _string_  | Letterboxd ID of the movie                   |
-| metacriticId     | _string_  | Metacritic ID of the movie or tvshow         |
-| rottentomatoesId | _string_  | Rotten Tomatoes ID of the movie or tvshow    |
-| senscritiqueId   | _integer_ | SensCritique ID of the movie or tvshow       |
-| tmdbId           | _integer_ | The Movie Database ID of the movie or tvshow |
-| traktId          | _string_  | Trakt ID of the movie or tvshow              |
-| tvtimeId         | _integer_ | TV Time ID of the tvshow                     |
-| thetvdbId        | _integer_ | TheTVDB ID of the movie or tvshow            |
+| Parameter          | Value                                   | Description                                                                     |
+| ------------------ | --------------------------------------- | ------------------------------------------------------------------------------- |
+| title              | _string_                                | Title of the movie or tvshow                                                    |
+| allocineId         | _integer_                               | AlloCiné ID of the movie or tvshow                                              |
+| betaseriesId       | _string_                                | BetaSeries ID of the movie or tvshow                                            |
+| imdbId             | _string_                                | IMDb ID of the movie or tvshow                                                  |
+| letterboxdId       | _string_                                | Letterboxd ID of the movie                                                      |
+| metacriticId       | _string_                                | Metacritic ID of the movie or tvshow                                            |
+| rottentomatoesId   | _string_                                | Rotten Tomatoes ID of the movie or tvshow                                       |
+| senscritiqueId     | _integer_                               | SensCritique ID of the movie or tvshow                                          |
+| tmdbId             | _integer_                               | The Movie Database ID of the movie or tvshow                                    |
+| traktId            | _string_                                | Trakt ID of the movie or tvshow                                                 |
+| tvtimeId           | _integer_                               | TV Time ID of the tvshow                                                        |
+| thetvdbId          | _integer_                               | TheTVDB ID of the movie or tvshow                                               |
+| append_to_response | critics_rating_details,episodes_details | Should we return critics_rating_details and/or episodes_details in the response |
+| filtered_season    | _integer_                               | Filter episodes on a specific season number                                     |
 
 #### Responses:
 
@@ -139,7 +142,10 @@ Example of an item returned:
   "trailer": "string", // URL to the item's trailer
 
   "episodes_details": [
-    // To display this key, add `episodes_details` to the query parameter `append_to_response`
+    /*
+     * To include this key in the response, add `episodes_details` to the `append_to_response` query parameter.
+     * To filter episodes by a specific season, add the `filtered_season` query parameter with the desired season number.
+     */
     {
       "season": "number", // Season number of the episode
       "episode": "number", // Episode number within the season

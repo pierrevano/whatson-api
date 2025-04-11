@@ -15,7 +15,10 @@ const schema = {
   trailer: "string", // URL to the item's trailer
 
   episodes_details: [
-    // To display this key, add `episodes_details` to the query parameter `append_to_response`
+    /*
+     * To include this key in the response, add `episodes_details` to the `append_to_response` query parameter.
+     * To filter episodes by a specific season, add the `filtered_season` query parameter with the desired season number.
+     */
     {
       season: "number", // Season number of the episode
       episode: "number", // Episode number within the season
