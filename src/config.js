@@ -52,6 +52,7 @@ const config = {
   /* Global settings */
   IPinfo: "https://ipinfo.io/country",
   webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
+  appendToResponse: "critics_rating_details,episodes_details",
 
   limit: 15,
   maximumThreshold: {
@@ -84,7 +85,7 @@ const config = {
   /* Tests settings */
   baseURLLocal: "http://localhost:8081",
   baseURLRemote: process.env.WHATSON_API_URL,
-  maxLimit: 1700,
+  maxLimit: 1500,
   maxLimitRemote: 500,
   checkItemsNumber: true,
   keysToCheck: [

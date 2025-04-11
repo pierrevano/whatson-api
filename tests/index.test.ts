@@ -873,37 +873,37 @@ const params = {
   },
 
   correct_tmdb_id_returned_on_path: {
-    query: "/tvshow/87108?append_to_response",
+    query: "/tvshow/249042?append_to_response",
     expectedResult: (item) => {
-      expect(item.id).toBe(87108);
+      expect(item.id).toBe(249042);
       expect(item.allocine).not.toHaveProperty("critics_rating_details");
       expect(item).not.toHaveProperty("episodes_details");
     },
   },
 
   correct_tmdb_id_returned_on_path_with_critics_rating_details: {
-    query: "/tvshow/87108?append_to_response=critics_rating_details",
+    query: "/tvshow/249042?append_to_response=critics_rating_details",
     expectedResult: (item) => {
-      expect(item.id).toBe(87108);
+      expect(item.id).toBe(249042);
       expect(item.allocine).toHaveProperty("critics_rating_details");
       expect(item).not.toHaveProperty("episodes_details");
     },
   },
 
   correct_tmdb_id_returned_on_path_with_episodes_details: {
-    query: "/tvshow/87108?append_to_response=episodes_details",
+    query: "/tvshow/249042?append_to_response=episodes_details",
     expectedResult: (item) => {
-      expect(item.id).toBe(87108);
+      expect(item.id).toBe(249042);
       expect(item.allocine).not.toHaveProperty("critics_rating_details");
       expect(item).toHaveProperty("episodes_details");
     },
   },
 
   correct_tmdb_id_returned_on_search: {
-    query: "?tmdbid=87108",
+    query: "?tmdbid=249042",
     expectedResult: (items) => {
       expect(items.length).toBe(1);
-      expect(items[0].id).toBe(87108);
+      expect(items[0].id).toBe(249042);
       expect(items[0].allocine).not.toHaveProperty("critics_rating_details");
       expect(items[0]).not.toHaveProperty("episodes_details");
     },
@@ -911,10 +911,10 @@ const params = {
 
   correct_tmdb_id_returned_on_search_with_append_to_response: {
     query:
-      "?tmdbid=87108&append_to_response=critics_rating_details,episodes_details",
+      "?tmdbid=249042&append_to_response=critics_rating_details,episodes_details",
     expectedResult: (items) => {
       expect(items.length).toBe(1);
-      expect(items[0].id).toBe(87108);
+      expect(items[0].id).toBe(249042);
       expect(items[0].allocine).toHaveProperty("critics_rating_details");
       expect(items[0]).toHaveProperty("episodes_details");
     },
@@ -922,10 +922,10 @@ const params = {
 
   correct_tmdb_id_returned_on_search_with_append_to_response_but_without_critics_rating_details:
     {
-      query: "?tmdbid=87108&append_to_response=episodes_details",
+      query: "?tmdbid=249042&append_to_response=episodes_details",
       expectedResult: (items) => {
         expect(items.length).toBe(1);
-        expect(items[0].id).toBe(87108);
+        expect(items[0].id).toBe(249042);
         expect(items[0].allocine).not.toHaveProperty("critics_rating_details");
         expect(items[0]).toHaveProperty("episodes_details");
       },

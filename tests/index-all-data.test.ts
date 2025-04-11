@@ -118,10 +118,10 @@ const params = {
 
   correct_tmdb_id_returned: {
     query:
-      "/tvshow/87108?ratings_filters=all&append_to_response=critics_rating_details,episodes_details",
+      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
-      expect(data.id).toBe(87108);
+      expect(data.id).toBe(249042);
       expect(data.ratings_average).toBeGreaterThan(0);
 
       expect(Array.isArray(data.allocine.critics_rating_details)).toBeTruthy();
@@ -131,10 +131,10 @@ const params = {
 
   correct_tmdb_id_returned_without_critics_rating_details: {
     query:
-      "/tvshow/87108?ratings_filters=all&append_to_response=episodes_details",
+      "/tvshow/249042?ratings_filters=all&append_to_response=episodes_details",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
-      expect(data.id).toBe(87108);
+      expect(data.id).toBe(249042);
       expect(data.ratings_average).toBeGreaterThan(0);
 
       expect(
@@ -146,10 +146,10 @@ const params = {
 
   correct_tmdb_id_returned_without_episodes_details: {
     query:
-      "/tvshow/87108?ratings_filters=all&append_to_response=critics_rating_details",
+      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
-      expect(data.id).toBe(87108);
+      expect(data.id).toBe(249042);
       expect(data.ratings_average).toBeGreaterThan(0);
 
       expect(Array.isArray(data.allocine.critics_rating_details)).toBeTruthy();
@@ -159,11 +159,11 @@ const params = {
 
   correct_tmdb_id_returned_without_critics_rating_details_and_episodes_details:
     {
-      query: "/tvshow/87108?ratings_filters=all",
+      query: "/tvshow/249042?ratings_filters=all",
       expectedResult: (data) => {
         expect(typeof data).toBe("object");
         expect(Object.keys(data).length).toEqual(config.keysToCheck.length - 1);
-        expect(data.id).toBe(87108);
+        expect(data.id).toBe(249042);
         expect(data.ratings_average).toBeGreaterThan(0);
 
         expect(data.allocine).not.toHaveProperty("critics_rating_details");

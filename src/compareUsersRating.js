@@ -43,7 +43,7 @@ const compareUsersRating = async (
   const isEqualObj = { isEqual: false };
 
   const item_type_api = item_type === "movie" ? "movie" : "tvshow";
-  const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${config.internalApiKey}`;
+  const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?append_to_response=${config.appendToResponse}&api_key=${config.internalApiKey}`;
 
   try {
     const { allocineUsersRating: allocine_users_rating, status } =
