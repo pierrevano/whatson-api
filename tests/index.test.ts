@@ -270,7 +270,9 @@ function checkItemProperties(items) {
             "number",
       ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    item.allocine && item.allocine.critics_number
+    item.allocine &&
+    item.allocine.critics_number &&
+    item.allocine.critics_rating_details
       ? expect(item.allocine.critics_number).toEqual(
           item.allocine.critics_rating_details.length,
         )
@@ -713,6 +715,101 @@ const params = {
         expect(item.seasons_number).toBeGreaterThanOrEqual(1);
       }),
   },
+
+  only_episodes_from_season_2: {
+    query:
+      "?item_type=tvshow&append_to_response=episodes_details&filtered_season=2",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("episodes_details");
+        if (Array.isArray(item.episodes_details)) {
+          item.episodes_details.forEach((episode) => {
+            expect(episode).toHaveProperty("season");
+            expect(episode.season).toBe(2);
+          });
+        }
+      }),
+  },
+
+  only_episodes_from_season_3_but_not_2: {
+    query:
+      "?item_type=tvshow&append_to_response=episodes_details&filtered_season=3,2",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("episodes_details");
+        if (Array.isArray(item.episodes_details)) {
+          item.episodes_details.forEach((episode) => {
+            expect(episode).toHaveProperty("season");
+            expect(episode.season).toBe(3);
+          });
+        }
+      }),
+  },
+
+  should_return_all_seasons_on_wrong_filtered_season_value: {
+    query:
+      "?item_type=tvshow&append_to_response=episodes_details&filtered_season=wrong_value",
+    expectedResult: (items) => {
+      let hasSeason1 = false;
+      let hasSeason2 = false;
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("episodes_details");
+        if (Array.isArray(item.episodes_details)) {
+          item.episodes_details.forEach((episode) => {
+            expect(episode).toHaveProperty("season");
+
+            if (episode.season === 1) hasSeason1 = true;
+            if (episode.season === 2) hasSeason2 = true;
+          });
+        }
+      });
+
+      expect(hasSeason1).toBe(true);
+      expect(hasSeason2).toBe(true);
+    },
+  },
+
+  only_episodes_from_season_3_but_not_2_on_search: {
+    query:
+      "?imdbid=tt0903747&append_to_response=episodes_details&filtered_season=3,2",
+    expectedResult: (items) => {
+      checkSingleItemId(items, 1396);
+      const item = items[0];
+      expect(item).toHaveProperty("episodes_details");
+      if (Array.isArray(item.episodes_details)) {
+        item.episodes_details.forEach((episode) => {
+          expect(episode).toHaveProperty("season");
+          expect(episode.season).toBe(3);
+        });
+      }
+    },
+  },
+
+  should_return_all_seasons_on_wrong_filtered_season_value_on_search: {
+    query:
+      "?imdbid=tt0903747&append_to_response=episodes_details&filtered_season=wrong_value",
+    expectedResult: (items) => {
+      checkSingleItemId(items, 1396);
+      const item = items[0];
+      expect(item).toHaveProperty("episodes_details");
+      if (Array.isArray(item.episodes_details)) {
+        item.episodes_details.forEach((episode) => {
+          expect(episode).toHaveProperty("season");
+          expect([1, 2, 3, 4, 5]).toContain(episode.season);
+        });
+      }
+    },
+  },
+
+  should_not_return_an_error_if_append_to_response_is_empty_and_filtered_season_is_added_on_search:
+    {
+      query: "?imdbid=tt0903747&append_to_response=&filtered_season=1",
+      expectedResult: (items) => {
+        checkSingleItemId(items, 1396);
+        expect(items[0]).not.toHaveProperty("episodes_details");
+      },
+    },
 
   only_ongoing_tvshows: {
     query: "?item_type=tvshow&status=ongoing",
@@ -1472,17 +1569,60 @@ const params = {
 };
 
 /**
+ * Validates the structure and content of a paginated API response object.
+ *
+ * This function performs assertions on the presence and values of standard
+ * pagination keys: `page`, `results`, `total_pages`, and `total_results`.
+ * It allows optional expectations to override default checks.
+ *
+ * @param {Object} data - The API response data object to validate.
+ * @param {Object} [expected={}] - Optional expectations for the validation.
+ * @param {number} [expected.resultsLength] - Expected number of items in `results`.
+ * @param {number} [expected.total_pages] - Expected total number of pages.
+ * @param {number} [expected.total_results] - Expected total number of results.
+ *
+ * @throws Will throw assertion errors if any validation fails.
+ */
+function validatePaginationKeys(data, expected = {}) {
+  expect(data).toHaveProperty("page");
+  expect(data.page).toBe(1);
+
+  expect(data).toHaveProperty("results");
+  expect(Array.isArray(data.results)).toBe(true);
+  if (expected.resultsLength) {
+    expect(data.results.length).toBe(expected.resultsLength);
+  } else {
+    expect(data.results.length).toBeGreaterThan(1);
+  }
+
+  expect(data).toHaveProperty("total_pages");
+  if (expected.total_pages) {
+    expect(data.total_pages).toBe(expected.total_pages);
+  } else {
+    expect(data.total_pages).toBeGreaterThan(1);
+  }
+
+  expect(data).toHaveProperty("total_results");
+  if (expected.total_results) {
+    expect(data.total_results).toBe(expected.total_results);
+  } else {
+    expect(data.total_results).toBeGreaterThan(1);
+  }
+}
+
+/**
  * Tests the What's on? API by iterating through the params object and running each test case.
  * @returns None
  */
 describe("What's on? API tests", () => {
   console.log(`Testing on ${baseURL}`);
 
+  const simpleApiCall = `${baseURL}?api_key=${config.internalApiKey}`;
+
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     async function fetchItemsData() {
       if (query.includes("directors=xxx")) {
-        const apiCallDirectors = `${baseURL}?api_key=${config.internalApiKey}`;
-        const responseDirectors = await axios.get(apiCallDirectors, {
+        const responseDirectors = await axios.get(simpleApiCall, {
           validateStatus: (status) => status < 500,
         });
         const dataDirectors = responseDirectors.data;
@@ -1495,7 +1635,7 @@ describe("What's on? API tests", () => {
       const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
 
       console.log("Test name:", name);
-      console.log(`Calling ${apiCall}`);
+      console.log(`Calling: ${apiCall}`);
 
       const response = await axios.get(apiCall, {
         validateStatus: (status) => status < 500,
@@ -1513,6 +1653,32 @@ describe("What's on? API tests", () => {
       },
       config.timeout,
     );
+  });
+
+  test("should_have_top_level_pagination_keys", async () => {
+    const response = await axios.get(simpleApiCall);
+    console.log("Test name: should_have_top_level_pagination_keys");
+    console.log(`Calling: ${simpleApiCall}`);
+
+    expect(response.status).toBe(200);
+    validatePaginationKeys(response.data);
+  });
+
+  test("should_have_top_level_pagination_keys_equal_to_one_on_search", async () => {
+    const simpleApiCallOnSearch = `${baseURL}?imdbid=tt0903747&api_key=${config.internalApiKey}`;
+    const response = await axios.get(simpleApiCallOnSearch);
+    console.log(
+      "Test name: should_have_top_level_pagination_keys_equal_to_one_on_search",
+    );
+    console.log(`Calling: ${simpleApiCallOnSearch}`);
+
+    expect(response.status).toBe(200);
+    validatePaginationKeys(response.data, {
+      page: 1,
+      resultsLength: 1,
+      total_pages: 1,
+      total_results: 1,
+    });
   });
 
   test(

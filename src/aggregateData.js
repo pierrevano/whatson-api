@@ -1,4 +1,5 @@
 const { config } = require("./config");
+const { filterEpisodesBySeason } = require("./utils/filterEpisodesBySeason");
 const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
@@ -28,6 +29,7 @@ const aggregateData = async (
   ratings_filters_query,
   release_date_query,
   seasons_number_query,
+  filtered_season_query,
   status_query,
 ) => {
   const critics_rating_details =
@@ -85,6 +87,11 @@ const aggregateData = async (
     typeof seasons_number_query !== "undefined" && seasons_number_query
       ? seasons_number_query
       : "";
+  const filtered_season =
+    typeof filtered_season_query !== "undefined" && filtered_season_query
+      ? filtered_season_query
+      : null;
+
   const status =
     typeof status_query !== "undefined" && status_query ? status_query : "";
 
@@ -233,7 +240,9 @@ const aggregateData = async (
   pipeline.push(facet);
 
   const data = await collectionData.aggregate(pipeline);
-  const items = await data.toArray();
+  let items = await data.toArray();
+
+  items = await filterEpisodesBySeason(items, filtered_season);
 
   return {
     items: items,

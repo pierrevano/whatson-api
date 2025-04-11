@@ -32,6 +32,7 @@ const getItems = async (req, res) => {
     const ratings_filters_query = req.query.ratings_filters;
     const release_date_query = req.query.release_date;
     const seasons_number_query = req.query.seasons_number;
+    const filtered_season_query = parseInt(req.query.filtered_season);
     const status_query = req.query.status;
 
     const internal_api_key = await collectionNameApiKey.findOne({
@@ -55,6 +56,7 @@ const getItems = async (req, res) => {
       ratings_filters_query,
       release_date_query,
       seasons_number_query,
+      filtered_season_query,
       status_query,
     );
     const results = items && items.length > 0 ? items[0].results : [];
@@ -77,7 +79,11 @@ const getItems = async (req, res) => {
       }
 
       if (lowerCaseQuery.hasOwnProperty(key)) {
-        const items = await findId(lowerCaseQuery, append_to_response);
+        const items = await findId(
+          lowerCaseQuery,
+          append_to_response,
+          filtered_season_query,
+        );
         const results = items.results;
         const total_results = items.total_results;
 

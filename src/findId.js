@@ -1,7 +1,8 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const { config } = require("./config");
 const { buildProjection } = require("./utils/buildProjection");
+const { config } = require("./config");
+const { filterEpisodesBySeason } = require("./utils/filterEpisodesBySeason");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -15,13 +16,14 @@ const collectionData = database.collection(config.collectionName);
  * Receives a JSON object as input and returns a list of items from the database that match the input.
  * The keys of the input JSON are matched with a predetermined key mapping.
  * If a key is found in the input JSON, it is used to form a query which is then executed against the MongoDB collection.
+ * Optionally filters episodes by a given season.
  *
- * @param {Object} json - The JSON object that contains the data to search for. Valid keys include 'title', 'allocineid',
- * 'betaseriesid', 'imdbid', 'letterboxdid', 'metacriticid', 'rottentomatoesid', 'senscritiqueid', 'thetvdbid', 'tmdbid', 'traktid', 'tvtimeid'.
- * @returns {Object} An object containing two properties: 'results' which is an array of matching documents from the database,
- *  and 'total_results', which is the total count of matching documents.
+ * @param {Object} json - The JSON object to match keys against.
+ * @param {String} append_to_response - Specifies additional fields to include in the projection.
+ * @param {Number} filtered_season - If provided, filters episodes to only include this season number.
+ * @returns {Object} An object containing filtered `results` and `total_results`.
  */
-const findId = async (json, append_to_response) => {
+const findId = async (json, append_to_response, filtered_season) => {
   const keysMapping = {
     allocineid: "allocine.id",
     betaseriesid: "betaseries.id",
@@ -61,10 +63,16 @@ const findId = async (json, append_to_response) => {
   const projection = buildProjection(append_to_response);
 
   // Step 3: Execute query with projection
-  const [results, total_results] = await Promise.all([
+  let [results, total_results] = await Promise.all([
     collectionData.find(query, { projection }).toArray(),
     collectionData.countDocuments(query),
   ]);
+
+  // Step 4: Filter by season if needed
+  if (filtered_season) {
+    results = await filterEpisodesBySeason(results, filtered_season);
+    total_results = results.length;
+  }
 
   return { results, total_results };
 };
