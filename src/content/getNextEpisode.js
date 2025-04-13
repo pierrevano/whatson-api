@@ -1,4 +1,5 @@
 const { config } = require("../config");
+const { formatDate } = require("../utils/formatDate");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
@@ -58,13 +59,8 @@ const getNextEpisode = async (
       }
 
       if (nextEpisode && nextEpisode.release_date) {
-        const currentDate = new Date().toISOString().split("T")[0];
-        const releaseDate = new Date(nextEpisode.release_date)
-          .toISOString()
-          .split("T")[0];
-
         if (
-          releaseDate >= currentDate &&
+          formatDate(nextEpisode.release_date) >= formatDate(new Date()) &&
           (await getWhatsonResponse(imdbId)).status !== "Ended"
         ) {
           nextEpisodeDetails = {

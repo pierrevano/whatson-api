@@ -1,4 +1,5 @@
 const { config } = require("../config");
+const { formatDate } = require("../utils/formatDate");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
@@ -16,31 +17,16 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
 
   try {
     if (Array.isArray(episodesDetails) && episodesDetails.some((ep) => ep)) {
-      const today = new Date().toISOString().split("T")[0];
-
       const pastEpisodes = episodesDetails.filter(
         (ep) =>
           ep?.release_date &&
-          new Date(ep.release_date).toISOString().split("T")[0] <= today,
+          formatDate(ep.release_date) < formatDate(new Date()),
       );
 
       // All episodes are in the future, no valid last episode
       if (pastEpisodes.length === 0) return null;
 
-      let lastEpisode = pastEpisodes[pastEpisodes.length - 1];
-      const secondToLast = pastEpisodes[pastEpisodes.length - 2];
-
-      /*
-       * Use the second-to-last episode instead, but only if the most recent
-       * episode airs today and the previous episode has a different release date
-       */
-      if (
-        lastEpisode.release_date === today &&
-        secondToLast &&
-        secondToLast.release_date !== today
-      ) {
-        lastEpisode = secondToLast;
-      }
+      const lastEpisode = pastEpisodes[pastEpisodes.length - 1];
 
       const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 

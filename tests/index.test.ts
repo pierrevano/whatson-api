@@ -6,6 +6,7 @@ const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
 const { countNullValues } = require("./utils/countNullValues");
+const { formatDate } = require("../src/utils/formatDate");
 const { schema } = require("../src/schema");
 
 const isRemoteSource = process.env.SOURCE === "remote";
@@ -1406,11 +1407,9 @@ const params = {
 
                 // Check that future episodes have null users_rating
                 if (episode.release_date) {
-                  const releaseDate = new Date(episode.release_date)
-                    .toISOString()
-                    .split("T")[0];
-                  const today = new Date().toISOString().split("T")[0];
-                  if (releaseDate > today) {
+                  if (
+                    formatDate(episode.release_date) >= formatDate(new Date())
+                  ) {
                     expect(episode.users_rating).toBeNull();
                   }
                 }
@@ -1430,8 +1429,7 @@ const params = {
           const pastEpisodes = item.episodes_details.filter(
             (ep) =>
               ep?.release_date &&
-              new Date(ep.release_date).toISOString().split("T")[0] <=
-                new Date().toISOString().split("T")[0],
+              formatDate(ep.release_date) < formatDate(new Date()),
           );
 
           if (pastEpisodes.length === 0) return;
@@ -1453,6 +1451,8 @@ const params = {
   should_have_next_episode_greater_than_last_episode: {
     query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
+      const today = formatDate(new Date());
+
       items.forEach((item) => {
         if (item.last_episode && item.next_episode) {
           const lastSeason = item.last_episode.season;
@@ -1473,6 +1473,8 @@ const params = {
           )
             return;
 
+          expect(formatDate(lastReleaseDate) < today).toBe(true);
+          expect(formatDate(nextReleaseDate) >= today).toBe(true);
           expect(nextCombined).toBeGreaterThanOrEqual(lastCombined);
         }
       });
@@ -1512,6 +1514,8 @@ const params = {
 
       items.forEach((item) => {
         if (item.next_episode) {
+          expect(item.next_episode.users_rating).toBeNull();
+
           const releaseDate = new Date(
             item.next_episode.release_date,
           ).getTime();
@@ -1529,22 +1533,6 @@ const params = {
         expect(item).toHaveProperty("status");
         expect(item.status).toBe("Ended");
         expect(item.next_episode).toBeNull();
-      });
-    },
-  },
-
-  should_only_have_last_episode_released_until_today: {
-    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
-    expectedResult: (items) => {
-      items.forEach((item) => {
-        if (item.last_episode && item.last_episode.release_date) {
-          const releaseDate = new Date(item.last_episode.release_date)
-            .toISOString()
-            .split("T")[0];
-          expect(releaseDate <= new Date().toISOString().split("T")[0]).toBe(
-            true,
-          );
-        }
       });
     },
   },

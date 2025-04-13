@@ -2,6 +2,7 @@ const { config } = require("../config");
 const {
   convertImdbDateToISOString,
 } = require("../utils/convertFrenchDateToISOString");
+const { formatDate } = require("../utils/formatDate");
 const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
@@ -88,8 +89,9 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
 
           const getUsersRating = (date, rating) => {
             if (!date) return null;
-            const today = new Date().toISOString().split("T")[0];
-            return date > today ? null : parseFloat(rating) || null;
+            return formatDate(date) >= formatDate(new Date())
+              ? null
+              : parseFloat(rating) || null;
           };
 
           episodesDetails.push({
