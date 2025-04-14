@@ -16,48 +16,47 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
   let lastEpisodeDetails = null;
 
   try {
-    if (Array.isArray(episodesDetails) && episodesDetails.some((ep) => ep)) {
-      const pastEpisodes = episodesDetails.filter(
-        (ep) =>
-          ep?.release_date &&
-          formatDate(ep.release_date) < formatDate(new Date()),
-      );
+    const pastEpisodes = Array.isArray(episodesDetails)
+      ? episodesDetails.filter(
+          (ep) =>
+            ep?.release_date &&
+            formatDate(ep.release_date) < formatDate(new Date()),
+        )
+      : [];
 
-      // All episodes are in the future, no valid last episode
-      if (pastEpisodes.length === 0) return null;
+    if (pastEpisodes.length === 0) return null;
 
-      const lastEpisode = pastEpisodes[pastEpisodes.length - 1];
+    const lastEpisode = pastEpisodes[pastEpisodes.length - 1];
 
-      const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
+    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 
-      let episode_type = null;
-      if (data?.last_episode_to_air) {
-        const {
-          season_number,
-          episode_number,
-          episode_type: type,
-        } = data.last_episode_to_air;
+    let episode_type = null;
+    if (data?.last_episode_to_air) {
+      const {
+        season_number,
+        episode_number,
+        episode_type: type,
+      } = data.last_episode_to_air;
 
-        if (
-          season_number === lastEpisode.season &&
-          episode_number === lastEpisode.episode
-        ) {
-          episode_type = type;
-        }
+      if (
+        season_number === lastEpisode.season &&
+        episode_number === lastEpisode.episode
+      ) {
+        episode_type = type;
       }
-
-      lastEpisodeDetails = {
-        season: lastEpisode.season,
-        episode: lastEpisode.episode,
-        episode_type,
-        title: lastEpisode.title,
-        description: lastEpisode.description,
-        id: lastEpisode.id,
-        url: lastEpisode.url,
-        release_date: lastEpisode.release_date,
-        users_rating: lastEpisode.users_rating,
-      };
     }
+
+    lastEpisodeDetails = {
+      season: lastEpisode.season,
+      episode: lastEpisode.episode,
+      episode_type,
+      title: lastEpisode.title,
+      description: lastEpisode.description,
+      id: lastEpisode.id,
+      url: lastEpisode.url,
+      release_date: lastEpisode.release_date,
+      users_rating: lastEpisode.users_rating,
+    };
   } catch (error) {
     logErrors(error, allocineHomepage, "getLastEpisode");
   }

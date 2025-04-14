@@ -23,59 +23,48 @@ const getNextEpisode = async (
   let nextEpisodeDetails = null;
 
   try {
-    let lastRatedEpisodeIndex = -1;
+    const futureEpisodes = Array.isArray(episodesDetails)
+      ? episodesDetails.filter(
+          (ep) =>
+            ep?.release_date &&
+            formatDate(ep.release_date) > formatDate(new Date()),
+        )
+      : [];
 
-    if (
-      Array.isArray(episodesDetails) &&
-      episodesDetails.some((ep) => ep?.users_rating !== null)
-    ) {
-      lastRatedEpisodeIndex = episodesDetails.findLastIndex(
-        (ep) => ep?.users_rating !== null,
-      );
+    if (futureEpisodes.length === 0) return null;
+
+    const nextEpisode = futureEpisodes[0];
+
+    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
+
+    let episode_type = null;
+    if (data?.next_episode_to_air) {
+      const {
+        season_number,
+        episode_number,
+        episode_type: type,
+      } = data.next_episode_to_air;
+
+      if (
+        season_number === nextEpisode.season &&
+        episode_number === nextEpisode.episode
+      ) {
+        episode_type = type;
+      }
     }
 
-    if (
-      lastRatedEpisodeIndex !== -1 &&
-      lastRatedEpisodeIndex < episodesDetails.length - 1
-    ) {
-      const nextEpisode = episodesDetails[lastRatedEpisodeIndex + 1];
-
-      const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
-
-      let episode_type = null;
-      if (data?.next_episode_to_air) {
-        const {
-          season_number,
-          episode_number,
-          episode_type: type,
-        } = data.next_episode_to_air;
-
-        if (
-          season_number === nextEpisode.season &&
-          episode_number === nextEpisode.episode
-        ) {
-          episode_type = type;
-        }
-      }
-
-      if (nextEpisode && nextEpisode.release_date) {
-        if (
-          formatDate(nextEpisode.release_date) >= formatDate(new Date()) &&
-          (await getWhatsonResponse(imdbId)).status !== "Ended"
-        ) {
-          nextEpisodeDetails = {
-            season: nextEpisode.season,
-            episode: nextEpisode.episode,
-            episode_type,
-            title: nextEpisode.title,
-            description: nextEpisode.description,
-            id: nextEpisode.id,
-            url: nextEpisode.url,
-            release_date: nextEpisode.release_date,
-            users_rating: nextEpisode.users_rating,
-          };
-        }
-      }
+    if ((await getWhatsonResponse(imdbId)).status !== "Ended") {
+      nextEpisodeDetails = {
+        season: nextEpisode.season,
+        episode: nextEpisode.episode,
+        episode_type,
+        title: nextEpisode.title,
+        description: nextEpisode.description,
+        id: nextEpisode.id,
+        url: nextEpisode.url,
+        release_date: nextEpisode.release_date,
+        users_rating: nextEpisode.users_rating,
+      };
     }
   } catch (error) {
     logErrors(error, allocineHomepage, "getNextEpisode");

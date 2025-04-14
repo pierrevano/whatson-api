@@ -64,10 +64,10 @@ const getItems = async (req, res) => {
       results.length > 0 ? items[0].total_results[0].total_results : 0;
 
     let json = {
-      page: page,
-      results: results,
+      page,
+      results,
       total_pages: Math.ceil(total_results / limit),
-      total_results: total_results,
+      total_results,
     };
 
     for (let index = 0; index < config.keysToCheckForSearch.length; index++) {
@@ -89,9 +89,9 @@ const getItems = async (req, res) => {
 
         json = {
           page: 1,
-          results: results,
+          results,
           total_pages: 1,
-          total_results: total_results,
+          total_results,
         };
 
         break;

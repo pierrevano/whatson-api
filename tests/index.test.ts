@@ -1393,7 +1393,7 @@ const params = {
         if (item.episodes_details) {
           if (item.item_type === "movie") {
             expect(item.episodes_details).toBeNull();
-          } else if (item.item_type === "tvshow") {
+          } else {
             let lastGlobalEpisodeNumber = -1;
             item.episodes_details.forEach((episode) => {
               if (episode && episode.season && episode.episode) {
@@ -1422,7 +1422,7 @@ const params = {
   },
 
   should_match_last_episode_details: {
-    query: `?item_type=tvshow&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details && item.last_episode) {
@@ -1431,8 +1431,6 @@ const params = {
               ep?.release_date &&
               formatDate(ep.release_date) < formatDate(new Date()),
           );
-
-          if (pastEpisodes.length === 0) return;
 
           const lastAired = pastEpisodes[pastEpisodes.length - 1];
 
@@ -1455,27 +1453,17 @@ const params = {
 
       items.forEach((item) => {
         if (item.last_episode && item.next_episode) {
-          const lastSeason = item.last_episode.season;
-          const lastEpisode = item.last_episode.episode;
-          const nextSeason = item.next_episode.season;
-          const nextEpisode = item.next_episode.episode;
+          const lastCombined =
+            item.last_episode.season * 100 + item.last_episode.episode;
+          const nextCombined =
+            item.next_episode.season * 100 + item.next_episode.episode;
 
-          const lastCombined = lastSeason * 100 + lastEpisode;
-          const nextCombined = nextSeason * 100 + nextEpisode;
+          const lastReleaseDate = formatDate(item.last_episode.release_date);
+          const nextReleaseDate = formatDate(item.next_episode.release_date);
 
-          const lastReleaseDate = item.last_episode.release_date;
-          const nextReleaseDate = item.next_episode.release_date;
-
-          if (
-            lastReleaseDate &&
-            nextReleaseDate &&
-            lastReleaseDate === nextReleaseDate
-          )
-            return;
-
-          expect(formatDate(lastReleaseDate) < today).toBe(true);
-          expect(formatDate(nextReleaseDate) >= today).toBe(true);
-          expect(nextCombined).toBeGreaterThanOrEqual(lastCombined);
+          expect(lastReleaseDate < today).toBe(true);
+          expect(nextReleaseDate >= today).toBe(true);
+          expect(nextCombined).toBeGreaterThan(lastCombined);
         }
       });
     },
