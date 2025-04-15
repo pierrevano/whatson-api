@@ -27,7 +27,7 @@ const getNextEpisode = async (
       ? episodesDetails.filter(
           (ep) =>
             ep?.release_date &&
-            formatDate(ep.release_date) > formatDate(new Date()),
+            formatDate(ep.release_date) >= formatDate(new Date()),
         )
       : [];
 

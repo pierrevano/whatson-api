@@ -1453,17 +1453,22 @@ const params = {
 
       items.forEach((item) => {
         if (item.last_episode && item.next_episode) {
-          const lastCombined =
-            item.last_episode.season * 100 + item.last_episode.episode;
-          const nextCombined =
-            item.next_episode.season * 100 + item.next_episode.episode;
+          const lastSeason = item.last_episode.season;
+          const lastEpisode = item.last_episode.episode;
+          const nextSeason = item.next_episode.season;
+          const nextEpisode = item.next_episode.episode;
+
+          const isSequential =
+            (nextSeason === lastSeason && nextEpisode === lastEpisode + 1) ||
+            (nextSeason === lastSeason + 1 && nextEpisode === 1);
+
+          expect(isSequential).toBe(true);
 
           const lastReleaseDate = formatDate(item.last_episode.release_date);
           const nextReleaseDate = formatDate(item.next_episode.release_date);
 
           expect(lastReleaseDate < today).toBe(true);
           expect(nextReleaseDate >= today).toBe(true);
-          expect(nextCombined).toBeGreaterThan(lastCombined);
         }
       });
     },
@@ -1503,6 +1508,13 @@ const params = {
       items.forEach((item) => {
         if (item.next_episode) {
           expect(item.next_episode.users_rating).toBeNull();
+
+          if (
+            item.next_episode.season !== 1 ||
+            item.next_episode.episode !== 1
+          ) {
+            expect(item.last_episode).not.toBeNull();
+          }
 
           const releaseDate = new Date(
             item.next_episode.release_date,

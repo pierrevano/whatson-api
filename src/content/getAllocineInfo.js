@@ -61,9 +61,10 @@ const getAllocineInfo = async (
     const seasonsNumber = !compare
       ? await getSeasonsNumber(allocineHomepage, tmdbId)
       : null;
-    const status = !compare
-      ? await getStatus(allocineHomepage, $(".thumbnail .label-status").text())
-      : null;
+    const status = await getStatus(
+      allocineHomepage,
+      $(".thumbnail .label-status").text(),
+    );
     const trailer = !compare
       ? await getTrailer(allocineHomepage, betaseriesHomepage, options)
       : null;
