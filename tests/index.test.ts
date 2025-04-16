@@ -224,7 +224,7 @@ function checkItemProperties(items) {
       : null;
 
     item.is_active === true && item.item_type === "tvshow"
-      ? expect(item.status).not.toBeNull()
+      ? expect(["Canceled", "Ongoing", "Pilot", "Ended"]).toContain(item.status)
       : null;
 
     /* Popularity */
