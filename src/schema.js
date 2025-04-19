@@ -28,6 +28,7 @@ const schema = {
       url: "string", // URL to the IMDb page
       release_date: "string", // Release date of the episode
       users_rating: "number", // Rating given by IMDb users
+      users_rating_count: "number", // Count of rating given by IMDb users
     },
   ],
   last_episode: {
@@ -41,6 +42,7 @@ const schema = {
     url: "string", // URL to the IMDb page of the most recent episode
     release_date: "string", // Release date of the most recent episode
     users_rating: "number", // Rating given by IMDb users for the most recent episode
+    users_rating_count: "number", // Count of rating given by IMDb users for the most recent episode
   },
   next_episode: {
     /* Information related to the next episode to air */
@@ -53,6 +55,7 @@ const schema = {
     url: "string", // URL to the IMDb page of the next episode to air
     release_date: "string", // Release date of the next episode to air
     users_rating: "number", // Rating given by IMDb users for the next episode to air
+    users_rating_count: "number", // Count of rating given by IMDb users for the next episode to air
   },
   platforms_links: [
     {

@@ -64,6 +64,7 @@ const getNextEpisode = async (
         url: nextEpisode.url,
         release_date: nextEpisode.release_date,
         users_rating: nextEpisode.users_rating,
+        users_rating_count: nextEpisode.users_rating_count,
       };
     }
   } catch (error) {

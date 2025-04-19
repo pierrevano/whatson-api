@@ -26,85 +26,57 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
     };
     const $ = await getCheerioContent(url, options, "parseImdbEpisodes");
 
+    const jsonText = $("#__NEXT_DATA__").html();
+    const nextData = JSON.parse(jsonText);
+
+    const items =
+      nextData?.props?.pageProps?.contentData?.section?.episodes?.items;
+
+    if (!Array.isArray(items)) {
+      return episodesDetails;
+    }
+
     let previousReleaseDate = null;
 
-    $(".ipc-page-section section").each((_, element) => {
-      $(element)
-        .find(".ipc-title__text")
-        .each((titleIndex, titleElement) => {
-          // Skip this iteration if no episodes are found for the season (titleIndex is not a number)
-          if (typeof titleIndex !== "number") return;
+    items.forEach((episode) => {
+      const rawEpisode = parseInt(episode.episode, 10);
 
-          // Extract the episode number from the title (assuming the format "S5.E10 ∙ Episode Title")
-          const fullTitle = $(titleElement).text().trim();
-          const episodeNumberMatch = fullTitle.match(/E(\d+)/);
-          const episodeNumber = episodeNumberMatch
-            ? parseInt(episodeNumberMatch[1], 10)
-            : null;
+      let releaseDate = convertImdbDateToISOString(episode?.releaseDate);
 
-          // Split the title to get the actual episode title after "∙"
-          const [_, episodeTitle] =
-            fullTitle.split("∙").map((part) => part.trim()) || null;
+      // Ensure release dates are not decreasing
+      if (
+        releaseDate &&
+        previousReleaseDate &&
+        releaseDate < previousReleaseDate
+      ) {
+        releaseDate = null;
+      } else if (releaseDate) {
+        previousReleaseDate = releaseDate;
+      }
 
-          // Extract episode description
-          const episodeDescription =
-            $(element)
-              .find(".ipc-overflowText .ipc-html-content-inner-div")
-              .eq(titleIndex)
-              .text()
-              .trim() || null;
+      const getUsersRating = (date, rating) => {
+        if (!date) return null;
+        return formatDate(date) >= formatDate(new Date())
+          ? null
+          : parseFloat(rating) || null;
+      };
 
-          // Find the parent element that contains the href attribute
-          const parentWithHref = $(titleElement).closest(".ipc-title a");
-          const episodeIdMatch = parentWithHref.attr("href")
-            ? parentWithHref.attr("href").match(/\/title\/(tt\d+)\//)
-            : null;
-          const episodeId = episodeIdMatch ? episodeIdMatch[1] : null;
+      const usersRating = getUsersRating(releaseDate, episode.aggregateRating);
+      const usersRatingCount = usersRating
+        ? parseInt(episode.voteCount, 10) || null
+        : null;
 
-          // Find the closest h4 and then get the sibling span for the release date
-          const closestH4 = $(titleElement).closest("h4");
-          const releaseDateText = closestH4
-            .siblings("span")
-            .first()
-            .text()
-            .trim();
-          let releaseDate = convertImdbDateToISOString(releaseDateText) || null;
-
-          // Ensure release dates are not decreasing
-          if (
-            releaseDate &&
-            previousReleaseDate &&
-            releaseDate < previousReleaseDate
-          ) {
-            releaseDate = null;
-          } else if (releaseDate) {
-            previousReleaseDate = releaseDate;
-          }
-
-          const ratingText = $(element)
-            .find(".ipc-rating-star--rating")
-            .eq(titleIndex)
-            .text()
-            .trim();
-
-          const getUsersRating = (date, rating) => {
-            if (!date) return null;
-            return formatDate(date) >= formatDate(new Date())
-              ? null
-              : parseFloat(rating) || null;
-          };
-
-          episodesDetails.push({
-            season,
-            episode: episodeNumber,
-            title: episodeTitle,
-            description: episodeDescription,
-            id: episodeId,
-            url: episodeId ? `${config.baseURLIMDB}${episodeId}/` : null,
-            release_date: releaseDate,
-            users_rating: getUsersRating(releaseDate, ratingText),
-          });
-        });
+      episodesDetails.push({
+        season,
+        episode: isNaN(rawEpisode) ? null : rawEpisode,
+        title: episode.titleText || null,
+        description: episode.plot || null,
+        id: episode.id || null,
+        url: episode.id ? `${config.baseURLIMDB}${episode.id}/` : null,
+        release_date: releaseDate,
+        users_rating: usersRating,
+        users_rating_count: usersRatingCount,
+      });
     });
   } catch (error) {
     logErrors(error, url, "parseImdbEpisodes");

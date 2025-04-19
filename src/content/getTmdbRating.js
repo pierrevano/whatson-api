@@ -7,7 +7,7 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} allocineHomepage - Allocine homepage URL.
  * @param {string} tmdbHomepage - TMDB homepage URL.
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
- * @returns {Promise<Object>} - An object containing TMDB rating information.
+ * @returns {Promise<Object|null>} - An object containing TMDB rating information, or null if not found.
  * @throws {Error} - If there is an error retrieving rating from TMDB.
  */
 const getTmdbRating = async (allocineHomepage, tmdbHomepage, tmdbId) => {
@@ -15,9 +15,13 @@ const getTmdbRating = async (allocineHomepage, tmdbHomepage, tmdbId) => {
 
   try {
     if (isNotNull(tmdbId)) {
-      const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
+      const response = await getTMDBResponse(allocineHomepage, tmdbId);
+      const data = response?.data;
 
-      const usersRating = parseFloat(data.vote_average.toFixed(2));
+      const usersRating =
+        data && data.vote_average
+          ? parseFloat(data.vote_average.toFixed(2))
+          : null;
       tmdbObj = {
         id: tmdbId,
         url: tmdbHomepage,

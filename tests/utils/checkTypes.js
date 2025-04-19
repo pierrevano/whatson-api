@@ -44,7 +44,11 @@ function checkTypes(item, schema) {
         expect(actualType).toBe(expectedType);
       }
     } else if (!item.hasOwnProperty(key)) {
-      if (key !== "description" && key !== "release_date") {
+      if (
+        key !== "description" &&
+        key !== "release_date" &&
+        key !== "users_rating_count"
+      ) {
         // The key is missing in the item
         throw new Error(`Missing required key '${key}' in the item.`);
       }

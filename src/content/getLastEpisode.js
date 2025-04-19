@@ -56,6 +56,7 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
       url: lastEpisode.url,
       release_date: lastEpisode.release_date,
       users_rating: lastEpisode.users_rating,
+      users_rating_count: lastEpisode.users_rating_count,
     };
   } catch (error) {
     logErrors(error, allocineHomepage, "getLastEpisode");

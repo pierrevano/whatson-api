@@ -76,38 +76,33 @@ function convertFrenchDateToISOString(frenchDateStr, isTVShow = false) {
 }
 
 /**
- * Converts an IMDb-formatted date string (e.g., "Tue, Mar 4, 2025") to an ISO 8601 date string.
+ * Converts a structured release date object (with year, optional month and day)
+ * to an ISO 8601 date string.
  *
- * @param {string} imdbDateStr - The date string in IMDb format.
- * @returns {string|null} - The formatted date in ISO format (e.g., "2025-03-04T00:00:00.000Z") or null if parsing fails.
+ * @param {{ year: number, month?: number, day?: number }} releaseDate - The release date object.
+ * @returns {string|null} - The ISO 8601 date string or null if input is missing or invalid.
  */
-function convertImdbDateToISOString(imdbDateStr) {
-  if (!imdbDateStr) return null;
+function convertImdbDateToISOString(releaseDate) {
+  if (!releaseDate?.year) return null;
 
-  const months = {
-    Jan: "01",
-    Feb: "02",
-    Mar: "03",
-    Apr: "04",
-    May: "05",
-    Jun: "06",
-    Jul: "07",
-    Aug: "08",
-    Sep: "09",
-    Oct: "10",
-    Nov: "11",
-    Dec: "12",
-  };
+  const { year, month, day } = releaseDate;
 
-  const match = imdbDateStr.match(
-    /([A-Za-z]+), ([A-Za-z]+) (\d{1,2}), (\d{4})/,
-  );
-  if (!match) return null;
+  if (year && month && day) {
+    const paddedMonth = String(month).padStart(2, "0");
+    const paddedDay = String(day).padStart(2, "0");
+    return `${year}-${paddedMonth}-${paddedDay}T00:00:00.000Z`;
+  }
 
-  const [_, __, month, day, year] = match;
-  const formattedDate = `${year}-${months[month]}-${day.padStart(2, "0")}T00:00:00.000Z`;
+  if (year && month) {
+    const paddedMonth = String(month).padStart(2, "0");
+    return `${year}-${paddedMonth}-01T00:00:00.000Z`;
+  }
 
-  return formattedDate;
+  if (year) {
+    return `${year}-01-01T00:00:00.000Z`;
+  }
+
+  return null;
 }
 
 module.exports = { convertFrenchDateToISOString, convertImdbDateToISOString };

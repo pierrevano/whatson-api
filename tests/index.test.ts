@@ -1554,6 +1554,20 @@ const params = {
       });
     },
   },
+
+  should_not_have_season_and_episode_to_null: {
+    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        if (Array.isArray(item.episodes_details)) {
+          item.episodes_details.forEach((episode) => {
+            expect(episode.season).not.toBeNull();
+            expect(episode.episode).not.toBeNull();
+          });
+        }
+      });
+    },
+  },
 };
 
 /**
