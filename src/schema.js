@@ -57,6 +57,30 @@ const schema = {
     users_rating: "number", // Average rating given by IMDb users for the next episode to air
     users_rating_count: "number", // Total number of ratings submitted by IMDb users for the next episode to air
   },
+  highest_episode: {
+    /* Highest rated episode across all seasons */
+    season: "number", // Season number of the highest-rated episode
+    episode: "number", // Episode number of the highest-rated episode
+    title: "string", // Title of the highest-rated episode
+    description: "string", // Description of the highest-rated episode
+    id: "string", // IMDb specific identifier for the highest-rated episode
+    url: "string", // URL to the IMDb page of the highest-rated episode
+    release_date: "string", // Release date of the highest-rated episode
+    users_rating: "number", // Average rating given by IMDb users for the highest-rated episode
+    users_rating_count: "number", // Total number of ratings submitted by IMDb users for the highest-rated episode
+  },
+  lowest_episode: {
+    /* Lowest rated episode across all seasons */
+    season: "number", // Season number of the lowest-rated episode
+    episode: "number", // Episode number of the lowest-rated episode
+    title: "string", // Title of the lowest-rated episode
+    description: "string", // Description of the lowest-rated episode
+    id: "string", // IMDb specific identifier for the lowest-rated episode
+    url: "string", // URL to the IMDb page of the lowest-rated episode
+    release_date: "string", // Release date of the lowest-rated episode
+    users_rating: "number", // Average rating given by IMDb users for the lowest-rated episode
+    users_rating_count: "number", // Total number of ratings submitted by IMDb users for the lowest-rated episode
+  },
   platforms_links: [
     {
       name: "string", // Name of the streaming platform

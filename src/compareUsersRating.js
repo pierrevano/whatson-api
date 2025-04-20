@@ -4,9 +4,11 @@ const { config } = require("./config");
 const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getEpisodesDetails } = require("./content/getEpisodesDetails");
+const { getHighestRatedEpisode } = require("./content/getHighestRatedEpisode");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
 const { getImdbRating } = require("./content/getImdbRating");
 const { getLastEpisode } = require("./content/getLastEpisode");
+const { getLowestRatedEpisode } = require("./content/getLowestRatedEpisode");
 const { getNextEpisode } = require("./content/getNextEpisode");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { logErrors } = require("./utils/logErrors");
@@ -56,7 +58,11 @@ const compareUsersRating = async (
     const imdb_users_rating = await getImdbRating(imdbHomepage);
 
     const isTvshowNotEnded = status && status !== "Ended";
-    let episodesDetails, lastEpisode, nextEpisode;
+    let episodesDetails,
+      lastEpisode,
+      nextEpisode,
+      highestEpisode,
+      lowestEpisode;
     if (isTvshowNotEnded) {
       episodesDetails = await getEpisodesDetails(
         allocineHomepage,
@@ -73,6 +79,14 @@ const compareUsersRating = async (
         episodesDetails,
         imdbId,
         tmdbId,
+      );
+      highestEpisode = await getHighestRatedEpisode(
+        allocineHomepage,
+        episodesDetails,
+      );
+      lowestEpisode = await getLowestRatedEpisode(
+        allocineHomepage,
+        episodesDetails,
       );
     }
 
@@ -119,6 +133,8 @@ const compareUsersRating = async (
         dataWithoutId.episodes_details = episodesDetails;
         dataWithoutId.last_episode = lastEpisode;
         dataWithoutId.next_episode = nextEpisode;
+        dataWithoutId.highest_episode = highestEpisode;
+        dataWithoutId.lowest_episode = lowestEpisode;
       }
 
       dataWithoutId.allocine.popularity = allocinePopularity;

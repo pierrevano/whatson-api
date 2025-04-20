@@ -110,10 +110,12 @@ function checkItemProperties(items) {
         })
       : null;
 
-    if (item.item_type === "movie") {
+    if (item.item_type !== "tvshow") {
       expect(item.episodes_details).toBeNull();
       expect(item.last_episode).toBeNull();
       expect(item.next_episode).toBeNull();
+      expect(item.highest_episode).toBeNull();
+      expect(item.lowest_episode).toBeNull();
       expect(item.seasons_number).toBeNull();
       expect(item.status).toBeNull();
     }
@@ -152,15 +154,20 @@ function checkItemProperties(items) {
           ).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
+
+    item.item_type === "tvshow" && item.is_active === true
+      ? expect(
+          item.episodes_details === null ||
+            (Array.isArray(item.episodes_details) &&
+              item.episodes_details.every((ep) => ep !== null)),
+        ).toBe(true)
+      : null;
+
     item.is_active === true && item.item_type === "tvshow"
       ? expect(
           items.filter((item) => item.last_episode).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
-    expect(
-      items.filter((item) => item.item_type === "movie" && item.last_episode)
-        .length,
-    ).toBe(0);
     const releaseDatePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
     item.last_episode && item.last_episode.release_date
       ? expect(item.last_episode.release_date).toMatch(releaseDatePattern)
@@ -188,12 +195,8 @@ function checkItemProperties(items) {
     item.is_active === true && item.item_type === "tvshow"
       ? expect(
           items.filter((item) => item.next_episode).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.nextEpisodes)
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
-    expect(
-      items.filter((item) => item.item_type === "movie" && item.next_episode)
-        .length,
-    ).toBe(0);
     item.next_episode
       ? [
           "season",
@@ -221,6 +224,18 @@ function checkItemProperties(items) {
             expect(item.next_episode[key]).not.toBeNull();
           }
         })
+      : null;
+
+    item.is_active === true && item.item_type === "tvshow"
+      ? expect(
+          items.filter((item) => item.highest_episode).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+
+    item.is_active === true && item.item_type === "tvshow"
+      ? expect(
+          items.filter((item) => item.lowest_episode).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
     item.is_active === true && item.item_type === "tvshow"
@@ -1564,6 +1579,88 @@ const params = {
             expect(episode.season).not.toBeNull();
             expect(episode.episode).not.toBeNull();
           });
+        }
+      });
+    },
+  },
+
+  should_have_highest_rated_episode_above_second_best: {
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        const all = item.episodes_details;
+        const best = item.highest_episode;
+
+        if (Array.isArray(all) && all.length > 1 && best) {
+          const sorted = all
+            .filter(
+              (ep) =>
+                ep?.users_rating != null &&
+                ep?.users_rating_count != null &&
+                ep?.release_date,
+            )
+            .sort((a, b) => {
+              if (b.users_rating !== a.users_rating) {
+                return b.users_rating - a.users_rating;
+              }
+              if (b.users_rating_count !== a.users_rating_count) {
+                return b.users_rating_count - a.users_rating_count;
+              }
+              return new Date(b.release_date) - new Date(a.release_date);
+            });
+
+          const secondBest = sorted[1];
+          if (secondBest) {
+            expect(best.users_rating).toBeGreaterThanOrEqual(
+              secondBest.users_rating,
+            );
+            if (best.users_rating === secondBest.users_rating) {
+              expect(best.users_rating_count).toBeGreaterThanOrEqual(
+                secondBest.users_rating_count,
+              );
+            }
+          }
+        }
+      });
+    },
+  },
+
+  should_have_lowest_rated_episode_below_second_worst: {
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        const all = item.episodes_details;
+        const worst = item.lowest_episode;
+
+        if (Array.isArray(all) && all.length > 1 && worst) {
+          const sorted = all
+            .filter(
+              (ep) =>
+                ep?.users_rating != null &&
+                ep?.users_rating_count != null &&
+                ep?.release_date,
+            )
+            .sort((a, b) => {
+              if (a.users_rating !== b.users_rating) {
+                return a.users_rating - b.users_rating;
+              }
+              if (a.users_rating_count !== b.users_rating_count) {
+                return a.users_rating_count - b.users_rating_count;
+              }
+              return new Date(a.release_date) - new Date(b.release_date);
+            });
+
+          const secondWorst = sorted[1];
+          if (secondWorst) {
+            expect(worst.users_rating).toBeLessThanOrEqual(
+              secondWorst.users_rating,
+            );
+            if (worst.users_rating === secondWorst.users_rating) {
+              expect(worst.users_rating_count).toBeLessThanOrEqual(
+                secondWorst.users_rating_count,
+              );
+            }
+          }
         }
       });
     },

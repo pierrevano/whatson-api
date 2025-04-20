@@ -102,6 +102,8 @@ const config = {
     "item_type",
     "last_episode",
     "next_episode",
+    "highest_episode",
+    "lowest_episode",
     "letterboxd",
     "metacritic",
     "mojo",

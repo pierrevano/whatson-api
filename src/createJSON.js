@@ -1,26 +1,28 @@
-const {
-  getAllocineCriticsRating,
-} = require("./content/getAllocineCriticsRating");
 const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getBetaseriesRating } = require("./content/getBetaseriesRating");
 const { getEpisodesDetails } = require("./content/getEpisodesDetails");
+const { getHighestRatedEpisode } = require("./content/getHighestRatedEpisode");
 const { getImdbPopularity } = require("./content/getImdbPopularity");
 const { getImdbRating } = require("./content/getImdbRating");
 const { getLastEpisode } = require("./content/getLastEpisode");
 const { getLetterboxdRating } = require("./content/getLetterboxdRating");
+const { getLowestRatedEpisode } = require("./content/getLowestRatedEpisode");
 const { getMetacriticRating } = require("./content/getMetacriticRating");
-const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { getNextEpisode } = require("./content/getNextEpisode");
+const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { getPlatformsLinks } = require("./content/getPlatformsLinks");
-const {
-  getRottenTomatoesRating,
-} = require("./content/getRottenTomatoesRating");
 const { getSensCritiqueRating } = require("./content/getSensCritiqueRating");
 const { getTheTvdbSlug } = require("./content/getTheTvdbSlug");
 const { getTmdbRating } = require("./content/getTmdbRating");
 const { getTraktRating } = require("./content/getTraktRating");
 const { getTVTimeRating } = require("./content/getTVTimeRating");
+const {
+  getAllocineCriticsRating,
+} = require("./content/getAllocineCriticsRating");
+const {
+  getRottenTomatoesRating,
+} = require("./content/getRottenTomatoesRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -124,6 +126,14 @@ const createJSON = async (
     episodesDetails,
     imdbId,
     tmdbId,
+  );
+  const highestEpisode = await getHighestRatedEpisode(
+    allocineHomepage,
+    episodesDetails,
+  );
+  const lowestEpisode = await getLowestRatedEpisode(
+    allocineHomepage,
+    episodesDetails,
   );
   const mojoValues = await getObjectByImdbId(
     mojoBoxOfficeArray,
@@ -296,6 +306,8 @@ const createJSON = async (
     episodes_details: episodesDetails,
     last_episode: lastEpisode,
     next_episode: nextEpisode,
+    highest_episode: highestEpisode,
+    lowest_episode: lowestEpisode,
     platforms_links: platformsLinks,
     seasons_number: allocineFirstInfo.seasonsNumber,
     status: allocineFirstInfo.status,
