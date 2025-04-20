@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "2.98.0",
+  "version": "2.98.01",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "commit": "git add . && git cz",
     "pull-all-platforms": "git pull origin main && git pull bitbucket main && git pull bitbucket_2 main && git pull bitbucket_3 main",
     "push-all-platforms": "git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main",
-    "push": "npm run check-api-version && npm run prettier && npm run test && npm run commit && npm run push-all-platforms && npm run unchanged-dataset",
+    "push": "npm run changed-dataset && npm run check-api-version && npm run prettier && npm run test && npm run commit && npm run push-all-platforms && npm run unchanged-dataset",
     "push-dataset": "npm run changed-dataset && npm run prettier && npm run test && git add . && git commit -m 'build: update dataset' && npm run push-all-platforms && npm run unchanged-dataset",
     "push-without-tests": "npm run check-api-version && npm run prettier && npm run commit && npm run push-all-platforms && npm run unchanged-dataset",
     "push-without-version": "npm run prettier && npm run test && npm run commit && npm run push-all-platforms && npm run unchanged-dataset",
@@ -42,7 +42,12 @@
     "update-all-ids-force-movie": "node src/updateData.js movie update_ids update_db local active no_check_db_ids 0 no_check_data force",
     "update-all-ids-force-tvshow": "node src/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 no_check_data force",
     "update-all-ids-force": "npm run update-all-ids-force-movie && npm run update-all-ids-force-tvshow && npm run test",
-    "update-all-active-ids": "node src/updateData.js movie no_update_ids update_db local active no_check_db_ids 0 no_check_data force && node src/updateData.js tvshow no_update_ids update_db local active no_check_db_ids 0 no_check_data force && npm run test"
+    "update-all-active-ids-movie": "node src/updateData.js movie no_update_ids update_db local active no_check_db_ids 0 no_check_data force",
+    "update-all-active-ids-tvshow": "node src/updateData.js tvshow no_update_ids update_db local active no_check_db_ids 0 no_check_data force",
+    "update-all-active-ids": "npm run update-all-active-ids-movie && npm run update-all-active-ids-tvshow && npm run test",
+    "update-all-non-active-ids-movie": "node src/updateData.js movie no_update_ids update_db local no_active no_check_db_ids $INDEX no_check_data force mojo no_skip_services no_delete_ids $DAYS_NUMBER $MAX_INDEX",
+    "update-all-non-active-ids-tvshow": "node src/updateData.js tvshow no_update_ids update_db local no_active no_check_db_ids $INDEX no_check_data force mojo no_skip_services no_delete_ids $DAYS_NUMBER $MAX_INDEX",
+    "update-all-non-active-ids": "npm run update-all-non-active-ids-movie && npm run update-all-non-active-ids-tvshow && npm run test"
   },
   "author": "Pierre Vanoverschelde",
   "license": "ISC",
