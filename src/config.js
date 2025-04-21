@@ -85,7 +85,7 @@ const config = {
   /* Tests settings */
   baseURLLocal: "http://localhost:8081",
   baseURLRemote: process.env.WHATSON_API_URL,
-  maxLimit: 1500,
+  maxLimit: 900,
   maxLimitRemote: 500,
   checkItemsNumber: true,
   keysToCheck: [
@@ -184,7 +184,7 @@ const config = {
   maximumIsActiveItems: 400,
   maxPopularityDiff: 20,
   ratings_filters:
-    "allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottenTomatoes_critics,rottenTomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users",
+    "allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users",
   timeout: 500000,
 
   /* Services settings */

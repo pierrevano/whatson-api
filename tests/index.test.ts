@@ -129,13 +129,12 @@ function checkItemProperties(items) {
       config.minimumNumberOfItems.trailer,
     );
 
-    item.is_active === true && item.item_type === "tvshow"
+    item.item_type === "tvshow"
       ? expect(
           items.filter((item) => item.episodes_details).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
     item.item_type === "tvshow" &&
-    item.is_active === true &&
     item.episodes_details &&
     item.episodes_details.length > 0 &&
     item.episodes_details[0]
@@ -155,7 +154,7 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
-    item.item_type === "tvshow" && item.is_active === true
+    item.item_type === "tvshow"
       ? expect(
           item.episodes_details === null ||
             (Array.isArray(item.episodes_details) &&
@@ -163,7 +162,7 @@ function checkItemProperties(items) {
         ).toBe(true)
       : null;
 
-    item.is_active === true && item.item_type === "tvshow"
+    item.item_type === "tvshow"
       ? expect(
           items.filter((item) => item.last_episode).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
@@ -226,19 +225,19 @@ function checkItemProperties(items) {
         })
       : null;
 
-    item.is_active === true && item.item_type === "tvshow"
+    item.item_type === "tvshow"
       ? expect(
           items.filter((item) => item.highest_episode).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
-    item.is_active === true && item.item_type === "tvshow"
+    item.item_type === "tvshow"
       ? expect(
           items.filter((item) => item.lowest_episode).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
-    item.is_active === true && item.item_type === "tvshow"
+    item.item_type === "tvshow"
       ? expect(["Canceled", "Ongoing", "Pilot", "Ended"]).toContain(item.status)
       : null;
 
@@ -450,7 +449,7 @@ function checkItemProperties(items) {
           config.minimumNumberOfItems.tvtime,
         )
       : null;
-    item.is_active === true && item.item_type === "tvshow"
+    item.item_type === "tvshow"
       ? expect(
           items.filter(
             (item) =>
@@ -1165,6 +1164,50 @@ const params = {
     },
   },
 
+  compare_allocine_vs_allocine_and_rottentomatoes: {
+    query: "?ratings_filters=allocine_critics,allocine_users",
+    expectedResult: async (_) => {
+      const baseParams = "allocine_critics,allocine_users";
+      const extendedParams =
+        "allocine_critics,allocine_users,rottentomatoes_critics,rottentomatoes_users";
+
+      // Fetch base ratings
+      const baseResponse = await axios.get(
+        `${baseURL}?ratings_filters=${baseParams}&api_key=${config.internalApiKey}`,
+      );
+      const baseResults = baseResponse.data.results;
+
+      // Fetch extended ratings with Rotten Tomatoes
+      const extendedResponse = await axios.get(
+        `${baseURL}?ratings_filters=${extendedParams}&api_key=${config.internalApiKey}`,
+      );
+      const extendedResults = extendedResponse.data.results;
+
+      let withRTCheckCount = 0;
+      let withoutRTCheckCount = 0;
+
+      baseResults.forEach((baseItem, index) => {
+        const extendedItem = extendedResults[index];
+
+        if (extendedItem.rotten_tomatoes) {
+          withRTCheckCount++;
+          expect(baseItem.ratings_average).not.toEqual(
+            extendedItem.ratings_average,
+          );
+        } else {
+          withoutRTCheckCount++;
+          expect(baseItem.ratings_average).toEqual(
+            extendedItem.ratings_average,
+          );
+        }
+      });
+
+      // Assert that both conditions were checked at least once
+      expect(withRTCheckCount).toBeGreaterThan(0);
+      expect(withoutRTCheckCount).toBeGreaterThan(0);
+    },
+  },
+
   ratings_average_for_incorrect_minimum_ratings: {
     query:
       "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
@@ -1437,7 +1480,7 @@ const params = {
   },
 
   should_match_last_episode_details: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details && item.last_episode) {
@@ -1462,7 +1505,7 @@ const params = {
   },
 
   should_have_next_episode_greater_than_last_episode: {
-    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const today = formatDate(new Date());
 
@@ -1515,7 +1558,7 @@ const params = {
   },
 
   should_have_release_date_after_current_date: {
-    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const currentDate = new Date().getTime();
       const thresholdDate = currentDate - 48 * 60 * 60 * 1000;
@@ -1571,7 +1614,7 @@ const params = {
   },
 
   should_not_have_season_and_episode_to_null: {
-    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (Array.isArray(item.episodes_details)) {
@@ -1585,7 +1628,7 @@ const params = {
   },
 
   should_have_highest_rated_episode_above_second_best: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         const all = item.episodes_details;
@@ -1626,7 +1669,7 @@ const params = {
   },
 
   should_have_lowest_rated_episode_below_second_worst: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         const all = item.episodes_details;

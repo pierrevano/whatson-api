@@ -33,11 +33,11 @@ const getRatingsFilters = async (ratings_filters_query) => {
       imdb_users: { path: "$imdb.users_rating", divisor: 2 },
       metacritic_critics: { path: "$metacritic.critics_rating", divisor: 20 },
       metacritic_users: { path: "$metacritic.users_rating", divisor: 2 },
-      rottenTomatoes_critics: {
+      rottentomatoes_critics: {
         path: "$rotten_tomatoes.critics_rating",
         divisor: 20,
       },
-      rottenTomatoes_users: {
+      rottentomatoes_users: {
         path: "$rotten_tomatoes.users_rating",
         divisor: 20,
       },
