@@ -1,3 +1,5 @@
+const he = require("he");
+
 const { config } = require("../config");
 const {
   convertImdbDateToISOString,
@@ -69,8 +71,8 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
       episodesDetails.push({
         season,
         episode: isNaN(rawEpisode) ? null : rawEpisode,
-        title: episode.titleText || null,
-        description: episode.plot || null,
+        title: episode.titleText ? he.decode(episode.titleText) : null,
+        description: episode.plot ? he.decode(episode.plot) : null,
         id: episode.id || null,
         url: episode.id ? `${config.baseURLIMDB}${episode.id}/` : null,
         release_date: releaseDate,
