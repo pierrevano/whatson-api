@@ -1,4 +1,7 @@
 const { config } = require("../config");
+const {
+  convertFrenchDateToISOString,
+} = require("../utils/convertFrenchDateToISOString");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getDirectors } = require("./getDirectors");
 const { getGenres } = require("./getGenres");
@@ -7,9 +10,6 @@ const { getSeasonsNumber } = require("./getSeasonsNumber");
 const { getStatus } = require("./getStatus");
 const { getTrailer } = require("./getTrailer");
 const { logErrors } = require("../utils/logErrors");
-const {
-  convertFrenchDateToISOString,
-} = require("../utils/convertFrenchDateToISOString");
 
 /**
  * Retrieves information about a movie or tvshow from AlloCiné.
@@ -61,10 +61,9 @@ const getAllocineInfo = async (
     const seasonsNumber = !compare
       ? await getSeasonsNumber(allocineHomepage, tmdbId)
       : null;
-    const status = await getStatus(
-      allocineHomepage,
-      $(".thumbnail .label-status").text(),
-    );
+    const status = !compare
+      ? await getStatus(allocineHomepage, $(".thumbnail .label-status").text())
+      : null;
     const trailer = !compare
       ? await getTrailer(allocineHomepage, betaseriesHomepage, options)
       : null;

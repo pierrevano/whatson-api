@@ -6,8 +6,8 @@ const {
 } = require("../utils/convertFrenchDateToISOString");
 const { formatDate } = require("../utils/formatDate");
 const { generateUserAgent } = require("../utils/generateUserAgent");
+const { getAllocineInfo } = require("./getAllocineInfo");
 const { getCheerioContent } = require("../utils/getCheerioContent");
-const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -94,17 +94,27 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
  * @param {string} imdbId - The IMDb title ID for the tvshow.
  * @returns {Promise<Array<Object>|null>} A promise that resolves to an array of episode details across all seasons, or null if no data is available.
  */
-const getEpisodesDetails = async (allocineHomepage, imdbHomepage, imdbId) => {
+const getEpisodesDetails = async (
+  allocineHomepage,
+  betaseriesHomepage,
+  imdbHomepage,
+  imdbId,
+  tmdbId,
+) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
   let episodesDetails = [];
 
   try {
-    const response = await getWhatsonResponse(imdbId);
     const totalSeasons =
-      response && typeof response.seasons_number !== "undefined"
-        ? response.seasons_number
-        : null;
+      (
+        await getAllocineInfo(
+          allocineHomepage,
+          betaseriesHomepage,
+          tmdbId,
+          false,
+        )
+      )?.seasonsNumber ?? null;
 
     if (totalSeasons) {
       for (let season = 1; season <= totalSeasons; season++) {

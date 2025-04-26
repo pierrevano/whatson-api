@@ -40,7 +40,6 @@ const compareUsersRating = async (
   item_type,
   mojoBoxOfficeArray,
   tmdbId,
-  compare,
 ) => {
   const isEqualObj = { isEqual: false };
 
@@ -53,7 +52,7 @@ const compareUsersRating = async (
         allocineHomepage,
         betaseriesHomepage,
         tmdbId,
-        compare,
+        false,
       );
     const imdb_users_rating = await getImdbRating(imdbHomepage);
 
@@ -66,8 +65,10 @@ const compareUsersRating = async (
     if (isTvshowNotEnded) {
       episodesDetails = await getEpisodesDetails(
         allocineHomepage,
+        betaseriesHomepage,
         imdbHomepage,
         imdbId,
+        tmdbId,
       );
       lastEpisode = await getLastEpisode(
         allocineHomepage,
@@ -76,8 +77,8 @@ const compareUsersRating = async (
       );
       nextEpisode = await getNextEpisode(
         allocineHomepage,
+        betaseriesHomepage,
         episodesDetails,
-        imdbId,
         tmdbId,
       );
       highestEpisode = await getHighestRatedEpisode(
@@ -90,12 +91,11 @@ const compareUsersRating = async (
       );
     }
 
-    const allocinePopularity = (
-      await getAllocinePopularity(allocineURL, item_type)
-    ).popularity;
-    const imdbPopularity = (
-      await getImdbPopularity(imdbHomepage, allocineURL, item_type)
-    ).popularity;
+    const allocinePopularity =
+      (await getAllocinePopularity(allocineURL, item_type))?.popularity ?? null;
+    const imdbPopularity =
+      (await getImdbPopularity(imdbHomepage, allocineURL, item_type))
+        ?.popularity ?? null;
 
     const mojoValues = await getObjectByImdbId(
       mojoBoxOfficeArray,

@@ -183,7 +183,6 @@ const loopItems = async (
               item_type,
               mojoBoxOfficeArray,
               tmdbId,
-              true,
             )
           : false;
         if (!getIsEqualValue) getIsEqualValue.isEqual = false;

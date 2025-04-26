@@ -1,3 +1,6 @@
+const {
+  getAllocineCriticsRating,
+} = require("./content/getAllocineCriticsRating");
 const { getAllocineInfo } = require("./content/getAllocineInfo");
 const { getAllocinePopularity } = require("./content/getAllocinePopularity");
 const { getBetaseriesRating } = require("./content/getBetaseriesRating");
@@ -12,17 +15,14 @@ const { getMetacriticRating } = require("./content/getMetacriticRating");
 const { getNextEpisode } = require("./content/getNextEpisode");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
 const { getPlatformsLinks } = require("./content/getPlatformsLinks");
+const {
+  getRottenTomatoesRating,
+} = require("./content/getRottenTomatoesRating");
 const { getSensCritiqueRating } = require("./content/getSensCritiqueRating");
 const { getTheTvdbSlug } = require("./content/getTheTvdbSlug");
 const { getTmdbRating } = require("./content/getTmdbRating");
 const { getTraktRating } = require("./content/getTraktRating");
 const { getTVTimeRating } = require("./content/getTVTimeRating");
-const {
-  getAllocineCriticsRating,
-} = require("./content/getAllocineCriticsRating");
-const {
-  getRottenTomatoesRating,
-} = require("./content/getRottenTomatoesRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -113,8 +113,10 @@ const createJSON = async (
   );
   const episodesDetails = await getEpisodesDetails(
     allocineHomepage,
+    betaseriesHomepage,
     imdbHomepage,
     imdbId,
+    tmdbId,
   );
   const lastEpisode = await getLastEpisode(
     allocineHomepage,
@@ -123,8 +125,8 @@ const createJSON = async (
   );
   const nextEpisode = await getNextEpisode(
     allocineHomepage,
+    betaseriesHomepage,
     episodesDetails,
-    imdbId,
     tmdbId,
   );
   const highestEpisode = await getHighestRatedEpisode(

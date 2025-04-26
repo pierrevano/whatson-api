@@ -1,8 +1,8 @@
 const { config } = require("../config");
 const { formatDate } = require("../utils/formatDate");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
-const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
+const { getAllocineInfo } = require("./getAllocineInfo");
 
 /**
  * Retrieves details of the next episode to air for a given tvshow, including its episode type from The Movie Database (TMDB) API.
@@ -14,8 +14,8 @@ const { logErrors } = require("../utils/logErrors");
  */
 const getNextEpisode = async (
   allocineHomepage,
+  betaseriesHomepage,
   episodesDetails,
-  imdbId,
   tmdbId,
 ) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
@@ -53,7 +53,16 @@ const getNextEpisode = async (
       }
     }
 
-    if ((await getWhatsonResponse(imdbId)).status !== "Ended") {
+    if (
+      (
+        await getAllocineInfo(
+          allocineHomepage,
+          betaseriesHomepage,
+          tmdbId,
+          false,
+        )
+      ).status !== "Ended"
+    ) {
       nextEpisodeDetails = {
         season: nextEpisode.season,
         episode: nextEpisode.episode,
