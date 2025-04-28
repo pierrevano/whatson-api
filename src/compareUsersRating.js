@@ -11,7 +11,24 @@ const { getLastEpisode } = require("./content/getLastEpisode");
 const { getLowestRatedEpisode } = require("./content/getLowestRatedEpisode");
 const { getNextEpisode } = require("./content/getNextEpisode");
 const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
+const { getWhatsonResponse } = require("./utils/getWhatsonResponse");
 const { logErrors } = require("./utils/logErrors");
+
+// Helper function to determine if the show has ended
+async function hasTvShowEnded(status, imdbId) {
+  if (status !== "Ended") {
+    return false; // The show is not marked as ended
+  }
+
+  const whatsonResponse = await getWhatsonResponse(imdbId);
+  const lastWhatsOnEpisode = whatsonResponse?.episodes_details?.slice(-1)[0];
+
+  if (!lastWhatsOnEpisode?.release_date) {
+    return false; // No release date info, assume not ended
+  }
+
+  return formatDate(lastWhatsOnEpisode.release_date) < formatDate(new Date());
+}
 
 /**
  * Compares the users rating of a movie or tvshow from AlloCiné with the rating
@@ -56,13 +73,13 @@ const compareUsersRating = async (
       );
     const imdb_users_rating = await getImdbRating(imdbHomepage);
 
-    const isTvshowNotEnded = status && status !== "Ended";
+    const tvShowEnded = await hasTvShowEnded(status, imdbId);
     let episodesDetails,
       lastEpisode,
       nextEpisode,
       highestEpisode,
       lowestEpisode;
-    if (isTvshowNotEnded) {
+    if (!tvShowEnded) {
       episodesDetails = await getEpisodesDetails(
         allocineHomepage,
         betaseriesHomepage,
@@ -129,7 +146,7 @@ const compareUsersRating = async (
 
       dataWithoutId.is_active = isActive;
 
-      if (isTvshowNotEnded) {
+      if (!tvShowEnded) {
         dataWithoutId.episodes_details = episodesDetails;
         dataWithoutId.last_episode = lastEpisode;
         dataWithoutId.next_episode = nextEpisode;
