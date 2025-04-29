@@ -1164,12 +1164,12 @@ const params = {
     },
   },
 
-  compare_allocine_vs_allocine_and_rottentomatoes: {
-    query: "?ratings_filters=allocine_critics,allocine_users",
+  compare_tmdb_and_rottentomatoes: {
+    query: "?ratings_filters=tmdb_users",
     expectedResult: async (_) => {
-      const baseParams = "allocine_critics,allocine_users";
+      const baseParams = "tmdb_users";
       const extendedParams =
-        "allocine_critics,allocine_users,rottentomatoes_critics,rottentomatoes_users";
+        "tmdb_users,rottentomatoes_critics,rottentomatoes_users";
 
       // Fetch base ratings
       const baseResponse = await axios.get(
