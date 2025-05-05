@@ -12,7 +12,11 @@ const getPipelineByNames = (names, pipeline, key_value, is_active_item) => {
     const decodedNames = decodeURIComponent(names);
     const decodedNamesArray = decodedNames.split(",");
 
-    if (decodedNamesArray.includes("all")) return pipeline;
+    if (
+      decodedNamesArray.includes("all") ||
+      decodedNamesArray.includes("allgenres")
+    )
+      return pipeline;
 
     let condition;
     if (key_value === "platforms_links") {
