@@ -1480,7 +1480,7 @@ const params = {
   },
 
   should_match_last_episode_details: {
-    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details && item.last_episode) {
@@ -1505,7 +1505,7 @@ const params = {
   },
 
   should_have_next_episode_greater_than_last_episode: {
-    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const today = formatDate(new Date());
 
