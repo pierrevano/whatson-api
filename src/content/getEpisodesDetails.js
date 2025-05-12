@@ -34,23 +34,24 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
     const items =
       nextData?.props?.pageProps?.contentData?.section?.episodes?.items;
 
-    if (!Array.isArray(items)) {
-      return episodesDetails;
-    }
+    if (!Array.isArray(items)) return episodesDetails;
 
+    let invalidDateFound = false;
     let previousReleaseDate = null;
 
-    items.forEach((episode) => {
+    for (const episode of items) {
       const rawEpisode = parseInt(episode.episode, 10);
 
       let releaseDate = convertImdbDateToISOString(episode?.releaseDate);
 
-      // Ensure release dates are not decreasing
+      // Ensure release dates are valid and not in decreasing order
       if (
-        releaseDate &&
-        previousReleaseDate &&
-        releaseDate < previousReleaseDate
+        invalidDateFound ||
+        (releaseDate &&
+          previousReleaseDate &&
+          releaseDate < previousReleaseDate)
       ) {
+        invalidDateFound = true;
         releaseDate = null;
       } else if (releaseDate) {
         previousReleaseDate = releaseDate;
@@ -79,7 +80,7 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
         users_rating: usersRating,
         users_rating_count: usersRatingCount,
       });
-    });
+    }
   } catch (error) {
     logErrors(error, url, "parseImdbEpisodes");
   }
