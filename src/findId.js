@@ -13,15 +13,13 @@ const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 
 /**
- * Receives a JSON object as input and returns a list of items from the database that match the input.
- * The keys of the input JSON are matched with a predetermined key mapping.
- * If a key is found in the input JSON, it is used to form a query which is then executed against the MongoDB collection.
- * Optionally filters episodes by a given season.
+ * Queries the database for a media item matching the given identifier or title.
+ * Supports optional projection and episode filtering by season.
  *
- * @param {Object} json - The JSON object to match keys against.
- * @param {String} append_to_response - Specifies additional fields to include in the projection.
- * @param {Number} filtered_season - If provided, filters episodes to only include this season number.
- * @returns {Object} An object containing filtered `results` and `total_results`.
+ * @param {Object} json - Input object with a supported key (e.g. `imdbid`, `tmdbid`, `title`, etc.).
+ * @param {string} [append_to_response] - Additional fields to include in the projection.
+ * @param {number} [filtered_season] - Season number to filter episodes by (if applicable).
+ * @returns {Promise<{ results: Object[], total_results: number }>} Filtered results and total count.
  */
 const findId = async (json, append_to_response, filtered_season) => {
   const keysMapping = {
@@ -41,22 +39,29 @@ const findId = async (json, append_to_response, filtered_season) => {
 
   // Step 1: Build the query object
   let query = {};
-  for (let key in keysMapping) {
-    if (json.hasOwnProperty(key)) {
-      const mappedKey = keysMapping[key];
-      query[mappedKey != null ? mappedKey : key] = ["title"].includes(key)
-        ? { $regex: json[key], $options: "i" }
-        : [
-              "allocineid",
-              "senscritiqueid",
-              "thetvdbid",
-              "tmdbid",
-              "tvtimeid",
-            ].includes(key)
-          ? parseInt(json[key])
-          : json[key];
-      break;
-    }
+
+  for (const key in keysMapping) {
+    if (!json.hasOwnProperty(key)) continue;
+
+    const mappedKey = keysMapping[key] ?? key;
+    const value = json[key];
+
+    const isTitleKey = key === "title";
+    const isNumericIdKey = [
+      "allocineid",
+      "senscritiqueid",
+      "thetvdbid",
+      "tmdbid",
+      "tvtimeid",
+    ].includes(key);
+
+    query[mappedKey] = isTitleKey
+      ? { $regex: value, $options: "i" }
+      : isNumericIdKey
+        ? parseInt(value)
+        : value;
+
+    break; // exit after first match
   }
 
   // Step 2: Build the projection object

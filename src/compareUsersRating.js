@@ -96,6 +96,7 @@ const compareUsersRating = async (
         allocineHomepage,
         betaseriesHomepage,
         episodesDetails,
+        lastEpisode,
         tmdbId,
       );
       highestEpisode = await getHighestRatedEpisode(

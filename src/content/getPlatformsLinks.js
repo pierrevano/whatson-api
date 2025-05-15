@@ -3,7 +3,7 @@ const axios = require("axios");
 const { config } = require("../config");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
-const { writeItemsNumber } = require("../utils/writeItemsNumber");
+const { writeItemsNumber } = require("../utils/writeItems");
 
 const platformsNamesCount = {};
 

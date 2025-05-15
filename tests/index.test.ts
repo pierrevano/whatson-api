@@ -118,6 +118,10 @@ function checkItemProperties(items) {
       expect(item.lowest_episode).toBeNull();
       expect(item.seasons_number).toBeNull();
       expect(item.status).toBeNull();
+    } else if (item.is_active === true) {
+      expect(item.seasons_number).not.toBeNull();
+      expect(item.seasons_number).toBeGreaterThan(0);
+      expect(item.status).not.toBeNull();
     }
 
     item.trailer
@@ -1706,6 +1710,27 @@ const params = {
           }
         }
       });
+    },
+  },
+
+  should_have_limited_null_release_dates: {
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      let nullReleaseDateCount = 0;
+
+      items.forEach((item) => {
+        if (Array.isArray(item.episodes_details)) {
+          item.episodes_details.forEach((episode) => {
+            if (episode.release_date == null) {
+              nullReleaseDateCount++;
+            }
+          });
+        }
+      });
+
+      expect(nullReleaseDateCount).toBeLessThanOrEqual(
+        config.maxNullReleaseDates,
+      );
     },
   },
 };

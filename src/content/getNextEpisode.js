@@ -16,6 +16,7 @@ const getNextEpisode = async (
   allocineHomepage,
   betaseriesHomepage,
   episodesDetails,
+  lastEpisode,
   tmdbId,
 ) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
@@ -34,6 +35,20 @@ const getNextEpisode = async (
     if (futureEpisodes.length === 0) return null;
 
     const nextEpisode = futureEpisodes[0];
+
+    // Ensure the next episode is always after the last episode
+    const isAfter = (nEpisode, lEpisode) => {
+      if (!nEpisode || !lEpisode) return true;
+      if (nEpisode.season > lEpisode.season) return true;
+      if (
+        nEpisode.season === lEpisode.season &&
+        nEpisode.episode > lEpisode.episode
+      )
+        return true;
+      return false;
+    };
+
+    if (!isAfter(nextEpisode, lastEpisode)) return null;
 
     const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 

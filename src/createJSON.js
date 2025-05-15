@@ -127,6 +127,7 @@ const createJSON = async (
     allocineHomepage,
     betaseriesHomepage,
     episodesDetails,
+    lastEpisode,
     tmdbId,
   );
   const highestEpisode = await getHighestRatedEpisode(

@@ -1,6 +1,6 @@
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
-const { writeItemsNumber } = require("../utils/writeItemsNumber");
+const { writeItemsNumber } = require("../utils/writeItems");
 
 const directorsCount = {};
 

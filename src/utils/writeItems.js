@@ -21,7 +21,27 @@ const writeItemsNumber = (allocineHomepage, itemsCount, source) => {
 
   const filePath = `./temp_${source}_${type}.txt`;
 
-  writeFileSync(filePath, sortedItems);
+  writeFileSync(filePath, sortedItems, "utf-8");
 };
 
-module.exports = { writeItemsNumber };
+/**
+ * Writes any data to a file as JSON, based on the type determined from the allocineHomepage.
+ *
+ * @param {string} allocineHomepage - The URL of the movie or TV show’s page on AlloCiné.
+ * @param {any} data - The data to be written to the file (e.g., array, object, etc.).
+ * @param {string} source - The source identifier to be included in the filename.
+ */
+const writeItems = (allocineHomepage, itemsArray, source) => {
+  const type = allocineHomepage.includes(config.baseURLTypeSeries)
+    ? "tvshow"
+    : "movie";
+
+  const filePath = `./temp_${source}_${type}.json`;
+
+  writeFileSync(filePath, itemsArray, "utf-8");
+};
+
+module.exports = {
+  writeItemsNumber,
+  writeItems,
+};

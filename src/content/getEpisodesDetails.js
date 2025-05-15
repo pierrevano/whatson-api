@@ -9,6 +9,7 @@ const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getAllocineInfo } = require("./getAllocineInfo");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
+const { writeItems } = require("../utils/writeItems");
 
 /**
  * Parses episode details for a specific season of a tvshow from its IMDb homepage.
@@ -36,33 +37,17 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
 
     if (!Array.isArray(items)) return episodesDetails;
 
-    let invalidDateFound = false;
-    let previousReleaseDate = null;
+    const getUsersRating = (date, rating) => {
+      if (!date) return null;
+      return formatDate(date) >= formatDate(new Date())
+        ? null
+        : parseFloat(rating) || null;
+    };
 
     for (const episode of items) {
       const rawEpisode = parseInt(episode.episode, 10);
 
       let releaseDate = convertImdbDateToISOString(episode?.releaseDate);
-
-      // Ensure release dates are valid and not in decreasing order
-      if (
-        invalidDateFound ||
-        (releaseDate &&
-          previousReleaseDate &&
-          releaseDate < previousReleaseDate)
-      ) {
-        invalidDateFound = true;
-        releaseDate = null;
-      } else if (releaseDate) {
-        previousReleaseDate = releaseDate;
-      }
-
-      const getUsersRating = (date, rating) => {
-        if (!date) return null;
-        return formatDate(date) >= formatDate(new Date())
-          ? null
-          : parseFloat(rating) || null;
-      };
 
       const usersRating = getUsersRating(releaseDate, episode.aggregateRating);
       const usersRatingCount = usersRating
@@ -117,24 +102,30 @@ const getEpisodesDetails = async (
         )
       )?.seasonsNumber ?? null;
 
-    if (totalSeasons) {
-      for (let season = 1; season <= totalSeasons; season++) {
-        const seasonEpisodesDetails = await parseImdbEpisodes(
-          imdbHomepage,
-          season,
-        );
+    if (!totalSeasons || totalSeasons < 1) return null;
 
-        episodesDetails = episodesDetails.concat(seasonEpisodesDetails);
+    for (let season = 1; season <= totalSeasons; season++) {
+      const seasonEpisodesDetails = await parseImdbEpisodes(
+        imdbHomepage,
+        season,
+      );
 
-        /*
-         * We cannot parse more than 50 episodes at once on IMDb with Cheerio, so I prefer to return `null`.
-         * Ideally, it should be parsed with Puppeteer or Playwright to get all episodes.
-         */
-        if (seasonEpisodesDetails.length === 50) {
-          return null;
-        }
+      episodesDetails.push(...seasonEpisodesDetails);
+
+      /*
+       * We cannot parse more than 50 episodes at once on IMDb with Cheerio, so I prefer to return `null`.
+       * Ideally, it should be parsed with Puppeteer or Playwright to get all episodes.
+       */
+      if (seasonEpisodesDetails.length === 50) {
+        return null;
       }
     }
+
+    writeItems(
+      allocineHomepage,
+      JSON.stringify(episodesDetails, null, 2),
+      "episodes_details",
+    );
   } catch (error) {
     logErrors(error, imdbId, "getEpisodesDetails");
   }
