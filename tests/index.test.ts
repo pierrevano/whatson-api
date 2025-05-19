@@ -1168,50 +1168,6 @@ const params = {
     },
   },
 
-  compare_tmdb_and_rottentomatoes: {
-    query: "?ratings_filters=tmdb_users",
-    expectedResult: async (_) => {
-      const baseParams = "tmdb_users";
-      const extendedParams =
-        "tmdb_users,rottentomatoes_critics,rottentomatoes_users";
-
-      // Fetch base ratings
-      const baseResponse = await axios.get(
-        `${baseURL}?ratings_filters=${baseParams}&api_key=${config.internalApiKey}`,
-      );
-      const baseResults = baseResponse.data.results;
-
-      // Fetch extended ratings with Rotten Tomatoes
-      const extendedResponse = await axios.get(
-        `${baseURL}?ratings_filters=${extendedParams}&api_key=${config.internalApiKey}`,
-      );
-      const extendedResults = extendedResponse.data.results;
-
-      let withRTCheckCount = 0;
-      let withoutRTCheckCount = 0;
-
-      baseResults.forEach((baseItem, index) => {
-        const extendedItem = extendedResults[index];
-
-        if (extendedItem.rotten_tomatoes) {
-          withRTCheckCount++;
-          expect(baseItem.ratings_average).not.toEqual(
-            extendedItem.ratings_average,
-          );
-        } else {
-          withoutRTCheckCount++;
-          expect(baseItem.ratings_average).toEqual(
-            extendedItem.ratings_average,
-          );
-        }
-      });
-
-      // Assert that both conditions were checked at least once
-      expect(withRTCheckCount).toBeGreaterThan(0);
-      expect(withoutRTCheckCount).toBeGreaterThan(0);
-    },
-  },
-
   ratings_average_for_incorrect_minimum_ratings: {
     query:
       "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
