@@ -1,4 +1,3 @@
-const { config } = require("../config");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
