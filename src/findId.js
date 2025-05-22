@@ -55,11 +55,17 @@ const findId = async (json, append_to_response, filtered_season) => {
       "tvtimeid",
     ].includes(key);
 
-    query[mappedKey] = isTitleKey
-      ? { $regex: value, $options: "i" }
-      : isNumericIdKey
-        ? parseInt(value)
-        : value;
+    if (isTitleKey) {
+      // Match both title and original_title
+      query = {
+        $or: [
+          { title: { $regex: value, $options: "i" } },
+          { original_title: { $regex: value, $options: "i" } },
+        ],
+      };
+    } else {
+      query[mappedKey] = isNumericIdKey ? parseInt(value) : value;
+    }
 
     break; // exit after first match
   }

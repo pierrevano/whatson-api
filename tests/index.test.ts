@@ -47,6 +47,12 @@ function checkItemProperties(items) {
 
     expect(item.title).not.toBeNull();
 
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.original_title).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+
     expect(
       items.filter((item) => item.directors && item.directors.length > 0)
         .length,

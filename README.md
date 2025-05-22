@@ -133,6 +133,7 @@ Example of an item returned:
   "item_type": "string", // Type of the item (e.g., movie or tvshow)
   "is_active": "boolean", // Indicates if the item is currently active
   "title": "string", // Title of the item
+  "original_title": "string", // Original title of the item
 
   "directors": "object", // Directors' names
   "genres": "object", // Genres' names

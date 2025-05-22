@@ -107,6 +107,7 @@ const config = {
     "letterboxd",
     "metacritic",
     "mojo",
+    "original_title",
     "platforms_links",
     "popularity_average",
     "ratings_average",

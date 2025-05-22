@@ -23,6 +23,7 @@ const { getTheTvdbSlug } = require("./content/getTheTvdbSlug");
 const { getTmdbRating } = require("./content/getTmdbRating");
 const { getTraktRating } = require("./content/getTraktRating");
 const { getTVTimeRating } = require("./content/getTVTimeRating");
+const { getOriginalTitle } = require("./content/getOriginalTitle");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -89,6 +90,7 @@ const createJSON = async (
     tmdbId,
     false,
   );
+  const originalTitle = await getOriginalTitle(allocineHomepage, tmdbId);
   const allocineCriticInfo = await getAllocineCriticsRating(
     allocineCriticsDetails,
   );
@@ -298,6 +300,7 @@ const createJSON = async (
     item_type: item_type,
     is_active: isActive,
     title: allocineFirstInfo.allocineTitle,
+    original_title: originalTitle,
 
     directors: allocineFirstInfo.directors,
     genres: allocineFirstInfo.genres,
