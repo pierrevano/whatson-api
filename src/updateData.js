@@ -82,19 +82,6 @@ async function checkStatus(service) {
   const database = client.db(config.dbName);
   const collectionData = database.collection(config.collectionName);
 
-  const filter = {
-    original_title: { $exists: false },
-  };
-
-  const update = {
-    $set: {
-      original_title: null,
-    },
-  };
-
-  const result = await collectionData.updateMany(filter, update);
-  console.log(`${result.modifiedCount} documents updated`);
-
   const idsFilePath =
     getNodeVarsValues.item_type === "movie"
       ? config.filmsIdsFilePath
