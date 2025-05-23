@@ -32,7 +32,13 @@ const getPipelineFromTVShow = (
   }
 
   if (seasons_number) {
-    if (seasons_number > config.maxSeasonsNumber) {
+    const numbers = seasons_number
+      .split(",")
+      .map((n) => Number(n.trim()))
+      .filter((n) => !Number.isNaN(n));
+
+    const hasManySeasons = numbers.some((n) => n >= config.maxSeasonsNumber);
+    if (hasManySeasons) {
       pipeline.push({
         $match: {
           $and: [

@@ -719,26 +719,55 @@ const params = {
     },
   },
 
+  only_tvshows_with_1_season: {
+    query: "?item_type=tvshow&seasons_number=1",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("tvshow");
+        expect(item).toHaveProperty("seasons_number");
+        expect(item.seasons_number).toBe(1);
+      });
+    },
+  },
+
   only_tvshows_with_1_and_2_seasons: {
     query: "?item_type=tvshow&seasons_number=1,2",
-    expectedResult: (items) =>
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("tvshow");
         expect(item).toHaveProperty("seasons_number");
         expect(item.seasons_number).toBeLessThanOrEqual(2);
-      }),
+      });
+    },
   },
 
-  only_tvshows_greater_than_1_season: {
-    query: "?item_type=tvshow&seasons_number=1,2,5",
-    expectedResult: (items) =>
+  should_return_all_tvshows_since_max_season_number_is_included: {
+    query: `?item_type=tvshow&seasons_number=1,2,3,4,5&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      const hasSeason1 = items.some((item) => item.seasons_number === 1);
+      const hasManySeasons = items.some((item) => item.seasons_number > 5);
+
+      expect(hasSeason1).toBe(true);
+      expect(hasManySeasons).toBe(true);
+
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("tvshow");
         expect(item).toHaveProperty("seasons_number");
-        expect(item.seasons_number).toBeGreaterThanOrEqual(1);
-      }),
+        expect(typeof item.seasons_number).toBe("number");
+      });
+    },
   },
 
   only_episodes_from_season_2: {
