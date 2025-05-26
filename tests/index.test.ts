@@ -986,10 +986,10 @@ const params = {
     },
 
   titles_containing_game_on_search: {
-    query: "?title=game",
+    query: "?title=star wars",
     expectedResult: (items) =>
       items.forEach((item) => {
-        expect(item.title.toLowerCase()).toContain("game");
+        expect(item.title.toLowerCase()).toContain("star wars");
       }),
   },
 
