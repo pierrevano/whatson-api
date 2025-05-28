@@ -985,11 +985,11 @@ const params = {
       },
     },
 
-  titles_containing_game_on_search: {
-    query: "?title=star wars",
+  titles_containing_breaking_bad_on_search: {
+    query: "?title=breaking bad",
     expectedResult: (items) =>
       items.forEach((item) => {
-        expect(item.title.toLowerCase()).toContain("star wars");
+        expect(item.title.toLowerCase()).toContain("breaking bad");
       }),
   },
 
