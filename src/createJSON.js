@@ -107,7 +107,7 @@ const createJSON = async (
     allocineHomepage,
     imdbId,
   );
-  const imdbRating = await getImdbRating(imdbHomepage);
+  const { usersRating, usersRatingCount } = await getImdbRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
     allocineURL,
@@ -179,8 +179,11 @@ const createJSON = async (
     id: allocineId,
     url: allocineHomepage,
     users_rating: allocineFirstInfo && allocineFirstInfo.allocineUsersRating,
+    users_rating_count:
+      allocineFirstInfo && allocineFirstInfo.allocineUsersRatingCount,
     critics_rating: allocineCriticInfo && allocineCriticInfo.criticsRating,
-    critics_number: allocineCriticInfo && allocineCriticInfo.criticsNumber,
+    critics_rating_count:
+      allocineCriticInfo && allocineCriticInfo.criticsRatingCount,
     critics_rating_details:
       allocineCriticInfo && allocineCriticInfo.criticsRatingDetails,
     popularity: allocinePopularity && allocinePopularity.popularity,
@@ -200,7 +203,8 @@ const createJSON = async (
   const imdbObj = {
     id: imdbId,
     url: imdbHomepage,
-    users_rating: imdbRating,
+    users_rating: usersRating,
+    users_rating_count: usersRatingCount,
     popularity: imdbPopularity && imdbPopularity.popularity,
   };
 
@@ -221,7 +225,10 @@ const createJSON = async (
           id: metacriticRating.id,
           url: metacriticRating.url,
           users_rating: metacriticRating.usersRating,
+          users_rating_count: metacriticRating.usersRatingCount,
           critics_rating: metacriticRating.criticsRating,
+          critics_rating_count: metacriticRating.criticsRatingCount,
+          must_see: metacriticRating.mustSee,
         }
       : null;
 

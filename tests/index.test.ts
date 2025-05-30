@@ -274,13 +274,21 @@ function checkItemProperties(items) {
       items.filter((item) => typeof item.allocine.users_rating === "number")
         .length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.is_active === true
+      ? expect(
+          items.filter(
+            (item) => typeof item.allocine.users_rating_count === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
     expect(
       items.filter((item) => typeof item.allocine.critics_rating === "number")
         .length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(
-      items.filter((item) => typeof item.allocine.critics_number === "number")
-        .length,
+      items.filter(
+        (item) => typeof item.allocine.critics_rating_count === "number",
+      ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(
       items.filter((item) => item.allocine.critics_rating_details).length,
@@ -296,9 +304,9 @@ function checkItemProperties(items) {
       ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     item.allocine &&
-    item.allocine.critics_number &&
+    item.allocine.critics_rating_count &&
     item.allocine.critics_rating_details
-      ? expect(item.allocine.critics_number).toEqual(
+      ? expect(item.allocine.critics_rating_count).toEqual(
           item.allocine.critics_rating_details.length,
         )
       : null;
@@ -314,6 +322,13 @@ function checkItemProperties(items) {
     expect(
       items.filter((item) => typeof item.imdb.users_rating === "number").length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.is_active === true
+      ? expect(
+          items.filter(
+            (item) => typeof item.imdb.users_rating_count === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
 
     /* BetaSeries */
     item.betaseries ? expect(item.betaseries.id).not.toBeNull() : null;
@@ -344,12 +359,37 @@ function checkItemProperties(items) {
           item.metacritic && typeof item.metacritic.users_rating === "number",
       ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.metacritic && item.is_active === true
+      ? expect(
+          items.filter(
+            (item) =>
+              item.metacritic &&
+              typeof item.metacritic.users_rating_count === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
     expect(
       items.filter(
         (item) =>
           item.metacritic && typeof item.metacritic.critics_rating === "number",
       ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    item.metacritic && item.is_active === true
+      ? expect(
+          items.filter(
+            (item) =>
+              item.metacritic &&
+              typeof item.metacritic.critics_rating_count === "number",
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
+    item.metacritic && item.is_active === true
+      ? expect(
+          items.filter(
+            (item) => item.metacritic && item.metacritic.must_see === true,
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mustSee)
+      : null;
 
     /* Rotten Tomatoes */
     item.rotten_tomatoes

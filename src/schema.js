@@ -96,8 +96,9 @@ const schema = {
     id: "number", // AlloCiné specific identifier
     url: "string", // URL to the AlloCiné page
     users_rating: "number", // Rating given by AlloCiné users
+    users_rating_count: "number", // Total number of ratings submitted by AlloCiné users
     critics_rating: "number", // Rating given by AlloCiné critics
-    critics_number: "number", // Number of AlloCiné critics who rated
+    critics_rating_count: "number", // Total number of ratings submitted by AlloCiné critics
     critics_rating_details: [
       // To display this key, add `critics_rating_details` to the query parameter `append_to_response`
       {
@@ -118,6 +119,7 @@ const schema = {
     id: "string", // IMDb specific identifier
     url: "string", // URL to the IMDb page
     users_rating: "number", // Average rating given by IMDb users
+    users_rating_count: "number", // Total number of ratings submitted by IMDb users
     popularity: "number", // Popularity score on IMDb
   },
   letterboxd: {
@@ -131,7 +133,10 @@ const schema = {
     id: "string", // Metacritic specific identifier
     url: "string", // URL to the Metacritic page
     users_rating: "number", // Rating given by Metacritic users
+    users_rating_count: "number", // Total number of ratings submitted by Metacritic users
     critics_rating: "number", // Rating given by Metacritic critics
+    critics_rating_count: "number", // Total number of ratings submitted by Metacritic critics
+    must_see: "boolean", // Whether the title has received the "Must-See" badge on Metacritic
   },
   rotten_tomatoes: {
     /* Information related to Rotten Tomatoes platform */

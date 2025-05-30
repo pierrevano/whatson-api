@@ -164,6 +164,7 @@ const config = {
   minimumNumberOfItems: {
     default: 25,
     mojo: 15,
+    mustSee: 3,
     nextEpisodes: 5,
     platformsLinksMovies: 5,
     popularity: 10,
@@ -232,6 +233,7 @@ const config = {
   baseURLLetterboxdFilm: `${baseURL.letterboxd}/film/`,
   baseURLMetacriticFilm: `${baseURL.metacritic}/movie/`,
   baseURLMetacriticSerie: `${baseURL.metacritic}/tv/`,
+  baseURLMetacriticBackend: "https://backend.metacritic.com/reviews/metacritic",
   baseURLRottenTomatoesFilm: `${baseURL.rottenTomatoes}/m/`,
   baseURLRottenTomatoesSerie: `${baseURL.rottenTomatoes}/tv/`,
   baseURLSensCritiqueFilm: `${baseURL.senscritique}/film/-/`,

@@ -1,6 +1,8 @@
 const { appendFile } = require("fs");
 
 const { config } = require("../config");
+const { getNodeVarsValues } = require("./getNodeVarsValues");
+const { reportError } = require("./sendToNewRelic");
 
 function isErrorPresent(errorMsg, error, item) {
   const errorList = [
@@ -28,11 +30,15 @@ const logErrors = (error, item, origin) => {
     errorMsg.includes("AxiosError: Request failed with status code 404") ||
     errorMsg.includes("Error: Failed to retrieve data.")
   ) {
-    appendFile(
-      "temp_error.log",
-      `${new Date().toISOString()} - ${errorMsg}\n`,
-      () => {},
-    );
+    if (getNodeVarsValues.is_not_active === "active") {
+      reportError(null, null, 404, new Error(errorMsg));
+    } else {
+      appendFile(
+        "temp_error.log",
+        `${new Date().toISOString()} - ${errorMsg}\n`,
+        () => {},
+      );
+    }
   }
 
   if (error instanceof RangeError) {

@@ -58,6 +58,20 @@ const getAllocineInfo = async (
       );
     if (isNaN(allocineUsersRating)) allocineUsersRating = null;
 
+    const extractRating = (index) => {
+      const text = $(".stareval-review").eq(index).text();
+      const match = text ? text.match(/\d+/) : null;
+      return match ? parseInt(match[0], 10) : NaN;
+    };
+
+    let allocineUsersRatingCount = extractRating(1);
+    if (isNaN(allocineUsersRatingCount)) {
+      allocineUsersRatingCount = extractRating(0);
+    }
+    if (isNaN(allocineUsersRatingCount)) {
+      allocineUsersRatingCount = null;
+    }
+
     const seasonsNumber = !compare
       ? await getSeasonsNumber(allocineHomepage, tmdbId)
       : null;
@@ -79,14 +93,15 @@ const getAllocineInfo = async (
 
     allocineFirstInfo = {
       allocineTitle: title,
-      image: image,
-      allocineUsersRating: allocineUsersRating,
-      directors: directors,
-      genres: genres,
-      seasonsNumber: seasonsNumber,
-      status: status,
-      trailer: trailer,
-      releaseDate: releaseDate,
+      image,
+      allocineUsersRating,
+      allocineUsersRatingCount,
+      directors,
+      genres,
+      seasonsNumber,
+      status,
+      trailer,
+      releaseDate,
     };
   } catch (error) {
     logErrors(error, allocineHomepage, "getAllocineInfo");

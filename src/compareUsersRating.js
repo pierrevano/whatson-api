@@ -71,7 +71,8 @@ const compareUsersRating = async (
         tmdbId,
         false,
       );
-    const imdb_users_rating = await getImdbRating(imdbHomepage);
+    const { usersRating: imdb_users_rating } =
+      await getImdbRating(imdbHomepage);
 
     const tvShowEnded = await hasTvShowEnded(status, imdbId);
     let episodesDetails,

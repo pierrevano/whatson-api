@@ -45,9 +45,9 @@ function checkTypes(item, schema) {
       }
     } else if (!item.hasOwnProperty(key)) {
       if (
-        key !== "description" &&
-        key !== "release_date" &&
-        key !== "users_rating_count"
+        key !== "users_rating_count" &&
+        key !== "critics_rating_count" &&
+        key !== "must_see"
       ) {
         // The key is missing in the item
         throw new Error(`Missing required key '${key}' in the item.`);

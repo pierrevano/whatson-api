@@ -1,14 +1,17 @@
+const axios = require("axios");
+
+const { config } = require("../config");
 const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
+const { reportError } = require("../utils/sendToNewRelic");
 
 /**
  * Retrieves the Metacritic rating for a given movie or tvshow.
  * @param {string} metacriticHomepage - The Metacritic homepage URL.
  * @param {string} metacriticId - The Metacritic ID for the movie or tvshow.
  * @returns {Promise<Object>} - An object containing the Metacritic rating information.
- * @throws {Error} - If there is an error retrieving the Metacritic rating.
  */
 const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
   let metacriticObj = null;
@@ -24,38 +27,62 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
     };
 
     if (isNotNull(metacriticId)) {
-      $ = await getCheerioContent(
-        `${metacriticHomepage}`,
+      const $ = await getCheerioContent(
+        metacriticHomepage,
         options,
         "getMetacriticRating",
       );
-      let usersRating = parseFloat(
-        $(".c-siteReviewScore_user span").first().text(),
-      );
-      if (isNaN(usersRating)) usersRating = null;
 
-      $ = await getCheerioContent(
-        `${metacriticHomepage}/critic-reviews`,
-        options,
-        "getMetacriticRating",
-      );
-      let criticsRating = parseInt($(".c-siteReviewScore span").first().text());
-      if (isNaN(criticsRating) || criticsRating === parseInt(usersRating))
-        criticsRating = null;
+      if (typeof $.html !== "function") {
+        const errorMsg = `$.html is not a function - ${metacriticHomepage} - ${metacriticId}`;
+        reportError(null, null, 500, new Error(errorMsg));
+        return null;
+      }
+
+      const type = metacriticHomepage.includes("/tv/") ? "shows" : "movies";
+
+      const [userStats, criticStats] = await Promise.all([
+        axios.get(
+          `${config.baseURLMetacriticBackend}/user/${type}/${metacriticId}/stats/web`,
+          options,
+        ),
+        axios.get(
+          `${config.baseURLMetacriticBackend}/critic/${type}/${metacriticId}/stats/web`,
+          options,
+        ),
+      ]);
+
+      const rawUserData = userStats?.data?.data?.item ?? {};
+      const rawCriticData = criticStats?.data?.data?.item ?? {};
+
+      const usersRating =
+        rawUserData.score && rawUserData.score !== 0 ? rawUserData.score : null;
+      const usersRatingCount =
+        usersRating !== null ? (rawUserData.reviewCount ?? null) : null;
+
+      const criticsRating =
+        rawCriticData.score && rawCriticData.score !== 0
+          ? rawCriticData.score
+          : null;
+      const criticsRatingCount =
+        criticsRating !== null ? (rawCriticData.reviewCount ?? null) : null;
+
+      const mustSee = $(".c-productScoreInfo_must").length > 0;
 
       metacriticObj = {
         id: metacriticId,
         url: metacriticHomepage,
-        usersRating: usersRating,
-        criticsRating: criticsRating,
+        usersRating,
+        usersRatingCount,
+        criticsRating,
+        criticsRatingCount,
+        mustSee,
       };
     }
   } catch (error) {
     logErrors(error, metacriticHomepage, "getMetacriticRating");
 
-    return {
-      error: error,
-    };
+    return { error };
   }
 
   return metacriticObj;

@@ -7,12 +7,13 @@ const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * It takes the IMDb homepage of a movie as an argument, and returns the IMDb users rating of the movie
- * @param imdbHomepage - The IMDb homepage of the movie.
- * @returns The critics rating for the movie.
+ * Extracts the IMDb users rating and number of users rating from an IMDb homepage.
+ * @param {string} imdbHomepage - The IMDb homepage URL of the item.
+ * @returns {{ usersRating: number | null, usersRatingCount: number | null }}
  */
 const getImdbRating = async (imdbHomepage) => {
-  let criticsRating = null;
+  let usersRating = null;
+  let usersRatingCount = null;
 
   try {
     axiosRetry(axios, {
@@ -26,19 +27,22 @@ const getImdbRating = async (imdbHomepage) => {
     };
     const $ = await getCheerioContent(imdbHomepage, options, "getImdbRating");
 
-    criticsRating = parseFloat(
-      $(".rating-bar__base-button")
-        .first()
-        .text()
-        .split("/")[0]
-        .replace("IMDb RATING", ""),
-    );
-    if (isNaN(criticsRating)) criticsRating = null;
+    const jsonText = $("#__NEXT_DATA__").html();
+    const nextData = JSON.parse(jsonText);
+
+    const ratingsSummary =
+      nextData?.props?.pageProps?.mainColumnData?.ratingsSummary;
+
+    const parsedRating = parseFloat(ratingsSummary?.aggregateRating);
+    const parsedCount = parseInt(ratingsSummary?.voteCount, 10);
+
+    usersRating = isNaN(parsedRating) ? null : parsedRating;
+    usersRatingCount = isNaN(parsedCount) ? null : parsedCount;
   } catch (error) {
     logErrors(error, imdbHomepage, "getImdbRating");
   }
 
-  return criticsRating;
+  return { usersRating, usersRatingCount };
 };
 
 module.exports = { getImdbRating };
