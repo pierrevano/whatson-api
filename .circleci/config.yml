@@ -60,6 +60,7 @@ jobs:
   build:
     docker:
       - image: cimg/node:20.5.1
+    resource_class: large
     steps:
       - ping_service
       - setup_env
@@ -80,6 +81,7 @@ jobs:
     docker:
       - image: cimg/node:20.5.1
     parallelism: 30
+    resource_class: large
     steps:
       - ping_service
       - setup_env
@@ -102,6 +104,7 @@ jobs:
   force:
     docker:
       - image: cimg/node:20.5.1
+    resource_class: large
     steps:
       - ping_service
       - setup_env
