@@ -15,17 +15,6 @@ const { reportError } = require("../utils/sendToNewRelic");
  * @returns {Promise<Object>} - An object containing the Metacritic rating information.
  */
 const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
-  /*
-   * This error is thrown intentionally because Metacritic blocks automatic updates from CircleCI.
-   * Metacritic values can only be updated locally.
-   */
-  if (getNodeVarsValues.environment !== "local") {
-    const error = new Error("403 Access forbidden by Metacritic");
-    error.status = 403;
-    logErrors(error, metacriticHomepage, "getMetacriticRating");
-    return { error };
-  }
-
   let metacriticObj = null;
 
   try {
@@ -39,6 +28,17 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
     };
 
     if (isNotNull(metacriticId)) {
+      /*
+       * This error is thrown intentionally because Metacritic blocks automatic updates from CircleCI.
+       * Metacritic values can only be updated locally.
+       */
+      if (getNodeVarsValues.environment !== "local") {
+        const error = new Error("403 Access forbidden by Metacritic");
+        error.status = 403;
+        logErrors(error, metacriticHomepage, "getMetacriticRating");
+        return { error };
+      }
+
       const $ = await getCheerioContent(
         metacriticHomepage,
         options,
