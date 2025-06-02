@@ -65,10 +65,10 @@ jobs:
       - setup_env
       - run:
           name: Update movie data
-          command: node src/updateData.js movie update_ids update_db
+          command: node --max-old-space-size=16384 src/updateData.js movie update_ids update_db
       - run:
           name: Update tvshow data
-          command: node src/updateData.js tvshow update_ids update_db
+          command: node --max-old-space-size=16384 src/updateData.js tvshow update_ids update_db
       - run_tests
   build_all:
     docker:
@@ -101,10 +101,10 @@ jobs:
       - setup_env
       - run:
           name: Force update movie data
-          command: node src/updateData.js movie update_ids update_db circleci active no_check_db_ids 0 no_check_data force
+          command: node --max-old-space-size=16384 src/updateData.js movie update_ids update_db circleci active no_check_db_ids 0 no_check_data force
       - run:
           name: Force update tvshow data
-          command: node src/updateData.js tvshow update_ids update_db circleci active no_check_db_ids 0 no_check_data force
+          command: node --max-old-space-size=16384 src/updateData.js tvshow update_ids update_db circleci active no_check_db_ids 0 no_check_data force
       - run_tests
 
 workflows:

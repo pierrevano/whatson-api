@@ -390,6 +390,9 @@ function checkItemProperties(items) {
           ).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mustSee)
       : null;
+    item.metacritic && item.metacritic.must_see === true
+      ? expect(item.metacritic.critics_rating).toBeGreaterThanOrEqual(80)
+      : null;
 
     /* Rotten Tomatoes */
     item.rotten_tomatoes

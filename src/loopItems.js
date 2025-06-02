@@ -38,6 +38,11 @@ const loopItems = async (
   // Loop through jsonArray with the given start index
   for (let index = index_to_start; index < jsonArray.length; index++) {
     try {
+      const { heapUsed, rss } = process.memoryUsage();
+      console.log(
+        `Memory - heapUsed: ${(heapUsed / 1024 / 1024).toFixed(2)} MB, rss: ${(rss / 1024 / 1024).toFixed(2)} MB`,
+      );
+
       if (max_index && index === max_index) {
         console.log(`Maximum index ${max_index} processed, aborting.`);
         process.exit(0);
