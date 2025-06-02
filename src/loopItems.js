@@ -245,8 +245,12 @@ const loopItems = async (
 
         if (
           itemCounter === config.circleLimitPerInstance &&
-          getNodeVarsValues.environment === "circleci"
+          getNodeVarsValues.environment === "circleci" &&
+          !max_index
         ) {
+          console.log(
+            "CircleCI limit per instance has been reached, aborting.",
+          );
           process.exit(0);
         }
       } else {
