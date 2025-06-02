@@ -3,6 +3,7 @@ const axios = require("axios");
 const { config } = require("../config");
 const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 const { reportError } = require("../utils/sendToNewRelic");
@@ -18,7 +19,7 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
    * This error is thrown intentionally because Metacritic blocks automatic updates from CircleCI.
    * Metacritic values can only be updated locally.
    */
-  if (process.env.SOURCE === "circleci") {
+  if (getNodeVarsValues.environment !== "local") {
     const error = new Error("Access forbidden by Metacritic");
     error.status = 403;
     throw error;
