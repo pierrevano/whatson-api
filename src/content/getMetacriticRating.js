@@ -20,9 +20,10 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
    * Metacritic values can only be updated locally.
    */
   if (getNodeVarsValues.environment !== "local") {
-    const error = new Error("Access forbidden by Metacritic");
+    const error = new Error("403 Access forbidden by Metacritic");
     error.status = 403;
-    throw error;
+    logErrors(error, metacriticHomepage, "getMetacriticRating");
+    return { error };
   }
 
   let metacriticObj = null;
