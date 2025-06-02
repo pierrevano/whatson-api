@@ -14,6 +14,16 @@ const { reportError } = require("../utils/sendToNewRelic");
  * @returns {Promise<Object>} - An object containing the Metacritic rating information.
  */
 const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
+  /*
+   * This error is thrown intentionally because Metacritic blocks automatic updates from CircleCI.
+   * Metacritic values can only be updated locally.
+   */
+  if (process.env.SOURCE === "circleci") {
+    const error = new Error("Access forbidden by Metacritic");
+    error.status = 403;
+    throw error;
+  }
+
   let metacriticObj = null;
 
   try {
