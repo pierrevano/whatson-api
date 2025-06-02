@@ -28,17 +28,6 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
     };
 
     if (isNotNull(metacriticId)) {
-      /*
-       * This error is thrown intentionally because Metacritic blocks automatic updates from CircleCI.
-       * Metacritic values can only be updated locally.
-       */
-      if (getNodeVarsValues.environment !== "local") {
-        const error = new Error("403 Access forbidden by Metacritic");
-        error.status = 403;
-        logErrors(error, metacriticHomepage, "getMetacriticRating");
-        return { error };
-      }
-
       const $ = await getCheerioContent(
         metacriticHomepage,
         options,

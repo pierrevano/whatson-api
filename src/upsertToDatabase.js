@@ -9,7 +9,9 @@ const { b64Encode } = require("./utils/b64EncodeAndDecode");
 const upsertToDatabase = async (data, collectionData, isEqual) => {
   try {
     console.log("Updating all item info:", !isEqual);
-    console.log(data);
+    if (!isEqual) {
+      console.log(data);
+    }
     console.log();
 
     const filter = { _id: b64Encode(data.allocine.url) };
