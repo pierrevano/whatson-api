@@ -65,10 +65,16 @@ jobs:
       - setup_env
       - run:
           name: Update movie data
-          command: node --max-old-space-size=16384 src/updateData.js movie update_ids update_db
+          command: node src/updateData.js movie update_ids update_db
       - run:
-          name: Update tvshow data
-          command: node --max-old-space-size=16384 src/updateData.js tvshow update_ids update_db
+          name: Update tvshow data first batch
+          command: node src/updateData.js tvshow update_ids update_db circleci active no_check_db_ids 0 no_check_data no_force mojo no_skip_services no_delete_ids 0 101
+      - run:
+          name: Update tvshow data second batch
+          command: node src/updateData.js tvshow no_update_ids update_db circleci active no_check_db_ids 100 no_check_data no_force mojo no_skip_services no_delete_ids 0 201
+      - run:
+          name: Update tvshow data third batch
+          command: node src/updateData.js tvshow no_update_ids update_db circleci active no_check_db_ids 200 no_check_data no_force mojo no_skip_services no_delete_ids 0 301
       - run_tests
   build_all:
     docker:
@@ -101,10 +107,16 @@ jobs:
       - setup_env
       - run:
           name: Force update movie data
-          command: node --max-old-space-size=16384 src/updateData.js movie update_ids update_db circleci active no_check_db_ids 0 no_check_data force
+          command: node src/updateData.js movie update_ids update_db circleci active no_check_db_ids 0 no_check_data force
       - run:
-          name: Force update tvshow data
-          command: node --max-old-space-size=16384 src/updateData.js tvshow update_ids update_db circleci active no_check_db_ids 0 no_check_data force
+          name: Force update tvshow data first batch
+          command: node src/updateData.js tvshow update_ids update_db circleci active no_check_db_ids 0 no_check_data force mojo no_skip_services no_delete_ids 0 101
+      - run:
+          name: Force update tvshow data second batch
+          command: node src/updateData.js tvshow no_update_ids update_db circleci active no_check_db_ids 100 no_check_data force mojo no_skip_services no_delete_ids 0 201
+      - run:
+          name: Force update tvshow data third batch
+          command: node src/updateData.js tvshow no_update_ids update_db circleci active no_check_db_ids 200 no_check_data force mojo no_skip_services no_delete_ids 0 301
       - run_tests
 
 workflows:
