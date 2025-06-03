@@ -1,10 +1,10 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const { aggregateData } = require("../aggregateData");
+const { aggregateData } = require("./aggregateData");
+const { buildProjection } = require("../utils/buildProjection");
 const { config } = require("../config");
 const { sendInternalError, sendRequest } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
-const { buildProjection } = require("../utils/buildProjection");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {

@@ -13,6 +13,4 @@ src/assets/.vercel
 src/assets/popularity_ids_*.txt
 src/assets/skip_ids_*.txt
 src/assets/updated_at.txt
-src/controlData.js
 temp_*
-update_db.sh

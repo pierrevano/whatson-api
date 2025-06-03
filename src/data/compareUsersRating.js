@@ -1,18 +1,18 @@
 const axios = require("axios");
 
-const { config } = require("./config");
-const { getAllocineInfo } = require("./content/getAllocineInfo");
-const { getAllocinePopularity } = require("./content/getAllocinePopularity");
-const { getEpisodesDetails } = require("./content/getEpisodesDetails");
-const { getHighestRatedEpisode } = require("./content/getHighestRatedEpisode");
-const { getImdbPopularity } = require("./content/getImdbPopularity");
-const { getImdbRating } = require("./content/getImdbRating");
-const { getLastEpisode } = require("./content/getLastEpisode");
-const { getLowestRatedEpisode } = require("./content/getLowestRatedEpisode");
-const { getNextEpisode } = require("./content/getNextEpisode");
-const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
-const { getWhatsonResponse } = require("./utils/getWhatsonResponse");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { getAllocineInfo } = require("../content/getAllocineInfo");
+const { getAllocinePopularity } = require("../content/getAllocinePopularity");
+const { getEpisodesDetails } = require("../content/getEpisodesDetails");
+const { getHighestRatedEpisode } = require("../content/getHighestRatedEpisode");
+const { getImdbPopularity } = require("../content/getImdbPopularity");
+const { getImdbRating } = require("../content/getImdbRating");
+const { getLastEpisode } = require("../content/getLastEpisode");
+const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
+const { getNextEpisode } = require("../content/getNextEpisode");
+const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
+const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
+const { logErrors } = require("../utils/logErrors");
 
 // Helper function to determine if the show has ended
 async function hasTvShowEnded(status, imdbId) {

@@ -1,29 +1,29 @@
 const {
   getAllocineCriticsRating,
-} = require("./content/getAllocineCriticsRating");
-const { getAllocineInfo } = require("./content/getAllocineInfo");
-const { getAllocinePopularity } = require("./content/getAllocinePopularity");
-const { getBetaseriesRating } = require("./content/getBetaseriesRating");
-const { getEpisodesDetails } = require("./content/getEpisodesDetails");
-const { getHighestRatedEpisode } = require("./content/getHighestRatedEpisode");
-const { getImdbPopularity } = require("./content/getImdbPopularity");
-const { getImdbRating } = require("./content/getImdbRating");
-const { getLastEpisode } = require("./content/getLastEpisode");
-const { getLetterboxdRating } = require("./content/getLetterboxdRating");
-const { getLowestRatedEpisode } = require("./content/getLowestRatedEpisode");
-const { getMetacriticRating } = require("./content/getMetacriticRating");
-const { getNextEpisode } = require("./content/getNextEpisode");
-const { getObjectByImdbId } = require("./content/getMojoBoxOffice");
-const { getPlatformsLinks } = require("./content/getPlatformsLinks");
+} = require("../content/getAllocineCriticsRating");
+const { getAllocineInfo } = require("../content/getAllocineInfo");
+const { getAllocinePopularity } = require("../content/getAllocinePopularity");
+const { getBetaseriesRating } = require("../content/getBetaseriesRating");
+const { getEpisodesDetails } = require("../content/getEpisodesDetails");
+const { getHighestRatedEpisode } = require("../content/getHighestRatedEpisode");
+const { getImdbPopularity } = require("../content/getImdbPopularity");
+const { getImdbRating } = require("../content/getImdbRating");
+const { getLastEpisode } = require("../content/getLastEpisode");
+const { getLetterboxdRating } = require("../content/getLetterboxdRating");
+const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
+const { getMetacriticRating } = require("../content/getMetacriticRating");
+const { getNextEpisode } = require("../content/getNextEpisode");
+const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
+const { getOriginalTitle } = require("../content/getOriginalTitle");
+const { getPlatformsLinks } = require("../content/getPlatformsLinks");
 const {
   getRottenTomatoesRating,
-} = require("./content/getRottenTomatoesRating");
-const { getSensCritiqueRating } = require("./content/getSensCritiqueRating");
-const { getTheTvdbSlug } = require("./content/getTheTvdbSlug");
-const { getTmdbRating } = require("./content/getTmdbRating");
-const { getTraktRating } = require("./content/getTraktRating");
-const { getTVTimeRating } = require("./content/getTVTimeRating");
-const { getOriginalTitle } = require("./content/getOriginalTitle");
+} = require("../content/getRottenTomatoesRating");
+const { getSensCritiqueRating } = require("../content/getSensCritiqueRating");
+const { getTheTvdbSlug } = require("../content/getTheTvdbSlug");
+const { getTmdbRating } = require("../content/getTmdbRating");
+const { getTraktRating } = require("../content/getTraktRating");
+const { getTVTimeRating } = require("../content/getTVTimeRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.

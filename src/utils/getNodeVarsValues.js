@@ -53,21 +53,13 @@ const getNodeVarsValues = {
   index_to_start: node_vars[6],
 
   /*
-   * Should the whole dataset be controlled?
-   * This parameter allows checking the dataset on
-   * various elements and is mainly used for sanity checks.
-   * If not equal to `check_data`, it is ignored.
-   */
-  check_data: node_vars[7],
-
-  /*
    * Should updating of items be forced or not?
    * To enhance performance, some items are only
    * updated when ratings from AlloCiné and IMDb differ.
    * Unless this parameter is set to `force`, items are only
    * updated when the above condition is met.
    */
-  force: node_vars[8],
+  force: node_vars[7],
 
   /*
    * Do we want to skip getting the data
@@ -77,7 +69,7 @@ const getNodeVarsValues = {
    * If different from `skip_mojo`, the pages of
    * the Box Office Mojo website are normally parsed.
    */
-  skip_mojo: node_vars[9],
+  skip_mojo: node_vars[8],
 
   /*
    * Do we want to skip checking the
@@ -87,7 +79,7 @@ const getNodeVarsValues = {
    * If different from `skip_services`, the services
    * are normally checked for any possible downtimes.
    */
-  skip_services: node_vars[10],
+  skip_services: node_vars[9],
 
   /*
    * Do we want to delete specific items from
@@ -95,7 +87,7 @@ const getNodeVarsValues = {
    * to delete should be set in an array.
    * If the parameter is not set to `delete_ids` it is ignored.
    */
-  delete_ids: node_vars[11],
+  delete_ids: node_vars[10],
 
   /*
    * Do we want to update only items
@@ -105,7 +97,7 @@ const getNodeVarsValues = {
    * The item's `updated_at` date is used for this purpose.
    * If not set, it is ignored.
    */
-  check_date: node_vars[12],
+  check_date: node_vars[11],
 
   /*
    * Do we want to limit the number of items
@@ -113,14 +105,14 @@ const getNodeVarsValues = {
    * to control the batch size during processing.
    * If not set, it is ignored.
    */
-  max_index: node_vars[13],
+  max_index: node_vars[12],
 
   /*
    * Do we want to update a specific item
    * in the dataset? The ID to specify should
    * be an IMDb ID. If not set, it is ignored.
    */
-  check_id: node_vars[14],
+  check_id: node_vars[13],
 };
 
 module.exports = { getNodeVarsValues };

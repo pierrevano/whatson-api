@@ -1,8 +1,8 @@
-const { config } = require("./config");
-const { generateUserAgent } = require("./utils/generateUserAgent");
-const { getCheerioContent } = require("./utils/getCheerioContent");
-const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
-const { logErrors } = require("./utils/logErrors");
+const { config } = require("../config");
+const { generateUserAgent } = require("../utils/generateUserAgent");
+const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
+const { logErrors } = require("../utils/logErrors");
 
 const fetchAndCheckItemCount = async (index) => {
   const baseURLAllocineType =

@@ -1,9 +1,8 @@
 const axios = require("axios");
 
-// const { controlData } = require("./controlData");
-const { getAllocineInfo } = require("./content/getAllocineInfo");
-const { getMetacriticRating } = require("./content/getMetacriticRating");
-const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
+const { getAllocineInfo } = require("../content/getAllocineInfo");
+const { getMetacriticRating } = require("../content/getMetacriticRating");
+const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
 const createJSON = require("./createJSON");
@@ -19,7 +18,6 @@ const generateURLs = require("./generateURLs");
  * @param {string} item_type - The type of item being looped.
  * @param {Array} jsonArray - The array of JSON objects to loop through.
  * @param {Array} mojoBoxOfficeArray - The array of Mojo Box Office data to be included in the operations.
- * @param {string} check_data - Flag indicating whether we check the data or not.
  * @returns {Object} Returns an object containing the number of new or updated items.
  */
 const loopItems = async (
@@ -30,7 +28,6 @@ const loopItems = async (
   item_type,
   jsonArray,
   mojoBoxOfficeArray,
-  check_data,
   max_index,
 ) => {
   let createJsonCounter = (itemCounter = 0);
@@ -64,10 +61,6 @@ const loopItems = async (
       const allocineURL = urls.allocine.lastPartUrl;
       const allocineHomepage = urls.allocine.homepage;
       const allocineCriticsDetails = urls.allocine.criticsDetails;
-
-      if (check_data === "check_data") {
-        // await controlData(allocineHomepage, config.keysToCheck, isDocumentHasInfo, isDocumentExisting[0], item_type);
-      }
 
       /* Handle IMDb related data */
       const imdbId = urls.imdb.id;

@@ -1,10 +1,11 @@
-const { config } = require("./config");
-const { filterEpisodesBySeason } = require("./utils/filterEpisodesBySeason");
+const { MongoClient, ServerApiVersion } = require("mongodb");
+
+const { config } = require("../config");
+const { filterEpisodesBySeason } = require("../utils/filterEpisodesBySeason");
 const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
 const { getRatingsFilters } = require("./getRatingsFilters");
-const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {

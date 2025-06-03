@@ -1,4 +1,4 @@
-const { b64Encode } = require("./utils/b64EncodeAndDecode");
+const { b64Encode } = require("../utils/b64EncodeAndDecode");
 
 /**
  * Upserts the given data to the database collection.

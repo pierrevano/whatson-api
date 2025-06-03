@@ -1,7 +1,7 @@
 const shell = require("shelljs");
 
-const { config } = require("./config");
-const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
+const { config } = require("../config");
+const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 
 /**
  * It updates the IDs of the movies and tvshows in the database

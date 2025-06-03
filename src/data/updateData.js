@@ -1,6 +1,6 @@
 const csv = require("csvtojson");
 
-const { config } = require("./config");
+const { config } = require("../config");
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
@@ -8,14 +8,14 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-const { b64Encode } = require("./utils/b64EncodeAndDecode");
+const { b64Encode } = require("../utils/b64EncodeAndDecode");
 const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
-const { getMojoBoxOffice } = require("./content/getMojoBoxOffice");
-const { getNodeVarsValues } = require("./utils/getNodeVarsValues");
-const { jsonArrayFiltered } = require("./utils/jsonArrayFiltered");
+const { getMojoBoxOffice } = require("../content/getMojoBoxOffice");
+const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
+const { jsonArrayFiltered } = require("../utils/jsonArrayFiltered");
 const { updateIds } = require("./updateIds");
 const checkDbIds = require("./checkDbIds");
-const isThirdPartyServiceOK = require("./utils/thirdPartyStatus");
+const isThirdPartyServiceOK = require("../utils/thirdPartyStatus");
 const loopItems = require("./loopItems");
 
 async function checkCountryCode() {
@@ -140,7 +140,9 @@ async function checkStatus(service) {
   }
 
   if (getNodeVarsValues.delete_ids === "delete_ids") {
-    let itemsToDelete = [];
+    let itemsToDelete = [
+      "https://www.allocine.fr/series/ficheserie_gen_cserie=31618.html",
+    ];
     itemsToDelete = itemsToDelete.map((item) => b64Encode(item));
 
     const filterQueryDelete = {
@@ -192,7 +194,6 @@ async function checkStatus(service) {
       getNodeVarsValues.item_type,
       jsonArraySortedHighestToLowest,
       mojoBoxOfficeArray,
-      getNodeVarsValues.check_data,
       max_index,
     );
     console.log(`Number of new or updated items: ${newOrUpdatedItems}`);
