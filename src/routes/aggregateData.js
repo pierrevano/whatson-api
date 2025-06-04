@@ -1,7 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { config } = require("../config");
-const { filterEpisodesBySeason } = require("../utils/filterEpisodesBySeason");
+const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
 const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
@@ -21,6 +21,7 @@ const aggregateData = async (
   genres_query,
   id_path,
   is_active_query,
+  is_must_see_query,
   item_type_query,
   limit_query,
   minimum_ratings_query,
@@ -54,6 +55,10 @@ const aggregateData = async (
     typeof is_active_query !== "undefined" && is_active_query
       ? is_active_query
       : true;
+  const is_must_see =
+    typeof is_must_see_query !== "undefined" && is_must_see_query
+      ? is_must_see_query
+      : "true,false";
   const item_type =
     typeof item_type_query !== "undefined" && item_type_query
       ? item_type_query
@@ -127,6 +132,17 @@ const aggregateData = async (
       ? is_active_all
       : is_active_item;
 
+  let is_must_see_item = {
+    "metacritic.must_see": is_must_see === "true" || is_must_see === true,
+  };
+  const is_must_see_all = {
+    $or: [{ "metacritic.must_see": true }, { "metacritic.must_see": false }],
+  };
+  is_must_see_item =
+    is_must_see === "true,false" || is_must_see === "false,true"
+      ? is_must_see_all
+      : is_must_see_item;
+
   let item_type_default = { item_type: item_type };
   const item_type_all = {
     $or: [{ item_type: "movie" }, { item_type: "tvshow" }],
@@ -138,7 +154,7 @@ const aggregateData = async (
 
   const match_id = { $match: { id: id } };
   const match_item_type = {
-    $match: { $and: [item_type_default, is_active_item] },
+    $match: { $and: [item_type_default, is_active_item, is_must_see_item] },
   };
 
   const minimum_ratings_sorted = minimum_ratings.includes(",")
@@ -223,6 +239,7 @@ const aggregateData = async (
     getPipelineFromTVShow(
       config,
       is_active_item,
+      is_must_see_item,
       item_type,
       pipeline,
       seasons_number,
@@ -233,9 +250,27 @@ const aggregateData = async (
   }
 
   if (!id) {
-    getPipelineByNames(directors, pipeline, "directors", is_active_item);
-    getPipelineByNames(genres, pipeline, "genres", is_active_item);
-    getPipelineByNames(platforms, pipeline, "platforms_links", is_active_item);
+    getPipelineByNames(
+      directors,
+      pipeline,
+      "directors",
+      is_active_item,
+      is_must_see_item,
+    );
+    getPipelineByNames(
+      genres,
+      pipeline,
+      "genres",
+      is_active_item,
+      is_must_see_item,
+    );
+    getPipelineByNames(
+      platforms,
+      pipeline,
+      "platforms_links",
+      is_active_item,
+      is_must_see_item,
+    );
   }
 
   pipeline.push(facet);
@@ -246,10 +281,10 @@ const aggregateData = async (
   items = await filterEpisodesBySeason(items, filtered_season);
 
   return {
-    items: items,
-    limit: limit,
-    page: page,
-    is_active_item: is_active_item,
+    items,
+    limit,
+    page,
+    is_active_item,
   };
 };
 

@@ -1,13 +1,20 @@
 /**
- * Constructs a MongoDB aggregation pipeline to filter items based on names.
+ * Adds a MongoDB aggregation filter to match documents by names for a specific key.
  *
- * @param {string} names - The names to retrieve, as a comma-separated string.
- * @param {Array} pipeline - The current MongoDB aggregation pipeline to add the filter to.
- * @param {string} key_value - The key in the documents to match against the names (e.g., "platforms_links" or "genres").
- * @param {boolean} is_active_item - The active item flag to include in the match condition.
- * @returns {Array} - The updated MongoDB aggregation pipeline.
+ * @param {string} names - Comma-separated string of names to filter by (e.g., "Action,Drama").
+ * @param {Array<Object>} pipeline - The existing MongoDB aggregation pipeline to be modified.
+ * @param {string} key_value - The document field to match names against (e.g., "platforms_links", "genres", "directors").
+ * @param {Object} is_active_item - MongoDB condition to match active items (e.g., { is_active: true }).
+ * @param {Object} is_must_see_item - MongoDB condition to match must-see items (e.g., { must_see: true }).
+ * @returns {Array<Object>} - The updated MongoDB aggregation pipeline.
  */
-const getPipelineByNames = (names, pipeline, key_value, is_active_item) => {
+const getPipelineByNames = (
+  names,
+  pipeline,
+  key_value,
+  is_active_item,
+  is_must_see_item,
+) => {
   if (names) {
     const decodedNames = decodeURIComponent(names);
     const decodedNamesArray = decodedNames.split(",");
@@ -38,7 +45,7 @@ const getPipelineByNames = (names, pipeline, key_value, is_active_item) => {
     }
 
     const match = {
-      $match: { $and: [is_active_item, condition] },
+      $match: { $and: [is_active_item, is_must_see_item, condition] },
     };
 
     pipeline.push(match);

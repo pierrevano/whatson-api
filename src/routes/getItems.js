@@ -23,6 +23,7 @@ const getItems = async (req, res) => {
     const genres_query = req.query.genres;
     const id_path = parseInt(req.params.id);
     const is_active_query = req.query.is_active;
+    const is_must_see_query = req.query.must_see;
     const item_type_query = req.query.item_type;
     const limit_query = parseInt(req.query.limit);
     const minimum_ratings_query = req.query.minimum_ratings;
@@ -47,6 +48,7 @@ const getItems = async (req, res) => {
       genres_query,
       id_path,
       is_active_query,
+      is_must_see_query,
       item_type_query,
       limit_query,
       minimum_ratings_query,

@@ -1,8 +1,8 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const { buildProjection } = require("../utils/buildProjection");
+const { buildProjection } = require("./buildProjection");
 const { config } = require("../config");
-const { filterEpisodesBySeason } = require("../utils/filterEpisodesBySeason");
+const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {

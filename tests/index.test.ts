@@ -204,7 +204,7 @@ function checkItemProperties(items) {
     item.is_active === true && item.item_type === "tvshow"
       ? expect(
           items.filter((item) => item.next_episode).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.nextEpisodes)
       : null;
     item.next_episode
       ? [
@@ -390,9 +390,10 @@ function checkItemProperties(items) {
           ).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mustSee)
       : null;
-    item.metacritic && item.metacritic.must_see === true
-      ? expect(item.metacritic.critics_rating).toBeGreaterThanOrEqual(80)
-      : null;
+    if (item.metacritic && item.metacritic.must_see === true) {
+      expect(item.metacritic.critics_rating).toBeGreaterThanOrEqual(80);
+      expect(item.metacritic.critics_rating_count).toBeGreaterThanOrEqual(15);
+    }
 
     /* Rotten Tomatoes */
     item.rotten_tomatoes
@@ -687,6 +688,8 @@ const params = {
 
         expect(item.allocine).not.toHaveProperty("critics_rating_details");
         expect(item).not.toHaveProperty("episodes_details");
+
+        expect([true, false]).toContain(item.metacritic?.must_see);
       }),
   },
 
@@ -696,6 +699,8 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("movie");
+
+        expect([true, false]).toContain(item.metacritic?.must_see);
       }),
   },
 
@@ -705,6 +710,8 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("tvshow");
+
+        expect([true, false]).toContain(item.metacritic?.must_see);
       }),
   },
 
@@ -723,6 +730,24 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("is_active");
         expect(item.is_active).toBeFalsy();
+      }),
+  },
+
+  only_must_see_items: {
+    query: "?must_see=true",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item.metacritic).toHaveProperty("must_see");
+        expect(item.metacritic.must_see).toBeTruthy();
+      }),
+  },
+
+  only_non_must_see_items: {
+    query: "?must_see=false",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item.metacritic).toHaveProperty("must_see");
+        expect(item.metacritic.must_see).toBeFalsy();
       }),
   },
 
@@ -1473,9 +1498,9 @@ const params = {
           return false;
         }
         const today = new Date();
-        const eightDaysAgo = new Date();
-        eightDaysAgo.setDate(today.getDate() - 8);
-        return releaseDate >= eightDaysAgo && releaseDate <= today;
+        const twoWeeksAgo = new Date();
+        twoWeeksAgo.setDate(today.getDate() - 14);
+        return releaseDate >= twoWeeksAgo && releaseDate <= today;
       });
 
       expect(recentItems.length).toBeGreaterThanOrEqual(5);

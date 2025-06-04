@@ -3,18 +3,20 @@ function capitalize(word) {
 }
 
 /**
- * Constructs a MongoDB aggregation pipeline for retrieving tvshow data based on the given parameters.
- * @param {Object} config - The configuration object.
- * @param {Object} is_active_item - The active item object.
- * @param {string} item_type - The type of item to retrieve.
- * @param {Array} pipeline - The current pipeline to add to.
- * @param {string} seasons_number - The number of seasons to retrieve.
- * @param {string} status - The status of the tvshow to retrieve.
- * @returns {Array} - The updated pipeline.
+ * Builds a MongoDB aggregation pipeline for retrieving tvshow data based on filters.
+ * @param {Object} config - Configuration object.
+ * @param {Object} is_active_item - MongoDB condition to match active items.
+ * @param {Object} is_must_see_item - MongoDB condition to match must see items.
+ * @param {string} item_type - Type of item to match (e.g., "tvshow").
+ * @param {Array<Object>} pipeline - Aggregation pipeline to append conditions to.
+ * @param {string} seasons_number - Comma-separated list of season numbers to filter.
+ * @param {string} status - Comma-separated list of statuses to filter (e.g., "ongoing,ended").
+ * @returns {Array<Object>} - The updated aggregation pipeline.
  */
 const getPipelineFromTVShow = (
   config,
   is_active_item,
+  is_must_see_item,
   item_type,
   pipeline,
   seasons_number,
@@ -27,7 +29,7 @@ const getPipelineFromTVShow = (
 
   if (item_type) {
     pipeline.push({
-      $match: { $and: [is_active_item, item_type_tvshow] },
+      $match: { $and: [is_active_item, is_must_see_item, item_type_tvshow] },
     });
   }
 
@@ -43,6 +45,7 @@ const getPipelineFromTVShow = (
         $match: {
           $and: [
             is_active_item,
+            is_must_see_item,
             item_type_tvshow,
             {
               $or: [
@@ -58,7 +61,12 @@ const getPipelineFromTVShow = (
     } else {
       pipeline.push({
         $match: {
-          $and: [is_active_item, item_type_tvshow, seasons_number_first],
+          $and: [
+            is_active_item,
+            is_must_see_item,
+            item_type_tvshow,
+            seasons_number_first,
+          ],
         },
       });
     }
@@ -69,6 +77,7 @@ const getPipelineFromTVShow = (
       $match: {
         $and: [
           is_active_item,
+          is_must_see_item,
           { status: { $in: status.split(",").map(capitalize) } },
           item_type_tvshow,
         ],

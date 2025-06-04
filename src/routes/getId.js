@@ -1,7 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { aggregateData } = require("./aggregateData");
-const { buildProjection } = require("../utils/buildProjection");
+const { buildProjection } = require("./buildProjection");
 const { config } = require("../config");
 const { sendInternalError, sendRequest } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
@@ -40,6 +40,7 @@ const getId = async (req, res) => {
           undefined,
           undefined,
           id_path,
+          undefined,
           undefined,
           item_type_query,
           undefined,
