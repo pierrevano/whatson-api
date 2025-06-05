@@ -46,52 +46,52 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&popularity_filters=allocine_popularity,imdb_popularity&item_type=movie,tvshow&is_active=true,false&must_see=true,false&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&release_date=everything,new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&append_to_response=critics_rating_details,episodes_details&filtered_season=<integer>&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&popularity_filters=allocine_popularity,imdb_popularity&item_type=movie,tvshow&is_active=true,false&must_see=true,false&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&release_date=everything,new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&filtered_season=<integer>&page=<integer>&limit=<integer>
 > ```
 
-| Parameter          | Value                                                                                                                                                                                                               | Description                                                                     |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| ratings_filters    | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source (or _all_ for every values)                              |
-| popularity_filters | allocine_popularity,imdb_popularity                                                                                                                                                                                 | Popularity filters source (or _none_ to disable it)                             |
-| item_type          | movie,tvshow                                                                                                                                                                                                        | The type of the item (_movie_, _tvshow_ or both)                                |
-| is_active          | true,false                                                                                                                                                                                                          | Is the item currently on screens (_true_, _false_ or both)                      |
-| must_see           | true,false                                                                                                                                                                                                          | Is the item a Metacritic must see (_true_, _false_ or both)                     |
-| minimum_ratings    | 0,1,2,2.5,3,3.5,4,4.5                                                                                                                                                                                               | Minimum ratings to return                                                       |
-| release_date       | everything,new                                                                                                                                                                                                      | Should we return only new items or not                                          |
-| seasons_number     | 1,2,3,4,5                                                                                                                                                                                                           | Number of seasons (5 means 5+) (only valid for tvshows)                         |
-| status             | canceled,ended,ongoing,pilot,unknown                                                                                                                                                                                | TV show's status (only valid for tvshows)                                       |
-| directors          | _string_                                                                                                                                                                                                            | TV show's directors (only valid for tvshows; or all for every values)           |
-| genres             | _string_                                                                                                                                                                                                            | TV show's genres (only valid for tvshows; or all for every values)              |
-| platforms          | _string_                                                                                                                                                                                                            | TV show's platforms (only valid for tvshows; or all for every values)           |
-| append_to_response | critics_rating_details,episodes_details                                                                                                                                                                             | Should we return critics_rating_details and/or episodes_details in the response |
-| filtered_season    | _integer_                                                                                                                                                                                                           | Filter episodes on a specific season number                                     |
-| page               | _integer_                                                                                                                                                                                                           | Page number                                                                     |
-| limit              | _integer_                                                                                                                                                                                                           | Page items limit                                                                |
+| Parameter          | Value                                                                                                                                                                                                               | Description                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| ratings_filters    | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source (or _all_ for every values)                    |
+| popularity_filters | allocine_popularity,imdb_popularity                                                                                                                                                                                 | Popularity filters source (or _none_ to disable it)                   |
+| item_type          | movie,tvshow                                                                                                                                                                                                        | The type of the item (_movie_, _tvshow_ or both)                      |
+| is_active          | true,false                                                                                                                                                                                                          | Is the item currently on screens (_true_, _false_ or both)            |
+| must_see           | true,false                                                                                                                                                                                                          | Is the item a Metacritic must see (_true_, _false_ or both)           |
+| minimum_ratings    | 0,1,2,2.5,3,3.5,4,4.5                                                                                                                                                                                               | Minimum ratings to return                                             |
+| release_date       | everything,new                                                                                                                                                                                                      | Should we return only new items or not                                |
+| seasons_number     | 1,2,3,4,5                                                                                                                                                                                                           | Number of seasons (5 means 5+) (only valid for tvshows)               |
+| status             | canceled,ended,ongoing,pilot,unknown                                                                                                                                                                                | TV show's status (only valid for tvshows)                             |
+| directors          | _string_                                                                                                                                                                                                            | TV show's directors (only valid for tvshows; or all for every values) |
+| genres             | _string_                                                                                                                                                                                                            | TV show's genres (only valid for tvshows; or all for every values)    |
+| platforms          | _string_                                                                                                                                                                                                            | TV show's platforms (only valid for tvshows; or all for every values) |
+| append_to_response | critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode                                                                                                                    | Should we return specific keys in the response                        |
+| filtered_season    | _integer_                                                                                                                                                                                                           | Filter episodes on a specific season number                           |
+| page               | _integer_                                                                                                                                                                                                           | Page number                                                           |
+| limit              | _integer_                                                                                                                                                                                                           | Page items limit                                                      |
 
 ### Search
 
 The query parameters provided below are solely for item search purposes and must be unique.
 
 > ```
-> https://whatson-api.onrender.com/?title=<string>&append_to_response=critics_rating_details,episodes_details&filtered_season=<integer>
+> https://whatson-api.onrender.com/?title=<string>&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&filtered_season=<integer>
 > ```
 
-| Parameter          | Value                                   | Description                                                                     |
-| ------------------ | --------------------------------------- | ------------------------------------------------------------------------------- |
-| title              | _string_                                | Title of the movie or tvshow                                                    |
-| allocineId         | _integer_                               | AlloCiné ID of the movie or tvshow                                              |
-| betaseriesId       | _string_                                | BetaSeries ID of the movie or tvshow                                            |
-| imdbId             | _string_                                | IMDb ID of the movie or tvshow                                                  |
-| letterboxdId       | _string_                                | Letterboxd ID of the movie                                                      |
-| metacriticId       | _string_                                | Metacritic ID of the movie or tvshow                                            |
-| rottentomatoesId   | _string_                                | Rotten Tomatoes ID of the movie or tvshow                                       |
-| senscritiqueId     | _integer_                               | SensCritique ID of the movie or tvshow                                          |
-| tmdbId             | _integer_                               | The Movie Database ID of the movie or tvshow                                    |
-| traktId            | _string_                                | Trakt ID of the movie or tvshow                                                 |
-| tvtimeId           | _integer_                               | TV Time ID of the tvshow                                                        |
-| thetvdbId          | _integer_                               | TheTVDB ID of the movie or tvshow                                               |
-| append_to_response | critics_rating_details,episodes_details | Should we return critics_rating_details and/or episodes_details in the response |
-| filtered_season    | _integer_                               | Filter episodes on a specific season number                                     |
+| Parameter          | Value                                                                                            | Description                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| title              | _string_                                                                                         | Title of the movie or tvshow                   |
+| allocineId         | _integer_                                                                                        | AlloCiné ID of the movie or tvshow             |
+| betaseriesId       | _string_                                                                                         | BetaSeries ID of the movie or tvshow           |
+| imdbId             | _string_                                                                                         | IMDb ID of the movie or tvshow                 |
+| letterboxdId       | _string_                                                                                         | Letterboxd ID of the movie                     |
+| metacriticId       | _string_                                                                                         | Metacritic ID of the movie or tvshow           |
+| rottentomatoesId   | _string_                                                                                         | Rotten Tomatoes ID of the movie or tvshow      |
+| senscritiqueId     | _integer_                                                                                        | SensCritique ID of the movie or tvshow         |
+| tmdbId             | _integer_                                                                                        | The Movie Database ID of the movie or tvshow   |
+| traktId            | _string_                                                                                         | Trakt ID of the movie or tvshow                |
+| tvtimeId           | _integer_                                                                                        | TV Time ID of the tvshow                       |
+| thetvdbId          | _integer_                                                                                        | TheTVDB ID of the movie or tvshow              |
+| append_to_response | critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode | Should we return specific keys in the response |
+| filtered_season    | _integer_                                                                                        | Filter episodes on a specific season number    |
 
 #### Responses:
 
@@ -107,13 +107,13 @@ The query parameters provided below are solely for item search purposes and must
 Provides detailed information about specific item (movie or tvshow) by its type and unique identifier (TMDB ID).
 
 > ```
-> https://whatson-api.onrender.com/:item_type/:id?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&append_to_response=critics_rating_details,episodes_details
+> https://whatson-api.onrender.com/:item_type/:id?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode
 > ```
 
-| Parameter          | Value                                                                                                                                                                                                               | Description                                                                     |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| ratings_filters    | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source                                                          |
-| append_to_response | critics_rating_details,episodes_details                                                                                                                                                                             | Should we return critics_rating_details and/or episodes_details in the response |
+| Parameter          | Value                                                                                                                                                                                                               | Description                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| ratings_filters    | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source                         |
+| append_to_response | critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode                                                                                                                    | Should we return specific keys in the response |
 
 #### Responses:
 
@@ -160,6 +160,9 @@ Example of an item returned:
       "users_rating_count": "number" // Total number of ratings submitted by IMDb users
     }
   ],
+  /*
+   * To include this key in the response, add `last_episode` to the `append_to_response` query parameter.
+   */
   "last_episode": {
     /* Information related to the most recent episode */
     "season": "number", // Season number of the most recent episode
@@ -173,6 +176,9 @@ Example of an item returned:
     "users_rating": "number", // Average rating given by IMDb users for the most recent episode
     "users_rating_count": "number" // Total number of ratings submitted by IMDb users for the most recent episode
   },
+  /*
+   * To include this key in the response, add `next_episode` to the `append_to_response` query parameter.
+   */
   "next_episode": {
     /* Information related to the next episode to air */
     "season": "number", // Season number of the next episode to air
@@ -186,6 +192,9 @@ Example of an item returned:
     "users_rating": "number", // Average rating given by IMDb users for the next episode to air
     "users_rating_count": "number" // Total number of ratings submitted by IMDb users for the next episode to air
   },
+  /*
+   * To include this key in the response, add `highest_episode` to the `append_to_response` query parameter.
+   */
   "highest_episode": {
     /* Highest rated episode across all seasons */
     "season": "number", // Season number of the highest-rated episode
@@ -198,6 +207,9 @@ Example of an item returned:
     "users_rating": "number", // Average rating given by IMDb users for the highest-rated episode
     "users_rating_count": "number" // Total number of ratings submitted by IMDb users for the highest-rated episode
   },
+  /*
+   * To include this key in the response, add `lowest_episode` to the `append_to_response` query parameter.
+   */
   "lowest_episode": {
     /* Lowest rated episode across all seasons */
     "season": "number", // Season number of the lowest-rated episode

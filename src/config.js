@@ -52,7 +52,8 @@ const config = {
   /* Global settings */
   IPinfo: "https://ipinfo.io/country",
   webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
-  appendToResponse: "critics_rating_details,episodes_details",
+  appendToResponse:
+    "critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode",
 
   limit: 15,
   maximumThreshold: {
@@ -159,7 +160,7 @@ const config = {
     "title",
   ],
   margin: 10,
-  maxResponseTime: 5000,
+  maxResponseTime: 6000,
   maxNullValues: 600,
   maxNullReleaseDates: 150,
   minimumNumberOfItems: {

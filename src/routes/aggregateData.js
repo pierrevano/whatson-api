@@ -63,6 +63,24 @@ const aggregateData = async (
     typeof item_type_query !== "undefined" && item_type_query
       ? item_type_query
       : "movie";
+  const last_episode =
+    append_to_response && append_to_response.split(",").includes("last_episode")
+      ? true
+      : false;
+  const next_episode =
+    append_to_response && append_to_response.split(",").includes("next_episode")
+      ? true
+      : false;
+  const highest_episode =
+    append_to_response &&
+    append_to_response.split(",").includes("highest_episode")
+      ? true
+      : false;
+  const lowest_episode =
+    append_to_response &&
+    append_to_response.split(",").includes("lowest_episode")
+      ? true
+      : false;
   const limit = isNaN(limit_query) ? config.limit : limit_query;
   const minimum_ratings =
     typeof minimum_ratings_query !== "undefined" && minimum_ratings_query
@@ -214,6 +232,10 @@ const aggregateData = async (
         ? {}
         : { "allocine.critics_rating_details": 0 }),
       ...(episodes_details ? {} : { episodes_details: 0 }),
+      ...(last_episode ? {} : { last_episode: 0 }),
+      ...(next_episode ? {} : { next_episode: 0 }),
+      ...(highest_episode ? {} : { highest_episode: 0 }),
+      ...(lowest_episode ? {} : { lowest_episode: 0 }),
     },
   };
 

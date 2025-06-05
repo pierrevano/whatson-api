@@ -32,6 +32,9 @@ const schema = {
       users_rating_count: "number", // Total number of ratings submitted by IMDb users
     },
   ],
+  /*
+   * To include this key in the response, add `last_episode` to the `append_to_response` query parameter.
+   */
   last_episode: {
     /* Information related to the most recent episode */
     season: "number", // Season number of the most recent episode
@@ -45,6 +48,9 @@ const schema = {
     users_rating: "number", // Average rating given by IMDb users for the most recent episode
     users_rating_count: "number", // Total number of ratings submitted by IMDb users for the most recent episode
   },
+  /*
+   * To include this key in the response, add `next_episode` to the `append_to_response` query parameter.
+   */
   next_episode: {
     /* Information related to the next episode to air */
     season: "number", // Season number of the next episode to air
@@ -58,6 +64,9 @@ const schema = {
     users_rating: "number", // Average rating given by IMDb users for the next episode to air
     users_rating_count: "number", // Total number of ratings submitted by IMDb users for the next episode to air
   },
+  /*
+   * To include this key in the response, add `highest_episode` to the `append_to_response` query parameter.
+   */
   highest_episode: {
     /* Highest rated episode across all seasons */
     season: "number", // Season number of the highest-rated episode
@@ -70,6 +79,9 @@ const schema = {
     users_rating: "number", // Average rating given by IMDb users for the highest-rated episode
     users_rating_count: "number", // Total number of ratings submitted by IMDb users for the highest-rated episode
   },
+  /*
+   * To include this key in the response, add `lowest_episode` to the `append_to_response` query parameter.
+   */
   lowest_episode: {
     /* Lowest rated episode across all seasons */
     season: "number", // Season number of the lowest-rated episode

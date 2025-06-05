@@ -118,7 +118,7 @@ const params = {
 
   correct_tmdb_id_returned: {
     query:
-      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details",
+      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.id).toBe(249042);
@@ -126,6 +126,9 @@ const params = {
 
       expect(Array.isArray(data.allocine.critics_rating_details)).toBeTruthy();
       expect(Array.isArray(data.episodes_details)).toBeTruthy();
+      expect(typeof data.last_episode).toBe("object");
+      expect(typeof data.highest_episode).toBe("object");
+      expect(typeof data.lowest_episode).toBe("object");
     },
   },
 
@@ -162,12 +165,16 @@ const params = {
       query: "/tvshow/249042?ratings_filters=all",
       expectedResult: (data) => {
         expect(typeof data).toBe("object");
-        expect(Object.keys(data).length).toEqual(config.keysToCheck.length - 1);
+        expect(Object.keys(data).length).toEqual(config.keysToCheck.length - 5);
         expect(data.id).toBe(249042);
         expect(data.ratings_average).toBeGreaterThan(0);
 
         expect(data.allocine).not.toHaveProperty("critics_rating_details");
         expect(data).not.toHaveProperty("episodes_details");
+        expect(data).not.toHaveProperty("last_episode");
+        expect(data).not.toHaveProperty("next_episode");
+        expect(data).not.toHaveProperty("highest_episode");
+        expect(data).not.toHaveProperty("lowest_episode");
       },
     },
 
@@ -362,9 +369,12 @@ describe("What's on? API tests", () => {
       console.log("Test name:", name);
       console.log(`Calling ${apiCall}`);
 
+      console.time("axiosCallInDataTest");
       const response = await axios.get(apiCall, {
         validateStatus: (status) => status <= 500,
       });
+      console.timeEnd("axiosCallInDataTest");
+
       const data = response.data;
 
       expectedResult(data, response);

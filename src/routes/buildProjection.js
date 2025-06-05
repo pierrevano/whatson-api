@@ -16,6 +16,22 @@ function buildProjection(appendToResponse) {
     projection["episodes_details"] = 0;
   }
 
+  if (!includes("last_episode")) {
+    projection["last_episode"] = 0;
+  }
+
+  if (!includes("next_episode")) {
+    projection["next_episode"] = 0;
+  }
+
+  if (!includes("highest_episode")) {
+    projection["highest_episode"] = 0;
+  }
+
+  if (!includes("lowest_episode")) {
+    projection["lowest_episode"] = 0;
+  }
+
   return projection;
 }
 

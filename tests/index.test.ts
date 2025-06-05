@@ -674,7 +674,7 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&limit=${config.maxLimitRemote}`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, schema)),
   },
@@ -1284,22 +1284,22 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details&limit=${higherLimit}`,
+    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&limit=${higherLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&append_to_response=critics_rating_details,episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&limit=${config.maxLimitRemote}`,
     expectedResult: checkItemProperties,
   },
 
@@ -1543,7 +1543,7 @@ const params = {
   },
 
   should_match_last_episode_details: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details,last_episode&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details && item.last_episode) {
@@ -1568,7 +1568,7 @@ const params = {
   },
 
   should_have_next_episode_greater_than_last_episode: {
-    query: `?item_type=tvshow&is_active=true&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=last_episode,next_episode&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const today = formatDate(new Date());
 
@@ -1621,7 +1621,7 @@ const params = {
   },
 
   should_have_release_date_after_current_date: {
-    query: `?item_type=tvshow&is_active=true,false&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=last_episode,next_episode&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const currentDate = new Date().getTime();
       const thresholdDate = currentDate - 48 * 60 * 60 * 1000;
@@ -1648,7 +1648,7 @@ const params = {
   },
 
   should_not_have_next_episode_when_tvshow_is_ended: {
-    query: `?item_type=tvshow&status=ended&is_active=true,false&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&status=ended&is_active=true,false&append_to_response=episodes_details,next_episode&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("status");
@@ -1691,7 +1691,7 @@ const params = {
   },
 
   should_have_highest_rated_episode_above_second_best: {
-    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details,highest_episode&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         const all = item.episodes_details;
@@ -1732,7 +1732,7 @@ const params = {
   },
 
   should_have_lowest_rated_episode_below_second_worst: {
-    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details,last_episode,next_episode,highest_episode,lowest_episode&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         const all = item.episodes_details;
@@ -1791,6 +1791,62 @@ const params = {
         config.maxNullReleaseDates,
       );
     },
+  },
+
+  only_last_episode: {
+    query:
+      "?item_type=tvshow&append_to_response=last_episode&filtered_season=2",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("last_episode");
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("next_episode");
+        expect(item).not.toHaveProperty("highest_episode");
+        expect(item).not.toHaveProperty("lowest_episode");
+      }),
+  },
+
+  only_next_episode: {
+    query:
+      "?item_type=tvshow&append_to_response=next_episode&filtered_season=2",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("next_episode");
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("last_episode");
+        expect(item).not.toHaveProperty("highest_episode");
+        expect(item).not.toHaveProperty("lowest_episode");
+      }),
+  },
+
+  only_highest_episode: {
+    query:
+      "?item_type=tvshow&append_to_response=highest_episode&filtered_season=2",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("highest_episode");
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("next_episode");
+        expect(item).not.toHaveProperty("last_episode");
+        expect(item).not.toHaveProperty("lowest_episode");
+      }),
+  },
+
+  only_lowest_episode: {
+    query:
+      "?item_type=tvshow&append_to_response=lowest_episode&filtered_season=2",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("lowest_episode");
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("next_episode");
+        expect(item).not.toHaveProperty("last_episode");
+        expect(item).not.toHaveProperty("highest_episode");
+      }),
   },
 };
 
@@ -1863,9 +1919,12 @@ describe("What's on? API tests", () => {
       console.log("Test name:", name);
       console.log(`Calling: ${apiCall}`);
 
+      console.time("axiosCallInTest");
       const response = await axios.get(apiCall, {
         validateStatus: (status) => status < 500,
       });
+      console.timeEnd("axiosCallInTest");
+
       const data = response.data;
       const items = query.startsWith("/") ? data : data.results;
 
@@ -1922,9 +1981,9 @@ describe("What's on? API tests", () => {
     "api_response_time_should_be_within_an_acceptable_range_on_important_limit",
     async () => {
       const start = new Date().valueOf();
-      await axios.get(
-        `${baseURL}?item_type=movie,tvshow&limit=${config.maxLimit}&api_key=${config.internalApiKey}`,
-      );
+      const apiCall = `${baseURL}?item_type=movie,tvshow&limit=${config.maxLimit}&api_key=${config.internalApiKey}`;
+      console.log(`Calling: ${apiCall}`);
+      await axios.get(apiCall);
       const end = new Date().valueOf();
       expect(end - start).toBeLessThan(config.maxResponseTime);
     },
