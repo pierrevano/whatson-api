@@ -1,11 +1,11 @@
 {
   "name": "whatson-api",
-  "version": "2.103.0",
+  "version": "2.103.1",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
-    "test": "DISABLE_NEW_RELIC=true jest tests",
-    "test-remote": "DISABLE_NEW_RELIC=true SOURCE=remote jest tests --ci --runInBand --reporters=default --reporters=jest-junit",
+    "test": "DISABLE_NEW_RELIC=true npx jest tests/index-all-data.test.ts && npx jest tests/index.test.ts",
+    "test-remote": "DISABLE_NEW_RELIC=true SOURCE=remote npx jest tests/index-all-data.test.ts && npx jest tests/index.test.ts --ci --runInBand --reporters=default --reporters=jest-junit",
     "prettier": "prettier --write .",
     "update-packages": "ncu -u --reject express && rm -rf node_modules package-lock.json && npm install",
     "changed-dataset": "git update-index --no-assume-unchanged src/assets/films_ids.txt && git update-index --no-assume-unchanged src/assets/series_ids.txt",
