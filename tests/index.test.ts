@@ -1931,7 +1931,7 @@ describe("What's on? API tests", () => {
       expectedResult(items, null);
     }
 
-    test(
+    test.concurrent(
       name,
       async () => {
         await fetchItemsData();
