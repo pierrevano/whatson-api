@@ -154,7 +154,11 @@ const aggregateData = async (
     "metacritic.must_see": is_must_see === "true" || is_must_see === true,
   };
   const is_must_see_all = {
-    $or: [{ "metacritic.must_see": true }, { "metacritic.must_see": false }],
+    $or: [
+      { metacritic: null },
+      { "metacritic.must_see": true },
+      { "metacritic.must_see": false },
+    ],
   };
   is_must_see_item =
     is_must_see === "true,false" || is_must_see === "false,true"

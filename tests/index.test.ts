@@ -130,6 +130,10 @@ function checkItemProperties(items) {
       expect(item.status).not.toBeNull();
     }
 
+    if (item.metacritic) {
+      expect(item.metacritic.must_see).not.toBeNull();
+    }
+
     item.trailer
       ? expect(item.trailer).toMatch(
           /^(https:\/\/(fr\.vid\.web\.acsta\.net.*\.mp4|www\.youtube\.com\/embed.*|www\.dailymotion\.com\/embed.*))$/,
@@ -248,7 +252,9 @@ function checkItemProperties(items) {
       : null;
 
     item.item_type === "tvshow"
-      ? expect(["Canceled", "Ongoing", "Pilot", "Ended"]).toContain(item.status)
+      ? expect(["Canceled", "Ended", "Ongoing", "Pilot", "Unknown"]).toContain(
+          item.status,
+        )
       : null;
 
     /* Popularity */
@@ -689,7 +695,9 @@ const params = {
         expect(item.allocine).not.toHaveProperty("critics_rating_details");
         expect(item).not.toHaveProperty("episodes_details");
 
-        expect([true, false]).toContain(item.metacritic?.must_see);
+        item.metacritic
+          ? expect([true, false]).toContain(item.metacritic.must_see)
+          : null;
       }),
   },
 
@@ -700,7 +708,9 @@ const params = {
         expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("movie");
 
-        expect([true, false]).toContain(item.metacritic?.must_see);
+        item.metacritic
+          ? expect([true, false]).toContain(item.metacritic.must_see)
+          : null;
       }),
   },
 
@@ -711,7 +721,9 @@ const params = {
         expect(item).toHaveProperty("item_type");
         expect(item.item_type).toBe("tvshow");
 
-        expect([true, false]).toContain(item.metacritic?.must_see);
+        item.metacritic
+          ? expect([true, false]).toContain(item.metacritic.must_see)
+          : null;
       }),
   },
 
