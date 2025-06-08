@@ -1633,7 +1633,7 @@ const params = {
   },
 
   should_have_release_date_after_current_date: {
-    query: `?item_type=tvshow&is_active=true,false&append_to_response=last_episode,next_episode&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=last_episode,next_episode&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const currentDate = new Date().getTime();
       const thresholdDate = currentDate - 48 * 60 * 60 * 1000;
