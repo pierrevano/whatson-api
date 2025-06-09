@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const axios = require("axios");
+const { readFileSync } = require("fs");
 
 const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");
@@ -1943,7 +1944,7 @@ describe("What's on? API tests", () => {
       expectedResult(items, null);
     }
 
-    test.concurrent(
+    test(
       name,
       async () => {
         await fetchItemsData();
@@ -2000,5 +2001,51 @@ describe("What's on? API tests", () => {
       expect(end - start).toBeLessThan(config.maxResponseTime);
     },
     config.timeout,
+  );
+
+  const countTrueLines = (filePath) => {
+    const content = readFileSync(filePath, "utf-8");
+    return content.split("\n").filter((line) => line.trim().endsWith(",TRUE"))
+      .length;
+  };
+
+  (isRemoteSource ? test.skip : test)(
+    "Local item count from files should match API response for active items",
+    async () => {
+      const movieFileCount = countTrueLines(config.filmsIdsFilePath);
+      const seriesFileCount = countTrueLines(config.seriesIdsFilePath);
+
+      const [movieResponse, seriesResponse] = await Promise.all([
+        axios.get(baseURL, {
+          params: {
+            item_type: "movie",
+            is_active: true,
+            limit: `${config.maxLimit}`,
+            api_key: `${config.internalApiKey}`,
+          },
+        }),
+        axios.get(baseURL, {
+          params: {
+            item_type: "tvshow",
+            is_active: true,
+            limit: `${config.maxLimit}`,
+            api_key: `${config.internalApiKey}`,
+          },
+        }),
+      ]);
+
+      expect(movieResponse.status).toBe(200);
+      expect(seriesResponse.status).toBe(200);
+
+      const movieCount = Array.isArray(movieResponse.data.results)
+        ? movieResponse.data.results.length
+        : 0;
+      const seriesCount = Array.isArray(seriesResponse.data.results)
+        ? seriesResponse.data.results.length
+        : 0;
+
+      expect(movieCount).toBe(movieFileCount);
+      expect(seriesCount).toBe(seriesFileCount);
+    },
   );
 });

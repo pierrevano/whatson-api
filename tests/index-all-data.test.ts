@@ -380,7 +380,7 @@ describe("What's on? API tests", () => {
       expectedResult(data, response);
     }
 
-    test.concurrent(
+    test(
       name,
       async () => {
         await fetchItemsData();
