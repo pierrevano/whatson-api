@@ -231,81 +231,108 @@ function checkItemProperties(items) {
     /* Popularity */
     item.is_active === true
       ? expect(
-          items.filter((item) => item.allocine.popularity).length,
+          items.filter((item) => item.allocine?.popularity).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
       : null;
     item.is_active === true
       ? expect(
-          items.filter((item) => item.imdb.popularity).length,
+          items.filter((item) => item.imdb?.popularity).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
       : null;
 
     /* AlloCiné */
-    expect(item.allocine).not.toBeNull();
-    expect(item.allocine.id).not.toBeNull();
-    expect(item.allocine.url).not.toBeNull();
-    expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(
-      config.minimumNumberOfItems.allocine,
-    );
+    if (item.allocine) {
+      expect(item.allocine).not.toBeNull();
+      expect(item.allocine.id).not.toBeNull();
+      expect(item.allocine.url).not.toBeNull();
+      expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(
+        config.minimumNumberOfItems.allocine,
+      );
+    }
     expect(
-      items.filter((item) => typeof item.allocine.users_rating === "number")
+      items.filter((item) => typeof item.allocine?.users_rating === "number")
         .length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     item.is_active === true
       ? expect(
           items.filter(
-            (item) => typeof item.allocine.users_rating_count === "number",
+            (item) => typeof item.allocine?.users_rating_count === "number",
           ).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
     expect(
-      items.filter((item) => typeof item.allocine.critics_rating === "number")
+      items.filter((item) => typeof item.allocine?.critics_rating === "number")
         .length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(
       items.filter(
-        (item) => typeof item.allocine.critics_rating_count === "number",
+        (item) => typeof item.allocine?.critics_rating_count === "number",
       ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(
-      items.filter((item) => item.allocine.critics_rating_details).length,
+      items.filter((item) => item.allocine?.critics_rating_details).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(
       items.filter(
         (item) =>
-          item.allocine.critics_rating_details &&
-          typeof item.allocine.critics_rating_details[0].critic_name ===
+          item.allocine?.critics_rating_details &&
+          typeof item.allocine?.critics_rating_details[0].critic_name ===
             "string" &&
-          typeof item.allocine.critics_rating_details[0].critic_rating ===
+          typeof item.allocine?.critics_rating_details[0].critic_rating ===
             "number",
       ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    item.allocine &&
-    item.allocine.critics_rating_count &&
-    item.allocine.critics_rating_details
+    item.allocine?.critics_rating_count && item.allocine?.critics_rating_details
       ? expect(item.allocine.critics_rating_count).toEqual(
           item.allocine.critics_rating_details.length,
         )
       : null;
+    if (item.is_active === true) {
+      expect(
+        items.filter(
+          (item) =>
+            item.allocine &&
+            !item.allocine?.users_rating &&
+            !item.allocine?.critics_rating,
+        ).length,
+      ).toBe(0);
+      if (item.allocine?.users_rating) {
+        expect(item.allocine.users_rating_count).toBeGreaterThan(0);
+      }
+      if (item.allocine?.critics_rating) {
+        expect(item.allocine.critics_rating_count).toBeGreaterThan(0);
+      }
+    }
 
     /* IMDb */
-    expect(item.imdb).not.toBeNull();
-    expect(item.imdb.id).not.toBeNull();
-    expect(item.imdb.url).not.toBeNull();
-    expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(
-      config.minimumNumberOfItems.imdb,
-    );
-    expect(item.imdb.id.startsWith("tt")).toBeTruthy();
+    if (item.imdb) {
+      expect(item.imdb).not.toBeNull();
+      expect(item.imdb.id).not.toBeNull();
+      expect(item.imdb.url).not.toBeNull();
+      expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(
+        config.minimumNumberOfItems.imdb,
+      );
+      expect(item.imdb.id.startsWith("tt")).toBeTruthy();
+    }
     expect(
-      items.filter((item) => typeof item.imdb.users_rating === "number").length,
+      items.filter((item) => typeof item.imdb?.users_rating === "number")
+        .length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     item.is_active === true
       ? expect(
           items.filter(
-            (item) => typeof item.imdb.users_rating_count === "number",
+            (item) => typeof item.imdb?.users_rating_count === "number",
           ).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
+    if (item.is_active === true) {
+      expect(
+        items.filter((item) => item.imdb && !item.imdb?.users_rating).length,
+      ).toBe(0);
+      if (item.imdb?.users_rating) {
+        expect(item.imdb.users_rating_count).toBeGreaterThan(0);
+      }
+    }
 
     /* BetaSeries */
     if (item.betaseries) {
@@ -319,6 +346,16 @@ function checkItemProperties(items) {
           (item) => typeof item.betaseries?.users_rating === "number",
         ).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      if (item.is_active === true) {
+        expect(
+          items.filter(
+            (item) => item.betaseries && !item.betaseries?.users_rating,
+          ).length,
+        ).toBe(0);
+        if (item.betaseries?.users_rating) {
+          expect(item.betaseries.users_rating_count).toBeGreaterThan(0);
+        }
+      }
     }
     item.is_active === true
       ? expect(
@@ -340,6 +377,22 @@ function checkItemProperties(items) {
           (item) => typeof item.metacritic?.users_rating === "number",
         ).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      if (item.is_active === true) {
+        expect(
+          items.filter(
+            (item) =>
+              item.metacritic &&
+              !item.metacritic?.users_rating &&
+              !item.metacritic?.critics_rating,
+          ).length,
+        ).toBe(0);
+        if (item.metacritic?.users_rating) {
+          expect(item.metacritic.users_rating_count).toBeGreaterThan(0);
+        }
+        if (item.metacritic?.critics_rating) {
+          expect(item.metacritic.critics_rating_count).toBeGreaterThan(0);
+        }
+      }
     }
     if (item.metacritic?.must_see === true) {
       expect(item.metacritic.critics_rating).toBeGreaterThanOrEqual(80);
@@ -383,6 +436,19 @@ function checkItemProperties(items) {
           (item) => typeof item.rotten_tomatoes?.critics_rating === "number",
         ).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      if (item.is_active === true) {
+        expect(
+          items.filter(
+            (item) =>
+              item.rotten_tomatoes &&
+              !item.rotten_tomatoes?.users_rating &&
+              !item.rotten_tomatoes?.critics_rating,
+          ).length,
+        ).toBe(0);
+        if (item.rotten_tomatoes?.critics_rating) {
+          expect(item.rotten_tomatoes.critics_rating_count).toBeGreaterThan(0);
+        }
+      }
     }
     if (item.is_active === true) {
       expect(
@@ -421,6 +487,16 @@ function checkItemProperties(items) {
       expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.letterboxd,
       );
+      if (item.is_active === true) {
+        expect(
+          items.filter(
+            (item) => item.letterboxd && !item.letterboxd?.users_rating,
+          ).length,
+        ).toBe(0);
+        if (item.letterboxd?.users_rating) {
+          expect(item.letterboxd.users_rating_count).toBeGreaterThan(0);
+        }
+      }
     }
     if (item.is_active === true && item.item_type === "movie") {
       expect(
@@ -444,6 +520,16 @@ function checkItemProperties(items) {
         config.minimumNumberOfItems.senscritique,
       );
       expect(["string", "number"]).toContain(typeof item.senscritique.id);
+      if (item.is_active === true) {
+        expect(
+          items.filter(
+            (item) => item.senscritique && !item.senscritique?.users_rating,
+          ).length,
+        ).toBe(0);
+        if (item.senscritique?.users_rating) {
+          expect(item.senscritique.users_rating_count).toBeGreaterThan(0);
+        }
+      }
     }
     if (item.is_active === true) {
       expect(
@@ -466,6 +552,14 @@ function checkItemProperties(items) {
         config.minimumNumberOfItems.tmdb,
       );
       expect(typeof item.tmdb.id).toBe("number");
+      if (item.is_active === true) {
+        expect(
+          items.filter((item) => item.tmdb && !item.tmdb?.users_rating).length,
+        ).toBe(0);
+        if (item.tmdb?.users_rating) {
+          expect(item.tmdb.users_rating_count).toBeGreaterThan(0);
+        }
+      }
     }
     if (item.is_active === true) {
       expect(
@@ -486,6 +580,15 @@ function checkItemProperties(items) {
       expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.trakt,
       );
+      if (item.is_active === true) {
+        expect(
+          items.filter((item) => item.trakt && !item.trakt?.users_rating)
+            .length,
+        ).toBe(0);
+        if (item.trakt?.users_rating) {
+          expect(item.trakt.users_rating_count).toBeGreaterThan(0);
+        }
+      }
     }
     if (item.is_active === true) {
       expect(
@@ -506,6 +609,12 @@ function checkItemProperties(items) {
       expect(Object.keys(item.tv_time).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.tvtime,
       );
+      if (item.is_active === true) {
+        expect(
+          items.filter((item) => item.tv_time && !item.tv_time?.users_rating)
+            .length,
+        ).toBe(0);
+      }
     }
     item.item_type === "tvshow"
       ? expect(
@@ -522,6 +631,11 @@ function checkItemProperties(items) {
       expect(Object.keys(item.thetvdb).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.thetvdb,
       );
+      if (item.is_active === true) {
+        expect(
+          items.filter((item) => item.thetvdb && !item.thetvdb?.slug).length,
+        ).toBe(0);
+      }
     }
     item.is_active === true
       ? expect(
@@ -1159,7 +1273,7 @@ const params = {
       ).toBeGreaterThan(0);
       expect(
         items.filter(
-          (item) => item.imdb.popularity >= 1 && item.imdb.popularity <= 5,
+          (item) => item.imdb?.popularity >= 1 && item.imdb?.popularity <= 5,
         ).length,
       ).toBeGreaterThan(0);
     },

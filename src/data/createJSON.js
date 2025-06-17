@@ -179,54 +179,54 @@ const createJSON = async (
   const theTvdbSlug = await getTheTvdbSlug(allocineHomepage, theTvdbId);
 
   /* Creating an object called allocineObj. */
-  const allocineObj = {
-    id: allocineId,
-    url: allocineHomepage,
-    users_rating: allocineFirstInfo && allocineFirstInfo.allocineUsersRating,
-    users_rating_count:
-      allocineFirstInfo && allocineFirstInfo.allocineUsersRatingCount,
-    critics_rating: allocineCriticInfo && allocineCriticInfo.criticsRating,
-    critics_rating_count:
-      allocineCriticInfo && allocineCriticInfo.criticsRatingCount,
-    critics_rating_details:
-      allocineCriticInfo && allocineCriticInfo.criticsRatingDetails,
-    popularity: allocinePopularity && allocinePopularity.popularity,
-  };
+  const allocineObj =
+    allocineFirstInfo?.allocineUsersRating || allocineCriticInfo?.criticsRating
+      ? {
+          id: allocineId,
+          url: allocineHomepage,
+          users_rating: allocineFirstInfo?.allocineUsersRating,
+          users_rating_count: allocineFirstInfo?.allocineUsersRatingCount,
+          critics_rating: allocineCriticInfo?.criticsRating,
+          critics_rating_count: allocineCriticInfo?.criticsRatingCount,
+          critics_rating_details: allocineCriticInfo?.criticsRatingDetails,
+          popularity: allocinePopularity?.popularity,
+        }
+      : null;
 
   /* Creating an object called betaseriesObj. */
-  const betaseriesObj =
-    betaseriesId !== "null"
-      ? {
-          id: betaseriesId,
-          url: betaseriesHomepage,
-          users_rating: usersRatingBetaseries,
-          users_rating_count: usersRatingCountBetaseries,
-        }
-      : null;
+  const betaseriesObj = usersRatingBetaseries
+    ? {
+        id: betaseriesId,
+        url: betaseriesHomepage,
+        users_rating: usersRatingBetaseries,
+        users_rating_count: usersRatingCountBetaseries,
+      }
+    : null;
 
   /* Creating an object called imdbObj. */
-  const imdbObj = {
-    id: imdbId,
-    url: imdbHomepage,
-    users_rating: usersRating,
-    users_rating_count: usersRatingCount,
-    popularity: imdbPopularity && imdbPopularity.popularity,
-  };
+  const imdbObj = usersRating
+    ? {
+        id: imdbId,
+        url: imdbHomepage,
+        users_rating: usersRating,
+        users_rating_count: usersRatingCount,
+        popularity: imdbPopularity?.popularity,
+      }
+    : null;
 
   /* Creates a Letterboxd object if the letterboxd rating is not null. */
-  const letterboxdObj =
-    letterboxdRating !== null && letterboxdRating.id
-      ? {
-          id: letterboxdRating.id,
-          url: letterboxdRating.url,
-          users_rating: letterboxdRating.usersRating,
-          users_rating_count: letterboxdRating.usersRatingCount,
-        }
-      : null;
+  const letterboxdObj = letterboxdRating?.usersRating
+    ? {
+        id: letterboxdRating.id,
+        url: letterboxdRating.url,
+        users_rating: letterboxdRating.usersRating,
+        users_rating_count: letterboxdRating.usersRatingCount,
+      }
+    : null;
 
   /* Creates a Metacritic object if the metacritic rating is not null. */
   const metacriticObj =
-    metacriticRating !== null && metacriticRating.id
+    metacriticRating?.usersRating || metacriticRating?.criticsRating
       ? {
           id: metacriticRating.id,
           url: metacriticRating.url,
@@ -240,7 +240,7 @@ const createJSON = async (
 
   /* Creates a Rotten Tomatoes object if the rottenTomatoes rating is not null. */
   const rottenTomatoesObj =
-    rottenTomatoesRating !== null && rottenTomatoesRating.id
+    rottenTomatoesRating?.usersRating || rottenTomatoesRating?.criticsRating
       ? {
           id: rottenTomatoesRating.id,
           url: rottenTomatoesRating.url,
@@ -255,66 +255,60 @@ const createJSON = async (
       : null;
 
   /* Creates a SensCritique object if the sensCritique rating is not null. */
-  const sensCritiqueObj =
-    sensCritiqueRating !== null && sensCritiqueRating.id
-      ? {
-          id: sensCritiqueRating.id,
-          url: sensCritiqueRating.url,
-          users_rating: sensCritiqueRating.usersRating,
-          users_rating_count: sensCritiqueRating.usersRatingCount,
-        }
-      : null;
+  const sensCritiqueObj = sensCritiqueRating?.usersRating
+    ? {
+        id: sensCritiqueRating.id,
+        url: sensCritiqueRating.url,
+        users_rating: sensCritiqueRating.usersRating,
+        users_rating_count: sensCritiqueRating.usersRatingCount,
+      }
+    : null;
 
   /* Creating an object called theTvdbObj. */
-  const theTvdbObj =
-    theTvdbSlug !== null
-      ? {
-          id: theTvdbId,
-          slug: theTvdbSlug,
-          url: `${theTvdbHomepage}${theTvdbSlug}`,
-        }
-      : null;
+  const theTvdbObj = theTvdbSlug
+    ? {
+        id: theTvdbId,
+        slug: theTvdbSlug,
+        url: `${theTvdbHomepage}${theTvdbSlug}`,
+      }
+    : null;
 
   /* Creates a TMDB object if the TMDB rating is not null. */
-  const tmdbObj =
-    tmdbRating !== null && tmdbRating.id
-      ? {
-          id: tmdbRating.id,
-          url: tmdbRating.url,
-          users_rating: tmdbRating.usersRating,
-          users_rating_count: tmdbRating.usersRatingCount,
-        }
-      : null;
+  const tmdbObj = tmdbRating?.usersRating
+    ? {
+        id: tmdbRating.id,
+        url: tmdbRating.url,
+        users_rating: tmdbRating.usersRating,
+        users_rating_count: tmdbRating.usersRatingCount,
+      }
+    : null;
 
   /* Creates a Trakt object if the trakt rating is not null. */
-  const traktObj =
-    traktRating !== null && traktRating.id
-      ? {
-          id: traktRating.id,
-          url: traktRating.url,
-          users_rating: traktRating.usersRating,
-          users_rating_count: traktRating.usersRatingCount,
-        }
-      : null;
+  const traktObj = traktRating?.usersRating
+    ? {
+        id: traktRating.id,
+        url: traktRating.url,
+        users_rating: traktRating.usersRating,
+        users_rating_count: traktRating.usersRatingCount,
+      }
+    : null;
 
   /* Creates a TV Time object if the tvtime rating is not null. */
-  const tvtimeObj =
-    tvtimeRating !== null && tvtimeRating.id
-      ? {
-          id: tvtimeRating.id,
-          url: tvtimeRating.url,
-          users_rating: tvtimeRating.usersRating,
-        }
-      : null;
+  const tvtimeObj = tvtimeRating?.usersRating
+    ? {
+        id: tvtimeRating.id,
+        url: tvtimeRating.url,
+        users_rating: tvtimeRating.usersRating,
+      }
+    : null;
 
-  const mojoObj =
-    mojoValues !== null
-      ? {
-          rank: mojoValues.rank,
-          url: mojoValues.url,
-          lifetime_gross: mojoValues.lifetimeGross,
-        }
-      : null;
+  const mojoObj = mojoValues
+    ? {
+        rank: mojoValues.rank,
+        url: mojoValues.url,
+        lifetime_gross: mojoValues.lifetimeGross,
+      }
+    : null;
 
   const data = {
     id: tmdbId,
@@ -326,8 +320,8 @@ const createJSON = async (
     directors: allocineFirstInfo.directors,
     genres: allocineFirstInfo.genres,
     image: allocineFirstInfo.image,
-    release_date: allocineFirstInfo && allocineFirstInfo.releaseDate,
-    tagline: traktRating && traktRating.tagline,
+    release_date: allocineFirstInfo?.releaseDate,
+    tagline: traktRating?.tagline,
     trailer: allocineFirstInfo.trailer,
 
     episodes_details: episodesDetails,
