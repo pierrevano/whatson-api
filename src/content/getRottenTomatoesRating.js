@@ -4,17 +4,31 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the Rotten Tomatoes rating for a given movie or tvshow.
- * @param {string} rottenTomatoesHomepage - The Rotten Tomatoes homepage URL.
- * @param {string} rottenTomatoesId - The Rotten Tomatoes ID for the movie or tvshow.
- * @returns {Promise<Object>} - An object containing the Rotten Tomatoes rating information.
- * @throws {Error} - If there is an error retrieving the Rotten Tomatoes rating.
+ * It takes a rottenTomatoesHomepage as an argument, and returns user and critic rating details.
+ * It only attempts to fetch and parse the content if a valid rottenTomatoesId is provided.
+ *
+ * @param {string} rottenTomatoesHomepage - The URL of the item's page on rottentomatoes.com
+ * @param {string} rottenTomatoesId - Optional item identifier
+ * @returns {{
+ *   id: string,
+ *   url: string,
+ *   usersRating: number|null,
+ *   criticsRating: number|null,
+ *   criticsRatingCount: number|null,
+ *   criticsRatingLikedCount: number|null,
+ *   criticsRatingNotLikedCount: number|null
+ * }|null} An object containing the rating information, or null if not available
  */
 const getRottenTomatoesRating = async (
   rottenTomatoesHomepage,
   rottenTomatoesId,
 ) => {
   let rottenTomatoesObj = null;
+  let usersRating = null;
+  let criticsRating = null;
+  let criticsRatingCount = null;
+  let criticsRatingLikedCount = null;
+  let criticsRatingNotLikedCount = null;
 
   try {
     const options = {
@@ -24,45 +38,67 @@ const getRottenTomatoesRating = async (
     };
 
     if (isNotNull(rottenTomatoesId)) {
-      $ = await getCheerioContent(
-        `${rottenTomatoesHomepage}`,
+      const $ = await getCheerioContent(
+        rottenTomatoesHomepage,
         options,
         "getRottenTomatoesRating",
       );
 
-      let usersRating = parseInt(
-        $("score-board-deprecated").attr("audiencescore"),
-      );
-      let criticsRating = parseInt(
-        $("score-board-deprecated").attr("tomatometerscore"),
-      );
+      const rawJson = $("#media-scorecard-json").html();
 
-      if (isNaN(usersRating) || isNaN(criticsRating)) {
-        const scriptTag = $("#media-scorecard-json");
-        const jsonString = scriptTag.html();
-        const data = JSON.parse(jsonString);
-
-        if (isNaN(usersRating))
-          usersRating =
-            data && data.audienceScore && data.audienceScore.score
-              ? parseInt(data.audienceScore.score)
-              : null;
-        if (isNaN(criticsRating))
-          criticsRating =
-            data && data.criticsScore && data.criticsScore.score
-              ? parseInt(data.criticsScore.score)
-              : null;
+      if (!rawJson) {
+        throw new Error("Failed to locate the Rotten Tomatoes JSON.");
       }
 
-      if (isNaN(usersRating)) usersRating = null;
-      if (isNaN(criticsRating)) criticsRating = null;
+      try {
+        const mediaScorecard = JSON.parse(rawJson);
 
-      rottenTomatoesObj = {
-        id: rottenTomatoesId,
-        url: rottenTomatoesHomepage,
-        usersRating: usersRating,
-        criticsRating: criticsRating,
-      };
+        usersRating = parseInt(mediaScorecard?.audienceScore?.score);
+        if (isNaN(usersRating)) usersRating = null;
+
+        criticsRating = parseInt(mediaScorecard?.criticsScore?.score);
+        if (isNaN(criticsRating)) criticsRating = null;
+
+        if (criticsRating) {
+          criticsRatingCount = parseInt(
+            mediaScorecard?.criticsScore?.ratingCount,
+          );
+          if (isNaN(criticsRatingCount)) criticsRatingCount = null;
+
+          if (
+            mediaScorecard?.criticsScore?.ratingCount !==
+            mediaScorecard?.criticsScore?.reviewCount
+          ) {
+            console.log(mediaScorecard);
+            throw new Error("Different ratingCount and reviewCount.");
+          }
+
+          criticsRatingLikedCount = parseInt(
+            mediaScorecard?.criticsScore?.likedCount,
+          );
+          if (isNaN(criticsRatingLikedCount)) criticsRatingLikedCount = null;
+
+          criticsRatingNotLikedCount = parseInt(
+            mediaScorecard?.criticsScore?.notLikedCount,
+          );
+          if (isNaN(criticsRatingNotLikedCount))
+            criticsRatingNotLikedCount = null;
+        }
+
+        rottenTomatoesObj = {
+          id: rottenTomatoesId,
+          url: rottenTomatoesHomepage,
+          usersRating,
+          criticsRating,
+          criticsRatingCount,
+          criticsRatingLikedCount,
+          criticsRatingNotLikedCount,
+        };
+      } catch (parseErr) {
+        throw new Error(
+          `Invalid or malformed JSON in Rotten Tomatoes page: ${parseErr}`,
+        );
+      }
     }
   } catch (error) {
     logErrors(error, rottenTomatoesHomepage, "getRottenTomatoesRating");

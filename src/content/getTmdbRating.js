@@ -3,12 +3,14 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves TMDB rating for a given movie or tvshow.
- * @param {string} allocineHomepage - Allocine homepage URL.
- * @param {string} tmdbHomepage - TMDB homepage URL.
- * @param {number} tmdbId - TMDB ID for the movie or tvshow.
- * @returns {Promise<Object|null>} - An object containing TMDB rating information, or null if not found.
- * @throws {Error} - If there is an error retrieving rating from TMDB.
+ * It takes a tmdbHomepage and allocineHomepage as arguments, and returns the usersRating and usersRatingCount of the item.
+ * It only attempts to fetch and parse the content if a valid tmdbId is provided.
+ * The data is extracted from TheMovieDB API response, using the item's TMDB ID.
+ *
+ * @param {string} allocineHomepage - The URL of the item's page on allocine.fr
+ * @param {string} tmdbHomepage - The URL of the item's page on themoviedb.org
+ * @param {number} tmdbId - The TMDB ID for the movie or TV show
+ * @returns {{ id: number, url: string, usersRating: number|null, usersRatingCount: number|null }|null} An object containing the TMDB rating information, or null if not available
  */
 const getTmdbRating = async (allocineHomepage, tmdbHomepage, tmdbId) => {
   let tmdbObj = null;
@@ -18,14 +20,19 @@ const getTmdbRating = async (allocineHomepage, tmdbHomepage, tmdbId) => {
       const response = await getTMDBResponse(allocineHomepage, tmdbId);
       const data = response?.data;
 
-      const usersRating =
-        data && data.vote_average
-          ? parseFloat(data.vote_average.toFixed(2))
-          : null;
+      const usersRating = data?.vote_average
+        ? parseFloat(data.vote_average.toFixed(2))
+        : null;
+      const usersRatingCount = data?.vote_count
+        ? parseInt(data.vote_count)
+        : null;
+      if (!usersRatingCount || usersRatingCount === 0) return null;
+
       tmdbObj = {
         id: tmdbId,
         url: tmdbHomepage,
-        usersRating: usersRating === 0 ? null : usersRating,
+        usersRating,
+        usersRatingCount,
       };
     }
   } catch (error) {

@@ -4,15 +4,18 @@ const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * It takes the URL of a movie's critics page on AlloCiné, scrapes the page, and returns an object
- * containing the number of critics, the average rating, and the details of each critic's rating
- * @param allocineCriticsDetails - the URL of the page containing the critics' ratings
- * @returns An object with the following properties:
- * - criticsRating: average rating of critics
- * - criticsRatingCount: number of critics
- * - criticsRatingDetails: array of objects with the following properties:
- *   - criticName: name of the critic
- *   - criticRating: rating of the critic
+ * It takes an allocineCriticsDetails URL as an argument, and returns critics rating data extracted from the page.
+ * It scrapes individual critic entries and computes the average rating, total count, and rating breakdown.
+ *
+ * @param {string} allocineCriticsDetails - The URL of the page containing the critics' ratings on allocine.fr
+ * @returns {{
+ *   criticsRating: number|null,
+ *   criticsRatingCount: number|null,
+ *   criticsRatingDetails: Array<{
+ *     critic_name: string,
+ *     critic_rating: number
+ *   }> | null
+ * }|null} An object with the average rating, count of critics, and detailed ratings per critic, or null if not available
  */
 const getAllocineCriticsRating = async (allocineCriticsDetails) => {
   let allocineCriticInfo = null;

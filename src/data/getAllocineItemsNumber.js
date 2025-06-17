@@ -43,7 +43,7 @@ const getAllocineItemsNumber = async (
     };
 
     const url = `${baseURLAllocineType}${index > 1 ? "?page=" + index : ""}`;
-    $ = await getCheerioContent(`${url}`, options, "getAllocineItemsNumber");
+    const $ = await getCheerioContent(url, options, "getAllocineItemsNumber");
     const links = $("a.meta-title-link");
 
     links.each((_i, link) => {

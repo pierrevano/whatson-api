@@ -7,9 +7,11 @@ const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Extracts the IMDb users rating and number of users rating from an IMDb homepage.
- * @param {string} imdbHomepage - The IMDb homepage URL of the item.
- * @returns {{ usersRating: number | null, usersRatingCount: number | null }}
+ * It takes an imdbHomepage as an argument, and returns the usersRating and usersRatingCount of the item.
+ * The data is extracted from the embedded JSON structure found in the IMDb page content.
+ *
+ * @param {string} imdbHomepage - The IMDb homepage URL of the item
+ * @returns {{ usersRating: number|null, usersRatingCount: number|null }} The IMDb users rating and vote count
  */
 const getImdbRating = async (imdbHomepage) => {
   let usersRating = null;

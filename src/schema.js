@@ -107,15 +107,15 @@ const schema = {
     /* Information related to AlloCiné platform */
     id: "number", // AlloCiné specific identifier
     url: "string", // URL to the AlloCiné page
-    users_rating: "number", // Rating given by AlloCiné users
+    users_rating: "number", // Average rating given by AlloCiné users
     users_rating_count: "number", // Total number of ratings submitted by AlloCiné users
-    critics_rating: "number", // Rating given by AlloCiné critics
+    critics_rating: "number", // Average rating given by AlloCiné critics
     critics_rating_count: "number", // Total number of ratings submitted by AlloCiné critics
     critics_rating_details: [
       // To display this key, add `critics_rating_details` to the query parameter `append_to_response`
       {
         critic_name: "string", // Name of the critic
-        critic_rating: "number", // Rating given by the critic
+        critic_rating: "number", // Average rating given by the critic
       },
     ],
     popularity: "number", // Popularity score on AlloCiné
@@ -124,7 +124,8 @@ const schema = {
     /* Information related to BetaSeries platform */
     id: "string", // BetaSeries specific identifier
     url: "string", // URL to the BetaSeries page
-    users_rating: "number", // Rating given by BetaSeries users
+    users_rating: "number", // Average rating given by BetaSeries users
+    users_rating_count: "number", // Total number of ratings submitted by BetaSeries users
   },
   imdb: {
     /* Information related to IMDb platform */
@@ -138,15 +139,16 @@ const schema = {
     /* Information related to Letterboxd platform */
     id: "string", // Letterboxd specific identifier
     url: "string", // URL to the Letterboxd page
-    users_rating: "number", // Rating given by Letterboxd users
+    users_rating: "number", // Average rating given by Letterboxd users
+    users_rating_count: "number", // Total number of ratings submitted by Letterboxd users
   },
   metacritic: {
     /* Information related to Metacritic platform */
     id: "string", // Metacritic specific identifier
     url: "string", // URL to the Metacritic page
-    users_rating: "number", // Rating given by Metacritic users
+    users_rating: "number", // Average rating given by Metacritic users
     users_rating_count: "number", // Total number of ratings submitted by Metacritic users
-    critics_rating: "number", // Rating given by Metacritic critics
+    critics_rating: "number", // Average rating given by Metacritic critics
     critics_rating_count: "number", // Total number of ratings submitted by Metacritic critics
     must_see: "boolean", // Whether the title has received the "Must-See" badge on Metacritic
   },
@@ -154,32 +156,38 @@ const schema = {
     /* Information related to Rotten Tomatoes platform */
     id: "string", // Rotten Tomatoes specific identifier
     url: "string", // URL to the Rotten Tomatoes page
-    users_rating: "number", // Rating given by Rotten Tomatoes users
-    critics_rating: "number", // Rating given by Rotten Tomatoes critics
+    users_rating: "number", // Average rating given by Rotten Tomatoes users
+    critics_rating: "number", // Average rating given by Rotten Tomatoes critics
+    critics_rating_count: "number", // Total number of ratings submitted by Rotten Tomatoes critics
+    critics_rating_liked_count: "number", // Total number of liked ratings submitted by Rotten Tomatoes critics
+    critics_rating_not_liked_count: "number", // Total number of not liked ratings submitted by Rotten Tomatoes critics
   },
   senscritique: {
     /* Information related to SensCritique platform */
     id: "number", // SensCritique specific identifier
     url: "string", // URL to the SensCritique page
-    users_rating: "number", // Rating given by SensCritique users
+    users_rating: "number", // Average rating given by SensCritique users
+    users_rating_count: "number", // Total number of ratings submitted by SensCritique users
   },
   tmdb: {
     /* Information related to The Movie Database (TMDB) platform */
     id: "number", // TMDB specific identifier
     url: "string", // URL to the TMDB page
-    users_rating: "number", // Rating given by TMDB users
+    users_rating: "number", // Average rating given by TMDB users
+    users_rating_count: "number", // Total number of ratings submitted by TMDB users
   },
   trakt: {
     /* Information related to Trakt platform */
     id: "string", // Trakt specific identifier
     url: "string", // URL to the Trakt page
-    users_rating: "number", // Rating given by Trakt users
+    users_rating: "number", // Average rating given by Trakt users
+    users_rating_count: "number", // Total number of ratings submitted by Trakt users
   },
   tv_time: {
     /* Information related to TV Time platform */
     id: "number", // TV Time specific identifier
     url: "string", // URL to the TV Time page
-    users_rating: "number", // Rating given by TV Time users
+    users_rating: "number", // Average rating given by TV Time users
   },
   thetvdb: {
     /* Information related to TheTVDB platform */

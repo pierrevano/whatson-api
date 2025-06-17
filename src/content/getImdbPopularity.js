@@ -24,7 +24,7 @@ const getImdbPopularity = async (imdbHomepage, allocineURL, item_type) => {
       },
     };
     const $ = await getCheerioContent(
-      `${imdbHomepage}`,
+      imdbHomepage,
       options,
       "getImdbPopularity",
     );

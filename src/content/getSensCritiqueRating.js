@@ -4,11 +4,13 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the SensCritique rating for a given movie or tvshow.
- * @param {string} sensCritiqueHomepage - The SensCritique homepage URL.
- * @param {string} sensCritiqueId - The SensCritique ID for the movie or tvshow.
- * @returns {Promise<Object>} - An object containing the SensCritique rating information.
- * @throws {Error} - If there is an error retrieving the SensCritique rating.
+ * It takes a sensCritiqueHomepage and sensCritiqueId as arguments, and returns the usersRating and usersRatingCount of the item.
+ * It only attempts to fetch and parse the content if a valid sensCritiqueId is provided.
+ * The data is extracted from the embedded JSON-LD structure within the SensCritique page.
+ *
+ * @param {string} sensCritiqueHomepage - The URL of the item's page on senscritique.com
+ * @param {string} sensCritiqueId - The SensCritique ID for the movie or TV show
+ * @returns {{ id: string, url: string, usersRating: number|null, usersRatingCount: number|null }|null} An object containing the SensCritique rating information, or null if not available
  */
 const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
   let sensCritiqueObj = null;
@@ -21,18 +23,42 @@ const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
     };
 
     if (isNotNull(sensCritiqueId)) {
-      $ = await getCheerioContent(
-        `${sensCritiqueHomepage}`,
+      const $ = await getCheerioContent(
+        sensCritiqueHomepage,
         options,
         "getSensCritiqueRating",
       );
-      let usersRating = parseFloat($('[data-testid="Rating"]').first().text());
-      if (isNaN(usersRating)) usersRating = null;
+      const ldJsonTag = $('script[type="application/ld+json"]').html();
+
+      if (!ldJsonTag) {
+        throw new Error("Failed to fetch the SensCritique JSON data.");
+      }
+
+      try {
+        const cleanJsonText = ldJsonTag.replace(/\/\*.*?\*\//gs, "").trim();
+        const movieMetadata = JSON.parse(cleanJsonText);
+
+        usersRating = parseFloat(movieMetadata?.aggregateRating?.ratingValue);
+        if (isNaN(usersRating)) usersRating = null;
+
+        if (usersRating) {
+          usersRatingCount = parseInt(
+            movieMetadata?.aggregateRating?.ratingCount,
+            10,
+          );
+          if (isNaN(usersRatingCount)) usersRatingCount = null;
+        }
+      } catch (parseErr) {
+        throw new Error(
+          `Invalid or malformed JSON-LD in SensCritique page: ${parseErr}`,
+        );
+      }
 
       sensCritiqueObj = {
         id: sensCritiqueId,
         url: sensCritiqueHomepage,
-        usersRating: usersRating,
+        usersRating,
+        usersRatingCount,
       };
     }
   } catch (error) {

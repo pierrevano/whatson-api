@@ -47,6 +47,8 @@ function checkTypes(item, schema) {
       if (
         key !== "users_rating_count" &&
         key !== "critics_rating_count" &&
+        key !== "critics_rating_liked_count" &&
+        key !== "critics_rating_not_liked_count" &&
         key !== "must_see"
       ) {
         // The key is missing in the item

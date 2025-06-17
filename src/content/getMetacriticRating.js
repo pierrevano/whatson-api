@@ -9,10 +9,20 @@ const { logErrors } = require("../utils/logErrors");
 const { reportError } = require("../utils/sendToNewRelic");
 
 /**
- * Retrieves the Metacritic rating for a given movie or tvshow.
- * @param {string} metacriticHomepage - The Metacritic homepage URL.
- * @param {string} metacriticId - The Metacritic ID for the movie or tvshow.
- * @returns {Promise<Object>} - An object containing the Metacritic rating information.
+ * It takes a metacriticHomepage as an argument, and returns the users and critics ratings and review counts.
+ * It only attempts to fetch and parse the content if a valid metacriticId is provided.
+ *
+ * @param {string} metacriticHomepage - The Metacritic homepage URL
+ * @param {string} metacriticId - The Metacritic ID for the movie or tvshow
+ * @returns {{
+ *   id: string,
+ *   url: string,
+ *   usersRating: number|null,
+ *   usersRatingCount: number|null,
+ *   criticsRating: number|null,
+ *   criticsRatingCount: number|null,
+ *   mustSee: boolean
+ * }|null} An object containing Metacritic rating data, or null if not available
  */
 const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
   let metacriticObj = null;

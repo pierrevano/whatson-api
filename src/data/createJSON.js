@@ -98,7 +98,11 @@ const createJSON = async (
     allocineURL,
     item_type,
   );
-  const betaseriesRating = await getBetaseriesRating(
+  const {
+    usersRating: usersRatingBetaseries,
+    usersRatingCount: usersRatingCountBetaseries,
+  } = await getBetaseriesRating(
+    allocineHomepage,
     betaseriesHomepage,
     betaseriesId,
   );
@@ -195,7 +199,8 @@ const createJSON = async (
       ? {
           id: betaseriesId,
           url: betaseriesHomepage,
-          users_rating: betaseriesRating,
+          users_rating: usersRatingBetaseries,
+          users_rating_count: usersRatingCountBetaseries,
         }
       : null;
 
@@ -215,6 +220,7 @@ const createJSON = async (
           id: letterboxdRating.id,
           url: letterboxdRating.url,
           users_rating: letterboxdRating.usersRating,
+          users_rating_count: letterboxdRating.usersRatingCount,
         }
       : null;
 
@@ -240,6 +246,11 @@ const createJSON = async (
           url: rottenTomatoesRating.url,
           users_rating: rottenTomatoesRating.usersRating,
           critics_rating: rottenTomatoesRating.criticsRating,
+          critics_rating_count: rottenTomatoesRating.criticsRatingCount,
+          critics_rating_liked_count:
+            rottenTomatoesRating.criticsRatingLikedCount,
+          critics_rating_not_liked_count:
+            rottenTomatoesRating.criticsRatingNotLikedCount,
         }
       : null;
 
@@ -250,6 +261,7 @@ const createJSON = async (
           id: sensCritiqueRating.id,
           url: sensCritiqueRating.url,
           users_rating: sensCritiqueRating.usersRating,
+          users_rating_count: sensCritiqueRating.usersRatingCount,
         }
       : null;
 
@@ -270,6 +282,7 @@ const createJSON = async (
           id: tmdbRating.id,
           url: tmdbRating.url,
           users_rating: tmdbRating.usersRating,
+          users_rating_count: tmdbRating.usersRatingCount,
         }
       : null;
 
@@ -280,6 +293,7 @@ const createJSON = async (
           id: traktRating.id,
           url: traktRating.url,
           users_rating: traktRating.usersRating,
+          users_rating_count: traktRating.usersRatingCount,
         }
       : null;
 

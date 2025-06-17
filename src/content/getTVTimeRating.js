@@ -7,11 +7,13 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the TV Time rating for a given tvshow.
- * @param {string} tvtimeHomepage - The TV Time homepage URL.
- * @param {string} tvtimeId - The TV Time ID for the tvshow.
- * @returns {Promise<Object>} - An object containing the TV Time rating information.
- * @throws {Error} - If there is an error retrieving the TV Time rating.
+ * It takes a tvtimeHomepage as an argument, and returns the usersRating of the item.
+ * It only attempts to fetch and parse the content if a valid tvtimeId is provided.
+ * The data is retrieved from the unofficial TV Time API through a proxy endpoint.
+ *
+ * @param {string} tvtimeHomepage - The URL of the item's page on tvtime.com
+ * @param {string} tvtimeId - The TV Time ID for the TV show
+ * @returns {{ id: string, url: string, usersRating: number|null }|null} An object containing the TV Time rating information, or null if not available
  */
 const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
   let tvtimeObj = null;
@@ -31,7 +33,7 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
     };
 
     if (isNotNull(tvtimeId)) {
-      const apiUrl = `https://side-api.tvtime.com/sidecar/tvt?o=https://api2.tozelabs.com/v2/cacheable/show/${tvtimeId}?fields%3Drating`;
+      const apiUrl = `https://side-api.tvtime.com/sidecar/tvt?o=https://api2.tozelabs.com/v2/show/${tvtimeId}?fields%3Drating`;
       const response = await axios.get(apiUrl, options);
 
       if (response.data && response.data.rating) {

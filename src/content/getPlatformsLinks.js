@@ -56,11 +56,7 @@ const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
 
       const options = { validateStatus: (status) => status < 500 };
       const { data, status } = await axios.get(url, options);
-      if (status !== 200) {
-        platformsLinks = null;
-
-        return platformsLinks;
-      }
+      if (status !== 200) return null;
 
       if (data.show && data.show.platforms && data.show.platforms.svods) {
         platformsLinks = processSvods(data.show.platforms.svods);

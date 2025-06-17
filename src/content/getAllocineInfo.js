@@ -12,11 +12,25 @@ const { getTrailer } = require("./getTrailer");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves information about a movie or tvshow from AlloCiné.
- * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow.
- * @param {string} betaseriesHomepage - The URL of the BetaSeries page for the movie or tvshow.
- * @param {number} tmdbId - TMDB ID for the movie or tvshow.
- * @returns An object containing information about the movie or tvshow, including its title, image, user rating, number of seasons, status, and trailer.
+ * It takes an allocineHomepage as an argument, and returns various metadata about the movie or tvshow.
+ * It fetches and parses the AlloCiné page content, optionally enhancing data via TMDB and BetaSeries, unless in compare mode.
+ *
+ * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow
+ * @param {string} betaseriesHomepage - The URL of the BetaSeries page for the movie or tvshow
+ * @param {number} tmdbId - TMDB ID for the movie or tvshow
+ * @param {boolean} compare - Whether to skip heavy metadata parsing (used for performance comparisons)
+ * @returns {{
+ *   allocineTitle: string|null,
+ *   image: string|null,
+ *   allocineUsersRating: number|null,
+ *   allocineUsersRatingCount: number|null,
+ *   directors: string[]|null,
+ *   genres: string[]|null,
+ *   seasonsNumber: number|null,
+ *   status: string|null,
+ *   trailer: string|null,
+ *   releaseDate: string|null
+ * }|null} An object containing AlloCiné metadata, or null if not available
  */
 const getAllocineInfo = async (
   allocineHomepage,

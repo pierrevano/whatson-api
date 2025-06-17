@@ -4,15 +4,17 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Retrieves the Letterboxd rating for a given movie.
- * @param {string} letterboxdHomepage - The Letterboxd homepage URL.
- * @param {string} letterboxdId - The Letterboxd ID for the movie.
- * @returns {Promise<Object>} - An object containing the Letterboxd rating information.
- * @throws {Error} - If there is an error retrieving the Letterboxd rating.
+ * It takes a letterboxdHomepage as an argument, and returns the usersRating and usersRatingCount of the item.
+ * It only attempts to fetch and parse the content if a valid letterboxdId is provided.
+ *
+ * @param {string} letterboxdHomepage - The URL of the item's page on letterboxd.com
+ * @param {string} letterboxdId - Optional item identifier
+ * @returns {{ id: string, url: string, usersRating: number|null, usersRatingCount: number|null }|null} An object containing the rating information, or null if not available
  */
 const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
   let letterboxdObj = null;
   let usersRating = null;
+  let usersRatingCount = null;
 
   try {
     const options = {
@@ -22,24 +24,42 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
     };
 
     if (isNotNull(letterboxdId)) {
-      $ = await getCheerioContent(
-        `${letterboxdHomepage}`,
+      const $ = await getCheerioContent(
+        letterboxdHomepage,
         options,
         "getLetterboxdRating",
       );
+      const ldJsonTag = $('script[type="application/ld+json"]').html();
 
-      let metaContent = $('meta[name="twitter:data2"]');
-      if (metaContent.length)
-        usersRating = parseFloat(
-          metaContent.attr("content").match(/(\d+\.\d+)/)[0],
+      if (!ldJsonTag || !ldJsonTag.includes("CDATA")) {
+        throw new Error("Failed to fetch the Letterboxd JSON data.");
+      }
+
+      try {
+        const cleanJsonText = ldJsonTag.replace(/\/\*.*?\*\//gs, "").trim();
+        const movieMetadata = JSON.parse(cleanJsonText);
+
+        usersRating = parseFloat(movieMetadata?.aggregateRating?.ratingValue);
+        if (isNaN(usersRating)) usersRating = null;
+
+        if (usersRating) {
+          usersRatingCount = parseInt(
+            movieMetadata?.aggregateRating?.ratingCount,
+            10,
+          );
+          if (isNaN(usersRatingCount)) usersRatingCount = null;
+        }
+      } catch (parseErr) {
+        throw new Error(
+          `Invalid or malformed JSON-LD in Letterboxd page: ${parseErr}`,
         );
-
-      if (isNaN(usersRating)) usersRating = null;
+      }
 
       letterboxdObj = {
         id: letterboxdId,
         url: letterboxdHomepage,
-        usersRating: usersRating,
+        usersRating,
+        usersRatingCount,
       };
     }
   } catch (error) {
