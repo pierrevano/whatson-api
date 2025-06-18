@@ -118,13 +118,19 @@ async function checkStatus(service) {
    */
   if (getNodeVarsValues.get_ids === "update_ids") {
     const resetIsActive = { $set: { is_active: false } };
-    const resetPopularity = {
-      $set: {
-        "allocine.popularity": null,
-        "imdb.popularity": null,
-        mojo: null,
+    const resetPopularity = [
+      {
+        $set: {
+          "allocine.popularity": {
+            $cond: [{ $ne: ["$allocine", null] }, null, "$allocine.popularity"],
+          },
+          "imdb.popularity": {
+            $cond: [{ $ne: ["$imdb", null] }, null, "$imdb.popularity"],
+          },
+          mojo: null,
+        },
       },
-    };
+    ];
 
     const filterQueryIsActive = {
       item_type: getNodeVarsValues.item_type,

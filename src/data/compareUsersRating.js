@@ -156,24 +156,33 @@ const compareUsersRating = async (
         dataWithoutId.lowest_episode = lowestEpisode;
       }
 
-      dataWithoutId.allocine.popularity = allocinePopularity;
-      dataWithoutId.imdb.popularity = imdbPopularity;
+      if (
+        dataWithoutId.allocine &&
+        typeof dataWithoutId.allocine === "object"
+      ) {
+        dataWithoutId.allocine.popularity = allocinePopularity;
+      }
+
+      if (dataWithoutId.imdb && typeof dataWithoutId.imdb === "object") {
+        dataWithoutId.imdb.popularity = imdbPopularity;
+      }
+
       dataWithoutId.mojo = mojoObj;
 
       const lastMonth = new Date();
       lastMonth.setMonth(lastMonth.getMonth() - 1);
 
       if (
-        (dataWithoutId.allocine.users_rating !== null &&
-          dataWithoutId.imdb.users_rating === null) ||
+        (dataWithoutId.allocine?.users_rating !== null &&
+          dataWithoutId.imdb?.users_rating === null) ||
         new Date(dataWithoutId.updated_at) <= lastMonth
       ) {
         return isEqualObj;
       }
 
       if (
-        dataWithoutId.allocine.users_rating === allocine_users_rating &&
-        dataWithoutId.imdb.users_rating === imdb_users_rating
+        dataWithoutId.allocine?.users_rating === allocine_users_rating &&
+        dataWithoutId.imdb?.users_rating === imdb_users_rating
       ) {
         return {
           isEqual: true,

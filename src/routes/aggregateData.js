@@ -153,16 +153,9 @@ const aggregateData = async (
   let is_must_see_item = {
     "metacritic.must_see": is_must_see === "true" || is_must_see === true,
   };
-  const is_must_see_all = {
-    $or: [
-      { metacritic: null },
-      { "metacritic.must_see": true },
-      { "metacritic.must_see": false },
-    ],
-  };
   is_must_see_item =
     is_must_see === "true,false" || is_must_see === "false,true"
-      ? is_must_see_all
+      ? is_active_all
       : is_must_see_item;
 
   let item_type_default = { item_type: item_type };

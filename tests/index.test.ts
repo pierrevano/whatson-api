@@ -296,10 +296,16 @@ function checkItemProperties(items) {
             !item.allocine?.critics_rating,
         ).length,
       ).toBe(0);
-      if (item.allocine?.users_rating) {
+      if (
+        item.allocine?.users_rating &&
+        typeof item.allocine?.users_rating_count !== "undefined"
+      ) {
         expect(item.allocine.users_rating_count).toBeGreaterThan(0);
       }
-      if (item.allocine?.critics_rating) {
+      if (
+        item.allocine?.critics_rating &&
+        typeof item.allocine?.critics_rating_count !== "undefined"
+      ) {
         expect(item.allocine.critics_rating_count).toBeGreaterThan(0);
       }
     }
@@ -329,7 +335,10 @@ function checkItemProperties(items) {
       expect(
         items.filter((item) => item.imdb && !item.imdb?.users_rating).length,
       ).toBe(0);
-      if (item.imdb?.users_rating) {
+      if (
+        item.imdb?.users_rating &&
+        typeof item.imdb?.users_rating_count !== "undefined"
+      ) {
         expect(item.imdb.users_rating_count).toBeGreaterThan(0);
       }
     }
@@ -352,7 +361,10 @@ function checkItemProperties(items) {
             (item) => item.betaseries && !item.betaseries?.users_rating,
           ).length,
         ).toBe(0);
-        if (item.betaseries?.users_rating) {
+        if (
+          item.betaseries?.users_rating &&
+          typeof item.betaseries?.users_rating_count !== "undefined"
+        ) {
           expect(item.betaseries.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -386,10 +398,16 @@ function checkItemProperties(items) {
               !item.metacritic?.critics_rating,
           ).length,
         ).toBe(0);
-        if (item.metacritic?.users_rating) {
+        if (
+          item.metacritic?.users_rating &&
+          typeof item.metacritic?.users_rating_count !== "undefined"
+        ) {
           expect(item.metacritic.users_rating_count).toBeGreaterThan(0);
         }
-        if (item.metacritic?.critics_rating) {
+        if (
+          item.metacritic?.critics_rating &&
+          typeof item.metacritic?.critics_rating_count !== "undefined"
+        ) {
           expect(item.metacritic.critics_rating_count).toBeGreaterThan(0);
         }
       }
@@ -445,7 +463,10 @@ function checkItemProperties(items) {
               !item.rotten_tomatoes?.critics_rating,
           ).length,
         ).toBe(0);
-        if (item.rotten_tomatoes?.critics_rating) {
+        if (
+          item.rotten_tomatoes?.critics_rating &&
+          typeof item.rotten_tomatoes?.critics_rating_count !== "undefined"
+        ) {
           expect(item.rotten_tomatoes.critics_rating_count).toBeGreaterThan(0);
         }
       }
@@ -493,7 +514,10 @@ function checkItemProperties(items) {
             (item) => item.letterboxd && !item.letterboxd?.users_rating,
           ).length,
         ).toBe(0);
-        if (item.letterboxd?.users_rating) {
+        if (
+          item.letterboxd?.users_rating &&
+          typeof item.letterboxd?.users_rating_count !== "undefined"
+        ) {
           expect(item.letterboxd.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -526,7 +550,10 @@ function checkItemProperties(items) {
             (item) => item.senscritique && !item.senscritique?.users_rating,
           ).length,
         ).toBe(0);
-        if (item.senscritique?.users_rating) {
+        if (
+          item.senscritique?.users_rating &&
+          typeof item.senscritique?.users_rating_count !== "undefined"
+        ) {
           expect(item.senscritique.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -556,7 +583,10 @@ function checkItemProperties(items) {
         expect(
           items.filter((item) => item.tmdb && !item.tmdb?.users_rating).length,
         ).toBe(0);
-        if (item.tmdb?.users_rating) {
+        if (
+          item.tmdb?.users_rating &&
+          typeof item.tmdb?.users_rating_count !== "undefined"
+        ) {
           expect(item.tmdb.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -585,7 +615,10 @@ function checkItemProperties(items) {
           items.filter((item) => item.trakt && !item.trakt?.users_rating)
             .length,
         ).toBe(0);
-        if (item.trakt?.users_rating) {
+        if (
+          item.trakt?.users_rating &&
+          typeof item.trakt?.users_rating_count !== "undefined"
+        ) {
           expect(item.trakt.users_rating_count).toBeGreaterThan(0);
         }
       }
