@@ -110,11 +110,11 @@ async function checkStatus(service) {
   }
 
   /**
-   * If we are in the `update_ids` mode, we proceed to reset the `is_active` and `popularity`
-   * fields for all documents in the collectionData that do not match the currently active items IDs.
-   * Once the operation is complete, we log the number of documents that have been affected by this operation.
-   *
-   * The fields `is_active` and `popularity` for the active items are updated afterwards.
+   * In `update_ids` mode, resets fields for items not in the current active ID list (`allTheMovieDbIds`):
+   * - Sets `is_active` to false.
+   * - Sets `allocine.popularity` and `imdb.popularity` to null if their objects are not null.
+   * Only items matching `item_type` and excluded from the ID list are affected.
+   * Logs the number of items excluded from the reset (i.e., still active).
    */
   if (getNodeVarsValues.get_ids === "update_ids") {
     const filterQuery = {
@@ -138,9 +138,6 @@ async function checkStatus(service) {
       { ...filterQuery, imdb: { $ne: null } },
       { $set: { "imdb.popularity": null } },
     );
-
-    // 4. Reset mojo to null for all
-    await collectionData.updateMany(filterQuery, { $set: { mojo: null } });
 
     console.log(
       `${allTheMovieDbIds.length} documents have been excluded from the is_active and popularity reset.`,
