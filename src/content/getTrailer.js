@@ -84,7 +84,7 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
         if (hasInactiveVideos) return trailer;
 
         const itemJSON = getContentUrl($, true, allocineHomepage);
-        if (itemJSON && itemJSON.trailer && itemJSON.trailer.url) {
+        if (itemJSON?.trailer?.url) {
           $ = await getCheerioContent(
             itemJSON.trailer.url,
             options,

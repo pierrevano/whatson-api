@@ -1,5 +1,6 @@
 const axios = require("axios");
 
+const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
 const { getAllocineInfo } = require("../content/getAllocineInfo");
 const { getMetacriticRating } = require("../content/getMetacriticRating");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
@@ -232,7 +233,19 @@ const loopItems = async (
         }
 
         // Perform upsert operation on the database with the fetched data
-        await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
+        try {
+          await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
+        } catch (error) {
+          if (areAllNullOrUndefined(data, config.ratingsKeys)) {
+            throw new Error(
+              `All ratings are null for the item at index ${index} - ${JSON.stringify(data)}`,
+            );
+          }
+
+          console.log(
+            `Item at index ${index} was not updated because AlloCiné is null.`,
+          );
+        }
 
         itemCounter++;
 

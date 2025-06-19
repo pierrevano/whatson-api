@@ -156,14 +156,11 @@ const compareUsersRating = async (
         dataWithoutId.lowest_episode = lowestEpisode;
       }
 
-      if (
-        dataWithoutId.allocine &&
-        typeof dataWithoutId.allocine === "object"
-      ) {
+      if (dataWithoutId.allocine) {
         dataWithoutId.allocine.popularity = allocinePopularity;
       }
 
-      if (dataWithoutId.imdb && typeof dataWithoutId.imdb === "object") {
+      if (dataWithoutId.imdb) {
         dataWithoutId.imdb.popularity = imdbPopularity;
       }
 

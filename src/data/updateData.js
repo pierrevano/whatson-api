@@ -117,28 +117,30 @@ async function checkStatus(service) {
    * The fields `is_active` and `popularity` for the active items are updated afterwards.
    */
   if (getNodeVarsValues.get_ids === "update_ids") {
-    const resetIsActive = { $set: { is_active: false } };
-    const resetPopularity = [
-      {
-        $set: {
-          "allocine.popularity": {
-            $cond: [{ $ne: ["$allocine", null] }, null, "$allocine.popularity"],
-          },
-          "imdb.popularity": {
-            $cond: [{ $ne: ["$imdb", null] }, null, "$imdb.popularity"],
-          },
-          mojo: null,
-        },
-      },
-    ];
-
-    const filterQueryIsActive = {
+    const filterQuery = {
       item_type: getNodeVarsValues.item_type,
       id: { $nin: allTheMovieDbIds },
     };
 
-    await collectionData.updateMany(filterQueryIsActive, resetIsActive);
-    await collectionData.updateMany(filterQueryIsActive, resetPopularity);
+    // 1. Reset is_active for all
+    await collectionData.updateMany(filterQuery, {
+      $set: { is_active: false },
+    });
+
+    // 2. Reset allocine popularity ONLY if allocine is not null
+    await collectionData.updateMany(
+      { ...filterQuery, allocine: { $ne: null } },
+      { $set: { "allocine.popularity": null } },
+    );
+
+    // 3. Reset imdb popularity ONLY if imdb is not null
+    await collectionData.updateMany(
+      { ...filterQuery, imdb: { $ne: null } },
+      { $set: { "imdb.popularity": null } },
+    );
+
+    // 4. Reset mojo to null for all
+    await collectionData.updateMany(filterQuery, { $set: { mojo: null } });
 
     console.log(
       `${allTheMovieDbIds.length} documents have been excluded from the is_active and popularity reset.`,

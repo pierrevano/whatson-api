@@ -1301,7 +1301,7 @@ const params = {
       expect(
         items.filter(
           (item) =>
-            item.allocine.popularity >= 1 && item.allocine.popularity <= 5,
+            item.allocine?.popularity >= 1 && item.allocine?.popularity <= 5,
         ).length,
       ).toBeGreaterThan(0);
       expect(
@@ -1318,12 +1318,12 @@ const params = {
       expect(
         items.filter(
           (item) =>
-            item.allocine.popularity >= 1 && item.allocine.popularity <= 5,
+            item.allocine?.popularity >= 1 && item.allocine?.popularity <= 5,
         ).length,
       ).toBeGreaterThan(0);
       expect(
         items.filter(
-          (item) => item.imdb.popularity >= 1 && item.imdb.popularity <= 5,
+          (item) => item.imdb?.popularity >= 1 && item.imdb?.popularity <= 5,
         ).length,
       ).toBeGreaterThan(0);
     },
