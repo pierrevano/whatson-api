@@ -1,4 +1,3 @@
-const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -7,15 +6,13 @@ const { logErrors } = require("../utils/logErrors");
  * For TV shows: original_name
  *
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the movie or tvshow.
- * @param {number} tmdbId - TMDB ID for the movie or tvshow.
+ * @param {object} data - The TMDB API response data for the item.
  * @returns {Promise<string|null>} - A promise that resolves with the original title or name, or null if it can't be determined.
  */
-const getOriginalTitle = async (allocineHomepage, tmdbId) => {
+const getOriginalTitle = async (allocineHomepage, data) => {
   let originalTitle = null;
 
   try {
-    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
-
     // Movies use "original_title", TV shows use "original_name"
     originalTitle = data?.original_title || data?.original_name || null;
 

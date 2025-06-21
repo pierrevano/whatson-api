@@ -44,6 +44,9 @@ function checkItemProperties(items) {
       expect(
         items.filter((item) => item.tagline).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        items.filter((item) => item.production_companies).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
       if (item.item_type === "movie") {
         expect(
@@ -57,6 +60,9 @@ function checkItemProperties(items) {
         expect(
           items.filter((item) => item.next_episode).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.nextEpisodes);
+        expect(
+          items.filter((item) => item.networks).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
       }
     }
 
@@ -130,10 +136,11 @@ function checkItemProperties(items) {
 
     if (item.item_type !== "tvshow") {
       expect(item.episodes_details).toBeNull();
-      expect(item.last_episode).toBeNull();
-      expect(item.next_episode).toBeNull();
       expect(item.highest_episode).toBeNull();
+      expect(item.last_episode).toBeNull();
       expect(item.lowest_episode).toBeNull();
+      expect(item.networks).toBeNull();
+      expect(item.next_episode).toBeNull();
       expect(item.seasons_number).toBeNull();
       expect(item.status).toBeNull();
     } else if (item.is_active === true) {

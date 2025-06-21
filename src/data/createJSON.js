@@ -12,16 +12,19 @@ const { getLastEpisode } = require("../content/getLastEpisode");
 const { getLetterboxdRating } = require("../content/getLetterboxdRating");
 const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
 const { getMetacriticRating } = require("../content/getMetacriticRating");
+const { getNetworks } = require("../content/getNetworks");
 const { getNextEpisode } = require("../content/getNextEpisode");
 const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
 const { getOriginalTitle } = require("../content/getOriginalTitle");
 const { getPlatformsLinks } = require("../content/getPlatformsLinks");
+const { getProductionCompanies } = require("../content/getProductionCompanies");
 const {
   getRottenTomatoesRating,
 } = require("../content/getRottenTomatoesRating");
 const { getSensCritiqueRating } = require("../content/getSensCritiqueRating");
 const { getTheTvdbSlug } = require("../content/getTheTvdbSlug");
 const { getTmdbRating } = require("../content/getTmdbRating");
+const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getTraktRating } = require("../content/getTraktRating");
 const { getTVTimeRating } = require("../content/getTVTimeRating");
 
@@ -84,13 +87,15 @@ const createJSON = async (
   theTvdbHomepage,
   theTvdbId,
 ) => {
+  const { data: tmdbData } = await getTMDBResponse(allocineHomepage, tmdbId);
+
   const allocineFirstInfo = await getAllocineInfo(
     allocineHomepage,
     betaseriesHomepage,
     tmdbId,
     false,
   );
-  const originalTitle = await getOriginalTitle(allocineHomepage, tmdbId);
+  const originalTitle = await getOriginalTitle(allocineHomepage, tmdbData);
   const allocineCriticInfo = await getAllocineCriticsRating(
     allocineCriticsDetails,
   );
@@ -110,6 +115,11 @@ const createJSON = async (
     betaseriesId,
     allocineHomepage,
     imdbId,
+  );
+  const networskNames = await getNetworks(allocineHomepage, tmdbData);
+  const productionCompanies = await getProductionCompanies(
+    allocineHomepage,
+    tmdbData,
   );
   const { usersRating, usersRatingCount } = await getImdbRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(
@@ -320,6 +330,8 @@ const createJSON = async (
     directors: allocineFirstInfo.directors,
     genres: allocineFirstInfo.genres,
     image: allocineFirstInfo.image,
+    networks: networskNames,
+    production_companies: productionCompanies,
     release_date: allocineFirstInfo?.releaseDate,
     tagline: traktRating?.tagline,
     trailer: allocineFirstInfo.trailer,

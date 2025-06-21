@@ -11,6 +11,8 @@ const schema = {
   directors: "object", // Directors' names
   genres: "object", // Genres' names
   image: "string", // URL to the item's image
+  networks: "object", // Networks' names
+  production_companies: "object", // Production Companies' names
   release_date: "string", // Release date of the item
   tagline: "string", // Tagline of the item
   trailer: "string", // URL to the item's trailer
