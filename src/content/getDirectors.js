@@ -1,4 +1,3 @@
-const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 const { writeItemsNumber } = require("../utils/writeItems");
 
@@ -7,15 +6,13 @@ const directorsCount = {};
 /**
  * Retrieves the director names for a movie or tvshow from The Movie Database (TMDB) API.
  * @param {string} allocineHomepage - The homepage of the movie or tvshow on AlloCiné.
- * @param {number} tmdbId - TMDB ID for the movie or tvshow.
+ * @param {object} data - The TMDB API response data for the item.
  * @returns {Promise<string[]|null>} - A promise that resolves with an array of director names or null if there was an error.
  */
-const getDirectors = async (allocineHomepage, tmdbId) => {
+const getDirectors = async (allocineHomepage, data) => {
   let directorNames = null;
 
   try {
-    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
-
     const directors =
       data?.credits?.crew
         ?.filter((crewMember) => crewMember.department === "Directing")

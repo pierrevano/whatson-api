@@ -1,4 +1,3 @@
-const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -7,19 +6,16 @@ const { logErrors } = require("../utils/logErrors");
  * It only attempts to fetch and parse the content if a valid tmdbId is provided.
  * The data is extracted from TheMovieDB API response, using the item's TMDB ID.
  *
- * @param {string} allocineHomepage - The URL of the item's page on allocine.fr
  * @param {string} tmdbHomepage - The URL of the item's page on themoviedb.org
- * @param {number} tmdbId - The TMDB ID for the movie or TV show
+ * @param {number} tmdbId - TMDB ID for the movie or tvshow
+ * @param {object} data - The TMDB API response data for the item.
  * @returns {{ id: number, url: string, usersRating: number|null, usersRatingCount: number|null }|null} An object containing the TMDB rating information, or null if not available
  */
-const getTmdbRating = async (allocineHomepage, tmdbHomepage, tmdbId) => {
+const getTmdbRating = async (tmdbHomepage, tmdbId, data) => {
   let tmdbObj = null;
 
   try {
     if (isNotNull(tmdbId)) {
-      const response = await getTMDBResponse(allocineHomepage, tmdbId);
-      const data = response?.data;
-
       const usersRating = data?.vote_average
         ? parseFloat(data.vote_average.toFixed(2))
         : null;

@@ -11,9 +11,13 @@ const { removeExtraChar } = require("../utils/removeExtraChar");
  * @param options - This is the options object that is passed to the getCheerioContent function.
  * @returns The trailer link.
  */
-const getTrailer = async (allocineHomepage, betaseriesHomepage, options) => {
+const getTrailer = async (allocineHomepage, betaseriesHomepage) => {
   let trailer = null;
   let $;
+
+  const options = {
+    validateStatus: (status) => status < 500 && status !== 404,
+  };
 
   try {
     if (betaseriesHomepage) {

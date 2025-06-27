@@ -6,8 +6,8 @@ const {
 } = require("../utils/convertFrenchDateToISOString");
 const { formatDate } = require("../utils/formatDate");
 const { generateUserAgent } = require("../utils/generateUserAgent");
-const { getAllocineInfo } = require("./getAllocineInfo");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { logErrors } = require("../utils/logErrors");
 const { writeItems } = require("../utils/writeItems");
 
@@ -78,29 +78,21 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {string} imdbHomepage - The IMDb homepage URL for the tvshow.
  * @param {string} imdbId - The IMDb title ID for the tvshow.
+ * @param {object} data - The TMDB API response data for the item.
  * @returns {Promise<Array<Object>|null>} A promise that resolves to an array of episode details across all seasons, or null if no data is available.
  */
 const getEpisodesDetails = async (
   allocineHomepage,
-  betaseriesHomepage,
   imdbHomepage,
   imdbId,
-  tmdbId,
+  data,
 ) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
   let episodesDetails = [];
 
   try {
-    const totalSeasons =
-      (
-        await getAllocineInfo(
-          allocineHomepage,
-          betaseriesHomepage,
-          tmdbId,
-          false,
-        )
-      )?.seasonsNumber ?? null;
+    const totalSeasons = await getSeasonsNumber(allocineHomepage, data);
 
     if (!totalSeasons || totalSeasons < 1) return null;
 

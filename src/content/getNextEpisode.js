@@ -1,23 +1,21 @@
 const { config } = require("../config");
 const { formatDate } = require("../utils/formatDate");
-const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 const { getAllocineInfo } = require("./getAllocineInfo");
 
 /**
- * Retrieves details of the next episode to air for a given tvshow, including its episode type from The Movie Database (TMDB) API.
+ * Retrieves details of the next episode to air for a given tvshow, excluding ended shows and past episodes.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {Array<Object>} episodesDetails - Array of episode objects for the tvshow.
- * @param {string} imdbId - IMDb ID for the tvshow.
- * @param {number} tmdbId - TMDB ID for the tvshow.
- * @returns {Promise<Object|null>} A promise that resolves to an object containing the next episode's details, or null if no valid next episode is found.
+ * @param {Object|null} lastEpisode - The last aired episode with season and episode numbers.
+ * @param {Object} data - The TMDB API response data for the tvshow.
+ * @returns {Promise<Object|null>} A promise resolving to the next episode's details, or null if not applicable.
  */
 const getNextEpisode = async (
   allocineHomepage,
-  betaseriesHomepage,
   episodesDetails,
   lastEpisode,
-  tmdbId,
+  data,
 ) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
@@ -50,8 +48,6 @@ const getNextEpisode = async (
 
     if (!isAfter(nextEpisode, lastEpisode)) return null;
 
-    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
-
     let episode_type = null;
     if (data?.next_episode_to_air) {
       const {
@@ -68,16 +64,7 @@ const getNextEpisode = async (
       }
     }
 
-    if (
-      (
-        await getAllocineInfo(
-          allocineHomepage,
-          betaseriesHomepage,
-          tmdbId,
-          false,
-        )
-      ).status !== "Ended"
-    ) {
+    if ((await getAllocineInfo(allocineHomepage, false)).status !== "Ended") {
       nextEpisodeDetails = {
         season: nextEpisode.season,
         episode: nextEpisode.episode,

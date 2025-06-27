@@ -1,16 +1,15 @@
 const { config } = require("../config");
 const { formatDate } = require("../utils/formatDate");
-const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
  * Retrieves details of the last episode to have aired for a given tvshow, including its episode type from The Movie Database (TMDB) API.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {Array<Object>} episodesDetails - Array of episode metadata objects for the tvshow.
- * @param {number} tmdbId - TMDB ID for the tvshow.
+ * @param {object} data - The TMDB API response data for the tvshow.
  * @returns {Promise<Object|null>} A promise that resolves to an object containing the last episode's details, or null if no valid episode is found.
  */
-const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
+const getLastEpisode = async (allocineHomepage, episodesDetails, data) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
   let lastEpisodeDetails = null;
@@ -27,8 +26,6 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, tmdbId) => {
     if (pastEpisodes.length === 0) return null;
 
     const lastEpisode = pastEpisodes[pastEpisodes.length - 1];
-
-    const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
 
     let episode_type = null;
     if (data?.last_episode_to_air) {

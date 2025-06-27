@@ -2153,6 +2153,39 @@ describe("What's on? API tests", () => {
       .length;
   };
 
+  function extractAllocinePathsFromFile(filePath) {
+    const content = readFileSync(filePath, "utf-8");
+    return content
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.endsWith(",TRUE"))
+      .map((line) => {
+        const parts = line.split(",");
+        return parts[0]?.trim();
+      })
+      .filter((path) => !!path);
+  }
+
+  function extractAllocinePathsFromApi(apiResponse) {
+    return apiResponse.data.results
+      .map((item) => {
+        const fullUrl = item.allocine?.url;
+        try {
+          return new URL(fullUrl).pathname;
+        } catch (e) {
+          return null;
+        }
+      })
+      .filter((path) => !!path);
+  }
+
+  function getDiffs(fileIds, apiIds) {
+    const inFileNotInApi = fileIds.filter((id) => !apiIds.includes(id));
+    const inApiNotInFile = apiIds.filter((id) => !fileIds.includes(id));
+
+    return { inFileNotInApi, inApiNotInFile };
+  }
+
   (isRemoteSource ? test.skip : test)(
     "Local item count from files should match API response for active items",
     async () => {
@@ -2177,6 +2210,29 @@ describe("What's on? API tests", () => {
           },
         }),
       ]);
+
+      if (process.env.DEBUG_ALLOCINE === "true") {
+        const fileAllocineIds = extractAllocinePathsFromFile(
+          config.seriesIdsFilePath,
+        );
+        const apiAllocineIds = extractAllocinePathsFromApi(seriesResponse);
+
+        const diffs = getDiffs(fileAllocineIds, apiAllocineIds);
+
+        if (diffs.inFileNotInApi.length || diffs.inApiNotInFile.length) {
+          console.warn("Allociné ID diff detected:");
+
+          if (diffs.inFileNotInApi.length) {
+            console.warn("→ Present in file but missing in API:");
+            diffs.inFileNotInApi.forEach((id) => console.warn("   -", id));
+          }
+
+          if (diffs.inApiNotInFile.length) {
+            console.warn("→ Present in API but missing in file:");
+            diffs.inApiNotInFile.forEach((id) => console.warn("   -", id));
+          }
+        }
+      }
 
       expect(movieResponse.status).toBe(200);
       expect(seriesResponse.status).toBe(200);

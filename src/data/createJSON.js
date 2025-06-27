@@ -4,7 +4,9 @@ const {
 const { getAllocineInfo } = require("../content/getAllocineInfo");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
 const { getBetaseriesRating } = require("../content/getBetaseriesRating");
+const { getDirectors } = require("../content/getDirectors");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
+const { getGenres } = require("../content/getGenres");
 const { getHighestRatedEpisode } = require("../content/getHighestRatedEpisode");
 const { getImdbPopularity } = require("../content/getImdbPopularity");
 const { getImdbRating } = require("../content/getImdbRating");
@@ -21,10 +23,12 @@ const { getProductionCompanies } = require("../content/getProductionCompanies");
 const {
   getRottenTomatoesRating,
 } = require("../content/getRottenTomatoesRating");
+const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { getSensCritiqueRating } = require("../content/getSensCritiqueRating");
 const { getTheTvdbSlug } = require("../content/getTheTvdbSlug");
 const { getTmdbRating } = require("../content/getTmdbRating");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
+const { getTrailer } = require("../content/getTrailer");
 const { getTraktRating } = require("../content/getTraktRating");
 const { getTVTimeRating } = require("../content/getTVTimeRating");
 
@@ -91,9 +95,8 @@ const createJSON = async (
 
   const allocineFirstInfo = await getAllocineInfo(
     allocineHomepage,
-    betaseriesHomepage,
-    tmdbId,
     false,
+    tmdbData,
   );
   const originalTitle = await getOriginalTitle(allocineHomepage, tmdbData);
   const allocineCriticInfo = await getAllocineCriticsRating(
@@ -116,11 +119,15 @@ const createJSON = async (
     allocineHomepage,
     imdbId,
   );
-  const networskNames = await getNetworks(allocineHomepage, tmdbData);
+  const directors = await getDirectors(allocineHomepage, tmdbData);
+  const genres = await getGenres(allocineHomepage, tmdbData);
+  const networks = await getNetworks(allocineHomepage, tmdbData);
   const productionCompanies = await getProductionCompanies(
     allocineHomepage,
     tmdbData,
   );
+  const trailer = await getTrailer(allocineHomepage, betaseriesHomepage);
+  const seasonsNumber = await getSeasonsNumber(allocineHomepage, tmdbData);
   const { usersRating, usersRatingCount } = await getImdbRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
@@ -129,22 +136,20 @@ const createJSON = async (
   );
   const episodesDetails = await getEpisodesDetails(
     allocineHomepage,
-    betaseriesHomepage,
     imdbHomepage,
     imdbId,
-    tmdbId,
+    tmdbData,
   );
   const lastEpisode = await getLastEpisode(
     allocineHomepage,
     episodesDetails,
-    tmdbId,
+    tmdbData,
   );
   const nextEpisode = await getNextEpisode(
     allocineHomepage,
-    betaseriesHomepage,
     episodesDetails,
     lastEpisode,
-    tmdbId,
+    tmdbData,
   );
   const highestEpisode = await getHighestRatedEpisode(
     allocineHomepage,
@@ -175,11 +180,7 @@ const createJSON = async (
     sensCritiqueHomepage,
     sensCritiqueId,
   );
-  const tmdbRating = await getTmdbRating(
-    allocineHomepage,
-    tmdbHomepage,
-    tmdbId,
-  );
+  const tmdbRating = await getTmdbRating(tmdbHomepage, tmdbId, tmdbData);
   const traktRating = await getTraktRating(
     allocineHomepage,
     traktHomepage,
@@ -327,14 +328,14 @@ const createJSON = async (
     title: allocineFirstInfo.allocineTitle,
     original_title: originalTitle,
 
-    directors: allocineFirstInfo.directors,
-    genres: allocineFirstInfo.genres,
+    directors,
+    genres,
     image: allocineFirstInfo.image,
-    networks: networskNames,
+    networks,
     production_companies: productionCompanies,
     release_date: allocineFirstInfo?.releaseDate,
     tagline: traktRating?.tagline,
-    trailer: allocineFirstInfo.trailer,
+    trailer,
 
     episodes_details: episodesDetails,
     last_episode: lastEpisode,
@@ -342,7 +343,7 @@ const createJSON = async (
     highest_episode: highestEpisode,
     lowest_episode: lowestEpisode,
     platforms_links: platformsLinks,
-    seasons_number: allocineFirstInfo.seasonsNumber,
+    seasons_number: seasonsNumber,
     status: allocineFirstInfo.status,
 
     allocine: allocineObj,

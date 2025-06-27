@@ -14,6 +14,8 @@ const { logErrors } = require("../utils/logErrors");
  */
 const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
   let sensCritiqueObj = null;
+  let usersRating = null;
+  let usersRatingCount = null;
 
   try {
     const options = {

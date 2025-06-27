@@ -11,6 +11,7 @@ const { getLastEpisode } = require("../content/getLastEpisode");
 const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
 const { getNextEpisode } = require("../content/getNextEpisode");
 const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
+const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
 
@@ -36,21 +37,18 @@ async function hasTvShowEnded(status, imdbId) {
  *
  * @param {string} allocineHomepage - The AlloCiné homepage URL.
  * @param {string} allocineURL - The AlloCiné URL specific to the item.
- * @param {string} betaseriesHomepage - The BetaSeries homepage URL.
  * @param {string} imdbHomepage - The IMDb homepage URL.
  * @param {string} imdbId - The IMDb ID of the item.
  * @param {boolean} isActive - Active status of the item.
  * @param {string} item_type - The type of item (movie or tvshow).
  * @param {Array<Object>} mojoBoxOfficeArray - Array of Mojo box office objects.
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
- * @param {boolean} compare - A flag to determine if comparison is required.
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
 const compareUsersRating = async (
   allocineHomepage,
   allocineURL,
-  betaseriesHomepage,
   imdbHomepage,
   imdbId,
   isActive,
@@ -65,12 +63,7 @@ const compareUsersRating = async (
 
   try {
     const { allocineUsersRating: allocine_users_rating, status } =
-      await getAllocineInfo(
-        allocineHomepage,
-        betaseriesHomepage,
-        tmdbId,
-        false,
-      );
+      await getAllocineInfo(allocineHomepage, false);
     const { usersRating: imdb_users_rating } =
       await getImdbRating(imdbHomepage);
 
@@ -81,24 +74,24 @@ const compareUsersRating = async (
       highestEpisode,
       lowestEpisode;
     if (!tvShowEnded) {
+      const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
+
       episodesDetails = await getEpisodesDetails(
         allocineHomepage,
-        betaseriesHomepage,
         imdbHomepage,
         imdbId,
-        tmdbId,
+        data,
       );
       lastEpisode = await getLastEpisode(
         allocineHomepage,
         episodesDetails,
-        tmdbId,
+        data,
       );
       nextEpisode = await getNextEpisode(
         allocineHomepage,
-        betaseriesHomepage,
         episodesDetails,
         lastEpisode,
-        tmdbId,
+        data,
       );
       highestEpisode = await getHighestRatedEpisode(
         allocineHomepage,

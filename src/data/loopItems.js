@@ -149,12 +149,7 @@ const loopItems = async (
       }
 
       // Check if page is existing before upsert to DB
-      const { error } = await getAllocineInfo(
-        allocineHomepage,
-        betaseriesHomepage,
-        tmdbId,
-        true,
-      );
+      const { error } = await getAllocineInfo(allocineHomepage, true);
 
       let errorMetacritic = false;
       try {
@@ -175,7 +170,6 @@ const loopItems = async (
           ? await compareUsersRating(
               allocineHomepage,
               allocineURL,
-              betaseriesHomepage,
               imdbHomepage,
               imdbId,
               isActive,
@@ -219,16 +213,11 @@ const loopItems = async (
                 theTvdbId,
               ));
 
-        if (!errorMetacritic && !getIsEqualValue.isEqual) {
-          /*
-           * Update `updated_at` date only when
-           * - There is no Metacritic error
-           * - And data is not fetched from the database
-           */
+        if (!errorMetacritic) {
           data.updated_at = new Date().toISOString();
         } else {
           console.log(
-            `The 'updated_at' date was not modified because 'errorMetacritic' is: ${errorMetacritic} and 'isEqual' is: ${getIsEqualValue.isEqual}`,
+            `The 'updated_at' date was not modified because 'errorMetacritic' is: ${errorMetacritic}`,
           );
         }
 
