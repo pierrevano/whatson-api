@@ -12,6 +12,13 @@ const client = new MongoClient(uri, {
 const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 
+// Utility to normalize strings for fuzzy title matching
+const normalizeString = (str) =>
+  str
+    .toLowerCase() // make all characters lowercase
+    .replace(/\s+/g, " ") // collapse multiple spaces into one
+    .trim(); // remove leading/trailing whitespace
+
 /**
  * Queries the database for a media item matching the given identifier or title.
  * Supports optional projection and episode filtering by season.
@@ -22,6 +29,10 @@ const collectionData = database.collection(config.collectionName);
  * @returns {Promise<{ results: Object[], total_results: number }>} Filtered results and total count.
  */
 const findId = async (json, append_to_response, filtered_season) => {
+  if (!json || typeof json !== "object" || Object.keys(json).length === 0) {
+    throw new Error("Invalid or empty input object in finding a unique ID.");
+  }
+
   const keysMapping = {
     allocineid: "allocine.id",
     betaseriesid: "betaseries.id",
@@ -40,11 +51,11 @@ const findId = async (json, append_to_response, filtered_season) => {
   // Step 1: Build the query object
   let query = {};
 
-  for (const key in keysMapping) {
-    if (!json.hasOwnProperty(key)) continue;
+  for (const [key, mappedKeyRaw] of Object.entries(keysMapping)) {
+    if (!(key in json)) continue;
 
-    const mappedKey = keysMapping[key] ?? key;
     const value = json[key];
+    const mappedKey = mappedKeyRaw ?? key;
 
     const isTitleKey = key === "title";
     const isNumericIdKey = [
@@ -56,15 +67,41 @@ const findId = async (json, append_to_response, filtered_season) => {
     ].includes(key);
 
     if (isTitleKey) {
+      const normalizedInput = normalizeString(value);
+
       // Match both title and original_title
       query = {
-        $or: [
-          { title: { $regex: value, $options: "i" } },
-          { original_title: { $regex: value, $options: "i" } },
-        ],
+        $expr: {
+          $or: [
+            {
+              $regexMatch: {
+                input: {
+                  $replaceAll: {
+                    input: { $toLower: "$title" },
+                    find: ",",
+                    replacement: "",
+                  },
+                },
+                regex: normalizedInput,
+              },
+            },
+            {
+              $regexMatch: {
+                input: {
+                  $replaceAll: {
+                    input: { $toLower: "$original_title" },
+                    find: ",",
+                    replacement: "",
+                  },
+                },
+                regex: normalizedInput,
+              },
+            },
+          ],
+        },
       };
     } else {
-      query[mappedKey] = isNumericIdKey ? parseInt(value) : value;
+      query[mappedKey] = isNumericIdKey ? parseInt(value, 10) : value;
     }
 
     break; // exit after first match

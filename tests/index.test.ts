@@ -1218,6 +1218,14 @@ const params = {
       }),
   },
 
+  title_with_commas_on_search: {
+    query: "?title=cours lola cours",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item.title).toBe("Cours, Lola, cours");
+      }),
+  },
+
   should_return_allocine_id_on_search: {
     query: "?allocineid=304508",
     expectedResult: (items) => {
