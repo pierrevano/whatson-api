@@ -70,6 +70,8 @@ Active items are fetched from 2 different links:
 | page                 | _integer_                                                                                                                                                                                                           | Page number                                                                 |
 | limit                | _integer_                                                                                                                                                                                                           | Page items limit                                                            |
 
+_For directors, genres, platforms, networks, and production companies, you can use the `^` and `$` regex delimiters to perform strict matching._
+
 ### Search
 
 The query parameters provided below are solely for item search purposes and must be unique.
