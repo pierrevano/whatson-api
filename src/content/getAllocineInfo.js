@@ -36,6 +36,12 @@ const getAllocineInfo = async (allocineHomepage, compare, data) => {
       "getAllocineInfo",
     );
 
+    if (typeof $ !== "function") {
+      throw new Error(
+        `Invalid HTML for the AlloCiné page: ${allocineHomepage}`,
+      );
+    }
+
     const title = $('meta[property="og:title"]').attr("content");
 
     let image = $('meta[property="og:image"]').attr("content");

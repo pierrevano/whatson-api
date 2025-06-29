@@ -21,6 +21,8 @@ const getItems = async (req, res) => {
     const append_to_response = req.query.append_to_response;
     const directors_query = req.query.directors;
     const genres_query = req.query.genres;
+    const networks_query = req.query.networks;
+    const production_companies_query = req.query.production_companies;
     const id_path = parseInt(req.params.id);
     const is_active_query = req.query.is_active;
     const is_must_see_query = req.query.must_see;
@@ -46,6 +48,8 @@ const getItems = async (req, res) => {
       append_to_response,
       directors_query,
       genres_query,
+      networks_query,
+      production_companies_query,
       id_path,
       is_active_query,
       is_must_see_query,

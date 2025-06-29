@@ -353,6 +353,16 @@ const params = {
       expect(data.code).toBe(404);
     },
   },
+
+  only_networks_no_matching_production_companies: {
+    query: `?item_type=tvshow&networks=${encodeURIComponent("hbo")}&production_companies=${encodeURIComponent("unknown studio")}&is_active=true,false&limit=900`,
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("No matching items found.");
+      expect(data.code).toBe(404);
+    },
+  },
 };
 
 /**

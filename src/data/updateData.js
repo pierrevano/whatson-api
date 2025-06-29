@@ -177,7 +177,7 @@ async function checkStatus(service) {
   }
 
   const index_to_start = getNodeVarsValues.index_to_start || 0;
-  const max_index = parseInt(getNodeVarsValues.max_index) || null;
+  const max_index = parseInt(getNodeVarsValues.max_index) + 1 || null;
 
   console.time("Duration");
 

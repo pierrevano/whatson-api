@@ -1,5 +1,6 @@
 /**
- * Adds a MongoDB aggregation filter to match documents by names for a specific key.
+ * Adds a MongoDB aggregation filter to match documents by names for a specific key,
+ * using partial, case-insensitive matching.
  *
  * @param {string} names - Comma-separated string of names to filter by (e.g., "Action,Drama").
  * @param {Array<Object>} pipeline - The existing MongoDB aggregation pipeline to be modified.
@@ -16,33 +17,30 @@ const getPipelineByNames = (
   is_must_see_item,
 ) => {
   if (names) {
-    const decodedNames = decodeURIComponent(names);
-    const decodedNamesArray = decodedNames.split(",");
+    const escapeRegExp = (s) => s.replace(/[.*+?{}()|[\]\\]/g, "\\$&");
 
-    if (
-      decodedNamesArray.includes("all") ||
-      decodedNamesArray.includes("allgenres")
-    )
-      return pipeline;
+    const decodedNamesArray = decodeURIComponent(names).split(",");
+    const nameSet = new Set(decodedNamesArray.map((s) => s.trim()));
 
-    let condition;
-    if (key_value === "platforms_links") {
-      condition = {
-        [key_value]: {
-          $elemMatch: {
-            name: {
-              $in: decodedNamesArray,
+    if (nameSet.has("all") || nameSet.has("allgenres")) return pipeline;
+
+    // Use partial match regex (no ^...$ anchors)
+    const regexArray = [...nameSet].map(
+      (name) => new RegExp(escapeRegExp(name), "i"),
+    );
+
+    const isNestedField = key_value === "platforms_links";
+    const condition = isNestedField
+      ? {
+          [key_value]: {
+            $elemMatch: {
+              name: { $in: regexArray },
             },
           },
-        },
-      };
-    } else if (key_value === "directors" || key_value === "genres") {
-      condition = {
-        [key_value]: {
-          $in: decodedNamesArray,
-        },
-      };
-    }
+        }
+      : {
+          [key_value]: { $in: regexArray },
+        };
 
     const match = {
       $match: { $and: [is_active_item, is_must_see_item, condition] },

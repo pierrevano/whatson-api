@@ -1506,9 +1506,18 @@ const params = {
     },
   },
 
-  only_platforms_disney_plus: {
-    query: `?item_type=tvshow&platforms=${encodeURIComponent("Disney+")}`,
+  should_return_all_platforms: {
+    query: `?item_type=tvshow&platforms=${encodeURIComponent("all,Disney+")}&limit=250`,
     expectedResult: (items) => {
+      expect(items.length).toBe(250);
+    },
+  },
+
+  only_platforms_disney_plus: {
+    query: `?item_type=tvshow&platforms=${encodeURIComponent("allWrong,Disney+")}&limit=250`,
+    expectedResult: (items) => {
+      expect(items.length).not.toBe(250);
+
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");
         expect(item.platforms_links).not.toBeNull();
@@ -1549,8 +1558,15 @@ const params = {
     },
   },
 
+  should_return_all_genres: {
+    query: `?item_type=tvshow&genres=${encodeURIComponent("allgenres,Drama")}&limit=250`,
+    expectedResult: (items) => {
+      expect(items.length).toBe(250);
+    },
+  },
+
   only_genres_drama: {
-    query: `?item_type=tvshow&genres=${encodeURIComponent("Drama")}`,
+    query: `?item_type=tvshow&genres=${encodeURIComponent("allgenresWrong,Drama")}&limit=250`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("genres");
@@ -1585,6 +1601,86 @@ const params = {
         expect(
           item.platforms_links.some((platform) => platform.name === "Netflix"),
         ).toBeTruthy();
+      });
+    },
+  },
+
+  only_networks_hbo: {
+    query: `?item_type=tvshow&networks=${encodeURIComponent("^hbo$")}&is_active=true,false&limit=900`, // Added ‘HBO’ in lowercase and as a regex on purpose to ensure it works.
+    expectedResult: (items) => {
+      expect(items.length).not.toBe(900);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("networks");
+        expect(item.networks).not.toBeNull();
+        expect(item.networks.some((network) => network === "HBO")).toBeTruthy();
+
+        expect(item.networks).not.toContain("HBO Films");
+        expect(item.networks).not.toContain("Netflix");
+        expect(item.networks).not.toContain("Amazon Prime");
+      });
+    },
+  },
+
+  only_production_companies_paramount_pictures: {
+    query: `?item_type=tvshow&production_companies=${encodeURIComponent("^paramount pictures$")}&is_active=true,false&limit=900`, // Added ‘Paramount Pictures’ in lowercase and as a regex on purpose to ensure it works.
+    expectedResult: (items) => {
+      expect(items.length).not.toBe(900);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("production_companies");
+        expect(item.production_companies).not.toBeNull();
+        expect(
+          item.production_companies.some(
+            (company) => company === "Paramount Pictures",
+          ),
+        ).toBeTruthy();
+      });
+    },
+  },
+
+  only_networks_and_production_companies_hbo: {
+    query: `?item_type=tvshow&networks=${encodeURIComponent("^hbo$")}&production_companies=${encodeURIComponent("^hbo$")}&is_active=true,false&limit=900`,
+    expectedResult: (items) => {
+      expect(items.length).not.toBe(900);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("networks");
+        expect(item.networks).not.toBeNull();
+        expect(item.networks.some((network) => network === "HBO")).toBeTruthy();
+
+        expect(item).toHaveProperty("production_companies");
+        expect(item.production_companies).not.toBeNull();
+        expect(
+          item.production_companies.some((company) => company === "HBO"),
+        ).toBeTruthy();
+      });
+    },
+  },
+
+  multiple_networks_and_companies: {
+    query: `?item_type=tvshow&networks=${encodeURIComponent("hbo,netflix")}&production_companies=${encodeURIComponent("universal,warner")}&is_active=true,false&limit=900`,
+    expectedResult: (items) => {
+      expect(items.length).not.toBe(900);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("networks");
+        expect(item.networks).not.toBeNull();
+
+        const matchesNetwork = item.networks.some((network) => {
+          const name = network.toLowerCase();
+          return name.includes("hbo") || name.includes("netflix");
+        });
+        expect(matchesNetwork).toBeTruthy();
+
+        expect(item).toHaveProperty("production_companies");
+        expect(item.production_companies).not.toBeNull();
+
+        const matchesCompany = item.production_companies.some((company) => {
+          const name = company.toLowerCase();
+          return name.includes("universal") || name.includes("warner");
+        });
+        expect(matchesCompany).toBeTruthy();
       });
     },
   },

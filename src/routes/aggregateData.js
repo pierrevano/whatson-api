@@ -19,6 +19,8 @@ const aggregateData = async (
   append_to_response,
   directors_query,
   genres_query,
+  networks_query,
+  production_companies_query,
   id_path,
   is_active_query,
   is_must_see_query,
@@ -50,6 +52,15 @@ const aggregateData = async (
       : false;
   const genres =
     typeof genres_query !== "undefined" && genres_query ? genres_query : "";
+  const networks =
+    typeof networks_query !== "undefined" && networks_query
+      ? networks_query
+      : "";
+  const production_companies =
+    typeof production_companies_query !== "undefined" &&
+    production_companies_query
+      ? production_companies_query
+      : "";
   const id = isNaN(id_path) ? "" : id_path;
   const is_active =
     typeof is_active_query !== "undefined" && is_active_query
@@ -287,6 +298,20 @@ const aggregateData = async (
       platforms,
       pipeline,
       "platforms_links",
+      is_active_item,
+      is_must_see_item,
+    );
+    getPipelineByNames(
+      networks,
+      pipeline,
+      "networks",
+      is_active_item,
+      is_must_see_item,
+    );
+    getPipelineByNames(
+      production_companies,
+      pipeline,
+      "production_companies",
       is_active_item,
       is_must_see_item,
     );
