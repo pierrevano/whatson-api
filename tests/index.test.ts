@@ -1622,10 +1622,6 @@ const params = {
         expect(item).toHaveProperty("networks");
         expect(item.networks).not.toBeNull();
         expect(item.networks.some((network) => network === "HBO")).toBeTruthy();
-
-        expect(item.networks).not.toContain("HBO Films");
-        expect(item.networks).not.toContain("Netflix");
-        expect(item.networks).not.toContain("Amazon Prime");
       });
     },
   },

@@ -14,4 +14,5 @@ src/assets/popularity_ids_*.txt
 src/assets/skip_ids_*.txt
 src/assets/updated_at.txt
 src/data/getAllIds.sh
+src/data/updateAllIds.sh
 temp_*
