@@ -1515,7 +1515,7 @@ const params = {
   },
 
   should_return_all_platforms: {
-    query: `?item_type=tvshow&platforms=${encodeURIComponent("all,Disney+")}&limit=250`,
+    query: `?item_type=tvshow&is_active=true,false&platforms=${encodeURIComponent("all,Disney+")}&limit=250`,
     expectedResult: (items) => {
       expect(items.length).toBe(250);
     },
@@ -1567,7 +1567,7 @@ const params = {
   },
 
   should_return_all_genres: {
-    query: `?item_type=tvshow&genres=${encodeURIComponent("allgenres,Drama")}&limit=250`,
+    query: `?item_type=tvshow&is_active=true,false&genres=${encodeURIComponent("allgenres,Drama")}&limit=250`,
     expectedResult: (items) => {
       expect(items.length).toBe(250);
     },
