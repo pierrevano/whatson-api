@@ -163,6 +163,7 @@ const config = {
     "status",
     "title",
   ],
+  skippedItems: ["tt16358384"],
   margin: 10,
   maxResponseTime: 6000,
   maxNullValues: 600,
