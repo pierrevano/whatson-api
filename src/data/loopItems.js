@@ -1,3 +1,4 @@
+const { appendFile } = require("fs");
 const axios = require("axios");
 
 const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
@@ -37,11 +38,16 @@ const loopItems = async (
   for (let index = index_to_start; index < jsonArray.length; index++) {
     try {
       const { heapUsed, rss } = process.memoryUsage();
+      const heapUsedInMB = heapUsed / 1024 / 1024;
       console.log(
-        `Memory - heapUsed: ${(heapUsed / 1024 / 1024).toFixed(2)} MB, rss: ${(rss / 1024 / 1024).toFixed(2)} MB`,
+        `Memory - heapUsed: ${heapUsedInMB.toFixed(2)} MB, rss: ${(rss / 1024 / 1024).toFixed(2)} MB`,
       );
 
-      if (max_index && index === max_index) {
+      const maxHeapUsed =
+        process.env.ENABLE_MAX_HEAP === "true"
+          ? heapUsedInMB
+          : config.heapLimit;
+      if (max_index && index >= max_index && maxHeapUsed >= config.heapLimit) {
         console.log(`Maximum index ${max_index} processed, aborting.`);
         process.exit(0);
       }
@@ -226,8 +232,10 @@ const loopItems = async (
           await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
         } catch (error) {
           if (areAllNullOrUndefined(data, config.ratingsKeys)) {
-            throw new Error(
-              `All ratings are null for the item at index ${index} - ${JSON.stringify(data)}`,
+            appendFile(
+              "temp_error.log",
+              `${new Date().toISOString()} - All ratings are null for the item at index ${index} - ${JSON.stringify(data)}\n`,
+              () => {},
             );
           }
 
