@@ -835,7 +835,12 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
-        expect(item.item_type).toBe("movie");
+
+        const movieItems = items.filter((item) => item.item_type === "movie");
+        const tvshowItems = items.filter((item) => item.item_type === "tvshow");
+
+        expect(movieItems.length).toBeGreaterThan(0);
+        expect(tvshowItems.length).toBeGreaterThan(0);
 
         expect(item.allocine).not.toHaveProperty("critics_rating_details");
         expect(item).not.toHaveProperty("episodes_details");
@@ -1110,7 +1115,7 @@ const params = {
   },
 
   only_null_status_items: {
-    query: "?status=&limit=200",
+    query: "?item_type=movie&status=&limit=200",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("status");
@@ -1537,7 +1542,7 @@ const params = {
   },
 
   only_platforms_netflix_or_canal: {
-    query: `?platforms=${encodeURIComponent("Netflix,Canal+")}`,
+    query: `?item_type=movie&platforms=${encodeURIComponent("Netflix,Canal+")}`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("platforms_links");

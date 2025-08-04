@@ -73,7 +73,7 @@ const aggregateData = async (
   const item_type =
     typeof item_type_query !== "undefined" && item_type_query
       ? item_type_query
-      : "movie";
+      : "movie,tvshow";
   const last_episode =
     append_to_response && append_to_response.split(",").includes("last_episode")
       ? true
