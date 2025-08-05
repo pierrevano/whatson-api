@@ -2175,7 +2175,8 @@ describe("What's on? API tests", () => {
         });
         const dataDirectors = responseDirectors.data;
         const itemsDirectors = dataDirectors && dataDirectors.results;
-        const directorName = itemsDirectors[0].directors[0];
+        const index = itemsDirectors[0].item_type === "tvshow" ? 1 : 0;
+        const directorName = itemsDirectors[index].directors[0];
 
         query = `?directors=${encodeURIComponent(directorName)}`;
       }
