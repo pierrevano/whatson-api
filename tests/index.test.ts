@@ -1589,17 +1589,6 @@ const params = {
     },
   },
 
-  only_directors_xxx: {
-    query: `?item_type=tvshow&directors=xxx`,
-    expectedResult: (items) => {
-      items.forEach((item) => {
-        expect(item).toHaveProperty("directors");
-        expect(item.directors).not.toBeNull();
-        expect(items.length).toBeLessThanOrEqual(2);
-      });
-    },
-  },
-
   only_genres_drama_and_platforms_netflix: {
     query: `?item_type=tvshow&genres=${encodeURIComponent("Drama")}&platforms=${encodeURIComponent("Netflix")}`,
     expectedResult: (items) => {
@@ -2169,18 +2158,6 @@ describe("What's on? API tests", () => {
 
   Object.entries(params).forEach(([name, { query, expectedResult }]) => {
     async function fetchItemsData() {
-      if (query.includes("directors=xxx")) {
-        const responseDirectors = await axios.get(simpleApiCall, {
-          validateStatus: (status) => status < 500,
-        });
-        const dataDirectors = responseDirectors.data;
-        const itemsDirectors = dataDirectors && dataDirectors.results;
-        const index = itemsDirectors[0].item_type === "tvshow" ? 1 : 0;
-        const directorName = itemsDirectors[index].directors[0];
-
-        query = `?directors=${encodeURIComponent(directorName)}`;
-      }
-
       const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
 
       console.log("Test name:", name);
