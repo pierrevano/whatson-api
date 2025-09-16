@@ -46,7 +46,7 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&popularity_filters=allocine_popularity,imdb_popularity&item_type=movie,tvshow&is_active=true,false&must_see=true,false&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&release_date=everything,new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&filtered_season=<integer>&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&popularity_filters=allocine_popularity,imdb_popularity&item_type=movie,tvshow&is_active=true,false&must_see=true,false&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&release_date=everything,new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&filtered_seasons=<string>&page=<integer>&limit=<integer>
 > ```
 
 | Parameter            | Value                                                                                                                                                                                                               | Description                                                                 |
@@ -66,7 +66,7 @@ Active items are fetched from 2 different links:
 | networks             | _string_                                                                                                                                                                                                            | TV show's networks (only valid for tvshows)                                 |
 | production_companies | _string_                                                                                                                                                                                                            | TV show's production companies                                              |
 | append_to_response   | critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode                                                                                                                    | Should we return specific keys in the response                              |
-| filtered_season      | _integer_                                                                                                                                                                                                           | Filter episodes on a specific season number                                 |
+| filtered_seasons     | _string_                                                                                                                                                                                                            | Filter episodes by one or more seasons                                      |
 | page                 | _integer_                                                                                                                                                                                                           | Page number                                                                 |
 | limit                | _integer_                                                                                                                                                                                                           | Page items limit                                                            |
 
@@ -77,7 +77,7 @@ _For directors, genres, platforms, networks, and production companies, you can u
 The query parameters provided below are solely for item search purposes and must be unique.
 
 > ```
-> https://whatson-api.onrender.com/?title=<string>&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&filtered_season=<integer>
+> https://whatson-api.onrender.com/?title=<string>&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&filtered_seasons=<string>
 > ```
 
 | Parameter          | Value                                                                                            | Description                                    |
@@ -95,7 +95,7 @@ The query parameters provided below are solely for item search purposes and must
 | tvtimeId           | _integer_                                                                                        | TV Time ID of the tvshow                       |
 | thetvdbId          | _integer_                                                                                        | TheTVDB ID of the movie or tvshow              |
 | append_to_response | critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode | Should we return specific keys in the response |
-| filtered_season    | _integer_                                                                                        | Filter episodes on a specific season number    |
+| filtered_seasons   | _string_                                                                                         | Filter episodes by one or more seasons         |
 
 #### Responses:
 
@@ -152,7 +152,7 @@ Example of an item returned:
   "episodes_details": [
     /*
      * To include this key in the response, add `episodes_details` to the `append_to_response` query parameter.
-     * To filter episodes by a specific season, add the `filtered_season` query parameter with the desired season number.
+     * To filter episodes by one or more seasons, add the `filtered_seasons` query parameter with the desired seasons numbers.
      */
     {
       "season": "number", // Season number of the episode

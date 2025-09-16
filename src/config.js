@@ -146,7 +146,7 @@ const config = {
     "append_to_response",
     "cinema_id",
     "directors",
-    "filtered_season",
+    "filtered_seasons",
     "genres",
     "is_active",
     "item_type",

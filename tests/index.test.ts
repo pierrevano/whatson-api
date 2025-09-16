@@ -1002,7 +1002,7 @@ const params = {
 
   only_episodes_from_season_2: {
     query:
-      "?item_type=tvshow&append_to_response=episodes_details&filtered_season=2",
+      "?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=2",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("episodes_details");
@@ -1015,24 +1015,24 @@ const params = {
       }),
   },
 
-  only_episodes_from_season_3_but_not_2: {
+  only_episodes_from_season_3_and_2: {
     query:
-      "?item_type=tvshow&append_to_response=episodes_details&filtered_season=3,2",
+      "?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=3,2",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("episodes_details");
         if (Array.isArray(item.episodes_details)) {
           item.episodes_details.forEach((episode) => {
             expect(episode).toHaveProperty("season");
-            expect(episode.season).toBe(3);
+            expect([2, 3]).toContain(episode.season);
           });
         }
       }),
   },
 
-  should_return_all_seasons_on_wrong_filtered_season_value: {
+  should_return_all_seasons_on_wrong_filtered_seasons_value: {
     query:
-      "?item_type=tvshow&append_to_response=episodes_details&filtered_season=wrong_value",
+      "?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=wrong_value",
     expectedResult: (items) => {
       let hasSeason1 = false;
       let hasSeason2 = false;
@@ -1054,9 +1054,9 @@ const params = {
     },
   },
 
-  only_episodes_from_season_3_but_not_2_on_search: {
+  only_episodes_from_season_3_and_1_on_search: {
     query:
-      "?imdbid=tt0903747&append_to_response=episodes_details&filtered_season=3,2",
+      "?imdbid=tt0903747&append_to_response=episodes_details&filtered_seasons=3,1",
     expectedResult: (items) => {
       checkSingleItemId(items, 1396);
       const item = items[0];
@@ -1064,15 +1064,15 @@ const params = {
       if (Array.isArray(item.episodes_details)) {
         item.episodes_details.forEach((episode) => {
           expect(episode).toHaveProperty("season");
-          expect(episode.season).toBe(3);
+          expect([1, 3]).toContain(episode.season);
         });
       }
     },
   },
 
-  should_return_all_seasons_on_wrong_filtered_season_value_on_search: {
+  should_return_all_seasons_on_wrong_filtered_seasons_value_on_search: {
     query:
-      "?imdbid=tt0903747&append_to_response=episodes_details&filtered_season=wrong_value",
+      "?imdbid=tt0903747&append_to_response=episodes_details&filtered_seasons=wrong_value",
     expectedResult: (items) => {
       checkSingleItemId(items, 1396);
       const item = items[0];
@@ -1086,9 +1086,9 @@ const params = {
     },
   },
 
-  should_not_return_an_error_if_append_to_response_is_empty_and_filtered_season_is_added_on_search:
+  should_not_return_an_error_if_append_to_response_is_empty_and_filtered_seasons_is_added_on_search:
     {
-      query: "?imdbid=tt0903747&append_to_response=&filtered_season=1",
+      query: "?imdbid=tt0903747&append_to_response=&filtered_seasons=1",
       expectedResult: (items) => {
         checkSingleItemId(items, 1396);
         expect(items[0]).not.toHaveProperty("episodes_details");
@@ -2050,7 +2050,7 @@ const params = {
 
   only_last_episode: {
     query:
-      "?item_type=tvshow&append_to_response=last_episode&filtered_season=2",
+      "?item_type=tvshow&append_to_response=last_episode&filtered_seasons=2",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("last_episode");
@@ -2064,7 +2064,7 @@ const params = {
 
   only_next_episode: {
     query:
-      "?item_type=tvshow&append_to_response=next_episode&filtered_season=2",
+      "?item_type=tvshow&append_to_response=next_episode&filtered_seasons=2",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("next_episode");
@@ -2078,7 +2078,7 @@ const params = {
 
   only_highest_episode: {
     query:
-      "?item_type=tvshow&append_to_response=highest_episode&filtered_season=2",
+      "?item_type=tvshow&append_to_response=highest_episode&filtered_seasons=2",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("highest_episode");
@@ -2092,7 +2092,7 @@ const params = {
 
   only_lowest_episode: {
     query:
-      "?item_type=tvshow&append_to_response=lowest_episode&filtered_season=2",
+      "?item_type=tvshow&append_to_response=lowest_episode&filtered_seasons=2",
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("lowest_episode");

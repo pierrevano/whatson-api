@@ -21,14 +21,14 @@ const normalizeString = (str) =>
 
 /**
  * Queries the database for a media item matching the given identifier or title.
- * Supports optional projection and episode filtering by season.
+ * Supports optional projection and episode filtering by seasons.
  *
  * @param {Object} json - Input object with a supported key (e.g. `imdbid`, `tmdbid`, `title`, etc.).
  * @param {string} [append_to_response] - Additional fields to include in the projection.
- * @param {number} [filtered_season] - Season number to filter episodes by (if applicable).
+ * @param {string} [filtered_seasons] - Seasons numbers to filter episodes by (if applicable).
  * @returns {Promise<{ results: Object[], total_results: number }>} Filtered results and total count.
  */
-const findId = async (json, append_to_response, filtered_season) => {
+const findId = async (json, append_to_response, filtered_seasons) => {
   if (!json || typeof json !== "object" || Object.keys(json).length === 0) {
     throw new Error("Invalid or empty input object in finding a unique ID.");
   }
@@ -116,9 +116,9 @@ const findId = async (json, append_to_response, filtered_season) => {
     collectionData.countDocuments(query),
   ]);
 
-  // Step 4: Filter by season if needed
-  if (filtered_season) {
-    results = await filterEpisodesBySeason(results, filtered_season);
+  // Step 4: Filter by seasons if needed
+  if (filtered_seasons) {
+    results = await filterEpisodesBySeason(results, filtered_seasons);
     total_results = results.length;
   }
 

@@ -20,7 +20,7 @@ const schema = {
   episodes_details: [
     /*
      * To include this key in the response, add `episodes_details` to the `append_to_response` query parameter.
-     * To filter episodes by a specific season, add the `filtered_season` query parameter with the desired season number.
+     * To filter episodes by one or more seasons, add the `filtered_seasons` query parameter with the desired seasons numbers.
      */
     {
       season: "number", // Season number of the episode

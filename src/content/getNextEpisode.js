@@ -1,7 +1,8 @@
 const { config } = require("../config");
 const { formatDate } = require("../utils/formatDate");
-const { logErrors } = require("../utils/logErrors");
 const { getAllocineInfo } = require("./getAllocineInfo");
+const { logErrors } = require("../utils/logErrors");
+const { updateToReadableString } = require("../utils/updateToReadableString");
 
 /**
  * Retrieves details of the next episode to air for a given tvshow, excluding ended shows and past episodes.
@@ -68,7 +69,7 @@ const getNextEpisode = async (
       nextEpisodeDetails = {
         season: nextEpisode.season,
         episode: nextEpisode.episode,
-        episode_type,
+        episode_type: updateToReadableString(episode_type),
         title: nextEpisode.title,
         description: nextEpisode.description,
         id: nextEpisode.id,

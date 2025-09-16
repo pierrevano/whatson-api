@@ -1,6 +1,7 @@
 const { config } = require("../config");
 const { formatDate } = require("../utils/formatDate");
 const { logErrors } = require("../utils/logErrors");
+const { updateToReadableString } = require("../utils/updateToReadableString");
 
 /**
  * Retrieves details of the last episode to have aired for a given tvshow, including its episode type from The Movie Database (TMDB) API.
@@ -46,7 +47,7 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, data) => {
     lastEpisodeDetails = {
       season: lastEpisode.season,
       episode: lastEpisode.episode,
-      episode_type,
+      episode_type: updateToReadableString(episode_type),
       title: lastEpisode.title,
       description: lastEpisode.description,
       id: lastEpisode.id,

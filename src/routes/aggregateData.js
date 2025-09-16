@@ -33,7 +33,7 @@ const aggregateData = async (
   ratings_filters_query,
   release_date_query,
   seasons_number_query,
-  filtered_season_query,
+  filtered_seasons_query,
   status_query,
 ) => {
   const critics_rating_details =
@@ -122,9 +122,9 @@ const aggregateData = async (
     typeof seasons_number_query !== "undefined" && seasons_number_query
       ? seasons_number_query
       : "";
-  const filtered_season =
-    typeof filtered_season_query !== "undefined" && filtered_season_query
-      ? filtered_season_query
+  const filtered_seasons =
+    typeof filtered_seasons_query !== "undefined" && filtered_seasons_query
+      ? filtered_seasons_query
       : null;
 
   const status =
@@ -322,7 +322,7 @@ const aggregateData = async (
   const data = await collectionData.aggregate(pipeline);
   let items = await data.toArray();
 
-  items = await filterEpisodesBySeason(items, filtered_season);
+  items = await filterEpisodesBySeason(items, filtered_seasons);
 
   return {
     items,
