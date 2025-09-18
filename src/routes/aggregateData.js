@@ -24,6 +24,8 @@ const aggregateData = async (
   id_path,
   is_active_query,
   is_must_see_query,
+  is_users_certified_query,
+  is_critics_certified_query,
   item_type_query,
   limit_query,
   minimum_ratings_query,
@@ -69,6 +71,15 @@ const aggregateData = async (
   const is_must_see =
     typeof is_must_see_query !== "undefined" && is_must_see_query
       ? is_must_see_query
+      : "true,false";
+  const is_users_certified =
+    typeof is_users_certified_query !== "undefined" && is_users_certified_query
+      ? is_users_certified_query
+      : "true,false";
+  const is_critics_certified =
+    typeof is_critics_certified_query !== "undefined" &&
+    is_critics_certified_query
+      ? is_critics_certified_query
       : "true,false";
   const item_type =
     typeof item_type_query !== "undefined" && item_type_query
@@ -169,6 +180,25 @@ const aggregateData = async (
       ? is_active_all
       : is_must_see_item;
 
+  let is_users_certified_item = {
+    "rotten_tomatoes.users_certified":
+      is_users_certified === "true" || is_users_certified === true,
+  };
+  is_users_certified_item =
+    is_users_certified === "true,false" || is_users_certified === "false,true"
+      ? is_active_all
+      : is_users_certified_item;
+
+  let is_critics_certified_item = {
+    "rotten_tomatoes.critics_certified":
+      is_critics_certified === "true" || is_critics_certified === true,
+  };
+  is_critics_certified_item =
+    is_critics_certified === "true,false" ||
+    is_critics_certified === "false,true"
+      ? is_active_all
+      : is_critics_certified_item;
+
   let item_type_default = { item_type: item_type };
   const item_type_all = {
     $or: [{ item_type: "movie" }, { item_type: "tvshow" }],
@@ -180,7 +210,15 @@ const aggregateData = async (
 
   const match_id = { $match: { id: id } };
   const match_item_type = {
-    $match: { $and: [item_type_default, is_active_item, is_must_see_item] },
+    $match: {
+      $and: [
+        item_type_default,
+        is_active_item,
+        is_must_see_item,
+        is_users_certified_item,
+        is_critics_certified_item,
+      ],
+    },
   };
 
   const minimum_ratings_sorted = minimum_ratings.includes(",")
@@ -270,6 +308,8 @@ const aggregateData = async (
       config,
       is_active_item,
       is_must_see_item,
+      is_users_certified_item,
+      is_critics_certified_item,
       item_type,
       pipeline,
       seasons_number,
@@ -286,6 +326,8 @@ const aggregateData = async (
       "directors",
       is_active_item,
       is_must_see_item,
+      is_users_certified_item,
+      is_critics_certified_item,
     );
     getPipelineByNames(
       genres,
@@ -293,6 +335,8 @@ const aggregateData = async (
       "genres",
       is_active_item,
       is_must_see_item,
+      is_users_certified_item,
+      is_critics_certified_item,
     );
     getPipelineByNames(
       platforms,
@@ -300,6 +344,8 @@ const aggregateData = async (
       "platforms_links",
       is_active_item,
       is_must_see_item,
+      is_users_certified_item,
+      is_critics_certified_item,
     );
     getPipelineByNames(
       networks,
@@ -307,6 +353,8 @@ const aggregateData = async (
       "networks",
       is_active_item,
       is_must_see_item,
+      is_users_certified_item,
+      is_critics_certified_item,
     );
     getPipelineByNames(
       production_companies,
@@ -314,6 +362,8 @@ const aggregateData = async (
       "production_companies",
       is_active_item,
       is_must_see_item,
+      is_users_certified_item,
+      is_critics_certified_item,
     );
   }
 

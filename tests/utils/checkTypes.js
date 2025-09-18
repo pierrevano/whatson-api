@@ -49,7 +49,9 @@ function checkTypes(item, schema) {
         key !== "critics_rating_count" &&
         key !== "critics_rating_liked_count" &&
         key !== "critics_rating_not_liked_count" &&
-        key !== "must_see"
+        key !== "must_see" &&
+        key !== "users_certified" &&
+        key !== "critics_certified"
       ) {
         // The key is missing in the item
         throw new Error(`Missing required key '${key}' in the item.`);

@@ -256,12 +256,14 @@ const createJSON = async (
           id: rottenTomatoesRating.id,
           url: rottenTomatoesRating.url,
           users_rating: rottenTomatoesRating.usersRating,
+          users_certified: rottenTomatoesRating.usersCertified,
           critics_rating: rottenTomatoesRating.criticsRating,
           critics_rating_count: rottenTomatoesRating.criticsRatingCount,
           critics_rating_liked_count:
             rottenTomatoesRating.criticsRatingLikedCount,
           critics_rating_not_liked_count:
             rottenTomatoesRating.criticsRatingNotLikedCount,
+          critics_certified: rottenTomatoesRating.criticsCertified,
         }
       : null;
 

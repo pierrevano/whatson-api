@@ -18,25 +18,31 @@ const getItems = async (req, res) => {
     const api_key_query = req.query.api_key || "api_key_not_provided";
     req.query.api_key = api_key_query;
 
-    const append_to_response = req.query.append_to_response;
-    const directors_query = req.query.directors;
-    const genres_query = req.query.genres;
-    const networks_query = req.query.networks;
-    const production_companies_query = req.query.production_companies;
-    const id_path = parseInt(req.params.id);
-    const is_active_query = req.query.is_active;
-    const is_must_see_query = req.query.must_see;
-    const item_type_query = req.query.item_type;
-    const limit_query = parseInt(req.query.limit);
-    const minimum_ratings_query = req.query.minimum_ratings;
-    const page_query = parseInt(req.query.page);
-    const platforms_query = req.query.platforms;
-    const popularity_filters_query = req.query.popularity_filters;
-    const ratings_filters_query = req.query.ratings_filters;
-    const release_date_query = req.query.release_date;
-    const seasons_number_query = req.query.seasons_number;
-    const filtered_seasons_query = req.query.filtered_seasons;
-    const status_query = req.query.status;
+    // Numeric query parameters
+    const id_path = Number(req.params.id);
+    const limit_query = Number(req.query.limit);
+    const page_query = Number(req.query.page);
+
+    const {
+      append_to_response,
+      critics_certified: is_critics_certified_query,
+      directors: directors_query,
+      filtered_seasons: filtered_seasons_query,
+      genres: genres_query,
+      is_active: is_active_query,
+      item_type: item_type_query,
+      minimum_ratings: minimum_ratings_query,
+      must_see: is_must_see_query,
+      networks: networks_query,
+      platforms: platforms_query,
+      popularity_filters: popularity_filters_query,
+      production_companies: production_companies_query,
+      ratings_filters: ratings_filters_query,
+      release_date: release_date_query,
+      seasons_number: seasons_number_query,
+      status: status_query,
+      users_certified: is_users_certified_query,
+    } = req.query;
 
     const internal_api_key = await collectionNameApiKey.findOne({
       name: "internal_api_key",
@@ -53,6 +59,8 @@ const getItems = async (req, res) => {
       id_path,
       is_active_query,
       is_must_see_query,
+      is_users_certified_query,
+      is_critics_certified_query,
       item_type_query,
       limit_query,
       minimum_ratings_query,

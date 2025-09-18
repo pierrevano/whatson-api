@@ -499,12 +499,22 @@ function checkItemProperties(items) {
             "number",
         ).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-
       if (item.rotten_tomatoes?.critics_rating_count) {
         expect(item.rotten_tomatoes.critics_rating_count).toBe(
           item.rotten_tomatoes.critics_rating_liked_count +
             item.rotten_tomatoes.critics_rating_not_liked_count,
         );
+      }
+      if (item.item_type === "movie") {
+        expect(
+          items.filter((item) => item.rotten_tomatoes?.users_certified === true)
+            .length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mustSee);
+        expect(
+          items.filter(
+            (item) => item.rotten_tomatoes?.critics_certified === true,
+          ).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mustSee);
       }
     }
 
@@ -910,6 +920,24 @@ const params = {
       items.forEach((item) => {
         expect(item.metacritic).toHaveProperty("must_see");
         expect(item.metacritic.must_see).toBeFalsy();
+      }),
+  },
+
+  only_users_certified_items: {
+    query: "?users_certified=true",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item.rotten_tomatoes).toHaveProperty("users_certified");
+        expect(item.rotten_tomatoes.users_certified).toBeTruthy();
+      }),
+  },
+
+  only_critics_certified_items: {
+    query: "?critics_certified=true",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item.rotten_tomatoes).toHaveProperty("critics_certified");
+        expect(item.rotten_tomatoes.critics_certified).toBeTruthy();
       }),
   },
 

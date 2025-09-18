@@ -29,6 +29,8 @@ const getRottenTomatoesRating = async (
   let criticsRatingCount = null;
   let criticsRatingLikedCount = null;
   let criticsRatingNotLikedCount = null;
+  let usersCertified = null;
+  let criticsCertified = null;
 
   try {
     const options = {
@@ -55,6 +57,13 @@ const getRottenTomatoesRating = async (
 
         usersRating = parseInt(mediaScorecard?.audienceScore?.score);
         if (isNaN(usersRating)) usersRating = null;
+
+        if (usersRating) {
+          usersCertified =
+            typeof mediaScorecard?.audienceScore?.certified === "boolean"
+              ? mediaScorecard.audienceScore.certified
+              : null;
+        }
 
         criticsRating = parseInt(mediaScorecard?.criticsScore?.score);
         if (isNaN(criticsRating)) criticsRating = null;
@@ -83,16 +92,23 @@ const getRottenTomatoesRating = async (
           );
           if (isNaN(criticsRatingNotLikedCount))
             criticsRatingNotLikedCount = null;
+
+          criticsCertified =
+            typeof mediaScorecard?.criticsScore?.certified === "boolean"
+              ? mediaScorecard.criticsScore.certified
+              : null;
         }
 
         rottenTomatoesObj = {
           id: rottenTomatoesId,
           url: rottenTomatoesHomepage,
           usersRating,
+          usersCertified,
           criticsRating,
           criticsRatingCount,
           criticsRatingLikedCount,
           criticsRatingNotLikedCount,
+          criticsCertified,
         };
       } catch (parseErr) {
         throw new Error(

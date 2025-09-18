@@ -363,6 +363,42 @@ const params = {
       expect(data.code).toBe(404);
     },
   },
+
+  no_critic_certified_items_on_tvshow: {
+    query: "?item_type=tvshow&critics_certified=true",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+      );
+      expect(data.code).toBe(404);
+    },
+  },
+
+  no_user_certified_items_on_tvshow: {
+    query: "?item_type=tvshow&users_certified=true",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+      );
+      expect(data.code).toBe(404);
+    },
+  },
+
+  no_user_or_critic_certified_items_on_tvshow: {
+    query: "?item_type=tvshow&users_certified=true&critics_certified=true",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+      );
+      expect(data.code).toBe(404);
+    },
+  },
 };
 
 /**

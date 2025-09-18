@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "update-active-dataset": "bash src/data/checkIds.sh check movie active && bash src/data/checkIds.sh check tvshow active",
     "confirm-dataset": "bash src/data/checkIds.sh update movie && bash src/data/checkIds.sh update tvshow",
     "check-api-version": "node src/utils/checkApiVersion.js",
-    "commit": "git add . && git cz",
+    "commit": "git add . && czg ai",
     "pull-all-platforms": "git pull origin main && git pull bitbucket main && git pull bitbucket_2 main && git pull bitbucket_3 main",
     "push-all-platforms": "git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main",
     "push": "npm run changed-dataset && npm run check-api-version && npm run prettier && npm run test && npm run commit && npm run push-all-platforms && npm run unchanged-dataset",
