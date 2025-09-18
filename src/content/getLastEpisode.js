@@ -20,7 +20,9 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, data) => {
       ? episodesDetails.filter(
           (ep) =>
             ep?.release_date &&
-            formatDate(ep.release_date) < formatDate(new Date()),
+            formatDate(ep.release_date) < formatDate(new Date()) &&
+            ep?.users_rating &&
+            ep?.users_rating_count,
         )
       : [];
 

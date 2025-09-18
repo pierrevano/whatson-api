@@ -1829,7 +1829,9 @@ const params = {
           const pastEpisodes = item.episodes_details.filter(
             (ep) =>
               ep?.release_date &&
-              formatDate(ep.release_date) < formatDate(new Date()),
+              formatDate(ep.release_date) < formatDate(new Date()) &&
+              ep?.users_rating &&
+              ep?.users_rating_count,
           );
 
           const lastAired = pastEpisodes[pastEpisodes.length - 1];
@@ -1840,6 +1842,10 @@ const params = {
             expect(lastAired.season).toBe(item.last_episode.season);
             expect(lastAired.id).toBe(item.last_episode.id);
             expect(lastAired.url).toBe(item.last_episode.url);
+            expect(lastAired.users_rating).toBeGreaterThan(0);
+            expect(item.last_episode.users_rating).toBeGreaterThan(0);
+            expect(lastAired.users_rating_count).toBeGreaterThan(0);
+            expect(item.last_episode.users_rating_count).toBeGreaterThan(0);
           }
         }
       });
@@ -1847,7 +1853,7 @@ const params = {
   },
 
   should_have_next_episode_greater_than_last_episode: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=last_episode,next_episode&limit=${config.maxLimitRemote}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=last_episode,next_episode,episodes_details&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const today = formatDate(new Date());
 
@@ -1867,6 +1873,17 @@ const params = {
             (nextSeason === lastSeason + 1 && nextEpisode === 1);
 
           expect(isSequential).toBe(true);
+
+          const lastEpisodeIndex = item.episodes_details.findIndex(
+            (episode) => episode.id === item.last_episode.id,
+          );
+          expect(lastEpisodeIndex).toBeGreaterThanOrEqual(0);
+
+          const expectedNextEpisode =
+            item.episodes_details[lastEpisodeIndex + 1] ?? null;
+
+          expect(expectedNextEpisode).not.toBeNull();
+          expect(expectedNextEpisode?.id).toBe(item.next_episode.id);
 
           const lastReleaseDate = formatDate(item.last_episode.release_date);
           const nextReleaseDate = formatDate(item.next_episode.release_date);

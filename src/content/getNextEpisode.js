@@ -5,6 +5,21 @@ const { logErrors } = require("../utils/logErrors");
 const { updateToReadableString } = require("../utils/updateToReadableString");
 
 /**
+ * Returns the episode that follows the provided last episode in the episodes list.
+ * @param {Object|null} lastEpisode - Last aired episode returned for a tvshow.
+ * @param {Array<Object>} normalizedEpisodes - Full episodes list in airing order.
+ * @returns {Object|null} The sequential episode, or null when not found.
+ */
+const getSequentialEpisode = (lastEpisode, normalizedEpisodes) => {
+  if (!lastEpisode?.id) return null;
+  const currentIndex = normalizedEpisodes.findIndex(
+    (episode) => episode.id === lastEpisode.id,
+  );
+  if (currentIndex < 0) return null;
+  return normalizedEpisodes[currentIndex + 1] ?? null;
+};
+
+/**
  * Retrieves details of the next episode to air for a given tvshow, excluding ended shows and past episodes.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {Array<Object>} episodesDetails - Array of episode objects for the tvshow.
@@ -23,17 +38,17 @@ const getNextEpisode = async (
   let nextEpisodeDetails = null;
 
   try {
-    const futureEpisodes = Array.isArray(episodesDetails)
-      ? episodesDetails.filter(
-          (ep) =>
-            ep?.release_date &&
-            formatDate(ep.release_date) >= formatDate(new Date()),
-        )
+    const normalizedEpisodes = Array.isArray(episodesDetails)
+      ? episodesDetails
       : [];
 
-    if (futureEpisodes.length === 0) return null;
+    const isFutureEpisode = (episode) =>
+      episode?.release_date &&
+      formatDate(episode.release_date) >= formatDate(new Date());
 
-    const nextEpisode = futureEpisodes[0];
+    const nextEpisode = getSequentialEpisode(lastEpisode, normalizedEpisodes);
+    if (!nextEpisode) return null;
+    if (!isFutureEpisode(nextEpisode)) return null;
 
     // Ensure the next episode is always after the last episode
     const isAfter = (nEpisode, lEpisode) => {
