@@ -97,6 +97,12 @@ fetch_from_trakt_search () {
 get_other_ids () {
   curl -s $WIKI_URL > temp_WIKI_URL_DOWNLOADED
 
+  CHECK_IMDB_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://www.imdb.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
+  if [[ $CHECK_IMDB_ID_DEPRECATED -eq 1 ]]; then
+    echo "IMDb redirection detected for $WIKI_URL. Aborting."
+    exit 1
+  fi
+
   METACRITIC_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
   METACRITIC_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | wc -l | awk '{print $1}')
   if [[ $METACRITIC_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
