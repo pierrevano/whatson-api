@@ -480,7 +480,7 @@ do
         curl -s https://www.allocine.fr$URL > temp_allocine_url
         echo "Downloading from: https://www.allocine.fr$URL"
         if [[ -z $URL ]]; then
-          echo "No URL has been found! Script aborded."
+          echo "No URL has been found! Script aborted."
           exit 1
         fi
 

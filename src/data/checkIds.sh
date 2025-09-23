@@ -71,6 +71,95 @@ is_id_found () {
   fi
 }
 
+check_id_consistency () {
+  local provider=$1
+  local file_value=$2
+  local media_type=$3
+
+  local property_id
+  case $provider in
+    "IMDb")
+      property_id="P345"
+      ;;
+    "Metacritic")
+      property_id="P1712"
+      ;;
+    "Rotten Tomatoes")
+      property_id="P1258"
+      ;;
+    "Letterboxd")
+      property_id="P6127"
+      ;;
+    "SensCritique")
+      property_id="P10100"
+      ;;
+    "Trakt")
+      if [[ $media_type == "tvshow" ]]; then
+        property_id="P8013"
+      else
+        property_id="P12492"
+      fi
+      ;;
+    "TheTVDB")
+      if [[ $media_type == "tvshow" ]]; then
+        property_id="P4835"
+      else
+        property_id="P12196"
+      fi
+      ;;
+    *)
+      echo "null"
+      return
+      ;;
+  esac
+
+  local fetched_value
+  fetched_value=$(jq -r --arg property "$property_id" '.entities[]?.claims[$property][]? | select(.rank != "deprecated") | .mainsnak.datavalue.value' <<< "$WIKIDATA_ENTITY_JSON" | head -n1)
+
+  if [[ -z $fetched_value ]] || [[ $fetched_value == "null" ]]; then
+    echo "null"
+    return
+  fi
+
+  case $provider in
+    "Metacritic"|"Rotten Tomatoes")
+      if [[ $fetched_value == */* ]]; then
+        fetched_value=${fetched_value#*/}
+      fi
+      ;;
+    "Trakt")
+      if [[ $media_type == "tvshow" && $fetched_value == */* ]]; then
+        fetched_value=${fetched_value#*/}
+      fi
+      ;;
+  esac
+
+  local should_check=0
+  if [[ $CHECK_OTHER_IDS_STRICT -eq 1 ]] && [[ -n $file_value ]] && [[ $file_value != "null" ]]; then
+    should_check=1
+  fi
+
+  if [[ $should_check -eq 1 ]]; then
+    if [[ $provider == "IMDb" ]]; then
+      local deprecated_count
+      deprecated_count=$(jq -r --arg property "$property_id" '[.entities[]?.claims[$property][]? | select(.rank == "deprecated")] | length' <<< "$WIKIDATA_ENTITY_JSON")
+      if [[ $deprecated_count -gt 0 ]]; then
+        echo "IMDb redirection detected for $WIKI_URL. Aborting." >&2
+        terminal-notifier -title "checkIds.sh" -message "Deprecation detected!"
+        return 1
+      fi
+    fi
+
+    if [[ $file_value != $fetched_value ]]; then
+      echo "$provider mismatch detected for $WIKI_URL. Local: $file_value / Wikidata: $fetched_value" >&2
+      terminal-notifier -title "checkIds.sh" -message "Mismatch detected!"
+      return 1
+    fi
+  fi
+
+  echo "$fetched_value"
+}
+
 fetch_from_trakt_search () {
   local imdb_id=$1
   local id_type=$2
@@ -95,32 +184,24 @@ fetch_from_trakt_search () {
 }
 
 get_other_ids () {
-  curl -s $WIKI_URL > temp_WIKI_URL_DOWNLOADED
+  WIKIDATA_ENTITY_ID=${WIKI_URL##*/}
+  WIKIDATA_ENTITY_ID=${WIKIDATA_ENTITY_ID%%#*}
+  WIKIDATA_ENTITY_ID=${WIKIDATA_ENTITY_ID%%\?*}
 
-  CHECK_IMDB_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://www.imdb.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
-  if [[ $CHECK_IMDB_ID_DEPRECATED -eq 1 ]]; then
-    echo "IMDb redirection detected for $WIKI_URL. Aborting."
-    exit 1
-  fi
+  WIKIDATA_ENTITY_JSON=$(curl -fs "https://www.wikidata.org/wiki/Special:EntityData/${WIKIDATA_ENTITY_ID}.json")
+  echo "https://www.wikidata.org/wiki/Special:EntityData/${WIKIDATA_ENTITY_ID}.json"
+  sleep 1 # Sleep for 1 second to avoid rate limiting
 
-  METACRITIC_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  METACRITIC_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | wc -l | awk '{print $1}')
-  if [[ $METACRITIC_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
-    METACRITIC_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.metacritic.com" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  fi
-  METACRITIC_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://www.metacritic.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
-  if [[ -z $METACRITIC_ID ]] || [[ $METACRITIC_ID_DEPRECATED -eq 1 ]]; then
+  check_id_consistency "IMDb" "$IMDB_ID_FROM_FILE" $2 > /dev/null || exit 1
+
+  METACRITIC_ID=$(check_id_consistency "Metacritic" "$METACRITIC_ID_FROM_FILE" $2) || exit 1
+  if [[ -z $METACRITIC_ID ]]; then
     METACRITIC_ID=null
   fi
   echo "Metacritic ID: $METACRITIC_ID"
 
-  ROTTEN_TOMATOES_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.rottentomatoes.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  ROTTEN_TOMATOES_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.rottentomatoes.com" | wc -l | awk '{print $1}')
-  if [[ $ROTTEN_TOMATOES_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
-    ROTTEN_TOMATOES_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.rottentomatoes.com" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  fi
-  ROTTEN_TOMATOES_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://www.rottentomatoes.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
-  if [[ -z $ROTTEN_TOMATOES_ID ]] || [[ $ROTTEN_TOMATOES_ID_DEPRECATED -eq 1 ]]; then
+  ROTTEN_TOMATOES_ID=$(check_id_consistency "Rotten Tomatoes" "$ROTTEN_TOMATOES_ID_FROM_FILE" $2) || exit 1
+  if [[ -z $ROTTEN_TOMATOES_ID ]]; then
     ROTTEN_TOMATOES_ID=null
   fi
   if [[ $ROTTEN_TOMATOES_ID != "null" ]]; then
@@ -131,35 +212,20 @@ get_other_ids () {
   fi
   echo "Rotten Tomatoes ID: $ROTTEN_TOMATOES_ID"
 
-  LETTERBOXD_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://letterboxd.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  LETTERBOXD_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://letterboxd.com" | wc -l | awk '{print $1}')
-  if [[ $LETTERBOXD_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
-    LETTERBOXD_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://letterboxd.com" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  fi
-  LETTERBOXD_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://letterboxd.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
-  if [[ -z $LETTERBOXD_ID ]] || [[ $LETTERBOXD_ID_DEPRECATED -eq 1 ]]; then
+  LETTERBOXD_ID=$(check_id_consistency "Letterboxd" "$LETTERBOXD_ID_FROM_FILE" $2) || exit 1
+  if [[ -z $LETTERBOXD_ID ]]; then
     LETTERBOXD_ID=null
   fi
   echo "Letterboxd ID: $LETTERBOXD_ID"
 
-  SENSCRITIQUE_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.senscritique.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  SENSCRITIQUE_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.senscritique.com" | wc -l | awk '{print $1}')
-  if [[ $SENSCRITIQUE_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
-    SENSCRITIQUE_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://www.senscritique.com" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  fi
-  SENSCRITIQUE_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://www.senscritique.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
-  if [[ -z $SENSCRITIQUE_ID ]] || [[ $SENSCRITIQUE_ID_DEPRECATED -eq 1 ]]; then
+  SENSCRITIQUE_ID=$(check_id_consistency "SensCritique" "$SENSCRITIQUE_ID_FROM_FILE" $2) || exit 1
+  if [[ -z $SENSCRITIQUE_ID ]]; then
     SENSCRITIQUE_ID=null
   fi
   echo "SensCritique ID: $SENSCRITIQUE_ID"
 
-  TRAKT_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://trakt.tv" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  TRAKT_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://trakt.tv" | wc -l | awk '{print $1}')
-  if [[ $TRAKT_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
-    TRAKT_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://trakt.tv" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  fi
-  TRAKT_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://trakt.tv" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
-  if [[ -z $TRAKT_ID ]] || [[ $TRAKT_ID_DEPRECATED -eq 1 ]]; then
+  TRAKT_ID=$(check_id_consistency "Trakt" "$TRAKT_ID_FROM_FILE" $2) || exit 1
+  if [[ -z $TRAKT_ID ]]; then
     TRAKT_ID=null
   fi
   if [[ $TRAKT_ID == "null" ]] && [[ $TRAKT_ID_FROM_FILE == "null" ]]; then
@@ -167,13 +233,8 @@ get_other_ids () {
   fi
   echo "Trakt ID: $TRAKT_ID"
 
-  THETVDB_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://thetvdb.com" | head -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  THETVDB_ID_NUMBER=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://thetvdb.com" | wc -l | awk '{print $1}')
-  if [[ $THETVDB_ID_NUMBER -eq 2 ]] && [[ $2 == "tvshow" ]]; then
-    THETVDB_ID=$(cat temp_WIKI_URL_DOWNLOADED | grep "https://thetvdb.com" | tail -1 | cut -d'>' -f3 | cut -d'<' -f1 | cut -d'/' -f2)
-  fi
-  THETVDB_ID_DEPRECATED=$(cat temp_WIKI_URL_DOWNLOADED | grep -A15 "https://thetvdb.com" | grep -Eo "/Q21441764|/Q45403344" | wc -l | awk '{print $1}')
-  if [[ -z $THETVDB_ID ]] || [[ $THETVDB_ID_DEPRECATED -eq 1 ]]; then
+  THETVDB_ID=$(check_id_consistency "TheTVDB" "$THETVDB_ID_FROM_FILE" $2) || exit 1
+  if [[ -z $THETVDB_ID ]]; then
     THETVDB_ID=null
   fi
   if [[ $THETVDB_ID == "null" ]] && [[ $THETVDB_ID_FROM_FILE == "null" ]]; then
@@ -212,7 +273,16 @@ if [[ $1 == "check" ]]; then
       TRAKT_ID_FROM_FILE=$(echo $LINE | cut -d',' -f9)
       THETVDB_ID_FROM_FILE=$(echo $LINE | cut -d',' -f10)
 
-      WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP345%20%22$IMDB_ID_FROM_FILE%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/' | head -1)
+      SPECIAL_IDS=("tt13207736")
+
+      PROPERTY_ID=P345
+      ITEM_ID=$IMDB_ID_FROM_FILE
+      if [[ " ${SPECIAL_IDS[@]} " =~ " ${IMDB_ID_FROM_FILE} " ]]; then
+        PROPERTY_ID=P1267
+        ITEM_ID=$ALLOCINE_ID_FROM_FILE
+      fi
+
+      WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY_ID%20%22$ITEM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/' | head -1)
       if [[ $WIKI_URL ]]; then
         echo $WIKI_URL
 
@@ -248,7 +318,7 @@ elif [[ $1 == "update" ]]; then
   if [ -f "$FILMS_IDS_FILE_PATH_TEMP" ]; then
     echo "Updating the dataset with the file: $FILMS_IDS_FILE_PATH_TEMP"
   else
-    echo "The temp file does not exist, abording"
+    echo "The temp file does not exist, aborting."
   fi
 
   TOTAL_LINES=$(wc -l <"${FILMS_IDS_FILE_PATH_TEMP}")
@@ -294,7 +364,7 @@ elif [[ $1 == "update" ]]; then
       COUNT=$(grep -o ",$IMDB_ID," $FILMS_IDS_FILE_PATH | wc -l)
 
       if [[ $COUNT -gt 3 ]]; then
-        echo "Count for $IMDB_ID is greater than 2. Exiting..."
+        echo "Count for $IMDB_ID is greater than 2. Exiting."
         exit 1
       fi
 

@@ -105,7 +105,7 @@ async function checkStatus(service) {
     console.log("Not updating tvshows as the top list is not correct.");
     process.exit(0);
   } else if (allTheMovieDbIds.length < config.minimumActiveItems) {
-    console.log("Something went wrong when updating the IDs. Abording.");
+    console.log("Something went wrong when updating the IDs. Aborting.");
     process.exit(1);
   }
 

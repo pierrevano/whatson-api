@@ -61,12 +61,12 @@
     "express": "^4.21.2",
     "he": "^1.2.0",
     "jshashes": "^1.0.8",
-    "mongodb": "^6.19.0",
-    "newrelic": "^13.3.2",
+    "mongodb": "^6.20.0",
+    "newrelic": "^13.3.3",
     "prettier": "^3.6.2",
-    "rate-limiter-flexible": "^7.3.1",
+    "rate-limiter-flexible": "^7.3.2",
     "shelljs": "^0.10.0",
-    "vercel": "^48.0.2"
+    "vercel": "^48.1.4"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
