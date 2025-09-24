@@ -727,8 +727,7 @@ function checkSingleItemId(items, expectedId) {
 
 /**
  * An object containing various query parameters and their expected results.
- * @param {object} params - An object containing various query parameters and their expected results.
- * @returns None
+ * @type {Record<string, { query: string, expectedResult: (items: any) => void }>}
  */
 const params = {
   valid_users_ratings: {
@@ -1170,6 +1169,17 @@ const params = {
     query: "?limit=5",
     expectedResult: (items) => {
       expect(items.length).toBe(5);
+    },
+  },
+
+  only_movies_directed_by_christopher_nolan: {
+    query: `?is_active=true,false&item_type=movie&directors=${encodeURIComponent("Christopher Nolan")}`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(Array.isArray(item.directors)).toBe(true);
+        expect(item.directors).toContain("Christopher Nolan");
+      });
     },
   },
 

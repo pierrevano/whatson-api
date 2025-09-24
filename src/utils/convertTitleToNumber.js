@@ -1,7 +1,7 @@
 /**
- * It takes a string as an argument and returns a number
- * @param title - The title of the review.
- * @returns The number value of the title.
+ * It takes a string as an argument and returns a number.
+ * @param {string} title - The title of the review.
+ * @returns {number|undefined} The numeric value of the title.
  */
 const convertTitleToNumber = (title) => {
   switch (title) {

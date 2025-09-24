@@ -2,11 +2,11 @@ const { logErrors } = require("./logErrors");
 const { removeExtraChar } = require("./removeExtraChar");
 
 /**
- * Extracts the content URL from the given HTML using jQuery.
- * @param {CheerioStatic} $ - The Cheerio object representing the HTML.
- * @param {boolean} backup - Whether to use the first or last script tag with type "application/ld+json".
- * @param {string} allocineHomepage - The URL of the AlloCiné homepage.
- * @returns The content URL parsed from the JSON object.
+ * Extracts structured JSON-LD metadata from the provided HTML snippet.
+ * @param {import("cheerio").CheerioAPI} $ - Cheerio handle for the loaded HTML document.
+ * @param {boolean} backup - Whether to use the first (true) or last (false) matching script tag.
+ * @param {string} allocineHomepage - The AlloCiné homepage URL used for error logging.
+ * @returns {Object|null} Parsed JSON data when available, otherwise null.
  */
 function getContentUrl($, backup, allocineHomepage) {
   try {

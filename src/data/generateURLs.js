@@ -1,6 +1,6 @@
 /**
- * Generates URLs for various movie or series related websites based on the provided item type, configuration, and JSON data.
- * @param {string} item_type - The type of item (movie or series).
+ * Generates URLs for various movie or tvshow related websites based on the provided item type, configuration, and JSON data.
+ * @param {string} item_type - The type of item ("movie" or "tvshow").
  * @param {object} config - The configuration object containing base URLs for different websites.
  * @param {object} json - The JSON data containing information about the item.
  * @returns {object} - An object containing URLs for AlloCiné, BetaSeries, IMDb, Letterboxd, Metacritic, RottenTomatoes, SensCritique, TheMovieDatabase, TheTVDB, Trakt, TVTime, and an isActive flag.

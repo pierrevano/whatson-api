@@ -15,6 +15,34 @@ const client = new MongoClient(uri, {
 const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 
+/**
+ * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.
+ * It normalises query parameters, constructs dynamic `$match` stages, attaches optional lookups,
+ * and returns both the raw pipeline results and paging metadata used by the HTTP layer.
+ *
+ * @param {string|undefined} append_to_response - Comma-separated list of extra fields to include.
+ * @param {string|undefined} directors_query - Comma-separated directors filter.
+ * @param {string|undefined} genres_query - Comma-separated genres filter.
+ * @param {string|undefined} networks_query - Comma-separated networks filter.
+ * @param {string|undefined} production_companies_query - Comma-separated production companies filter.
+ * @param {number|undefined} id_path - Numeric AlloCiné/TMDB identifier when fetching a single item.
+ * @param {string|boolean|undefined} is_active_query - Flag indicating which activity states to include.
+ * @param {string|undefined} is_must_see_query - Filter for `must_see` items.
+ * @param {string|undefined} is_users_certified_query - Filter for user certified badge.
+ * @param {string|undefined} is_critics_certified_query - Filter for critics certified badge.
+ * @param {string|undefined} item_type_query - Item type filters (e.g., "movie", "tvshow", "movie,tvshow").
+ * @param {number|undefined} limit_query - Requested page size.
+ * @param {string|undefined} minimum_ratings_query - Minimum ratings thresholds per source.
+ * @param {number|undefined} page_query - Requested page number.
+ * @param {string|undefined} platforms_query - Platform names used for SVOD filtering.
+ * @param {string|undefined} popularity_filters_query - Popularity filters requested by the client.
+ * @param {string|undefined} ratings_filters_query - Ratings filters requested by the client.
+ * @param {string|undefined} release_date_query - Release date range filter.
+ * @param {string|undefined} seasons_number_query - Seasons count filter for tvshows.
+ * @param {string|number|undefined} filtered_seasons_query - Seasons to keep when trimming episode lists.
+ * @param {string|undefined} status_query - Comma-separated list of show statuses to include.
+ * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: { is_active: boolean } }>} Aggregated items along with paging info and the resolved activity flag.
+ */
 const aggregateData = async (
   append_to_response,
   directors_query,

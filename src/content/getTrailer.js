@@ -5,11 +5,10 @@ const { logErrors } = require("../utils/logErrors");
 const { removeExtraChar } = require("../utils/removeExtraChar");
 
 /**
- * It gets the trailer link for a movie or tvshow
- * @param allocineHomepage - The URL of the movie or tvshow on AlloCiné.
- * @param betaseriesHomepage - The URL of the tvshow on BetaSeries.
- * @param options - This is the options object that is passed to the getCheerioContent function.
- * @returns The trailer link.
+ * Retrieves the trailer link for a movie or tvshow using BetaSeries and AlloCiné fallbacks.
+ * @param {string} allocineHomepage - The URL of the movie or tvshow on AlloCiné.
+ * @param {string|null} betaseriesHomepage - The corresponding BetaSeries URL when available.
+ * @returns {Promise<string|null>} The trailer URL, or null if it cannot be determined.
  */
 const getTrailer = async (allocineHomepage, betaseriesHomepage) => {
   let trailer = null;

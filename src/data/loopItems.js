@@ -20,7 +20,8 @@ const generateURLs = require("./generateURLs");
  * @param {string} item_type - The type of item being looped.
  * @param {Array} jsonArray - The array of JSON objects to loop through.
  * @param {Array} mojoBoxOfficeArray - The array of Mojo Box Office data to be included in the operations.
- * @returns {Object} Returns an object containing the number of new or updated items.
+ * @param {number|null} max_index - Optional index (1-based) at which to stop processing.
+ * @returns {Promise<{ newOrUpdatedItems: number }>} Number of newly created or updated items.
  */
 const loopItems = async (
   collectionData,

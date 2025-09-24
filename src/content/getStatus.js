@@ -4,9 +4,10 @@ const { config } = require("../config");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Returns the English equivalent of the given French status string.
- * @param {string} status - the French status string to convert
- * @returns {string | null} - the English equivalent of the status string, or throws an Error if the status string is not recognized
+ * Returns the English equivalent of the given French status string for a specific AlloCiné page.
+ * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
+ * @param {string} status - The French status string to convert.
+ * @returns {Promise<string | null | undefined>} The English status, null when it cannot be mapped, or undefined on error.
  */
 const getStatus = async (allocineHomepage, status) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;

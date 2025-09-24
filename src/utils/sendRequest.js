@@ -1,5 +1,14 @@
 const { reportError } = require("./sendToNewRelic");
 
+/**
+ * Normalises Express responses by attaching a status code and optional payload, while reporting
+ * non-success cases to New Relic for observability.
+ *
+ * @param {import("express").Response} res - Express response instance.
+ * @param {number} statusCode - HTTP status code to return.
+ * @param {object} data - Payload (already shaped) to serialise in the response body.
+ * @returns {import("express").Response} The Express response after being written.
+ */
 const sendResponse = (res, statusCode, data) => {
   if (statusCode === 200) {
     return res.status(statusCode).json(data);
@@ -15,6 +24,19 @@ const sendResponse = (res, statusCode, data) => {
   }
 };
 
+/**
+ * Validates query parameters, applies standard error handling, and ultimately dispatches
+ * the response payload produced by the aggregation helpers.
+ *
+ * @param {import("express").Request} req - Express request containing the original user query.
+ * @param {import("express").Response} res - Express response used to send the outcome.
+ * @param {object|null} json - Aggregated payload returned by the Mongo pipeline.
+ * @param {string|undefined} item_type_query - Original `item_type` query parameter.
+ * @param {number|undefined} limit - Resolved page size used for validation.
+ * @param {typeof import("../config").config} config - Shared configuration values.
+ * @param {{ is_active: boolean }} [is_active_item] - Activity metadata returned by the aggregation pipeline.
+ * @returns {import("express").Response} The Express response after being sent.
+ */
 const sendRequest = (
   req,
   res,
@@ -86,6 +108,19 @@ const sendRequest = (
   return sendResponse(res, 200, json);
 };
 
+/**
+ * Authorises and serves the preferences API, supporting both retrieval and upsert operations
+ * depending on the `post` flag.
+ *
+ * @param {import("express").Response} res - Express response used to return the outcome.
+ * @param {string} calculatedDigest - Expected digest computed from the email and secret.
+ * @param {string} digest - Digest provided by the caller for verification.
+ * @param {import("mongodb").Collection} collectionNamePreferences - Mongo collection storing preferences.
+ * @param {string} email - Target email address.
+ * @param {object} [preferences] - Preferences payload when performing an update.
+ * @param {boolean} [post] - When true, upserts; otherwise retrieves the stored preferences.
+ * @returns {Promise<import("express").Response>} The resulting Express response.
+ */
 const sendPreferencesRequest = async (
   res,
   calculatedDigest,
@@ -136,6 +171,13 @@ const sendPreferencesRequest = async (
   }
 };
 
+/**
+ * Handles unexpected exceptions by logging them to New Relic and returning a generic 500 payload.
+ *
+ * @param {import("express").Response} res - Express response instance.
+ * @param {Error} error - Captured error to forward to observability tooling.
+ * @returns {Promise<import("express").Response>} The generated error response.
+ */
 const sendInternalError = async (res, error) => {
   reportError(null, null, null, error);
 

@@ -1,7 +1,7 @@
 /**
- * It takes a string as an argument and returns an array of objects
- * @param popularity_filters_query - a string of popularity filters separated by commas.
- * @returns An array of objects
+ * Builds popularity aggregation expressions based on the provided query string.
+ * @param {string} popularity_filters_query - Comma-separated popularity filters (e.g., "allocine_popularity,imdb_popularity").
+ * @returns {Promise<Array<Object>>} Array of MongoDB expressions to apply to the pipeline.
  */
 const getPopularityFilters = async (popularity_filters_query) => {
   // popularity_filters query info

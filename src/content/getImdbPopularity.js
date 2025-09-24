@@ -8,9 +8,11 @@ const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * It takes the IMDb homepage of a movie as an argument, and returns the IMDb popularity ranking of the movie
- * @param imdbHomepage - The IMDb homepage of the movie.
- * @returns The popularity ranking of the movie.
+ * Retrieves the IMDb popularity rank for a movie or tvshow and reconciles it with AlloCiné popularity.
+ * @param {string} imdbHomepage - The IMDb homepage URL for the movie or tvshow.
+ * @param {string} allocineURL - The AlloCiné URL used to fetch AlloCiné popularity.
+ * @param {string} item_type - Type of item ("movie" or "tvshow").
+ * @returns {Promise<{ popularity: number | null } | undefined>} The IMDb popularity information, or undefined if the lookup fails.
  */
 const getImdbPopularity = async (imdbHomepage, allocineURL, item_type) => {
   try {

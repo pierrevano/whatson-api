@@ -36,11 +36,11 @@ const processSvods = (svods) => {
 };
 
 /**
- * It gets the platforms links of a movie or tvshow from the BetaSeries API
- * @param betaseriesId - the BetaSeries ID
- * @param allocineHomepage - the URL of the movie or tvshow's page on AlloCiné
- * @param imdbId - the IMDb ID
- * @returns An array of objects containing the name and link_url of the platforms.
+ * It gets the platforms links of a movie or tvshow from the BetaSeries API.
+ * @param {string|null} betaseriesId - The BetaSeries ID.
+ * @param {string} allocineHomepage - The URL of the movie or tvshow's page on AlloCiné.
+ * @param {string} imdbId - The IMDb ID.
+ * @returns {Promise<Array<{ name: string, link_url: string }> | null>} An array of platform objects, or null when none can be retrieved.
  */
 const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
   let platformsLinks = null;

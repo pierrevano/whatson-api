@@ -1,7 +1,7 @@
 /**
  * Converts a date input into a string in the format YYYY-MM-DD (UTC).
  * @param {string|Date} date - The input date (can be a Date object or ISO string).
- * @returns {string} The date formatted as 'YYYY-MM-DD'.
+ * @returns {string|null} The date formatted as 'YYYY-MM-DD', or null when the input is invalid.
  */
 const formatDate = (date) => {
   if (!date) return null;

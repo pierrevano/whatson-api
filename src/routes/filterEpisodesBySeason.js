@@ -7,6 +7,7 @@
  *
  * @param {Array} items - Array of aggregation results with episodes_details.
  * @param {string|number|null} seasonFilter - A single season number or a comma-separated list.
+ * @returns {Promise<Array>} The original items array with episodes_details filtered when applicable.
  */
 async function filterEpisodesBySeason(items, seasonFilter) {
   const results = items && items[0]?.results ? items[0].results : items;

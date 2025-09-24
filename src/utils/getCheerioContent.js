@@ -6,11 +6,11 @@ const { config } = require("../config");
 const { logErrors } = require("./logErrors");
 
 /**
- * It takes a URL and an optional options object, makes a request to the URL, and returns a cheerio object.
- * @param url - The URL of the page you want to scrape.
- * @param options - This is an object that contains the headers and other options, that you want to pass to the request.
- * @returns A function that returns a promise that resolves to a cheerio object or
- * an error object if any error occurs during the process.
+ * Fetches HTML content and returns a Cheerio wrapper for subsequent parsing.
+ * @param {string} url - The URL of the page you want to scrape.
+ * @param {object} [options] - Axios request options, including headers and retry behaviour.
+ * @param {string} origin - Identifier of the caller used for logging and retry diagnostics.
+ * @returns {Promise<import("cheerio").CheerioAPI | { error: Error }>} The Cheerio instance or an error payload when the request fails.
  */
 const getCheerioContent = async (url, options, origin) => {
   try {

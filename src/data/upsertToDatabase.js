@@ -4,7 +4,8 @@ const { b64Encode } = require("../utils/b64EncodeAndDecode");
  * Upserts the given data to the database collection.
  * @param {object} data - The data to upsert to the database.
  * @param {object} collectionData - The collection to upsert the data to.
- * @returns {void}
+ * @param {boolean} isEqual - Whether the remote and local payloads already match.
+ * @returns {Promise<void>} Resolves when the upsert completes.
  */
 const upsertToDatabase = async (data, collectionData, isEqual) => {
   try {

@@ -15,6 +15,14 @@ const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
+/**
+ * Resolves a single item by its numeric identifier, optionally applying ratings filters or
+ * additional projection fields, and streams the outcome through the shared request helpers.
+ *
+ * @param {import("express").Request} req - Express request carrying path params and optional filters.
+ * @param {import("express").Response} res - Express response instance used to emit the result or error.
+ * @returns {Promise<void>} Resolves once the response has been dispatched.
+ */
 const getId = async (req, res) => {
   try {
     const api_key_query = req.query.api_key || "api_key_not_provided";

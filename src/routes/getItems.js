@@ -13,6 +13,15 @@ const client = new MongoClient(uri, {
 const database = client.db(config.dbName);
 const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
+/**
+ * Handles the public `/items` endpoint by translating query parameters into a Mongo aggregation
+ * pipeline, enriching the response when identifier searches are detected, and delegating the
+ * response serialization to the shared request helpers.
+ *
+ * @param {import("express").Request} req - Express request containing filters and pagination options.
+ * @param {import("express").Response} res - Express response used to return JSON payloads or errors.
+ * @returns {Promise<void>} Resolves once the response has been sent.
+ */
 const getItems = async (req, res) => {
   try {
     const api_key_query = req.query.api_key || "api_key_not_provided";

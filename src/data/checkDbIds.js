@@ -4,6 +4,14 @@ const { b64Encode } = require("../utils/b64EncodeAndDecode");
 const { config } = require("../config");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 
+/**
+ * Compares locally generated dataset identifiers with those stored in MongoDB and writes a helper
+ * file whenever discrepancies are detected, allowing manual inspection of missing entries.
+ *
+ * @param {Array<Object>} jsonArrayFromCSV - Local dataset rows parsed from the CSV import.
+ * @param {import("mongodb").Collection} collectionData - Mongo collection containing the remote items.
+ * @returns {Promise<void>} Resolves after logging the comparison result or writing the diff file.
+ */
 const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
   let idsFromFile = [];
   jsonArrayFromCSV.forEach((element) => {

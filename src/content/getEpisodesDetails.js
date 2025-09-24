@@ -15,7 +15,7 @@ const { writeItems } = require("../utils/writeItems");
  * Parses episode details for a specific season of a tvshow from its IMDb homepage.
  * @param {string} imdbHomepage - The IMDb homepage URL for the tvshow.
  * @param {number} season - The season number to retrieve episode details for.
- * @returns {Promise<Array<Object>|null>} A promise that resolves to an array of episode detail objects, or null if parsing is incomplete.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of episode detail objects (empty when none are found).
  */
 const parseImdbEpisodes = async (imdbHomepage, season) => {
   let episodesDetails = [];

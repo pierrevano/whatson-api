@@ -54,6 +54,7 @@ const { getTVTimeRating } = require("../content/getTVTimeRating");
  * @param {number} sensCritiqueId - The SensCritique ID
  * @param {string} traktHomepage - The Trakt homepage URL
  * @param {string} traktId - The Trakt ID
+ * @param {Array<Object>} mojoBoxOfficeArray - Box office entries used to enrich Mojo data.
  * @param {number} tmdbId - TMDB ID
  * @param {string} tmdbHomepage - TMDB homepage URL
  * @param {string} tvtimeHomepage - TV Time homepage URL

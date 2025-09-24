@@ -28,7 +28,7 @@ const writeItemsNumber = (allocineHomepage, itemsCount, source) => {
  * Writes any data to a file as JSON, based on the type determined from the allocineHomepage.
  *
  * @param {string} allocineHomepage - The URL of the movie or TV show’s page on AlloCiné.
- * @param {any} data - The data to be written to the file (e.g., array, object, etc.).
+ * @param {string} itemsArray - The serialized payload to be written to the file.
  * @param {string} source - The source identifier to be included in the filename.
  */
 const writeItems = (allocineHomepage, itemsArray, source) => {

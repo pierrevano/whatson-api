@@ -11,8 +11,7 @@ const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
 
 /**
  * An object containing various query parameters and their expected results.
- * @param {object} params - An object containing various query parameters and their expected results.
- * @returns None
+ * @type {Record<string, { query: string, expectedResult: (data: any) => void }>}
  */
 const params = {
   wrong_item_type_present: {

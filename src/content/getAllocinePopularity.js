@@ -6,7 +6,8 @@ const { logErrors } = require("../utils/logErrors");
 /**
  * Extracts the ID of a movie or tvshow from a remote popularity file hosted on a server.
  * @param {string} allocineURL - The URL of the movie or tvshow on AlloCiné.
- * @returns {Promise<string | undefined>} - The ID of the movie or tvshow, or undefined if it cannot be found.
+ * @param {string} item_type - Type of item to inspect ("movie" or "tvshow").
+ * @returns {Promise<string | undefined>} The ID of the movie or tvshow, or undefined if it cannot be found.
  */
 const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
   try {
@@ -33,9 +34,10 @@ const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
 };
 
 /**
- * Retrieves the popularity of a movie from AlloCiné's remote popularity file.
- * @param {string} allocineURL - The URL of the movie on AlloCiné's website.
- * @returns An object containing the popularity of the movie, or null if it could not be retrieved.
+ * Retrieves the popularity rank of a movie or tvshow from AlloCiné's remote popularity file.
+ * @param {string} allocineURL - The URL of the movie or tvshow on AlloCiné's website.
+ * @param {string} item_type - Type of item to inspect ("movie" or "tvshow").
+ * @returns {Promise<{ popularity: number | null } | undefined>} The popularity information, or undefined if the lookup fails.
  */
 const getAllocinePopularity = async (allocineURL, item_type) => {
   try {
