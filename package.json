@@ -64,14 +64,14 @@
     "mongodb": "^6.20.0",
     "newrelic": "^13.3.3",
     "prettier": "^3.6.2",
-    "rate-limiter-flexible": "^7.4.0",
+    "rate-limiter-flexible": "^8.0.1",
     "shelljs": "^0.10.0",
-    "vercel": "^48.1.4"
+    "vercel": "^48.1.6"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "cz-conventional-changelog": "^3.3.0",
-    "jest": "^30.1.3",
+    "jest": "^30.2.0",
     "jest-junit": "^16.0.0"
   },
   "config": {
