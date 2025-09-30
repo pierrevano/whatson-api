@@ -7,6 +7,14 @@ const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
 const { countNullValues } = require("./utils/countNullValues");
+const {
+  expectPositiveInteger,
+  expectImdbId,
+  expectSlugLikeId,
+  expectPersistentId,
+  expectNumericIdOrNumericString,
+  expectIdRatingConsistency,
+} = require("./utils/idExpectations");
 const { formatDate } = require("../src/utils/formatDate");
 const { schema } = require("../src/schema");
 
@@ -73,9 +81,10 @@ function checkItemProperties(items) {
     );
 
     expect(item._id).not.toBeNull();
+    expectPersistentId(item._id);
 
     expect(item.id).not.toBeNull();
-    expect(typeof item.id).toBe("number");
+    expectPositiveInteger(item.id);
 
     expect(["movie", "tvshow"]).toContain(item.item_type);
 
@@ -182,6 +191,15 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
+    if (Array.isArray(item.episodes_details)) {
+      item.episodes_details.forEach((episode) => {
+        if (episode?.id) {
+          expectImdbId(episode.id);
+        }
+        expectIdRatingConsistency(episode, ["users_rating"]);
+      });
+    }
+
     const releaseDatePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
     item.last_episode && item.last_episode.release_date
       ? expect(item.last_episode.release_date).toMatch(releaseDatePattern)
@@ -205,6 +223,10 @@ function checkItemProperties(items) {
           }
         })
       : null;
+    if (item.last_episode?.id) {
+      expectImdbId(item.last_episode.id);
+    }
+    expectIdRatingConsistency(item.last_episode, ["users_rating"]);
 
     item.next_episode
       ? [
@@ -234,6 +256,20 @@ function checkItemProperties(items) {
           }
         })
       : null;
+    if (item.next_episode?.id) {
+      expectImdbId(item.next_episode.id);
+    }
+    expectIdRatingConsistency(item.next_episode, ["users_rating"]);
+
+    if (item.highest_episode?.id) {
+      expectImdbId(item.highest_episode.id);
+    }
+    expectIdRatingConsistency(item.highest_episode, ["users_rating"]);
+
+    if (item.lowest_episode?.id) {
+      expectImdbId(item.lowest_episode.id);
+    }
+    expectIdRatingConsistency(item.lowest_episode, ["users_rating"]);
 
     /* Popularity */
     item.is_active === true
@@ -251,10 +287,15 @@ function checkItemProperties(items) {
     if (item.allocine) {
       expect(item.allocine).not.toBeNull();
       expect(item.allocine.id).not.toBeNull();
+      expectPositiveInteger(item.allocine.id);
       expect(item.allocine.url).not.toBeNull();
       expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.allocine,
       );
+      expectIdRatingConsistency(item.allocine, [
+        "users_rating",
+        "critics_rating",
+      ]);
     }
     expect(
       items.filter((item) => typeof item.allocine?.users_rating === "number")
@@ -321,11 +362,12 @@ function checkItemProperties(items) {
     if (item.imdb) {
       expect(item.imdb).not.toBeNull();
       expect(item.imdb.id).not.toBeNull();
+      expectImdbId(item.imdb.id);
       expect(item.imdb.url).not.toBeNull();
       expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.imdb,
       );
-      expect(item.imdb.id.startsWith("tt")).toBeTruthy();
+      expectIdRatingConsistency(item.imdb, ["users_rating"]);
     }
     expect(
       items.filter((item) => typeof item.imdb?.users_rating === "number")
@@ -353,10 +395,12 @@ function checkItemProperties(items) {
     /* BetaSeries */
     if (item.betaseries) {
       expect(item.betaseries.id).not.toBeNull();
+      expectSlugLikeId(item.betaseries.id);
       expect(item.betaseries.url).not.toBeNull();
       expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.betaseries,
       );
+      expectIdRatingConsistency(item.betaseries, ["users_rating"]);
       expect(
         items.filter(
           (item) => typeof item.betaseries?.users_rating === "number",
@@ -387,10 +431,15 @@ function checkItemProperties(items) {
     /* Metacritic */
     if (item.metacritic) {
       expect(item.metacritic.id).not.toBeNull();
+      expectSlugLikeId(item.metacritic.id);
       expect(item.metacritic.url).not.toBeNull();
       expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.metacritic,
       );
+      expectIdRatingConsistency(item.metacritic, [
+        "users_rating",
+        "critics_rating",
+      ]);
       expect(
         items.filter(
           (item) => typeof item.metacritic?.users_rating === "number",
@@ -447,10 +496,15 @@ function checkItemProperties(items) {
     /* Rotten Tomatoes */
     if (item.rotten_tomatoes) {
       expect(item.rotten_tomatoes.id).not.toBeNull();
+      expectSlugLikeId(item.rotten_tomatoes.id);
       expect(item.rotten_tomatoes.url).not.toBeNull();
       expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.rottenTomatoes,
       );
+      expectIdRatingConsistency(item.rotten_tomatoes, [
+        "users_rating",
+        "critics_rating",
+      ]);
       expect(
         items.filter(
           (item) => typeof item.rotten_tomatoes?.users_rating === "number",
@@ -521,10 +575,12 @@ function checkItemProperties(items) {
     /* Letterboxd */
     if (item.letterboxd) {
       expect(item.letterboxd.id).not.toBeNull();
+      expectSlugLikeId(item.letterboxd.id);
       expect(item.letterboxd.url).not.toBeNull();
       expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.letterboxd,
       );
+      expectIdRatingConsistency(item.letterboxd, ["users_rating"]);
       if (item.is_active === true) {
         expect(
           items.filter(
@@ -556,11 +612,12 @@ function checkItemProperties(items) {
     /* SensCritique */
     if (item.senscritique) {
       expect(item.senscritique.id).not.toBeNull();
+      expectNumericIdOrNumericString(item.senscritique.id);
       expect(item.senscritique.url).not.toBeNull();
       expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.senscritique,
       );
-      expect(["string", "number"]).toContain(typeof item.senscritique.id);
+      expectIdRatingConsistency(item.senscritique, ["users_rating"]);
       if (item.is_active === true) {
         expect(
           items.filter(
@@ -591,11 +648,12 @@ function checkItemProperties(items) {
     /* TMDB */
     if (item.tmdb) {
       expect(item.tmdb.id).not.toBeNull();
+      expectPositiveInteger(item.tmdb.id);
       expect(item.tmdb.url).not.toBeNull();
       expect(Object.keys(item.tmdb).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.tmdb,
       );
-      expect(typeof item.tmdb.id).toBe("number");
+      expectIdRatingConsistency(item.tmdb, ["users_rating"]);
       if (item.is_active === true) {
         expect(
           items.filter((item) => item.tmdb && !item.tmdb?.users_rating).length,
@@ -623,10 +681,12 @@ function checkItemProperties(items) {
     /* Trakt */
     if (item.trakt) {
       expect(item.trakt.id).not.toBeNull();
+      expectSlugLikeId(item.trakt.id);
       expect(item.trakt.url).not.toBeNull();
       expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.trakt,
       );
+      expectIdRatingConsistency(item.trakt, ["users_rating"]);
       if (item.is_active === true) {
         expect(
           items.filter((item) => item.trakt && !item.trakt?.users_rating)
@@ -655,10 +715,12 @@ function checkItemProperties(items) {
     /* TV Time */
     if (item.tv_time) {
       expect(item.tv_time.id).not.toBeNull();
+      expectPositiveInteger(item.tv_time.id);
       expect(item.tv_time.url).not.toBeNull();
       expect(Object.keys(item.tv_time).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.tvtime,
       );
+      expectIdRatingConsistency(item.tv_time, ["users_rating"]);
       if (item.is_active === true) {
         expect(
           items.filter((item) => item.tv_time && !item.tv_time?.users_rating)
@@ -677,6 +739,7 @@ function checkItemProperties(items) {
     /* TheTVDB */
     if (item.thetvdb) {
       expect(item.thetvdb.id).not.toBeNull();
+      expectPositiveInteger(item.thetvdb.id);
       expect(item.thetvdb.url).not.toBeNull();
       expect(Object.keys(item.thetvdb).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.thetvdb,
@@ -692,6 +755,9 @@ function checkItemProperties(items) {
           items.filter((item) => typeof item.thetvdb?.slug === "string").length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
+    if (item.thetvdb?.slug) {
+      expectSlugLikeId(item.thetvdb.slug);
+    }
 
     /* Mojo */
     if (item.mojo) {
