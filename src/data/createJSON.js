@@ -129,7 +129,8 @@ const createJSON = async (
   );
   const trailer = await getTrailer(allocineHomepage, betaseriesHomepage);
   const seasonsNumber = await getSeasonsNumber(allocineHomepage, tmdbData);
-  const { usersRating, usersRatingCount } = await getImdbRating(imdbHomepage);
+  const { usersRating, usersRatingCount, isAdult, runtime, topRanking } =
+    await getImdbRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
     allocineURL,
@@ -223,6 +224,7 @@ const createJSON = async (
         users_rating: usersRating,
         users_rating_count: usersRatingCount,
         popularity: imdbPopularity?.popularity,
+        top_ranking: topRanking,
       }
     : null;
 
@@ -334,9 +336,11 @@ const createJSON = async (
     directors,
     genres,
     image: allocineFirstInfo.image,
+    is_adult: isAdult,
     networks,
     production_companies: productionCompanies,
     release_date: allocineFirstInfo?.releaseDate,
+    runtime,
     tagline: traktRating?.tagline,
     trailer,
 

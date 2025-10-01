@@ -11,9 +11,11 @@ const schema = {
   directors: "object", // Directors' names
   genres: "object", // Genres' names
   image: "string", // URL to the item's image
+  is_adult: "boolean", // Indicates if the title is flagged as adult content on IMDb
   networks: "object", // Networks' names
   production_companies: "object", // Production Companies' names
   release_date: "string", // Release date of the item
+  runtime: "number", // Runtime duration expressed in seconds
   tagline: "string", // Tagline of the item
   trailer: "string", // URL to the item's trailer
 
@@ -136,6 +138,7 @@ const schema = {
     users_rating: "number", // Average rating given by IMDb users
     users_rating_count: "number", // Total number of ratings submitted by IMDb users
     popularity: "number", // Popularity score on IMDb
+    top_ranking: "number", // Position of the title in IMDb top charts when available
   },
   letterboxd: {
     /* Information related to Letterboxd platform */

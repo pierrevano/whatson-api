@@ -55,6 +55,12 @@ function checkItemProperties(items) {
       expect(
         items.filter((item) => item.production_companies).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        items.filter((item) => typeof item.is_adult === "boolean").length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        items.filter((item) => typeof item.runtime === "number").length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
       if (item.item_type === "movie") {
         expect(
@@ -104,6 +110,14 @@ function checkItemProperties(items) {
       : null;
 
     expect(item.ratings_average).toBeGreaterThan(0);
+
+    if (item.is_adult !== null) {
+      expect(typeof item.is_adult).toBe("boolean");
+    }
+    if (item.runtime !== null) {
+      expect(typeof item.runtime).toBe("number");
+      expect(item.runtime).toBeGreaterThan(0);
+    }
 
     if (item.item_type === "tvshow") {
       expect(
@@ -359,6 +373,9 @@ function checkItemProperties(items) {
     }
 
     /* IMDb */
+    if (typeof item.imdb?.top_ranking === "number") {
+      expect(item.imdb.top_ranking).toBeGreaterThan(0);
+    }
     if (item.imdb) {
       expect(item.imdb).not.toBeNull();
       expect(item.imdb.id).not.toBeNull();
@@ -761,9 +778,19 @@ function checkItemProperties(items) {
 
     /* Mojo */
     if (item.mojo) {
+      expect(item.mojo).toEqual(
+        expect.objectContaining({
+          rank: expect.any(Number),
+          url: expect.stringMatching(
+            /^https:\/\/www\.boxofficemojo\.com\/title\/tt\d+\/?$/,
+          ),
+          lifetime_gross: expect.stringMatching(
+            /^\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?$/,
+          ),
+        }),
+      );
+      expect(Number.isInteger(item.mojo.rank)).toBe(true);
       expect(item.mojo.rank).toBeGreaterThan(0);
-      expect(item.mojo.url).not.toBeNull();
-      expect(item.mojo.lifetime_gross.startsWith("$")).toBeTruthy();
     }
     if (item.is_active === true && item.item_type === "movie") {
       expect(
