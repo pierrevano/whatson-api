@@ -1,6 +1,26 @@
 /* This is a way to pass arguments to the script. */
 const node_vars = process.argv.slice(2);
 
+/**
+ * Maps positional CLI arguments to well-named switches used by the data ingestion scripts.
+ *
+ * @type {{
+ *   item_type: string|undefined,
+ *   get_ids: string|undefined,
+ *   get_db: string|undefined,
+ *   environment: string|undefined,
+ *   is_not_active: string|undefined,
+ *   check_db_ids: string|undefined,
+ *   index_to_start: string|undefined,
+ *   force: string|undefined,
+ *   skip_mojo: string|undefined,
+ *   skip_services: string|undefined,
+ *   delete_ids: string|undefined,
+ *   check_date: string|undefined,
+ *   max_index: string|undefined,
+ *   check_id: string|undefined
+ * }}
+ */
 const getNodeVarsValues = {
   /*
    * Which item type should be updated?

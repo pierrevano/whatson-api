@@ -4,6 +4,12 @@ const { config } = require("../config");
 const { sendResponse } = require("./sendRequest");
 const { sendToNewRelic } = require("./sendToNewRelic");
 
+/**
+ * Builds a memory-based rate limiter with the shared configuration defaults.
+ *
+ * @param {number} points - Maximum number of requests allowed per window.
+ * @returns {RateLimiterMemory} Configured rate limiter instance.
+ */
 const createRateLimiter = (points) =>
   new RateLimiterMemory({
     points: points, // maximum number of requests
@@ -14,6 +20,12 @@ const createRateLimiter = (points) =>
 const defaultLimiter = createRateLimiter(config.points);
 const higherLimiter = createRateLimiter(config.higher_points);
 
+/**
+ * Normalises the requester identity used as the rate limit key.
+ *
+ * @param {import("express").Request} req - Incoming request.
+ * @returns {string} IP address or the first forwarded IP value.
+ */
 const getRateLimiterKey = (req) => {
   const forwardedFor = req.headers["x-forwarded-for"];
   const ip = req.ip;
@@ -25,6 +37,14 @@ const getRateLimiterKey = (req) => {
   return ipOrForwardedFor;
 };
 
+/**
+ * Express middleware enforcing per-IP rate limits while bypassing trusted internal keys.
+ *
+ * @param {import("express").Request} req - Express request.
+ * @param {import("express").Response} res - Express response.
+ * @param {import("express").NextFunction} next - Next middleware callback.
+ * @returns {void}
+ */
 const limiter = (req, res, next) => {
   const isInternalApiKeyValid =
     req.query.api_key !== undefined &&

@@ -1,5 +1,11 @@
 const { config } = require("../config");
 
+/**
+ * Computes the slice of the dataset to process based on the current day and execution shard.
+ *
+ * @param {boolean} firstHalf - Whether the first half of the month should trigger work.
+ * @returns {number|undefined} Calculated offset when processing should continue, otherwise exits the process.
+ */
 module.exports.getDateValue = function (firstHalf) {
   const day = new Date().getDate();
 

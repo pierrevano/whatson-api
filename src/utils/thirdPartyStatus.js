@@ -5,6 +5,12 @@ const { config } = require("../config");
 const { generateUserAgent } = require("./generateUserAgent");
 const { logErrors } = require("./logErrors");
 
+/**
+ * Checks the availability of a third-party service with automatic retries and user-agent spoofing.
+ *
+ * @param {string} service - Absolute URL of the status endpoint to probe.
+ * @returns {Promise<{success: boolean, data: any}>} Resolves with the HTTP payload when reachable, otherwise flags failure.
+ */
 const isThirdPartyServiceOK = async (service) => {
   try {
     axiosRetry(axios, {
