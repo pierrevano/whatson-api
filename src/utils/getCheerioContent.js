@@ -1,9 +1,38 @@
-const axios = require("axios");
-const axiosRetry = require("axios-retry").default;
 const cheerio = require("cheerio");
 
-const { config } = require("../config");
+const { generateUserAgent } = require("./generateUserAgent");
+const { httpClient } = require("./httpClient");
 const { logErrors } = require("./logErrors");
+
+const buildHeaders = (headers = {}) => {
+  const defaultHeaders = {
+    Accept:
+      "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9,fr-FR;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    Connection: "keep-alive",
+    DNT: "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1",
+  };
+
+  const mergedHeaders = {
+    ...defaultHeaders,
+    ...headers,
+  };
+
+  mergedHeaders["User-Agent"] = headers["User-Agent"] || generateUserAgent();
+
+  return mergedHeaders;
+};
+
+const buildOptions = (options = {}) => ({
+  ...options,
+  headers: buildHeaders(options.headers),
+});
 
 /**
  * Fetches HTML content and returns a Cheerio wrapper for subsequent parsing.
@@ -16,43 +45,12 @@ const getCheerioContent = async (url, options, origin) => {
   try {
     const startTime = Date.now();
 
-    axiosRetry(axios, {
-      retries: config.retries,
-      retryDelay: () => config.retryDelay,
-      retryCondition: (error) => {
-        const retryInfo = {
-          origin: origin || "No Origin specified",
-          url: url || "No URL specified",
-          userAgent:
-            options?.headers?.["User-Agent"] || "No User-Agent specified",
-          errorCode: error.response?.status || "Network Error",
-          ipAddress: error.response?.headers?.["x-forwarded-for"] || "N/A",
-          requestHeaders: options?.headers,
-          responseHeaders: error.response?.headers,
-        };
+    const requestOptions = buildOptions(options);
+    requestOptions.metadata = {
+      origin: origin || "No Origin specified",
+    };
 
-        if (retryInfo.errorCode !== 404) {
-          console.log(
-            `Retrying due to error:\n` +
-              `Origin: ${retryInfo.origin}\n` +
-              `URL: ${retryInfo.url}\n` +
-              `Error Code: ${retryInfo.errorCode}\n` +
-              `User-Agent: ${retryInfo.userAgent}\n` +
-              `IP Address: ${retryInfo.ipAddress}\n` +
-              `Request Headers: ${JSON.stringify(retryInfo.requestHeaders, null, 2)}\n` +
-              `Response Headers: ${JSON.stringify(retryInfo.responseHeaders, null, 2)}`,
-          );
-        }
-
-        // Retry only on network errors or server errors except for 404.
-        return (
-          !error.response ||
-          (error.response.status !== 404 && error.response.status >= 500)
-        );
-      },
-    });
-
-    const response = await axios.get(url, options);
+    const response = await httpClient.get(url, requestOptions);
 
     if (response.status !== 200) {
       throw new Error("Failed to retrieve data.");
