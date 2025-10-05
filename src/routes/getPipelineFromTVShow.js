@@ -6,6 +6,7 @@ function capitalize(word) {
  * Builds a MongoDB aggregation pipeline for retrieving tvshow data based on filters.
  * @param {Object} config - Configuration object.
  * @param {Object} is_active_item - MongoDB condition to match active items.
+ * @param {Object} is_adult_item - MongoDB condition to match adult items.
  * @param {Object} is_must_see_item - MongoDB condition to match must see items.
  * @param {Object} is_users_certified_item - MongoDB condition to match user-certified items.
  * @param {Object} is_critics_certified_item - MongoDB condition to match critics-certified items.
@@ -18,6 +19,7 @@ function capitalize(word) {
 const getPipelineFromTVShow = (
   config,
   is_active_item,
+  is_adult_item,
   is_must_see_item,
   is_users_certified_item,
   is_critics_certified_item,
@@ -36,6 +38,7 @@ const getPipelineFromTVShow = (
       $match: {
         $and: [
           is_active_item,
+          is_adult_item,
           is_must_see_item,
           is_users_certified_item,
           is_critics_certified_item,
@@ -57,6 +60,7 @@ const getPipelineFromTVShow = (
         $match: {
           $and: [
             is_active_item,
+            is_adult_item,
             is_must_see_item,
             is_users_certified_item,
             is_critics_certified_item,
@@ -75,6 +79,7 @@ const getPipelineFromTVShow = (
         $match: {
           $and: [
             is_active_item,
+            is_adult_item,
             is_must_see_item,
             is_users_certified_item,
             is_critics_certified_item,
@@ -91,6 +96,7 @@ const getPipelineFromTVShow = (
       $match: {
         $and: [
           is_active_item,
+          is_adult_item,
           is_must_see_item,
           is_users_certified_item,
           is_critics_certified_item,

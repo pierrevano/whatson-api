@@ -1,5 +1,5 @@
 const IMDB_TITLE_ID_REGEX = /^tt\d{7,}$/;
-const ALPHANUMERIC_ID_REGEX = /^[A-Za-z0-9_\-!+]+$/;
+const ALPHANUMERIC_ID_REGEX = /^[A-Za-z0-9_\-!+:]+$/;
 const PERSISTENT_ID_REGEX = /^[A-Za-z0-9_\-!+]+={0,2}$/;
 
 function expectPositiveInteger(value) {

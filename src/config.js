@@ -152,6 +152,7 @@ const config = {
     "filtered_seasons",
     "genres",
     "is_active",
+    "is_adult",
     "item_type",
     "limit",
     "minimum_ratings",

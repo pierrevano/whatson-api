@@ -950,6 +950,9 @@ const params = {
         item.metacritic
           ? expect([true, false]).toContain(item.metacritic.must_see)
           : null;
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -963,6 +966,9 @@ const params = {
         item.metacritic
           ? expect([true, false]).toContain(item.metacritic.must_see)
           : null;
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -976,6 +982,9 @@ const params = {
         item.metacritic
           ? expect([true, false]).toContain(item.metacritic.must_see)
           : null;
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -985,6 +994,9 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("is_active");
         expect(item.is_active).toBeTruthy();
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -994,6 +1006,27 @@ const params = {
       items.forEach((item) => {
         expect(item).toHaveProperty("is_active");
         expect(item.is_active).toBeFalsy();
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
+      }),
+  },
+
+  only_adult_items: {
+    query: "?item_type=movie,tvshow&is_active=true,false&is_adult=true",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeTruthy();
+      }),
+  },
+
+  only_non_adult_items: {
+    query: "?item_type=movie,tvshow&is_active=true,false&is_adult=false",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -1003,6 +1036,9 @@ const params = {
       items.forEach((item) => {
         expect(item.metacritic).toHaveProperty("must_see");
         expect(item.metacritic.must_see).toBeTruthy();
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -1012,6 +1048,9 @@ const params = {
       items.forEach((item) => {
         expect(item.metacritic).toHaveProperty("must_see");
         expect(item.metacritic.must_see).toBeFalsy();
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -1021,6 +1060,9 @@ const params = {
       items.forEach((item) => {
         expect(item.rotten_tomatoes).toHaveProperty("users_certified");
         expect(item.rotten_tomatoes.users_certified).toBeTruthy();
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -1030,6 +1072,9 @@ const params = {
       items.forEach((item) => {
         expect(item.rotten_tomatoes).toHaveProperty("critics_certified");
         expect(item.rotten_tomatoes.critics_certified).toBeTruthy();
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -1052,6 +1097,9 @@ const params = {
         expect(
           item.is_active === true || item.is_active === false,
         ).toBeTruthy();
+
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
       }),
   },
 
@@ -1285,6 +1333,22 @@ const params = {
         expect(item).toHaveProperty("seasons_number");
         expect(item.seasons_number).toBeLessThanOrEqual(2);
       }),
+  },
+
+  return_correct_movie_item_type_on_same_path_id: {
+    query: "/movie/10003?append_to_response",
+    expectedResult: (item) => {
+      expect(item.id).toBe(10003);
+      expect(item.item_type).toBe("movie");
+    },
+  },
+
+  return_correct_tvshow_item_type_on_same_path_id: {
+    query: "/tvshow/10003?append_to_response",
+    expectedResult: (item) => {
+      expect(item.id).toBe(10003);
+      expect(item.item_type).toBe("tvshow");
+    },
   },
 
   correct_tmdb_id_returned_on_path: {

@@ -94,9 +94,26 @@ async function checkStatus(service) {
     getNodeVarsValues.is_not_active === "active"
       ? jsonArrayFiltered(jsonArrayFromCSV)
       : jsonArrayFromCSV;
-  const jsonArraySortedHighestToLowest = jsonArray.sort(
+  let jsonArraySortedHighestToLowest = jsonArray.sort(
     (a, b) => b.THEMOVIEDB_ID - a.THEMOVIEDB_ID,
   );
+
+  if (getNodeVarsValues.check_id) {
+    const imdbIdToUpdate = getNodeVarsValues.check_id;
+    const filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) => {
+      return item.IMDB_ID === imdbIdToUpdate;
+    });
+
+    if (filteredByImdbId.length === 0) {
+      console.log(
+        `IMDb ID ${imdbIdToUpdate} not found in the dataset. Aborting.`,
+      );
+      process.exit(0);
+    }
+
+    jsonArraySortedHighestToLowest = filteredByImdbId;
+  }
+
   const allTheMovieDbIds = jsonArraySortedHighestToLowest.map((item) =>
     parseInt(item.THEMOVIEDB_ID),
   );
@@ -104,7 +121,10 @@ async function checkStatus(service) {
   if (allTheMovieDbIds.length === 0) {
     console.log("Not updating tvshows as the top list is not correct.");
     process.exit(0);
-  } else if (allTheMovieDbIds.length < config.minimumActiveItems) {
+  } else if (
+    allTheMovieDbIds.length < config.minimumActiveItems &&
+    !getNodeVarsValues.check_id
+  ) {
     console.log("Something went wrong when updating the IDs. Aborting.");
     process.exit(1);
   }

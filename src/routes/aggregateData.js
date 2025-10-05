@@ -27,6 +27,7 @@ const collectionData = database.collection(config.collectionName);
  * @param {string|undefined} production_companies_query - Comma-separated production companies filter.
  * @param {number|undefined} id_path - Numeric AlloCiné/TMDB identifier when fetching a single item.
  * @param {string|boolean|undefined} is_active_query - Flag indicating which activity states to include.
+ * @param {string|boolean|undefined} is_adult_query - Flag indicating which adult content states to include.
  * @param {string|undefined} is_must_see_query - Filter for `must_see` items.
  * @param {string|undefined} is_users_certified_query - Filter for user certified badge.
  * @param {string|undefined} is_critics_certified_query - Filter for critics certified badge.
@@ -41,7 +42,7 @@ const collectionData = database.collection(config.collectionName);
  * @param {string|undefined} seasons_number_query - Seasons count filter for tvshows.
  * @param {string|number|undefined} filtered_seasons_query - Seasons to keep when trimming episode lists.
  * @param {string|undefined} status_query - Comma-separated list of show statuses to include.
- * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: { is_active: boolean } }>} Aggregated items along with paging info and the resolved activity flag.
+ * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: { is_active: boolean }, is_adult_item: { is_adult: boolean } }>} Aggregated items along with paging info and the resolved activity flag.
  */
 const aggregateData = async (
   append_to_response,
@@ -51,6 +52,7 @@ const aggregateData = async (
   production_companies_query,
   id_path,
   is_active_query,
+  is_adult_query,
   is_must_see_query,
   is_users_certified_query,
   is_critics_certified_query,
@@ -96,6 +98,10 @@ const aggregateData = async (
     typeof is_active_query !== "undefined" && is_active_query
       ? is_active_query
       : true;
+  const is_adult =
+    typeof is_adult_query !== "undefined" && is_adult_query
+      ? is_adult_query
+      : false; // By default, we exclude items containing adult content.
   const is_must_see =
     typeof is_must_see_query !== "undefined" && is_must_see_query
       ? is_must_see_query
@@ -200,6 +206,15 @@ const aggregateData = async (
       ? is_active_all
       : is_active_item;
 
+  let is_adult_item = {
+    is_adult: is_adult === "true" || is_adult === true,
+  };
+  const is_adult_all = { $or: [{ is_adult: true }, { is_adult: false }] };
+  is_adult_item =
+    is_adult === "true,false" || is_adult === "false,true"
+      ? is_adult_all
+      : is_adult_item;
+
   let is_must_see_item = {
     "metacritic.must_see": is_must_see === "true" || is_must_see === true,
   };
@@ -242,6 +257,7 @@ const aggregateData = async (
       $and: [
         item_type_default,
         is_active_item,
+        is_adult_item,
         is_must_see_item,
         is_users_certified_item,
         is_critics_certified_item,
@@ -335,6 +351,7 @@ const aggregateData = async (
     getPipelineFromTVShow(
       config,
       is_active_item,
+      is_adult_item,
       is_must_see_item,
       is_users_certified_item,
       is_critics_certified_item,
@@ -353,6 +370,7 @@ const aggregateData = async (
       pipeline,
       "directors",
       is_active_item,
+      is_adult_item,
       is_must_see_item,
       is_users_certified_item,
       is_critics_certified_item,
@@ -362,6 +380,7 @@ const aggregateData = async (
       pipeline,
       "genres",
       is_active_item,
+      is_adult_item,
       is_must_see_item,
       is_users_certified_item,
       is_critics_certified_item,
@@ -371,6 +390,7 @@ const aggregateData = async (
       pipeline,
       "platforms_links",
       is_active_item,
+      is_adult_item,
       is_must_see_item,
       is_users_certified_item,
       is_critics_certified_item,
@@ -380,6 +400,7 @@ const aggregateData = async (
       pipeline,
       "networks",
       is_active_item,
+      is_adult_item,
       is_must_see_item,
       is_users_certified_item,
       is_critics_certified_item,
@@ -389,6 +410,7 @@ const aggregateData = async (
       pipeline,
       "production_companies",
       is_active_item,
+      is_adult_item,
       is_must_see_item,
       is_users_certified_item,
       is_critics_certified_item,

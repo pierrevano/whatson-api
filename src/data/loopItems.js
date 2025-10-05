@@ -151,10 +151,6 @@ const loopItems = async (
         }
       }
 
-      if (getNodeVarsValues.check_id) {
-        if (imdbId !== getNodeVarsValues.check_id) continue;
-      }
-
       // Check if page is existing before upsert to DB
       const { error } = await getAllocineInfo(allocineHomepage, true);
 

@@ -21,7 +21,8 @@ const { logErrors } = require("../utils/logErrors");
  *   allocineUsersRatingCount: number|null,
  *   status: string|null,
  *   releaseDate: string|null
- * }|null} An object containing AlloCiné metadata, or null if not available
+ * }|null|{ error: Error }} AlloCiné metadata when resolved, null when data is
+ * unavailable, or an error wrapper when the scrape fails
  */
 const getAllocineInfo = async (allocineHomepage, compare, data) => {
   let allocineFirstInfo = null;
