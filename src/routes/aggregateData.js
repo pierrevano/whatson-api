@@ -39,6 +39,7 @@ const collectionData = database.collection(config.collectionName);
  * @param {string|undefined} popularity_filters_query - Popularity filters requested by the client.
  * @param {string|undefined} ratings_filters_query - Ratings filters requested by the client.
  * @param {string|undefined} release_date_query - Release date range filter.
+ * @param {string|undefined} runtime_query - Runtime filter expressed in seconds.
  * @param {string|undefined} seasons_number_query - Seasons count filter for tvshows.
  * @param {string|number|undefined} filtered_seasons_query - Seasons to keep when trimming episode lists.
  * @param {string|undefined} status_query - Comma-separated list of show statuses to include.
@@ -64,6 +65,7 @@ const aggregateData = async (
   popularity_filters_query,
   ratings_filters_query,
   release_date_query,
+  runtime_query,
   seasons_number_query,
   filtered_seasons_query,
   status_query,
@@ -163,6 +165,8 @@ const aggregateData = async (
     typeof release_date_query !== "undefined" && release_date_query
       ? release_date_query
       : "";
+  const runtime_filter =
+    typeof runtime_query !== "undefined" && runtime_query ? runtime_query : "";
   const seasons_number =
     typeof seasons_number_query !== "undefined" && seasons_number_query
       ? seasons_number_query
@@ -294,6 +298,35 @@ const aggregateData = async (
     matchConditions.push({
       releaseDateAsDate: { $gte: sixOrEighteenMonthsAgo },
     });
+  }
+
+  if (runtime_filter) {
+    const runtimeValues = runtime_filter
+      .split(",")
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0)
+      .map((value) => Number(value))
+      .filter((value) => Number.isFinite(value));
+
+    if (runtimeValues.length === 1) {
+      matchConditions.push({ runtime: runtimeValues[0] });
+    } else if (runtimeValues.length > 1) {
+      const minRuntime = Math.min(...runtimeValues);
+      const maxRuntime = Math.max(...runtimeValues);
+      const runtimeRange = {};
+
+      if (Number.isFinite(minRuntime)) {
+        runtimeRange.$gte = minRuntime;
+      }
+
+      if (Number.isFinite(maxRuntime)) {
+        runtimeRange.$lte = maxRuntime;
+      }
+
+      if (Object.keys(runtimeRange).length > 0) {
+        matchConditions.push({ runtime: runtimeRange });
+      }
+    }
   }
 
   const match_min_ratings_and_release_date = {

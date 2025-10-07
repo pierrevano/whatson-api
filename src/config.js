@@ -150,6 +150,7 @@ const config = {
     "critics_certified",
     "directors",
     "filtered_seasons",
+    "runtime",
     "genres",
     "is_active",
     "is_adult",

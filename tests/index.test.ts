@@ -1103,6 +1103,100 @@ const params = {
       }),
   },
 
+  movies_with_runtime_between_60_and_120_minutes: {
+    query: "?item_type=movie&runtime=3600,7200",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+        expect(item).toHaveProperty("runtime");
+        expect(typeof item.runtime).toBe("number");
+        expect(item.runtime).toBeGreaterThanOrEqual(3600);
+        expect(item.runtime).toBeLessThanOrEqual(7200);
+      });
+    },
+  },
+
+  movies_with_runtime_between_60_and_120_minutes_unsorted_values: {
+    query: "?item_type=movie&runtime=7200,3600",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+        expect(item).toHaveProperty("runtime");
+        expect(typeof item.runtime).toBe("number");
+        expect(item.runtime).toBeGreaterThanOrEqual(3600);
+        expect(item.runtime).toBeLessThanOrEqual(7200);
+      });
+    },
+  },
+
+  tvshows_with_runtime_between_30_and_60_minutes: {
+    query: "?item_type=tvshow&runtime=1800,3600",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("tvshow");
+        expect(item).toHaveProperty("runtime");
+        expect(typeof item.runtime).toBe("number");
+        expect(item.runtime).toBeGreaterThanOrEqual(1800);
+        expect(item.runtime).toBeLessThanOrEqual(3600);
+      });
+    },
+  },
+
+  movies_with_runtime_single_value: {
+    query: "?item_type=movie&runtime=5400",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      const expectedRuntime = items[0].runtime;
+      expect(typeof expectedRuntime).toBe("number");
+      expect(expectedRuntime).toBe(5400);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+        expect(item).toHaveProperty("runtime");
+        expect(item.runtime).toBe(expectedRuntime);
+      });
+    },
+  },
+
+  movies_with_invalid_runtime_value: {
+    query: "?item_type=movie&runtime=invalid",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      const itemsWithRuntime = items.filter(
+        (item) => typeof item.runtime === "number" && item.runtime > 0,
+      );
+      expect(itemsWithRuntime.length).toBeGreaterThan(0);
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+        expect(item).toHaveProperty("runtime");
+        if (typeof item.runtime === "number") {
+          expect(item.runtime).toBeGreaterThan(0);
+        } else {
+          expect(item.runtime === null).toBe(true);
+        }
+      });
+    },
+  },
+
   should_limit_null_values_for_specific_keys_in_active_movies_and_tvshows: {
     query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
