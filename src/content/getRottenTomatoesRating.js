@@ -14,9 +14,14 @@ const { logErrors } = require("../utils/logErrors");
  *   url: string,
  *   usersRating: number|null,
  *   criticsRating: number|null,
+ *   usersRatingCount: number|null,
+ *   usersRatingLikedCount: number|null,
+ *   usersRatingNotLikedCount: number|null,
+ *   usersCertified: boolean|null,
  *   criticsRatingCount: number|null,
  *   criticsRatingLikedCount: number|null,
- *   criticsRatingNotLikedCount: number|null
+ *   criticsRatingNotLikedCount: number|null,
+ *   criticsCertified: boolean|null
  * }|null} An object containing the rating information, or null if not available
  */
 const getRottenTomatoesRating = async (
@@ -25,6 +30,9 @@ const getRottenTomatoesRating = async (
 ) => {
   let rottenTomatoesObj = null;
   let usersRating = null;
+  let usersRatingCount = null;
+  let usersRatingLikedCount = null;
+  let usersRatingNotLikedCount = null;
   let criticsRating = null;
   let criticsRatingCount = null;
   let criticsRatingLikedCount = null;
@@ -67,6 +75,23 @@ const getRottenTomatoesRating = async (
         if (isNaN(usersRating)) usersRating = null;
 
         if (usersRating) {
+          usersRatingLikedCount = parseInt(
+            mediaScorecard?.audienceScore?.likedCount,
+          );
+          if (isNaN(usersRatingLikedCount)) usersRatingLikedCount = null;
+
+          usersRatingNotLikedCount = parseInt(
+            mediaScorecard?.audienceScore?.notLikedCount,
+          );
+          if (isNaN(usersRatingNotLikedCount)) usersRatingNotLikedCount = null;
+
+          if (
+            usersRatingLikedCount !== null &&
+            usersRatingNotLikedCount !== null
+          ) {
+            usersRatingCount = usersRatingLikedCount + usersRatingNotLikedCount;
+          }
+
           usersCertified =
             typeof mediaScorecard?.audienceScore?.certified === "boolean"
               ? mediaScorecard.audienceScore.certified
@@ -112,6 +137,9 @@ const getRottenTomatoesRating = async (
           url: rottenTomatoesHomepage,
           usersRating,
           usersCertified,
+          usersRatingCount,
+          usersRatingLikedCount,
+          usersRatingNotLikedCount,
           criticsRating,
           criticsRatingCount,
           criticsRatingLikedCount,

@@ -103,6 +103,7 @@ const config = {
     "imdb",
     "is_active",
     "is_adult",
+    "certification",
     "item_type",
     "last_episode",
     "letterboxd",

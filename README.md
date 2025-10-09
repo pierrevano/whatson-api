@@ -148,6 +148,7 @@ Example of an item returned:
   "genres": "object", // Genres' names
   "image": "string", // URL to the item's image
   "is_adult": "boolean", // Indicates if the title is flagged as adult content on IMDb
+  "certification": "string", // Age classification assigned by IMDb (e.g., G, PG-13, R)
   "networks": "object", // Networks' names
   "production_companies": "object", // Production Companies' names
   "release_date": "string", // Release date of the item
@@ -274,7 +275,7 @@ Example of an item returned:
     "users_rating": "number", // Average rating given by IMDb users
     "users_rating_count": "number", // Total number of ratings submitted by IMDb users
     "popularity": "number", // Popularity score on IMDb
-    "top_ranking": "number" // Position of the title in IMDb top charts when available
+    "top_ranking": "number" // Position of the title in IMDb top charts
   },
   "letterboxd": {
     /* Information related to Letterboxd platform */
@@ -298,6 +299,9 @@ Example of an item returned:
     "id": "string", // Rotten Tomatoes specific identifier
     "url": "string", // URL to the Rotten Tomatoes page
     "users_rating": "number", // Average rating given by Rotten Tomatoes users
+    "users_rating_count": "number", // Total number of ratings submitted by Rotten Tomatoes users (calculated as liked + not liked votes)
+    "users_rating_liked_count": "number", // Total number of liked ratings submitted by Rotten Tomatoes users
+    "users_rating_not_liked_count": "number", // Total number of not liked ratings submitted by Rotten Tomatoes users
     "users_certified": "boolean", // Has the item received the Rotten Tomatoes "Verified Audience" certification
     "critics_rating": "number", // Average rating given by Rotten Tomatoes critics
     "critics_rating_count": "number", // Total number of ratings submitted by Rotten Tomatoes critics

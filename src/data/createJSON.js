@@ -129,8 +129,14 @@ const createJSON = async (
   );
   const trailer = await getTrailer(allocineHomepage, betaseriesHomepage);
   const seasonsNumber = await getSeasonsNumber(allocineHomepage, tmdbData);
-  const { usersRating, usersRatingCount, isAdult, runtime, topRanking } =
-    await getImdbRating(imdbHomepage);
+  const {
+    usersRating,
+    usersRatingCount,
+    isAdult,
+    runtime,
+    certification,
+    topRanking,
+  } = await getImdbRating(imdbHomepage);
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
     allocineURL,
@@ -259,6 +265,10 @@ const createJSON = async (
           id: rottenTomatoesRating.id,
           url: rottenTomatoesRating.url,
           users_rating: rottenTomatoesRating.usersRating,
+          users_rating_count: rottenTomatoesRating.usersRatingCount,
+          users_rating_liked_count: rottenTomatoesRating.usersRatingLikedCount,
+          users_rating_not_liked_count:
+            rottenTomatoesRating.usersRatingNotLikedCount,
           users_certified: rottenTomatoesRating.usersCertified,
           critics_rating: rottenTomatoesRating.criticsRating,
           critics_rating_count: rottenTomatoesRating.criticsRatingCount,
@@ -337,6 +347,7 @@ const createJSON = async (
     genres,
     image: allocineFirstInfo.image,
     is_adult: isAdult,
+    certification,
     networks,
     production_companies: productionCompanies,
     release_date: allocineFirstInfo?.releaseDate,
