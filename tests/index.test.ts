@@ -1365,8 +1365,7 @@ const params = {
   },
 
   should_return_all_seasons_on_wrong_filtered_seasons_value: {
-    query:
-      "?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=wrong_value",
+    query: `?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=wrong_value&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       let hasSeason1 = false;
       let hasSeason2 = false;
