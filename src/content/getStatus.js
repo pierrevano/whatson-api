@@ -21,6 +21,7 @@ const getStatus = async (allocineHomepage, status) => {
       case "Pilote":
         return "Pilot";
       case "Terminée":
+      case "mini-série":
         return "Ended";
       case "":
         return "Unknown";

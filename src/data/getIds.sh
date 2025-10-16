@@ -38,6 +38,7 @@ if [[ $TYPE == "movie" ]]; then
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_films.txt
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_films.txt
   TRAKT_PATH=".[0].movie.ids."
+  IMDB_CHART_URL="https://www.imdb.com/chart/moviemeter/"
 elif [[ $TYPE == "tvshow" ]]; then
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
@@ -54,6 +55,7 @@ elif [[ $TYPE == "tvshow" ]]; then
   POPULARITY_ASSETS_PATH=./src/assets/popularity_ids_series.txt
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_series.txt
   TRAKT_PATH=".[0].show.ids."
+  IMDB_CHART_URL="https://www.imdb.com/chart/tvmeter/"
 else
   echo "Item type should be either `movie` or `tvshow`"
   exit 1
@@ -156,6 +158,41 @@ remove_files () {
   else
     sed -i '' "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
   fi
+}
+
+update_imdb_popularity_flags () {
+  local json
+
+  json=$(curl -s -H "User-Agent: $USER_AGENT" "$IMDB_CHART_URL" | grep -o '<script id="__NEXT_DATA__" type="application/json">.*</script>' | sed 's/<script id="__NEXT_DATA__" type="application\/json">//; s/<\/script>//')
+  if [[ -z $json ]]; then
+    return
+  fi
+
+  json=$(echo "$json" | sed "s/<script>if(typeof uet === 'function'){ uet('be', 'LoadFooterJS', {wb: 1}); }<\/script>//")
+
+  echo "$json" | jq -r '.props.pageProps.pageData.chartTitles.edges[]?.node.id | select(. != null)' > ./temp_imdb_chart_ids 2>/dev/null
+
+  if [[ ! -s ./temp_imdb_chart_ids ]]; then
+    rm -f ./temp_imdb_chart_ids
+    return
+ fi
+
+  local ids_count
+  ids_count=$(grep -c '^tt[0-9]\+' ./temp_imdb_chart_ids)
+  if [[ $ids_count -ne 100 ]]; then
+    rm -f ./temp_imdb_chart_ids
+    return
+  fi
+
+  while IFS= read -r IMDB_CHART_ID; do
+    if [[ $SOURCE == "circleci" ]]; then
+      sed -i "/,$IMDB_CHART_ID,/ s/,FALSE$/,TRUE/" $FILMS_IDS_FILE_PATH
+    else
+      sed -i '' "/,$IMDB_CHART_ID,/ s/,FALSE$/,TRUE/" $FILMS_IDS_FILE_PATH
+    fi
+  done < ./temp_imdb_chart_ids
+
+  rm -f ./temp_imdb_chart_ids
 }
 
 set_default_values_if_empty () {
@@ -746,6 +783,8 @@ do
     FILMS_INDEX_NUMBER=$[$FILMS_INDEX_NUMBER+1] FILM_ID=$[$FILM_ID+1]
   done
 done
+
+update_imdb_popularity_flags
 
 LOCAL_LINES=$(wc -l < "$FILMS_IDS_FILE_PATH" | awk '{print $1}')
 REMOTE_LINES=$(curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" | wc -l | awk '{print $1}')

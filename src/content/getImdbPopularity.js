@@ -31,19 +31,48 @@ const getImdbPopularity = async (imdbHomepage, allocineURL, item_type) => {
       "getImdbPopularity",
     );
 
+    let popularity = null;
+    const jsonText = $("#__NEXT_DATA__").html();
+
+    if (jsonText) {
+      try {
+        const nextData = JSON.parse(jsonText);
+        const nextPopularity =
+          nextData?.props?.pageProps?.aboveTheFoldData?.meterRanking
+            ?.currentRank;
+        const parsedPopularity = Number(nextPopularity);
+        if (Number.isFinite(parsedPopularity)) {
+          popularity = parsedPopularity;
+        }
+      } catch (parseError) {
+        logErrors(parseError, imdbHomepage, "getImdbPopularity.parseNextData");
+      }
+    }
+
+    if (popularity === null) {
+      const rawPopularity = $(
+        'div[data-testid="hero-rating-bar__popularity__score"]',
+      )
+        .first()
+        .text()
+        .trim();
+      if (rawPopularity !== "") {
+        const fallbackPopularity = parseInt(
+          rawPopularity.replace(/,/g, ""),
+          10,
+        );
+        popularity = Number.isNaN(fallbackPopularity)
+          ? null
+          : fallbackPopularity;
+      }
+    }
+
     const allocinePopularity = (
       await getAllocinePopularity(allocineURL, item_type)
     ).popularity;
-    const rawPopularity = $(
-      'div[data-testid="hero-rating-bar__popularity__score"]',
-    )
-      .first()
-      .text()
-      .trim();
-    const popularity =
-      rawPopularity !== "" ? parseInt(rawPopularity.replace(/,/g, "")) : null;
-
     const popularityResult =
+      typeof popularity === "number" &&
+      typeof allocinePopularity === "number" &&
       popularity - allocinePopularity > config.maxPopularityDiff
         ? null
         : popularity;

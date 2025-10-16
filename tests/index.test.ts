@@ -890,6 +890,30 @@ function checkSingleItemId(items, expectedId) {
   expect(items[0].tmdb.id).toBe(expectedId);
 }
 
+const SINGLE_RATING_ALLOWED_DELTA = 0.2;
+
+const createSingleRatingsFilterExpectation = ({ getRating, divisor = 1 }) => {
+  return (items) => {
+    items.forEach((item) => {
+      const rating = getRating(item);
+
+      expect(rating).not.toBeNull();
+      expect(rating).not.toBeUndefined();
+      expect(typeof rating).toBe("number");
+      expect(Number.isFinite(rating)).toBe(true);
+      expect(typeof item.ratings_average).toBe("number");
+
+      const normalizedRating = rating / divisor;
+      const roundedAverage =
+        Math.round((normalizedRating + Number.EPSILON) * 10) / 10;
+
+      expect(
+        Math.abs(item.ratings_average - roundedAverage),
+      ).toBeLessThanOrEqual(SINGLE_RATING_ALLOWED_DELTA);
+    });
+  };
+};
+
 /**
  * An object containing various query parameters and their expected results.
  * @type {Record<string, { query: string, expectedResult: (items: any) => void }>}
@@ -1797,6 +1821,143 @@ const params = {
 
       items.forEach((item, index) => {
         expect(item.ratings_average).toEqual(results[index].ratings_average);
+      });
+    },
+  },
+
+  allocine_critics_rating_present: {
+    query: "?ratings_filters=allocine_critics",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.allocine?.critics_rating,
+    }),
+  },
+
+  allocine_users_rating_present: {
+    query: "?ratings_filters=allocine_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.allocine?.users_rating,
+    }),
+  },
+
+  betaseries_users_rating_present: {
+    query: "?ratings_filters=betaseries_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.betaseries?.users_rating,
+    }),
+  },
+
+  imdb_users_rating_present: {
+    query: "?ratings_filters=imdb_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.imdb?.users_rating,
+      divisor: 2,
+    }),
+  },
+
+  metacritic_critics_rating_present: {
+    query: "?ratings_filters=metacritic_critics",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.metacritic?.critics_rating,
+      divisor: 20,
+    }),
+  },
+
+  metacritic_users_rating_present: {
+    query: "?ratings_filters=metacritic_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.metacritic?.users_rating,
+      divisor: 2,
+    }),
+  },
+
+  rottentomatoes_critics_rating_present: {
+    query: "?ratings_filters=rottentomatoes_critics",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.rotten_tomatoes?.critics_rating,
+      divisor: 20,
+    }),
+  },
+
+  rottentomatoes_users_rating_present: {
+    query: "?ratings_filters=rottentomatoes_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.rotten_tomatoes?.users_rating,
+      divisor: 20,
+    }),
+  },
+
+  letterboxd_users_rating_present: {
+    query: "?ratings_filters=letterboxd_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.letterboxd?.users_rating,
+    }),
+  },
+
+  senscritique_users_rating_present: {
+    query: "?ratings_filters=senscritique_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.senscritique?.users_rating,
+      divisor: 2,
+    }),
+  },
+
+  tmdb_users_rating_present: {
+    query: "?ratings_filters=tmdb_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.tmdb?.users_rating,
+      divisor: 2,
+    }),
+  },
+
+  trakt_users_rating_present: {
+    query: "?ratings_filters=trakt_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.trakt?.users_rating,
+      divisor: 20,
+    }),
+  },
+
+  tvtime_users_rating_present: {
+    query: "?ratings_filters=tvtime_users",
+    expectedResult: createSingleRatingsFilterExpectation({
+      getRating: (item) => item.tv_time?.users_rating,
+      divisor: 2,
+    }),
+  },
+
+  ratings_average_when_selecting_three_sources: {
+    query: "?ratings_filters=imdb_users,allocine_users,metacritic_users",
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        const allocineRating = item.allocine?.users_rating;
+        const imdbRating = item.imdb?.users_rating;
+        const metacriticRating = item.metacritic?.users_rating;
+
+        const ratings = [
+          { value: allocineRating, divisor: 1 },
+          { value: imdbRating, divisor: 2 },
+          { value: metacriticRating, divisor: 2 },
+        ];
+
+        const numericRatings = ratings.filter(({ value }) => {
+          return typeof value === "number" && Number.isFinite(value);
+        });
+
+        expect(typeof item.ratings_average).toBe("number");
+        expect(Number.isFinite(item.ratings_average)).toBe(true);
+
+        const normalizedRatings = numericRatings.map(
+          ({ value, divisor }) => value / divisor,
+        );
+
+        const average =
+          normalizedRatings.reduce((sum, rating) => sum + rating, 0) /
+          normalizedRatings.length;
+        const roundedAverage = Math.round((average + Number.EPSILON) * 10) / 10;
+
+        expect(
+          Math.abs(item.ratings_average - roundedAverage),
+        ).toBeLessThanOrEqual(SINGLE_RATING_ALLOWED_DELTA);
       });
     },
   },
