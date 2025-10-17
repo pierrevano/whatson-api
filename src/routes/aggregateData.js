@@ -43,7 +43,10 @@ const collectionData = database.collection(config.collectionName);
  * @param {string|undefined} seasons_number_query - Seasons count filter for tvshows.
  * @param {string|number|undefined} filtered_seasons_query - Seasons to keep when trimming episode lists.
  * @param {string|undefined} status_query - Comma-separated list of show statuses to include.
- * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: { is_active: boolean }, is_adult_item: { is_adult: boolean } }>} Aggregated items along with paging info and the resolved activity flag.
+ * @param {string|undefined} top_ranking_order_query - Desired ordering for IMDb top ranking (`asc` or `desc`).
+ * @param {string|undefined} mojo_rank_order_query - Desired ordering for Box Office Mojo rank (`asc` or `desc`).
+ * @param {string|undefined} mojo_lifetime_gross_order_query - Desired ordering for Box Office Mojo lifetime gross (`asc` or `desc`).
+ * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: { is_active: boolean } }>} Aggregated items along with paging info and the resolved activity flag.
  */
 const aggregateData = async (
   append_to_response,
@@ -69,6 +72,9 @@ const aggregateData = async (
   seasons_number_query,
   filtered_seasons_query,
   status_query,
+  top_ranking_order_query,
+  mojo_rank_order_query,
+  mojo_lifetime_gross_order_query,
 ) => {
   const critics_rating_details =
     append_to_response &&
@@ -179,6 +185,33 @@ const aggregateData = async (
   const status =
     typeof status_query !== "undefined" && status_query ? status_query : "";
 
+  const parseSortOrder = (value) => {
+    if (typeof value === "undefined" || value === null) {
+      return null;
+    }
+    const normalized = String(value).toLowerCase();
+    return normalized === "asc" || normalized === "desc" ? normalized : null;
+  };
+
+  const top_ranking_order = parseSortOrder(top_ranking_order_query);
+  const has_top_ranking_order = top_ranking_order !== null;
+  const top_ranking_direction =
+    has_top_ranking_order && top_ranking_order === "desc" ? -1 : 1;
+
+  const mojo_rank_order = parseSortOrder(mojo_rank_order_query);
+  const has_mojo_rank_order = mojo_rank_order !== null;
+  const mojo_rank_direction =
+    has_mojo_rank_order && mojo_rank_order === "desc" ? -1 : 1;
+
+  const mojo_lifetime_gross_order = parseSortOrder(
+    mojo_lifetime_gross_order_query,
+  );
+  const has_mojo_lifetime_gross_order = mojo_lifetime_gross_order !== null;
+  const mojo_lifetime_gross_direction =
+    has_mojo_lifetime_gross_order && mojo_lifetime_gross_order === "desc"
+      ? -1
+      : 1;
+
   const addFields_popularity_and_ratings = {
     $addFields: {
       popularity_average: { $avg: popularity_filters },
@@ -197,6 +230,43 @@ const aggregateData = async (
           Infinity,
           { $avg: popularity_filters },
         ],
+      },
+      mojoLifetimeGrossNumeric: {
+        $let: {
+          vars: {
+            sanitized: {
+              $trim: {
+                input: {
+                  $replaceAll: {
+                    input: {
+                      $replaceAll: {
+                        input: { $ifNull: ["$mojo.lifetime_gross", ""] },
+                        find: { $literal: "$" },
+                        replacement: "",
+                      },
+                    },
+                    find: ",",
+                    replacement: "",
+                  },
+                },
+              },
+            },
+          },
+          in: {
+            $cond: [
+              { $eq: ["$$sanitized", ""] },
+              null,
+              {
+                $convert: {
+                  input: "$$sanitized",
+                  to: "double",
+                  onError: null,
+                  onNull: null,
+                },
+              },
+            ],
+          },
+        },
       },
     },
   };
@@ -329,6 +399,20 @@ const aggregateData = async (
     }
   }
 
+  if (has_top_ranking_order) {
+    matchConditions.push({ "imdb.top_ranking": { $type: "number" } });
+    matchConditions.push({ "imdb.top_ranking": { $gt: 0 } });
+  }
+
+  if (has_mojo_rank_order) {
+    matchConditions.push({ "mojo.rank": { $type: "number" } });
+    matchConditions.push({ "mojo.rank": { $gt: 0 } });
+  }
+
+  if (has_mojo_lifetime_gross_order) {
+    matchConditions.push({ "mojo.lifetime_gross": { $type: "string" } });
+  }
+
   const match_min_ratings_and_release_date = {
     $match: {
       $and: matchConditions,
@@ -337,12 +421,31 @@ const aggregateData = async (
 
   const limit_results = { $limit: limit };
   const skip_results = { $skip: (page - 1) * limit };
-  const sort_popularity_and_ratings = {
+  const additionalSort = {};
+
+  if (has_top_ranking_order) {
+    additionalSort["imdb.top_ranking"] = top_ranking_direction;
+  }
+
+  if (has_mojo_rank_order) {
+    additionalSort["mojo.rank"] = mojo_rank_direction;
+  }
+
+  if (has_mojo_lifetime_gross_order) {
+    additionalSort.mojoLifetimeGrossNumeric = mojo_lifetime_gross_direction;
+  }
+
+  const baseSort = {
+    sortAvgField: 1,
+    popularity_average: 1,
+    ratings_average: -1,
+    title: 1,
+  };
+
+  const sort_stage = {
     $sort: {
-      sortAvgField: 1,
-      popularity_average: 1,
-      ratings_average: -1,
-      title: 1,
+      ...additionalSort,
+      ...baseSort,
     },
   };
 
@@ -351,6 +454,7 @@ const aggregateData = async (
     $project: {
       releaseDateAsDate: 0,
       sortAvgField: 0,
+      mojoLifetimeGrossNumeric: 0,
       ...(critics_rating_details
         ? {}
         : { "allocine.critics_rating_details": 0 }),
@@ -367,7 +471,7 @@ const aggregateData = async (
       results: [
         addFields_popularity_and_ratings,
         match_min_ratings_and_release_date,
-        sort_popularity_and_ratings,
+        sort_stage,
         remove_keys,
         skip_results,
         limit_results,

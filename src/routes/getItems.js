@@ -14,7 +14,7 @@ const database = client.db(config.dbName);
 const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
 /**
- * Handles the public `/items` endpoint by translating query parameters into a Mongo aggregation
+ * Handles the public `/` endpoint by translating query parameters into a Mongo aggregation
  * pipeline, enriching the response when identifier searches are detected, and delegating the
  * response serialization to the shared request helpers.
  *
@@ -50,6 +50,9 @@ const getItems = async (req, res) => {
       production_companies: production_companies_query,
       ratings_filters: ratings_filters_query,
       release_date: release_date_query,
+      top_ranking_order: top_ranking_order_query,
+      mojo_rank_order: mojo_rank_order_query,
+      mojo_lifetime_gross_order: mojo_lifetime_gross_order_query,
       seasons_number: seasons_number_query,
       status: status_query,
       users_certified: is_users_certified_query,
@@ -85,6 +88,9 @@ const getItems = async (req, res) => {
       seasons_number_query,
       filtered_seasons_query,
       status_query,
+      top_ranking_order_query,
+      mojo_rank_order_query,
+      mojo_lifetime_gross_order_query,
     );
     const results = items && items.length > 0 ? items[0].results : [];
     const total_results =

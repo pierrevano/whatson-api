@@ -67,6 +67,9 @@ const getId = async (req, res) => {
           undefined,
           undefined,
           undefined,
+          undefined,
+          undefined,
+          undefined,
         );
         const filteredResults = items[0].results.filter((result) => {
           return result.item_type === item_type;

@@ -2641,6 +2641,214 @@ const params = {
         expect(item).not.toHaveProperty("highest_episode");
       }),
   },
+
+  should_sort_by_imdb_top_ranking_ascending: {
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      let previousRanking = null;
+      let smallestRanking = Infinity;
+
+      items.forEach((item) => {
+        expect(item.imdb).toBeDefined();
+        expect(typeof item.imdb.top_ranking).toBe("number");
+        expect(item.imdb.top_ranking).toBeGreaterThan(0);
+
+        smallestRanking = Math.min(smallestRanking, item.imdb.top_ranking);
+
+        if (previousRanking) {
+          expect(item.imdb.top_ranking).toBeGreaterThanOrEqual(previousRanking);
+        }
+
+        previousRanking = item.imdb.top_ranking;
+      });
+
+      expect(items[0].imdb.top_ranking).toBe(smallestRanking);
+    },
+  },
+
+  should_sort_by_imdb_top_ranking_descending: {
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=desc&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      let previousRanking = null;
+      let largestRanking = -Infinity;
+
+      items.forEach((item) => {
+        expect(item.imdb).toBeDefined();
+        expect(typeof item.imdb.top_ranking).toBe("number");
+        expect(item.imdb.top_ranking).toBeGreaterThan(0);
+
+        largestRanking = Math.max(largestRanking, item.imdb.top_ranking);
+
+        if (previousRanking) {
+          expect(item.imdb.top_ranking).toBeLessThanOrEqual(previousRanking);
+        }
+
+        previousRanking = item.imdb.top_ranking;
+      });
+
+      expect(items[0].imdb.top_ranking).toBe(largestRanking);
+    },
+  },
+
+  should_keep_popularity_order_when_top_ranking_ties: {
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      let previousPopularity = null;
+      let previousTopRanking = null;
+
+      items.forEach((item) => {
+        expect(item.imdb).toBeDefined();
+        expect(typeof item.imdb.top_ranking).toBe("number");
+        expect(item.imdb.top_ranking).toBeGreaterThan(0);
+
+        const popularity = item.popularity_average;
+
+        if (
+          previousTopRanking &&
+          item.imdb.top_ranking === previousTopRanking &&
+          popularity &&
+          previousPopularity
+        ) {
+          expect(popularity).toBeGreaterThanOrEqual(previousPopularity);
+        }
+
+        previousPopularity = popularity;
+        previousTopRanking = item.imdb.top_ranking;
+      });
+    },
+  },
+
+  should_fallback_to_popularity_when_top_ranking_order_invalid: {
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=invalid&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      let previousPopularity = -Infinity;
+      let sawMissingTopRanking = false;
+
+      items.forEach((item) => {
+        const popularity =
+          typeof item.popularity_average === "number"
+            ? item.popularity_average
+            : Number.POSITIVE_INFINITY;
+
+        expect(popularity).toBeGreaterThanOrEqual(previousPopularity);
+        previousPopularity = popularity;
+
+        if (!item.imdb || typeof item.imdb.top_ranking !== "number") {
+          sawMissingTopRanking = true;
+        }
+      });
+
+      expect(sawMissingTopRanking).toBe(true);
+    },
+  },
+
+  should_sort_by_mojo_rank_ascending: {
+    query: `?item_type=movie,tvshow&is_active=true,false&mojo_rank_order=asc&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      let previousRank = null;
+      let smallestRank = Infinity;
+
+      items.forEach((item) => {
+        expect(item.mojo).toBeDefined();
+        expect(typeof item.mojo.rank).toBe("number");
+        expect(item.mojo.rank).toBeGreaterThan(0);
+
+        smallestRank = Math.min(smallestRank, item.mojo.rank);
+
+        if (previousRank) {
+          expect(item.mojo.rank).toBeGreaterThanOrEqual(previousRank);
+        }
+
+        previousRank = item.mojo.rank;
+      });
+
+      expect(items[0].mojo.rank).toBe(smallestRank);
+    },
+  },
+
+  should_sort_by_mojo_lifetime_gross_descending: {
+    query: `?item_type=movie,tvshow&is_active=true,false&mojo_lifetime_gross_order=desc&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      const parseGross = (value) => Number(String(value).replace(/\$|,/g, ""));
+
+      let previousGross = Number.POSITIVE_INFINITY;
+      let largestGross = -Infinity;
+
+      items.forEach((item) => {
+        expect(item.mojo).toBeDefined();
+        expect(typeof item.mojo.lifetime_gross).toBe("string");
+
+        const gross = parseGross(item.mojo.lifetime_gross);
+        expect(Number.isFinite(gross)).toBe(true);
+        expect(gross).toBeLessThanOrEqual(previousGross);
+
+        largestGross = Math.max(largestGross, gross);
+        previousGross = gross;
+      });
+
+      const firstGross = parseGross(items[0].mojo.lifetime_gross);
+      expect(firstGross).toBe(largestGross);
+    },
+  },
+
+  should_prioritize_all_sorting_orders: {
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&mojo_rank_order=asc&mojo_lifetime_gross_order=desc&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      const parseGross = (value) => Number(String(value).replace(/\$|,/g, ""));
+
+      items.forEach((item) => {
+        expect(item.imdb).toBeDefined();
+        expect(typeof item.imdb.top_ranking).toBe("number");
+        expect(item.mojo).toBeDefined();
+        expect(typeof item.mojo.rank).toBe("number");
+        expect(typeof item.mojo.lifetime_gross).toBe("string");
+        expect(Number.isFinite(parseGross(item.mojo.lifetime_gross))).toBe(
+          true,
+        );
+      });
+
+      const comparator = (a, b) => {
+        if (a.imdb.top_ranking !== b.imdb.top_ranking) {
+          return a.imdb.top_ranking - b.imdb.top_ranking;
+        }
+        if (a.mojo.rank !== b.mojo.rank) {
+          return a.mojo.rank - b.mojo.rank;
+        }
+        return (
+          parseGross(b.mojo.lifetime_gross) - parseGross(a.mojo.lifetime_gross)
+        );
+      };
+
+      const expectedOrder = items
+        .slice()
+        .sort(comparator)
+        .map((item) => item.id);
+      const actualOrder = items.map((item) => item.id);
+
+      expect(actualOrder).toEqual(expectedOrder);
+    },
+  },
 };
 
 /**

@@ -50,7 +50,6 @@ const limiter = (req, res, next) => {
     req.query.api_key !== undefined &&
     config.internalApiKey !== undefined &&
     req.query.api_key === config.internalApiKey;
-  console.log("Internal API key:", config.internalApiKey);
   console.log("API key validity:", isInternalApiKeyValid);
 
   const rateLimiter = isInternalApiKeyValid ? higherLimiter : defaultLimiter;
