@@ -52,7 +52,6 @@ const getItems = async (req, res) => {
       release_date: release_date_query,
       top_ranking_order: top_ranking_order_query,
       mojo_rank_order: mojo_rank_order_query,
-      mojo_lifetime_gross_order: mojo_lifetime_gross_order_query,
       seasons_number: seasons_number_query,
       status: status_query,
       users_certified: is_users_certified_query,
@@ -90,7 +89,6 @@ const getItems = async (req, res) => {
       status_query,
       top_ranking_order_query,
       mojo_rank_order_query,
-      mojo_lifetime_gross_order_query,
     );
     const results = items && items.length > 0 ? items[0].results : [];
     const total_results =

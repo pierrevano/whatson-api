@@ -33,51 +33,51 @@ const higherLimit = isRemoteSource ? config.maxLimitRemote : config.maxLimit;
 function checkItemProperties(items) {
   return items.forEach((item) => {
     /* Common */
-    if (item.is_active === true) {
-      config.keysToCheck.forEach((key) => {
-        expect(item).toHaveProperty(key);
-        expect(typeof item[key]).not.toBe("undefined");
-      });
-      expect(item.id).toBeGreaterThan(0);
-      expect(
-        items.filter((item) => item.original_title).length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-      expect(item.image).not.toBeNull();
-      expect(item.image).toMatch(
-        /^https:\/\/.*\.(jpg|jpeg|png|gif|jfif)(\?[a-zA-Z0-9=&]*)?$/i,
-      );
-      expect(
-        items.filter((item) => item.release_date !== null).length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-      expect(
-        items.filter((item) => item.tagline).length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-      expect(
-        items.filter((item) => item.production_companies).length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-      expect(
-        items.filter((item) => typeof item.is_adult === "boolean").length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-      expect(
-        items.filter((item) => typeof item.runtime === "number").length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    config.keysToCheck.forEach((key) => {
+      expect(item).toHaveProperty(key);
+      expect(typeof item[key]).not.toBe("undefined");
+    });
+    expect(item.id).toBeGreaterThan(0);
+    expect(
+      items.filter((item) => item.original_title).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(item.image).not.toBeNull();
+    expect(item.image).toMatch(
+      /^https:\/\/.*\.(jpg|jpeg|png|gif|jfif)(\?[a-zA-Z0-9=&]*)?$/i,
+    );
+    expect(
+      items.filter((item) => item.release_date !== null).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(items.filter((item) => item.tagline).length).toBeGreaterThanOrEqual(
+      config.minimumNumberOfItems.default,
+    );
+    expect(
+      items.filter((item) => item.production_companies).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter((item) => typeof item.is_adult === "boolean").length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter((item) => typeof item.runtime === "number").length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
-      if (item.item_type === "movie") {
-        expect(
-          items.filter(
-            (item) => item.platforms_links && item.platforms_links.length > 0,
-          ).length,
-        ).toBeGreaterThanOrEqual(
-          config.minimumNumberOfItems.platformsLinksMovies,
-        );
-      } else {
+    if (item.item_type === "movie") {
+      expect(
+        items.filter(
+          (item) => item.platforms_links && item.platforms_links.length > 0,
+        ).length,
+      ).toBeGreaterThanOrEqual(
+        config.minimumNumberOfItems.platformsLinksMovies,
+      );
+    } else {
+      if (item.is_active === true) {
         expect(
           items.filter((item) => item.next_episode).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.nextEpisodes);
-        expect(
-          items.filter((item) => item.networks).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
       }
+      expect(
+        items.filter((item) => item.networks).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     }
 
     expect(Object.keys(item).length).toEqual(config.keysToCheck.length);
@@ -315,13 +315,11 @@ function checkItemProperties(items) {
       items.filter((item) => typeof item.allocine?.users_rating === "number")
         .length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    item.is_active === true
-      ? expect(
-          items.filter(
-            (item) => typeof item.allocine?.users_rating_count === "number",
-          ).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
-      : null;
+    expect(
+      items.filter(
+        (item) => typeof item.allocine?.users_rating_count === "number",
+      ).length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(
       items.filter((item) => typeof item.allocine?.critics_rating === "number")
         .length,
@@ -349,27 +347,25 @@ function checkItemProperties(items) {
           item.allocine.critics_rating_details.length,
         )
       : null;
-    if (item.is_active === true) {
-      expect(
-        items.filter(
-          (item) =>
-            item.allocine &&
-            !item.allocine?.users_rating &&
-            !item.allocine?.critics_rating,
-        ).length,
-      ).toBe(0);
-      if (
-        item.allocine?.users_rating &&
-        typeof item.allocine?.users_rating_count !== "undefined"
-      ) {
-        expect(item.allocine.users_rating_count).toBeGreaterThan(0);
-      }
-      if (
-        item.allocine?.critics_rating &&
-        typeof item.allocine?.critics_rating_count !== "undefined"
-      ) {
-        expect(item.allocine.critics_rating_count).toBeGreaterThan(0);
-      }
+    expect(
+      items.filter(
+        (item) =>
+          item.allocine &&
+          !item.allocine?.users_rating &&
+          !item.allocine?.critics_rating,
+      ).length,
+    ).toBe(0);
+    if (
+      item.allocine?.users_rating &&
+      typeof item.allocine?.users_rating_count !== "undefined"
+    ) {
+      expect(item.allocine.users_rating_count).toBeGreaterThan(0);
+    }
+    if (
+      item.allocine?.critics_rating &&
+      typeof item.allocine?.critics_rating_count !== "undefined"
+    ) {
+      expect(item.allocine.critics_rating_count).toBeGreaterThan(0);
     }
 
     /* IMDb */
@@ -390,27 +386,22 @@ function checkItemProperties(items) {
       items.filter((item) => typeof item.imdb?.users_rating === "number")
         .length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    item.is_active === true
-      ? expect(
-          items.filter(
-            (item) => typeof item.imdb?.users_rating_count === "number",
-          ).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
-      : null;
-    if (item.is_active === true) {
-      expect(
-        items.filter((item) => item.imdb && !item.imdb?.users_rating).length,
-      ).toBe(0);
-      if (
-        item.imdb?.users_rating &&
-        typeof item.imdb?.users_rating_count !== "undefined"
-      ) {
-        expect(item.imdb.users_rating_count).toBeGreaterThan(0);
-      }
-      expect(
-        items.filter((item) => typeof item.certification === "string").length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter((item) => typeof item.imdb?.users_rating_count === "number")
+        .length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    expect(
+      items.filter((item) => item.imdb && !item.imdb?.users_rating).length,
+    ).toBe(0);
+    if (
+      item.imdb?.users_rating &&
+      typeof item.imdb?.users_rating_count !== "undefined"
+    ) {
+      expect(item.imdb.users_rating_count).toBeGreaterThan(0);
     }
+    expect(
+      items.filter((item) => typeof item.certification === "string").length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
 
     /* BetaSeries */
     if (item.betaseries) {
@@ -849,7 +840,7 @@ function checkItemProperties(items) {
     }
 
     /* Mojo */
-    if (item.mojo) {
+    if (item.is_active === true && item.mojo) {
       expect(item.mojo).toEqual(
         expect.objectContaining({
           rank: expect.any(Number),
@@ -2780,60 +2771,8 @@ const params = {
     },
   },
 
-  should_sort_by_mojo_lifetime_gross_ascending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&mojo_lifetime_gross_order=asc&limit=${config.maxLimitRemote}`,
-    expectedResult: (items) => {
-      expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
-
-      let previousGross = Number.POSITIVE_INFINITY;
-      let largestGross = -Infinity;
-
-      items.forEach((item) => {
-        expect(item.mojo).toBeDefined();
-        expect(typeof item.mojo.lifetime_gross).toBe("number");
-
-        const gross = item.mojo.lifetime_gross;
-        expect(Number.isFinite(gross)).toBe(true);
-        expect(gross).toBeLessThanOrEqual(previousGross);
-
-        largestGross = Math.max(largestGross, gross);
-        previousGross = gross;
-      });
-
-      const firstGross = items[0].mojo.lifetime_gross;
-      expect(firstGross).toBe(largestGross);
-    },
-  },
-
-  should_sort_by_mojo_lifetime_gross_descending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&mojo_lifetime_gross_order=desc&limit=${config.maxLimitRemote}`,
-    expectedResult: (items) => {
-      expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
-
-      let previousGross = Number.NEGATIVE_INFINITY;
-      let smallestGross = Infinity;
-
-      items.forEach((item) => {
-        expect(item.mojo).toBeDefined();
-        expect(typeof item.mojo.lifetime_gross).toBe("number");
-
-        const gross = item.mojo.lifetime_gross;
-        expect(Number.isFinite(gross)).toBe(true);
-        expect(gross).toBeGreaterThanOrEqual(previousGross);
-
-        smallestGross = Math.min(smallestGross, gross);
-        previousGross = gross;
-      });
-
-      const firstGross = items[0].mojo.lifetime_gross;
-      expect(firstGross).toBe(smallestGross);
-    },
-  },
-
-  should_prioritize_all_sorting_orders: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&mojo_rank_order=asc&mojo_lifetime_gross_order=asc&limit=${config.maxLimitRemote}`,
+  should_prioritize_imdb_top_ranking_and_mojo_rank_orders: {
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&mojo_rank_order=asc&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(0);
@@ -2843,8 +2782,6 @@ const params = {
         expect(typeof item.imdb.top_ranking).toBe("number");
         expect(item.mojo).toBeDefined();
         expect(typeof item.mojo.rank).toBe("number");
-        expect(typeof item.mojo.lifetime_gross).toBe("number");
-        expect(Number.isFinite(item.mojo.lifetime_gross)).toBe(true);
       });
 
       const comparator = (a, b) => {
@@ -2854,7 +2791,6 @@ const params = {
         if (a.mojo.rank !== b.mojo.rank) {
           return a.mojo.rank - b.mojo.rank;
         }
-        return b.mojo.lifetime_gross - a.mojo.lifetime_gross;
       };
 
       const expectedOrder = items

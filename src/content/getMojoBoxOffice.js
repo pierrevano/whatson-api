@@ -5,8 +5,7 @@ const { config } = require("../config");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Finds the Box Office Mojo entry for a given IMDb id, ensuring the lifetime gross
- * value remains numeric (USD) for downstream consumers.
+ * Finds the Box Office Mojo entry for a given IMDb id.
  *
  * @param {Array<{ imdbId: string, rank: number, url: string, lifetimeGross: number|null }>} mojoBoxOfficeArray
  * @param {string} imdbId
@@ -20,8 +19,7 @@ async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
 
 /**
  * Scrapes a single Box Office Mojo table page and normalises the raw values.
- * Lifetime gross values are converted to numbers (USD) so the API can expose them
- * without additional formatting.
+ * Lifetime gross values are converted to numbers (USD).
  *
  * @param {number} offset
  * @returns {Promise<Array<{ rank: number, url: string|null, imdbId: string|null, lifetimeGross: number|null }>|null>}
@@ -102,7 +100,7 @@ async function fetchTableData(offset) {
 
 /**
  * Iterates through the Box Office Mojo lifetime gross chart and returns the
- * consolidated dataset with numeric lifetime grosses.
+ * consolidated dataset.
  *
  * @param {string} item_type
  * @returns {Promise<Array<{ rank: number, url: string|null, imdbId: string|null, lifetimeGross: number|null }>>}

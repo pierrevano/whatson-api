@@ -19,7 +19,6 @@ const collectionData = database.collection(config.collectionName);
  * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.
  * It normalises query parameters, constructs dynamic `$match` stages, attaches optional lookups,
  * and returns both the raw pipeline results and paging metadata used by the HTTP layer.
- * The Box Office Mojo data is expected to already expose numeric `mojo.lifetime_gross` values.
  *
  * @param {string|undefined} append_to_response - Comma-separated list of extra fields to include.
  * @param {string|undefined} directors_query - Comma-separated directors filter.
@@ -46,7 +45,6 @@ const collectionData = database.collection(config.collectionName);
  * @param {string|undefined} status_query - Comma-separated list of show statuses to include.
  * @param {string|undefined} top_ranking_order_query - Desired ordering for IMDb top ranking (`asc` or `desc`).
  * @param {string|undefined} mojo_rank_order_query - Desired ordering for Box Office Mojo rank (`asc` or `desc`).
- * @param {string|undefined} mojo_lifetime_gross_order_query - Desired ordering for Box Office Mojo lifetime gross (`asc` or `desc`).
  * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: { is_active: boolean } }>} Aggregated items along with paging info and the resolved activity flag.
  */
 const aggregateData = async (
@@ -75,7 +73,6 @@ const aggregateData = async (
   status_query,
   top_ranking_order_query,
   mojo_rank_order_query,
-  mojo_lifetime_gross_order_query,
 ) => {
   const critics_rating_details =
     append_to_response &&
@@ -203,15 +200,6 @@ const aggregateData = async (
   const has_mojo_rank_order = mojo_rank_order !== null;
   const mojo_rank_direction =
     has_mojo_rank_order && mojo_rank_order === "desc" ? -1 : 1;
-
-  const mojo_lifetime_gross_order = parseSortOrder(
-    mojo_lifetime_gross_order_query,
-  );
-  const has_mojo_lifetime_gross_order = mojo_lifetime_gross_order !== null;
-  const mojo_lifetime_gross_direction =
-    has_mojo_lifetime_gross_order && mojo_lifetime_gross_order === "asc"
-      ? -1
-      : 1;
 
   const addFields_popularity_and_ratings = {
     $addFields: {
@@ -373,11 +361,6 @@ const aggregateData = async (
     matchConditions.push({ "mojo.rank": { $gt: 0 } });
   }
 
-  if (has_mojo_lifetime_gross_order) {
-    matchConditions.push({ "mojo.lifetime_gross": { $type: "number" } });
-    matchConditions.push({ "mojo.lifetime_gross": { $gt: 0 } });
-  }
-
   const match_min_ratings_and_release_date = {
     $match: {
       $and: matchConditions,
@@ -394,10 +377,6 @@ const aggregateData = async (
 
   if (has_mojo_rank_order) {
     additionalSort["mojo.rank"] = mojo_rank_direction;
-  }
-
-  if (has_mojo_lifetime_gross_order) {
-    additionalSort["mojo.lifetime_gross"] = mojo_lifetime_gross_direction;
   }
 
   const baseSort = {

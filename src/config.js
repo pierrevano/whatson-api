@@ -171,7 +171,6 @@ const config = {
     "title",
     "top_ranking_order",
     "mojo_rank_order",
-    "mojo_lifetime_gross_order",
     "users_certified",
   ],
   skippedItems: ["tt16358384"],
