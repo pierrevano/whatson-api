@@ -211,7 +211,7 @@ const schema = {
     /* Information related to Box Office Mojo platform */
     rank: "number", // Ranking according to Box Office Mojo
     url: "string", // URL to the Box Office Mojo page
-    lifetime_gross: "string", // Lifetime gross revenue (formatted as string with $)
+    lifetime_gross: "number", // Lifetime gross revenue in US dollars
   },
 
   updated_at: "string", // Timestamp of the last update

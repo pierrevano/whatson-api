@@ -34,7 +34,7 @@ const { getTVTimeRating } = require("../content/getTVTimeRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
- * @param {Object} allocineCriticsDetails - The AlloCiné critics details
+ * @param {string} allocineCriticsDetails - URL for the AlloCiné critics details page
  * @param {string} allocineURL - The AlloCiné URL
  * @param {string} allocineHomepage - The AlloCiné homepage URL
  * @param {number} allocineId - The AlloCiné ID

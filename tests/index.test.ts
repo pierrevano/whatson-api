@@ -856,17 +856,16 @@ function checkItemProperties(items) {
           url: expect.stringMatching(
             /^https:\/\/www\.boxofficemojo\.com\/title\/tt\d+\/?$/,
           ),
-          lifetime_gross: expect.stringMatching(
-            /^\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?$/,
-          ),
+          lifetime_gross: expect.any(Number),
         }),
       );
       expect(Number.isInteger(item.mojo.rank)).toBe(true);
       expect(item.mojo.rank).toBeGreaterThan(0);
+      expect(item.mojo.lifetime_gross).toBeGreaterThan(0);
     }
     if (item.is_active === true && item.item_type === "movie") {
       expect(
-        items.filter((item) => item.mojo?.lifetime_gross.charAt(0) === "$")
+        items.filter((item) => typeof item.mojo?.lifetime_gross === "number")
           .length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo);
       expect(
@@ -2781,22 +2780,20 @@ const params = {
     },
   },
 
-  should_sort_by_mojo_lifetime_gross_descending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&mojo_lifetime_gross_order=desc&limit=${config.maxLimitRemote}`,
+  should_sort_by_mojo_lifetime_gross_ascending: {
+    query: `?item_type=movie,tvshow&is_active=true,false&mojo_lifetime_gross_order=asc&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(0);
-
-      const parseGross = (value) => Number(String(value).replace(/\$|,/g, ""));
 
       let previousGross = Number.POSITIVE_INFINITY;
       let largestGross = -Infinity;
 
       items.forEach((item) => {
         expect(item.mojo).toBeDefined();
-        expect(typeof item.mojo.lifetime_gross).toBe("string");
+        expect(typeof item.mojo.lifetime_gross).toBe("number");
 
-        const gross = parseGross(item.mojo.lifetime_gross);
+        const gross = item.mojo.lifetime_gross;
         expect(Number.isFinite(gross)).toBe(true);
         expect(gross).toBeLessThanOrEqual(previousGross);
 
@@ -2804,28 +2801,50 @@ const params = {
         previousGross = gross;
       });
 
-      const firstGross = parseGross(items[0].mojo.lifetime_gross);
+      const firstGross = items[0].mojo.lifetime_gross;
       expect(firstGross).toBe(largestGross);
     },
   },
 
-  should_prioritize_all_sorting_orders: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&mojo_rank_order=asc&mojo_lifetime_gross_order=desc&limit=${config.maxLimitRemote}`,
+  should_sort_by_mojo_lifetime_gross_descending: {
+    query: `?item_type=movie,tvshow&is_active=true,false&mojo_lifetime_gross_order=desc&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(0);
 
-      const parseGross = (value) => Number(String(value).replace(/\$|,/g, ""));
+      let previousGross = Number.NEGATIVE_INFINITY;
+      let smallestGross = Infinity;
+
+      items.forEach((item) => {
+        expect(item.mojo).toBeDefined();
+        expect(typeof item.mojo.lifetime_gross).toBe("number");
+
+        const gross = item.mojo.lifetime_gross;
+        expect(Number.isFinite(gross)).toBe(true);
+        expect(gross).toBeGreaterThanOrEqual(previousGross);
+
+        smallestGross = Math.min(smallestGross, gross);
+        previousGross = gross;
+      });
+
+      const firstGross = items[0].mojo.lifetime_gross;
+      expect(firstGross).toBe(smallestGross);
+    },
+  },
+
+  should_prioritize_all_sorting_orders: {
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&mojo_rank_order=asc&mojo_lifetime_gross_order=asc&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
 
       items.forEach((item) => {
         expect(item.imdb).toBeDefined();
         expect(typeof item.imdb.top_ranking).toBe("number");
         expect(item.mojo).toBeDefined();
         expect(typeof item.mojo.rank).toBe("number");
-        expect(typeof item.mojo.lifetime_gross).toBe("string");
-        expect(Number.isFinite(parseGross(item.mojo.lifetime_gross))).toBe(
-          true,
-        );
+        expect(typeof item.mojo.lifetime_gross).toBe("number");
+        expect(Number.isFinite(item.mojo.lifetime_gross)).toBe(true);
       });
 
       const comparator = (a, b) => {
@@ -2835,9 +2854,7 @@ const params = {
         if (a.mojo.rank !== b.mojo.rank) {
           return a.mojo.rank - b.mojo.rank;
         }
-        return (
-          parseGross(b.mojo.lifetime_gross) - parseGross(a.mojo.lifetime_gross)
-        );
+        return b.mojo.lifetime_gross - a.mojo.lifetime_gross;
       };
 
       const expectedOrder = items

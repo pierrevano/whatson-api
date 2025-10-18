@@ -19,6 +19,7 @@ const collectionData = database.collection(config.collectionName);
  * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.
  * It normalises query parameters, constructs dynamic `$match` stages, attaches optional lookups,
  * and returns both the raw pipeline results and paging metadata used by the HTTP layer.
+ * The Box Office Mojo data is expected to already expose numeric `mojo.lifetime_gross` values.
  *
  * @param {string|undefined} append_to_response - Comma-separated list of extra fields to include.
  * @param {string|undefined} directors_query - Comma-separated directors filter.
@@ -208,7 +209,7 @@ const aggregateData = async (
   );
   const has_mojo_lifetime_gross_order = mojo_lifetime_gross_order !== null;
   const mojo_lifetime_gross_direction =
-    has_mojo_lifetime_gross_order && mojo_lifetime_gross_order === "desc"
+    has_mojo_lifetime_gross_order && mojo_lifetime_gross_order === "asc"
       ? -1
       : 1;
 
@@ -230,43 +231,6 @@ const aggregateData = async (
           Infinity,
           { $avg: popularity_filters },
         ],
-      },
-      mojoLifetimeGrossNumeric: {
-        $let: {
-          vars: {
-            sanitized: {
-              $trim: {
-                input: {
-                  $replaceAll: {
-                    input: {
-                      $replaceAll: {
-                        input: { $ifNull: ["$mojo.lifetime_gross", ""] },
-                        find: { $literal: "$" },
-                        replacement: "",
-                      },
-                    },
-                    find: ",",
-                    replacement: "",
-                  },
-                },
-              },
-            },
-          },
-          in: {
-            $cond: [
-              { $eq: ["$$sanitized", ""] },
-              null,
-              {
-                $convert: {
-                  input: "$$sanitized",
-                  to: "double",
-                  onError: null,
-                  onNull: null,
-                },
-              },
-            ],
-          },
-        },
       },
     },
   };
@@ -410,7 +374,8 @@ const aggregateData = async (
   }
 
   if (has_mojo_lifetime_gross_order) {
-    matchConditions.push({ "mojo.lifetime_gross": { $type: "string" } });
+    matchConditions.push({ "mojo.lifetime_gross": { $type: "number" } });
+    matchConditions.push({ "mojo.lifetime_gross": { $gt: 0 } });
   }
 
   const match_min_ratings_and_release_date = {
@@ -432,7 +397,7 @@ const aggregateData = async (
   }
 
   if (has_mojo_lifetime_gross_order) {
-    additionalSort.mojoLifetimeGrossNumeric = mojo_lifetime_gross_direction;
+    additionalSort["mojo.lifetime_gross"] = mojo_lifetime_gross_direction;
   }
 
   const baseSort = {
@@ -454,7 +419,6 @@ const aggregateData = async (
     $project: {
       releaseDateAsDate: 0,
       sortAvgField: 0,
-      mojoLifetimeGrossNumeric: 0,
       ...(critics_rating_details
         ? {}
         : { "allocine.critics_rating_details": 0 }),

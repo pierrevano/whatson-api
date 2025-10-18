@@ -9,9 +9,9 @@ const { logErrors } = require("./logErrors");
  * @async
  * @function getWhatsonResponse
  * @param {string} imdbId - The IMDb title ID to query.
- * @returns {Promise<Object|null>} - Returns the first result object from the API response,
- *                                        or `null` if no results are found or an error occurs.
- * @throws {Error} - Throws an error and exits the process if the API response status is not 200.
+ * @returns {Promise<Object|null|undefined>} Resolves with the first result object when present,
+ *     `null` when no results are found, or `undefined` when the request fails before a response is returned.
+ *     The process exits with code 1 when the remote answers with a non-200 status.
  */
 const getWhatsonResponse = async (imdbId) => {
   try {

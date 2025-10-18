@@ -4,11 +4,28 @@ const cheerio = require("cheerio");
 const { config } = require("../config");
 const { logErrors } = require("../utils/logErrors");
 
+/**
+ * Finds the Box Office Mojo entry for a given IMDb id, ensuring the lifetime gross
+ * value remains numeric (USD) for downstream consumers.
+ *
+ * @param {Array<{ imdbId: string, rank: number, url: string, lifetimeGross: number|null }>} mojoBoxOfficeArray
+ * @param {string} imdbId
+ * @param {string} item_type
+ * @returns {Promise<Object|null>}
+ */
 async function getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type) {
   const foundItem = mojoBoxOfficeArray.find((item) => item.imdbId === imdbId);
   return foundItem && item_type === "movie" ? foundItem : null;
 }
 
+/**
+ * Scrapes a single Box Office Mojo table page and normalises the raw values.
+ * Lifetime gross values are converted to numbers (USD) so the API can expose them
+ * without additional formatting.
+ *
+ * @param {number} offset
+ * @returns {Promise<Array<{ rank: number, url: string|null, imdbId: string|null, lifetimeGross: number|null }>|null>}
+ */
 async function fetchTableData(offset) {
   let tableData = [];
 
@@ -63,7 +80,15 @@ async function fetchTableData(offset) {
               rowData.imdbId = imdbMatch ? imdbMatch[1] : null;
             }
           }
-          if (i === 2) rowData.lifetimeGross = cellText;
+          if (i === 2) {
+            const sanitizedGross = cellText.replace(/\$|,/g, "");
+            const numericGross =
+              sanitizedGross === "" ? null : Number(sanitizedGross);
+            rowData.lifetimeGross =
+              numericGross !== null && Number.isFinite(numericGross)
+                ? numericGross
+                : null;
+          }
         });
 
       tableData.push(rowData);
@@ -75,6 +100,13 @@ async function fetchTableData(offset) {
   return tableData;
 }
 
+/**
+ * Iterates through the Box Office Mojo lifetime gross chart and returns the
+ * consolidated dataset with numeric lifetime grosses.
+ *
+ * @param {string} item_type
+ * @returns {Promise<Array<{ rank: number, url: string|null, imdbId: string|null, lifetimeGross: number|null }>>}
+ */
 const getMojoBoxOffice = async (item_type) => {
   let offset = 0;
   let allTableData = [];

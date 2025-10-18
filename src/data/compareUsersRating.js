@@ -41,7 +41,7 @@ async function hasTvShowEnded(status, imdbId) {
  * @param {string} imdbId - The IMDb ID of the item.
  * @param {boolean} isActive - Active status of the item.
  * @param {string} item_type - The type of item (movie or tvshow).
- * @param {Array<Object>} mojoBoxOfficeArray - Array of Mojo box office objects.
+ * @param {Array<Object>} mojoBoxOfficeArray - Array of Mojo box office objects with numeric `lifetimeGross` values (USD).
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
