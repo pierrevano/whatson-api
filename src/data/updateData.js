@@ -1,3 +1,4 @@
+const { writeFileSync } = require("fs");
 const csv = require("csvtojson");
 
 const { config } = require("../config");
@@ -98,15 +99,31 @@ async function checkStatus(service) {
     (a, b) => b.THEMOVIEDB_ID - a.THEMOVIEDB_ID,
   );
 
+  const mojoBoxOfficeArray =
+    getNodeVarsValues.skip_mojo === "skip_mojo"
+      ? []
+      : await getMojoBoxOffice(getNodeVarsValues.item_type);
+
   if (getNodeVarsValues.check_id) {
-    const imdbIdToUpdate = getNodeVarsValues.check_id;
+    const imdbIdsToUpdate =
+      getNodeVarsValues.check_id === "all_ids"
+        ? mojoBoxOfficeArray.map((item) => item.imdbId).filter(Boolean)
+        : [getNodeVarsValues.check_id];
     const filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) => {
-      return item.IMDB_ID === imdbIdToUpdate;
+      return imdbIdsToUpdate.includes(item.IMDB_ID);
     });
+
+    writeFileSync(
+      "./temp_mojo_box_office.json",
+      JSON.stringify(filteredByImdbId),
+      "utf-8",
+    );
 
     if (filteredByImdbId.length === 0) {
       console.log(
-        `IMDb ID ${imdbIdToUpdate} not found in the dataset. Aborting.`,
+        `IMDb ID${
+          imdbIdsToUpdate.length > 1 ? "s" : ""
+        } ${imdbIdsToUpdate.join(", ")} not found in the dataset. Aborting.`,
       );
       process.exit(0);
     }
@@ -212,11 +229,6 @@ async function checkStatus(service) {
       await checkDbIds(jsonArrayFromCSV, collectionData);
 
     const force = getNodeVarsValues.force === "force";
-
-    const mojoBoxOfficeArray =
-      getNodeVarsValues.skip_mojo === "skip_mojo"
-        ? []
-        : await getMojoBoxOffice(getNodeVarsValues.item_type);
 
     const { newOrUpdatedItems } = await loopItems(
       collectionData,

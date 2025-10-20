@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.11.2",
+  "version": "3.11.3",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,7 @@
     "update-local-stop": "npm run update-local-stop-movie && npm run update-local-stop-tvshow",
     "update-dataset": "bash src/data/checkIds.sh check movie && bash src/data/checkIds.sh check tvshow",
     "update-active-dataset": "bash src/data/checkIds.sh check movie active && bash src/data/checkIds.sh check tvshow active",
+    "update-all-ids-dataset": "bash src/data/checkIds.sh check movie all_ids",
     "confirm-dataset": "bash src/data/checkIds.sh update movie && bash src/data/checkIds.sh update tvshow",
     "check-api-version": "node src/utils/checkApiVersion.js",
     "commit": "git add . && czg ai",
@@ -47,7 +48,8 @@
     "update-all-active-ids": "npm run update-all-active-ids-movie && npm run update-all-active-ids-tvshow && npm run test",
     "update-all-non-active-ids-movie": "node src/data/updateData.js movie no_update_ids update_db local no_active no_check_db_ids $INDEX force mojo no_skip_services no_delete_ids $DAYS_NUMBER $MAX_INDEX",
     "update-all-non-active-ids-tvshow": "node src/data/updateData.js tvshow no_update_ids update_db local no_active no_check_db_ids $INDEX force mojo no_skip_services no_delete_ids $DAYS_NUMBER $MAX_INDEX",
-    "update-all-non-active-ids": "npm run update-all-non-active-ids-movie && npm run update-all-non-active-ids-tvshow && npm run test"
+    "update-all-non-active-ids": "npm run update-all-non-active-ids-movie && npm run update-all-non-active-ids-tvshow && npm run test",
+    "update-all-non-active-and-top-ids": "node src/data/updateData.js movie no_update_ids update_db local no_active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 0 1000000 all_ids"
   },
   "author": "Pierre Vanoverschelde",
   "license": "ISC",

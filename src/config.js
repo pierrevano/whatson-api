@@ -1,5 +1,10 @@
 require("dotenv").config();
 
+const getEnvInt = (value, fallback) => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) || parsed <= 0 ? fallback : parsed;
+};
+
 const baseURL = {
   allocine: "https://www.allocine.fr",
   assets: "https://whatson-assets.vercel.app",
@@ -282,7 +287,7 @@ const config = {
     urlToFetch: "/chart/ww_top_lifetime_gross",
     tableRowsClasses: ".a-bordered.a-horizontal-stripes.a-size-base",
 
-    maxIterations: 30,
+    maxIterations: getEnvInt(process.env.MOJO_MAX_ITERATIONS, 30),
     offset: 200,
   },
 

@@ -253,6 +253,36 @@ if [[ $1 == "check" ]]; then
     FILE_PATH="$FILMS_IDS_ACTIVE_FILE_PATH"
   fi
 
+  if [[ $3 == "all_ids" ]]; then
+    SOURCE_ARRAY_FILE=${4:-./temp_mojo_box_office.json}
+    TEMP_IMDB_IDS_FILE=./temp_imdb_ids.txt
+
+    if [[ ! -f $SOURCE_ARRAY_FILE ]]; then
+      echo "Source array file $SOURCE_ARRAY_FILE not found. Aborting."
+      exit 1
+    fi
+
+    # Extract IMDb IDs from the source array and use them to filter the IDs file.
+    jq -r '.[] | select(.IMDB_ID != null and .IMDB_ID != "null") | .IMDB_ID' "$SOURCE_ARRAY_FILE" | sort -u > "$TEMP_IMDB_IDS_FILE"
+
+    if [[ ! -s $TEMP_IMDB_IDS_FILE ]]; then
+      echo "No IMDb IDs found in $SOURCE_ARRAY_FILE. Aborting."
+      rm -f "$TEMP_IMDB_IDS_FILE"
+      exit 1
+    fi
+
+    rm -f "$FILMS_IDS_ACTIVE_FILE_PATH"
+    awk -F',' 'NR==FNR { ids[$1]=1; next } FNR==1 { next } ($2 in ids)' "$TEMP_IMDB_IDS_FILE" "$FILMS_IDS_FILE_PATH" > "$FILMS_IDS_ACTIVE_FILE_PATH"
+    rm -f "$TEMP_IMDB_IDS_FILE"
+
+    if [[ ! -s $FILMS_IDS_ACTIVE_FILE_PATH ]]; then
+      echo "No matching IMDb IDs found in $SOURCE_ARRAY_FILE. Aborting."
+      exit 0
+    fi
+
+    FILE_PATH="$FILMS_IDS_ACTIVE_FILE_PATH"
+  fi
+
   TOTAL_LINES=$(wc -l <"${FILE_PATH}")
 
   while IFS= read -r LINE <&3; do
@@ -495,6 +525,36 @@ elif [[ $1 == "check_imdb" ]]; then
 
   if [[ $3 == "active" ]]; then
     grep ",TRUE$" $FILMS_IDS_FILE_PATH > $FILMS_IDS_ACTIVE_FILE_PATH
+    FILE_PATH="$FILMS_IDS_ACTIVE_FILE_PATH"
+  fi
+
+  if [[ $3 == "all_ids" ]]; then
+    SOURCE_ARRAY_FILE=${4:-./temp_mojo_box_office.json}
+    TEMP_IMDB_IDS_FILE=./temp_imdb_ids.txt
+
+    if [[ ! -f $SOURCE_ARRAY_FILE ]]; then
+      echo "Source array file $SOURCE_ARRAY_FILE not found. Aborting."
+      exit 1
+    fi
+
+    # Extract IMDb IDs from the source array and use them to filter the IDs file.
+    jq -r '.[] | select(.IMDB_ID != null and .IMDB_ID != "null") | .IMDB_ID' "$SOURCE_ARRAY_FILE" | sort -u > "$TEMP_IMDB_IDS_FILE"
+
+    if [[ ! -s $TEMP_IMDB_IDS_FILE ]]; then
+      echo "No IMDb IDs found in $SOURCE_ARRAY_FILE. Aborting."
+      rm -f "$TEMP_IMDB_IDS_FILE"
+      exit 1
+    fi
+
+    rm -f "$FILMS_IDS_ACTIVE_FILE_PATH"
+    awk -F',' 'NR==FNR { ids[$1]=1; next } FNR==1 { next } ($2 in ids)' "$TEMP_IMDB_IDS_FILE" "$FILMS_IDS_FILE_PATH" > "$FILMS_IDS_ACTIVE_FILE_PATH"
+    rm -f "$TEMP_IMDB_IDS_FILE"
+
+    if [[ ! -s $FILMS_IDS_ACTIVE_FILE_PATH ]]; then
+      echo "No matching IMDb IDs found in $SOURCE_ARRAY_FILE. Aborting."
+      exit 0
+    fi
+
     FILE_PATH="$FILMS_IDS_ACTIVE_FILE_PATH"
   fi
 
