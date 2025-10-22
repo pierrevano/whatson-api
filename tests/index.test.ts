@@ -863,6 +863,12 @@ function checkItemProperties(items) {
         items.filter((item) => item.mojo && Number.isInteger(item.mojo.rank))
           .length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.mojo);
+      expect(
+        items.filter(
+          (entry) =>
+            typeof entry.mojo?.rank === "number" && entry.mojo.rank >= 1200,
+        ).length,
+      ).toBeGreaterThanOrEqual(1);
     }
     item.item_type === "tvshow" ? expect(item.mojo).toBeNull() : null; // No mojo information for tvshow item type.
   });
