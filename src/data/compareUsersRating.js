@@ -1,6 +1,7 @@
 const axios = require("axios");
 
 const { config } = require("../config");
+const { formatDate } = require("../utils/formatDate");
 const { getAllocineInfo } = require("../content/getAllocineInfo");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
@@ -27,7 +28,14 @@ async function hasTvShowEnded(status, imdbId) {
     return false; // No release date info, assume not ended
   }
 
-  return formatDate(lastWhatsOnEpisode.release_date) < formatDate(new Date());
+  const formattedReleaseDate = formatDate(lastWhatsOnEpisode.release_date);
+  const formattedToday = formatDate(new Date());
+
+  if (!formattedReleaseDate || !formattedToday) {
+    return false;
+  }
+
+  return formattedReleaseDate < formattedToday;
 }
 
 /**
@@ -61,45 +69,52 @@ const compareUsersRating = async (
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?append_to_response=${config.appendToResponse}&api_key=${config.internalApiKey}`;
 
   try {
-    const { allocineUsersRating: allocine_users_rating, status } =
-      await getAllocineInfo(allocineHomepage, false);
+    const allocineInfo = await getAllocineInfo(allocineHomepage, false);
+    if (!allocineInfo || allocineInfo.error) {
+      return isEqualObj;
+    }
+    const { allocineUsersRating: allocine_users_rating, status } = allocineInfo;
     const { usersRating: imdb_users_rating } =
       await getImdbRating(imdbHomepage);
 
-    const tvShowEnded = await hasTvShowEnded(status, imdbId);
+    const isTvShow = item_type_api === "tvshow";
+    const tvShowEnded = isTvShow ? await hasTvShowEnded(status, imdbId) : false;
     let episodesDetails,
       lastEpisode,
       nextEpisode,
       highestEpisode,
       lowestEpisode;
-    if (!tvShowEnded) {
-      const { data } = await getTMDBResponse(allocineHomepage, tmdbId);
+    if (isTvShow && !tvShowEnded) {
+      const tmdbResponse = await getTMDBResponse(allocineHomepage, tmdbId);
+      const data = tmdbResponse?.data;
 
-      episodesDetails = await getEpisodesDetails(
-        allocineHomepage,
-        imdbHomepage,
-        imdbId,
-        data,
-      );
-      lastEpisode = await getLastEpisode(
-        allocineHomepage,
-        episodesDetails,
-        data,
-      );
-      nextEpisode = await getNextEpisode(
-        allocineHomepage,
-        episodesDetails,
-        lastEpisode,
-        data,
-      );
-      highestEpisode = await getHighestRatedEpisode(
-        allocineHomepage,
-        episodesDetails,
-      );
-      lowestEpisode = await getLowestRatedEpisode(
-        allocineHomepage,
-        episodesDetails,
-      );
+      if (data) {
+        episodesDetails = await getEpisodesDetails(
+          allocineHomepage,
+          imdbHomepage,
+          imdbId,
+          data,
+        );
+        lastEpisode = await getLastEpisode(
+          allocineHomepage,
+          episodesDetails,
+          data,
+        );
+        nextEpisode = await getNextEpisode(
+          allocineHomepage,
+          episodesDetails,
+          lastEpisode,
+          data,
+        );
+        highestEpisode = await getHighestRatedEpisode(
+          allocineHomepage,
+          episodesDetails,
+        );
+        lowestEpisode = await getLowestRatedEpisode(
+          allocineHomepage,
+          episodesDetails,
+        );
+      }
     }
 
     const allocinePopularity =
@@ -140,7 +155,7 @@ const compareUsersRating = async (
 
       dataWithoutId.is_active = isActive;
 
-      if (!tvShowEnded) {
+      if (isTvShow && !tvShowEnded) {
         dataWithoutId.episodes_details = episodesDetails;
         dataWithoutId.last_episode = lastEpisode;
         dataWithoutId.next_episode = nextEpisode;
