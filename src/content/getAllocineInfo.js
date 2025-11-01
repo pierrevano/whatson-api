@@ -13,7 +13,7 @@ const { logErrors } = require("../utils/logErrors");
  *
  * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow
  * @param {boolean} compare - Whether to skip heavy metadata parsing (used for performance comparisons)
- * @param {object} data - The TMDB API response data for the item.
+ * @param {object} [data] - Optional TMDB API response data for the item.
  * @returns {{
  *   allocineTitle: string|null,
  *   image: string|null,

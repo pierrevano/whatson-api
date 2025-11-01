@@ -2,7 +2,7 @@
  * Adds a MongoDB aggregation filter to match documents by names for a specific key,
  * using partial, case-insensitive matching.
  *
- * @param {string} names - Comma-separated string of names to filter by (e.g., "Action,Drama").
+ * @param {string} [names] - Optional comma-separated string of names to filter by (e.g., "Action,Drama").
  * @param {Array<Object>} pipeline - The existing MongoDB aggregation pipeline to be modified.
  * @param {string} key_value - The document field to match names against (e.g., "platforms_links", "genres", "directors").
  * @param {Object} is_active_item - MongoDB condition to match active items (e.g., { is_active: true }).

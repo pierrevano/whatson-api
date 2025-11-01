@@ -45,7 +45,7 @@ const collectionData = database.collection(config.collectionName);
  * @param {string|undefined} status_query - Comma-separated list of show statuses to include.
  * @param {string|undefined} top_ranking_order_query - Desired ordering for IMDb top ranking (`asc` or `desc`).
  * @param {string|undefined} mojo_rank_order_query - Desired ordering for Box Office Mojo rank (`asc` or `desc`).
- * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: { is_active: boolean } }>} Aggregated items along with paging info and the resolved activity flag.
+ * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: ({ is_active: boolean } | { $or: Array<object> }) }>} Aggregated items along with paging info and the resolved activity flag.
  */
 const aggregateData = async (
   append_to_response,

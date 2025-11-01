@@ -303,12 +303,12 @@ if [[ $1 == "check" ]]; then
       TRAKT_ID_FROM_FILE=$(echo $LINE | cut -d',' -f9)
       THETVDB_ID_FROM_FILE=$(echo $LINE | cut -d',' -f10)
 
-      SPECIAL_IDS=("tt13207736")
-
       PROPERTY_ID=P345
       ITEM_ID=$IMDB_ID_FROM_FILE
-      if [[ " ${SPECIAL_IDS[@]} " =~ " ${IMDB_ID_FROM_FILE} " ]]; then
-        PROPERTY_ID=P1267
+
+      IMDB_OCCURRENCES=$(grep -c -F ",$IMDB_ID_FROM_FILE," "$FILE_PATH")
+      if [[ $IMDB_OCCURRENCES -gt 1 ]]; then
+        PROPERTY_ID=$PROPERTY
         ITEM_ID=$ALLOCINE_ID_FROM_FILE
       fi
 
@@ -339,6 +339,9 @@ if [[ $1 == "check" ]]; then
         if [[ $FOUND_METACRITIC -eq 1 ]] || [[ $FOUND_ROTTEN_TOMATOES -eq 1 ]] || [[ $FOUND_LETTERBOXD -eq 1 ]] || [[ $FOUND_SENSCRITIQUE -eq 1 ]] || [[ $FOUND_TRAKT -eq 1 ]] || [[ $FOUND_THETVDB -eq 1 ]]; then
           echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_FROM_FILE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,$THETVDB_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
         fi
+      elif [[ $IMDB_OCCURRENCES -gt 1 ]]; then
+        echo "Wikidata entry not found for duplicated IMDb id $IMDB_ID_FROM_FILE. Aborting."
+        exit 1
       fi
     fi
 

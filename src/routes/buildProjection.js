@@ -1,6 +1,6 @@
 /**
  * Builds a MongoDB projection object based on the append_to_response query param.
- * @param {string} appendToResponse - Comma-separated list of fields to include.
+ * @param {string} [appendToResponse] - Optional comma-separated list of fields to include.
  * @returns {object} MongoDB projection object with fields excluded if not included in the list.
  */
 function buildProjection(appendToResponse) {

@@ -12,7 +12,7 @@ if (isNewRelicEnabled) {
  * @param {import("express").Request} req - The processed request.
  * @param {string|undefined} api_key_query - API key provided by the consumer.
  * @param {{value: string}|null} internal_api_key - Cached internal API key document.
- * @param {Record<string, string>|undefined} rateLimitHeaders - Optional rate limit telemetry to forward.
+ * @param {Record<string, string|number>|undefined} rateLimitHeaders - Optional rate limit telemetry to forward.
  * @returns {void}
  */
 function sendToNewRelic(
