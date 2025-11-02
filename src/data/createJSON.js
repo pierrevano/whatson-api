@@ -128,7 +128,6 @@ const createJSON = async (
     tmdbData,
   );
   const trailer = await getTrailer(allocineHomepage, betaseriesHomepage);
-  const seasonsNumber = await getSeasonsNumber(allocineHomepage, tmdbData);
   const {
     usersRating,
     usersRatingCount,
@@ -136,7 +135,10 @@ const createJSON = async (
     runtime,
     certification,
     topRanking,
+    seasonsNumber: imdbSeasonsNumber,
   } = await getImdbRating(imdbHomepage);
+  const seasonsNumber =
+    imdbSeasonsNumber ?? (await getSeasonsNumber(allocineHomepage, tmdbData));
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
     allocineURL,

@@ -7,6 +7,7 @@ const {
 const { formatDate } = require("../utils/formatDate");
 const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getImdbRating } = require("./getImdbRating");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { logErrors } = require("../utils/logErrors");
 const { writeItems } = require("../utils/writeItems");
@@ -75,10 +76,11 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
 
 /**
  * Fetches episode details including ratings for all seasons of a tvshow using IMDb and What's On API data.
+ * Prefers the season count returned by `getImdbRating`; falls back to TMDB-derived totals when unavailable.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {string} imdbHomepage - The IMDb homepage URL for the tvshow.
  * @param {string} imdbId - The IMDb title ID for the tvshow.
- * @param {object} data - The TMDB API response data for the item.
+ * @param {object} data - The TMDB API response data for the item (used when IMDb doesn’t expose the season count).
  * @returns {Promise<Array<Object>|null>} A promise that resolves to an array of episode details across all seasons, or null if no data is available.
  */
 const getEpisodesDetails = async (
@@ -92,7 +94,10 @@ const getEpisodesDetails = async (
   let episodesDetails = [];
 
   try {
-    const totalSeasons = await getSeasonsNumber(allocineHomepage, data);
+    const { seasonsNumber: imdbSeasonsNumber } =
+      (await getImdbRating(imdbHomepage)) || {};
+    const totalSeasons =
+      imdbSeasonsNumber ?? (await getSeasonsNumber(allocineHomepage, data));
 
     if (!totalSeasons || totalSeasons < 1) return null;
 

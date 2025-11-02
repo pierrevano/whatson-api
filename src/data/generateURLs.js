@@ -32,7 +32,7 @@ const generateURLs = (item_type, config, json) => {
       ? `${config.baseURLBetaseriesFilm}${betaseriesId}`
       : `${config.baseURLBetaseriesSerie}${betaseriesId}`;
 
-  if (betaseriesId.startsWith("serie/")) {
+  if (typeof betaseriesId === "string" && betaseriesId.startsWith("serie/")) {
     const betaseriesIdNew = betaseriesId.split("/");
     betaseriesId = betaseriesIdNew[1];
   }

@@ -93,6 +93,13 @@ check_id_consistency () {
     "SensCritique")
       property_id="P10100"
       ;;
+    "TMDB")
+      if [[ $media_type == "tvshow" ]]; then
+        property_id="P4983"
+      else
+        property_id="P4947"
+      fi
+      ;;
     "Trakt")
       if [[ $media_type == "tvshow" ]]; then
         property_id="P8013"
@@ -224,6 +231,12 @@ get_other_ids () {
   fi
   echo "SensCritique ID: $SENSCRITIQUE_ID"
 
+  TMDB_ID=$(check_id_consistency "TMDB" "$THEMOVIEDB_ID_FROM_FILE" $2) || exit 1
+  if [[ -z $TMDB_ID ]]; then
+    TMDB_ID=null
+  fi
+  echo "TMDB ID: $TMDB_ID"
+
   TRAKT_ID=$(check_id_consistency "Trakt" "$TRAKT_ID_FROM_FILE" $2) || exit 1
   if [[ -z $TRAKT_ID ]]; then
     TRAKT_ID=null
@@ -336,8 +349,11 @@ if [[ $1 == "check" ]]; then
         THETVDB_ID_TO_USE=$(check_id "$THETVDB_ID" "$THETVDB_ID_FROM_FILE")
         FOUND_THETVDB=$(is_id_found "$THETVDB_ID" "$THETVDB_ID_FROM_FILE")
 
-        if [[ $FOUND_METACRITIC -eq 1 ]] || [[ $FOUND_ROTTEN_TOMATOES -eq 1 ]] || [[ $FOUND_LETTERBOXD -eq 1 ]] || [[ $FOUND_SENSCRITIQUE -eq 1 ]] || [[ $FOUND_TRAKT -eq 1 ]] || [[ $FOUND_THETVDB -eq 1 ]]; then
-          echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_FROM_FILE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$THEMOVIEDB_ID_FROM_FILE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,$THETVDB_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
+        TMDB_ID_TO_USE=$(check_id "$TMDB_ID" "$THEMOVIEDB_ID_FROM_FILE")
+        FOUND_TMDB=$(is_id_found "$TMDB_ID" "$THEMOVIEDB_ID_FROM_FILE")
+
+        if [[ $FOUND_METACRITIC -eq 1 ]] || [[ $FOUND_ROTTEN_TOMATOES -eq 1 ]] || [[ $FOUND_LETTERBOXD -eq 1 ]] || [[ $FOUND_SENSCRITIQUE -eq 1 ]] || [[ $FOUND_TRAKT -eq 1 ]] || [[ $FOUND_THETVDB -eq 1 ]] || [[ $FOUND_TMDB -eq 1 ]]; then
+          echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_FROM_FILE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$TMDB_ID_TO_USE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,$THETVDB_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
         fi
       elif [[ $IMDB_OCCURRENCES -gt 1 ]]; then
         echo "Wikidata entry not found for duplicated IMDb id $IMDB_ID_FROM_FILE. Aborting."
@@ -359,6 +375,7 @@ elif [[ $1 == "update" ]]; then
   WRONG_LINES_NB=$(grep -E -v "$REGEX_IDS" $FILMS_IDS_FILE_PATH | wc -l)
   WRONG_LINES_NB_COMMAS=$(grep -E -v "$REGEX_IDS_COMMAS" $FILMS_IDS_FILE_PATH | wc -l)
   WRONG_LINES_NB_INVISIBLE=$(perl -lne 'print if m/[^\x20-\x7E]/ || /[^[:ascii:]]/ || /[[:^print:]]/' $FILMS_IDS_FILE_PATH | wc -l)
+  DUPLICATE_ALLOCINE_URLS=$(cut -d',' -f1 "$FILMS_IDS_FILE_PATH" | sort | uniq -d)
   ERRORS_FOUND=0
 
   if [[ $WRONG_LINES_NB -gt 1 ]]; then
@@ -372,6 +389,10 @@ elif [[ $1 == "update" ]]; then
   elif [[ $WRONG_LINES_NB_INVISIBLE -gt 0 ]]; then
     echo "WRONG_LINES_NB_INVISIBLE / Something's wrong with invisible characters in the file: $FILMS_IDS_FILE_PATH. Wrong Lines Invisible Count: $WRONG_LINES_NB_INVISIBLE"
     perl -lne 'print if m/[^\x20-\x7E]/ || /[^[:ascii:]]/ || /[[:^print:]]/' $FILMS_IDS_FILE_PATH | tail -1
+    ERRORS_FOUND=1
+  elif [[ -n $DUPLICATE_ALLOCINE_URLS ]]; then
+    echo "DUPLICATE_ALLOCINE_URLS / Duplicated AlloCiné URLs detected in $FILMS_IDS_FILE_PATH:"
+    echo "$DUPLICATE_ALLOCINE_URLS" | tail -1
     ERRORS_FOUND=1
   fi
 
@@ -393,7 +414,9 @@ elif [[ $1 == "update" ]]; then
 
     if [[ $IMDB_ID == tt* ]]; then
       echo "$PERCENT: $LINE from $FILMS_IDS_FILE_PATH_TEMP"
-    
+
+      ALLOCINE_ID=$(echo $LINE | cut -d',' -f1 | cut -d'=' -f2 | cut -d'.' -f1)
+
       COUNT=$(grep -o ",$IMDB_ID," $FILMS_IDS_FILE_PATH | wc -l)
 
       if [[ $COUNT -gt 3 ]]; then
@@ -401,7 +424,7 @@ elif [[ $1 == "update" ]]; then
         exit 1
       fi
 
-      sed -i '' "/.*,$IMDB_ID,.*/ s@.*@$LINE@" $FILMS_IDS_FILE_PATH
+      sed -i '' "/.*=$ALLOCINE_ID\.html,.*/ s@.*@$LINE@" $FILMS_IDS_FILE_PATH
     fi
 
     ((COUNTER++))

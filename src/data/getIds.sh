@@ -111,6 +111,7 @@ fi
 WRONG_LINES_NB=$(grep -E -v "$REGEX_IDS" $FILMS_IDS_FILE_PATH | wc -l)
 WRONG_LINES_NB_COMMAS=$(grep -E -v "$REGEX_IDS_COMMAS" $FILMS_IDS_FILE_PATH | wc -l)
 WRONG_LINES_NB_INVISIBLE=$(perl -lne 'print if m/[^\x20-\x7E]/ || /[^[:ascii:]]/ || /[[:^print:]]/' $FILMS_IDS_FILE_PATH | wc -l)
+DUPLICATE_ALLOCINE_URLS=$(cut -d',' -f1 "$FILMS_IDS_FILE_PATH" | sort | uniq -d)
 ERRORS_FOUND=0
 
 if [[ $WRONG_LINES_NB -gt 1 ]]; then
@@ -124,6 +125,10 @@ elif [[ $WRONG_LINES_NB_COMMAS -gt 0 ]]; then
 elif [[ $WRONG_LINES_NB_INVISIBLE -gt 0 ]]; then
   echo "WRONG_LINES_NB_INVISIBLE / Something's wrong with invisible characters in the file: $FILMS_IDS_FILE_PATH. Wrong Lines Invisible Count: $WRONG_LINES_NB_INVISIBLE"
   perl -lne 'print if m/[^\x20-\x7E]/ || /[^[:ascii:]]/ || /[[:^print:]]/' $FILMS_IDS_FILE_PATH | tail -1
+  ERRORS_FOUND=1
+elif [[ -n $DUPLICATE_ALLOCINE_URLS ]]; then
+  echo "DUPLICATE_ALLOCINE_URLS / Duplicated AlloCiné URLs detected in $FILMS_IDS_FILE_PATH:"
+  echo "$DUPLICATE_ALLOCINE_URLS" | tail -1
   ERRORS_FOUND=1
 fi
 

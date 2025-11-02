@@ -33,7 +33,8 @@ const loopItems = async (
   mojoBoxOfficeArray,
   max_index,
 ) => {
-  let createJsonCounter = (itemCounter = 0);
+  let createJsonCounter = 0;
+  let itemCounter = 0;
 
   // Loop through jsonArray with the given start index
   for (let index = index_to_start; index < jsonArray.length; index++) {
@@ -156,13 +157,13 @@ const loopItems = async (
 
       let errorMetacritic = false;
       try {
-        const { error: errorMetacritic } = await getMetacriticRating(
+        const result = await getMetacriticRating(
           metacriticHomepage,
           metacriticId,
         );
-
-        if (errorMetacritic.includes("403")) {
-          console.log(errorMetacritic);
+        const metacriticError = result?.error;
+        if (metacriticError && metacriticError.includes("403")) {
+          console.log(metacriticError);
           errorMetacritic = true;
         }
       } catch (error) {}

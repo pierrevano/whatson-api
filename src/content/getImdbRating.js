@@ -18,8 +18,10 @@ const { logErrors } = require("../utils/logErrors");
  *   isAdult: boolean|null,
  *   runtime: number|null,
  *   certification: string|null,
- *   topRanking: number|null
- * }} The IMDb users rating, vote count, adult flag, runtime in seconds, certification rating, and top ranking position
+ *   topRanking: number|null,
+ *   seasonsNumber: number|null
+ * }} The IMDb users rating, vote count, adult flag, runtime in seconds, certification rating, top ranking position,
+ *     and the number of seasons.
  */
 const getImdbRating = async (imdbHomepage) => {
   let usersRating = null;
@@ -28,6 +30,7 @@ const getImdbRating = async (imdbHomepage) => {
   let runtime = null;
   let certification = null;
   let topRanking = null;
+  let seasonsNumber = null;
 
   try {
     axiosRetry(axios, {
@@ -50,6 +53,7 @@ const getImdbRating = async (imdbHomepage) => {
     const ratingsSummary = mainColumnData?.ratingsSummary;
     const runtimeSeconds = mainColumnData?.runtime?.seconds;
     const certificate = aboveTheFoldData?.certificate?.rating;
+    const episodesInfo = mainColumnData?.episodes;
 
     const parsedRating = parseFloat(ratingsSummary?.aggregateRating);
     const parsedCount = parseInt(ratingsSummary?.voteCount, 10);
@@ -70,6 +74,23 @@ const getImdbRating = async (imdbHomepage) => {
         ? certificate.trim()
         : null;
     topRanking = isNaN(parsedTopRanking) ? null : parsedTopRanking;
+
+    if (episodesInfo && Array.isArray(episodesInfo.seasons)) {
+      const seasons = episodesInfo.seasons;
+      const years = Array.isArray(episodesInfo.years) ? episodesInfo.years : [];
+      const currentYear = new Date().getFullYear();
+
+      const countedSeasons = seasons.reduce((count, _season, index) => {
+        const seasonYear = years[index]?.year;
+        if (typeof seasonYear !== "number" || seasonYear <= currentYear) {
+          return count + 1;
+        }
+
+        return count;
+      }, 0);
+
+      seasonsNumber = countedSeasons > 0 ? countedSeasons : null;
+    }
   } catch (error) {
     logErrors(error, imdbHomepage, "getImdbRating");
   }
@@ -81,6 +102,7 @@ const getImdbRating = async (imdbHomepage) => {
     runtime,
     certification,
     topRanking,
+    seasonsNumber,
   };
 };
 
