@@ -7,6 +7,56 @@ const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
 /**
+ * Derives season metadata from the episodes payload, ensuring the latest season number
+ * matches the count of seasons aired up to the current year.
+ *
+ * @param {{
+ *   seasons?: Array<{ number: number|string }>,
+ *   years?: Array<{ year: number }>
+ * }} episodesInfo - Episode metadata extracted from the IMDb payload.
+ * @returns {number|null} Count of seasons validated against the latest season number, or null when inconsistent.
+ */
+const determineSeasonsInfo = (episodesInfo) => {
+  if (!episodesInfo || !Array.isArray(episodesInfo.seasons)) {
+    return null;
+  }
+
+  const seasons = episodesInfo.seasons;
+  const years = Array.isArray(episodesInfo.years) ? episodesInfo.years : [];
+  const currentYear = new Date().getFullYear();
+
+  let currentSeason = null;
+  let countedSeasons = 0;
+
+  seasons.forEach((season, index) => {
+    const seasonNumber = parseInt(season?.number, 10);
+    if (Number.isNaN(seasonNumber)) {
+      throw new Error("Failed to parse the season number.");
+    }
+
+    const seasonYear = years[index]?.year;
+    if (typeof seasonYear === "number" && seasonYear > currentYear) {
+      return;
+    }
+
+    countedSeasons += 1;
+    if (currentSeason === null || seasonNumber > currentSeason) {
+      currentSeason = seasonNumber;
+    }
+  });
+
+  if (
+    !countedSeasons ||
+    currentSeason === null ||
+    countedSeasons !== currentSeason
+  ) {
+    return null;
+  }
+
+  return countedSeasons;
+};
+
+/**
  * It takes an imdbHomepage as an argument, and returns the usersRating, usersRatingCount,
  * isAdult flag, runtime (in seconds), certification rating, and topRanking position of the item. The data is extracted
  * from the embedded JSON structure found in the IMDb page content.
@@ -75,21 +125,9 @@ const getImdbRating = async (imdbHomepage) => {
         : null;
     topRanking = isNaN(parsedTopRanking) ? null : parsedTopRanking;
 
-    if (episodesInfo && Array.isArray(episodesInfo.seasons)) {
-      const seasons = episodesInfo.seasons;
-      const years = Array.isArray(episodesInfo.years) ? episodesInfo.years : [];
-      const currentYear = new Date().getFullYear();
-
-      const countedSeasons = seasons.reduce((count, _season, index) => {
-        const seasonYear = years[index]?.year;
-        if (typeof seasonYear !== "number" || seasonYear <= currentYear) {
-          return count + 1;
-        }
-
-        return count;
-      }, 0);
-
-      seasonsNumber = countedSeasons > 0 ? countedSeasons : null;
+    const validatedSeasonsCount = determineSeasonsInfo(episodesInfo);
+    if (Number.isInteger(validatedSeasonsCount)) {
+      seasonsNumber = validatedSeasonsCount;
     }
   } catch (error) {
     logErrors(error, imdbHomepage, "getImdbRating");
