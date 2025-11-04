@@ -94,10 +94,20 @@ const getEpisodesDetails = async (
   let episodesDetails = [];
 
   try {
-    const { seasonsNumber: imdbSeasonsNumber } =
-      (await getImdbRating(imdbHomepage)) || {};
-    const totalSeasons =
-      imdbSeasonsNumber ?? (await getSeasonsNumber(allocineHomepage, data));
+    let totalSeasons = null;
+
+    if (config.specialItems.includes(imdbId)) {
+      const { seasonsNumber: imdbSeasonsNumber } =
+        (await getImdbRating(imdbHomepage)) || {};
+
+      if (imdbSeasonsNumber != null) {
+        totalSeasons = imdbSeasonsNumber;
+      }
+    }
+
+    if (!totalSeasons) {
+      totalSeasons = await getSeasonsNumber(allocineHomepage, data);
+    }
 
     if (!totalSeasons || totalSeasons < 1) return null;
 

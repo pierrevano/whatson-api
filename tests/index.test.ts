@@ -2347,11 +2347,7 @@ const params = {
       const today = formatDate(new Date());
 
       items.forEach((item) => {
-        if (
-          item.last_episode &&
-          item.next_episode &&
-          !config.skippedItems.includes(item?.imdb?.id)
-        ) {
+        if (item.last_episode && item.next_episode) {
           const lastSeason = item.last_episode.season;
           const lastEpisode = item.last_episode.episode;
           const nextSeason = item.next_episode.season;

@@ -35,7 +35,11 @@ const determineSeasonsInfo = (episodesInfo) => {
     }
 
     const seasonYear = years[index]?.year;
-    if (typeof seasonYear === "number" && seasonYear > currentYear) {
+    if (typeof seasonYear !== "number" || Number.isNaN(seasonYear)) {
+      return;
+    }
+
+    if (seasonYear > currentYear) {
       return;
     }
 
@@ -62,7 +66,7 @@ const determineSeasonsInfo = (episodesInfo) => {
  * from the embedded JSON structure found in the IMDb page content.
  *
  * @param {string} imdbHomepage - The IMDb homepage URL of the item
- * @returns {{
+ * @returns {Promise<{
  *   usersRating: number|null,
  *   usersRatingCount: number|null,
  *   isAdult: boolean|null,
@@ -70,8 +74,8 @@ const determineSeasonsInfo = (episodesInfo) => {
  *   certification: string|null,
  *   topRanking: number|null,
  *   seasonsNumber: number|null
- * }} The IMDb users rating, vote count, adult flag, runtime in seconds, certification rating, top ranking position,
- *     and the number of seasons.
+ * }>} Resolves with the IMDb users rating, vote count, adult flag, runtime in seconds, certification rating,
+ *     top ranking position, and the number of seasons.
  */
 const getImdbRating = async (imdbHomepage) => {
   let usersRating = null;

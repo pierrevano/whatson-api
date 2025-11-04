@@ -178,7 +178,7 @@ const config = {
     "mojo_rank_order",
     "users_certified",
   ],
-  skippedItems: ["tt16358384"],
+  specialItems: ["tt13207736"],
   margin: 10,
   maxResponseTime: 6000,
   maxNullValues: 600,

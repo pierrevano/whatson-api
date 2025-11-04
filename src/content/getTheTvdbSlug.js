@@ -42,14 +42,10 @@ const getTheTvdbSlug = async (allocineHomepage, theTvdbId) => {
       const accessToken = loginResponse.data.data.token;
 
       // Step 2: Fetch movie or tvshow details using TheTVDB API
-      const { data } = await axios.get(
-        `${config.baseURLTheTVDBAPI}/${type}/${theTvdbId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
+      const url = `${config.baseURLTheTVDBAPI}/${type}/${theTvdbId}`;
+      const { data } = await axios.get(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
 
       theTvdbSlug = data?.data?.slug;
 

@@ -1,3 +1,4 @@
+const { config } = require("../config");
 const {
   getAllocineCriticsRating,
 } = require("../content/getAllocineCriticsRating");
@@ -135,10 +136,11 @@ const createJSON = async (
     runtime,
     certification,
     topRanking,
-    seasonsNumber: imdbSeasonsNumber,
   } = await getImdbRating(imdbHomepage);
   const seasonsNumber =
-    imdbSeasonsNumber ?? (await getSeasonsNumber(allocineHomepage, tmdbData));
+    (config.specialItems.includes(imdbId) &&
+      ((await getImdbRating(imdbHomepage))?.seasonsNumber ?? null)) ||
+    (await getSeasonsNumber(allocineHomepage, tmdbData));
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
     allocineURL,
