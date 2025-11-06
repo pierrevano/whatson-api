@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.11.9",
+  "version": "3.11.10",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -54,7 +54,7 @@
   "author": "Pierre Vanoverschelde",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.13.1",
+    "axios": "^1.13.2",
     "axios-retry": "^4.5.0",
     "cheerio": "^1.1.2",
     "cors": "^2.8.5",
@@ -63,7 +63,7 @@
     "express": "^4.21.2",
     "he": "^1.2.0",
     "jshashes": "^1.0.8",
-    "mongodb": "^6.20.0",
+    "mongodb": "^7.0.0",
     "newrelic": "^13.6.2",
     "prettier": "^3.6.2",
     "rate-limiter-flexible": "^8.1.0",

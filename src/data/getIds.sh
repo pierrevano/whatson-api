@@ -545,7 +545,7 @@ do
         # Get title encoded characters URL
         TITLE_URL_ENCODED=$(echo $TITLE | tr '[:upper:]' '[:lower:]' | sed -f $URL_ESCAPE_FILE_PATH)
 
-        STATUS=$(curl -s https://www.allocine.fr$URL | grep "label-info-full label-status" | cut -d'>' -f2 | cut -d'<' -f1)
+        STATUS=$(curl -s https://www.allocine.fr$URL | grep "label-status\">" | cut -d'>' -f2 | cut -d'<' -f1)
         if [[ $TYPE == "tvshow" ]]; then
           echo "Status: $STATUS"
         fi

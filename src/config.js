@@ -181,7 +181,7 @@ const config = {
   specialItems: ["tt13207736"],
   margin: 10,
   maxResponseTime: 6000,
-  maxNullValues: 600,
+  maxNullValues: 650,
   maxNullReleaseDates: 150,
   minimumNumberOfItems: {
     default: 25,

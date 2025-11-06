@@ -306,10 +306,12 @@ function checkItemProperties(items) {
       expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.allocine,
       );
-      expectIdRatingConsistency(item.allocine, [
-        "users_rating",
-        "critics_rating",
-      ]);
+      if (item.allocine?.users_rating) {
+        expectIdRatingConsistency(item.allocine, ["users_rating"]);
+      }
+      if (item.allocine?.critics_rating) {
+        expectIdRatingConsistency(item.allocine, ["critics_rating"]);
+      }
     }
     expect(
       items.filter((item) => typeof item.allocine?.users_rating === "number")
@@ -352,7 +354,8 @@ function checkItemProperties(items) {
         (item) =>
           item.allocine &&
           !item.allocine?.users_rating &&
-          !item.allocine?.critics_rating,
+          !item.allocine?.critics_rating &&
+          typeof item.imdb?.users_rating !== "number",
       ).length,
     ).toBe(0);
     if (

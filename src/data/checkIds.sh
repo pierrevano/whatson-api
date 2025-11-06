@@ -325,7 +325,16 @@ if [[ $1 == "check" ]]; then
         ITEM_ID=$ALLOCINE_ID_FROM_FILE
       fi
 
-      WIKI_URL=$(curl -s https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY_ID%20%22$ITEM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/' | head -1)
+      WIKI_QUERY_URL="https://query.wikidata.org/sparql?query=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A${PROPERTY_ID}%20%22${ITEM_ID}%22%0A%7D"
+      WIKI_URL=""
+      WIKI_RETRY_COUNT=0
+      while [[ -z $WIKI_URL && $WIKI_RETRY_COUNT -lt 3 ]]; do
+        if [[ $WIKI_RETRY_COUNT -gt 0 ]]; then
+          sleep 1
+        fi
+        WIKI_URL=$(curl -s "$WIKI_QUERY_URL" | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/' | head -1)
+        ((WIKI_RETRY_COUNT++))
+      done
       if [[ $WIKI_URL ]]; then
         echo $WIKI_URL
 
@@ -356,6 +365,7 @@ if [[ $1 == "check" ]]; then
           echo "$BASE_URL_ALLOCINE$ALLOCINE_ID_FROM_FILE.html,$IMDB_ID_FROM_FILE,$BETASERIES_ID_FROM_FILE,$TMDB_ID_TO_USE,$METACRITIC_ID_TO_USE,$ROTTEN_TOMATOES_ID_TO_USE,$LETTERBOXD_ID_TO_USE,$SENSCRITIQUE_ID_TO_USE,$TRAKT_ID_TO_USE,$THETVDB_ID_TO_USE,FALSE" >> $FILMS_IDS_FILE_PATH_TEMP
         fi
       elif [[ $IMDB_OCCURRENCES -gt 1 ]]; then
+        echo $WIKI_QUERY_URL
         echo "Wikidata entry not found for duplicated IMDb id $IMDB_ID_FROM_FILE. Aborting."
         exit 1
       fi

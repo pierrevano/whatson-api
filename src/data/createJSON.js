@@ -202,19 +202,27 @@ const createJSON = async (
   const theTvdbSlug = await getTheTvdbSlug(allocineHomepage, theTvdbId);
 
   /* Creating an object called allocineObj. */
-  const allocineObj =
-    allocineFirstInfo?.allocineUsersRating || allocineCriticInfo?.criticsRating
-      ? {
-          id: allocineId,
-          url: allocineHomepage,
-          users_rating: allocineFirstInfo?.allocineUsersRating,
-          users_rating_count: allocineFirstInfo?.allocineUsersRatingCount,
-          critics_rating: allocineCriticInfo?.criticsRating,
-          critics_rating_count: allocineCriticInfo?.criticsRatingCount,
-          critics_rating_details: allocineCriticInfo?.criticsRatingDetails,
-          popularity: allocinePopularity?.popularity,
-        }
-      : null;
+  let allocineObj = {
+    id: allocineId,
+    url: allocineHomepage,
+    users_rating: allocineFirstInfo?.allocineUsersRating,
+    users_rating_count: allocineFirstInfo?.allocineUsersRatingCount,
+    critics_rating: allocineCriticInfo?.criticsRating,
+    critics_rating_count: allocineCriticInfo?.criticsRatingCount,
+    critics_rating_details: allocineCriticInfo?.criticsRatingDetails,
+    popularity: allocinePopularity?.popularity,
+  };
+
+  /**
+   * Nullifies AlloCiné details when IMDb users rating and AlloCiné users/critics ratings are all missing.
+   */
+  if (
+    usersRating == null &&
+    allocineObj.users_rating == null &&
+    allocineObj.critics_rating == null
+  ) {
+    allocineObj = null;
+  }
 
   /* Creating an object called betaseriesObj. */
   const betaseriesObj = usersRatingBetaseries
