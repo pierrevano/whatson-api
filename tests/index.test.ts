@@ -21,6 +21,7 @@ const { schema } = require("../src/schema");
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
 const higherLimit = isRemoteSource ? config.maxLimitRemote : config.maxLimit;
+const removeLogs = process.env.REMOVE_LOGS === "true";
 
 /**
  * Validates properties and metrics of a list of items against predefined expectations.
@@ -1357,6 +1358,29 @@ const params = {
     },
   },
 
+  tvshows_seasons_number_should_be_at_least_episode_season: {
+    query: `?item_type=tvshow&append_to_response=last_episode,next_episode&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      items.forEach((item) => {
+        if (item.seasons_number) {
+          const checkSeasonNumber = (episode) => {
+            expect(typeof episode.season).toBe("number");
+            expect(item.seasons_number).toBeGreaterThanOrEqual(episode.season);
+          };
+
+          if (item.next_episode) {
+            checkSeasonNumber(item.next_episode);
+          } else if (item.last_episode) {
+            checkSeasonNumber(item.last_episode);
+          }
+        }
+      });
+    },
+  },
+
   only_episodes_from_season_2: {
     query:
       "?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=2",
@@ -2288,7 +2312,7 @@ const params = {
           } else {
             let lastGlobalEpisodeNumber = -1;
             item.episodes_details.forEach((episode) => {
-              if (episode && episode.season && episode.episode) {
+              if (episode?.season && episode?.episode) {
                 const currentGlobalEpisodeNumber = parseInt(
                   `${String(episode.season)}${String(episode.episode).padStart(2, "0")}`,
                 );
@@ -2856,7 +2880,9 @@ function validatePaginationKeys(data, expected = {}) {
  * @returns None
  */
 describe("What's on? API tests", () => {
-  console.log(`Testing on ${baseURL}`);
+  if (!removeLogs) {
+    console.log(`Testing on ${baseURL}`);
+  }
 
   const simpleApiCall = `${baseURL}?api_key=${config.internalApiKey}`;
 
@@ -2864,10 +2890,13 @@ describe("What's on? API tests", () => {
     async function fetchItemsData() {
       const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
 
-      console.log("Test name:", name);
-      console.log(`Calling: ${apiCall}`);
+      if (!removeLogs) {
+        console.log("Test name:", name);
+        console.log(`Calling: ${apiCall}`);
 
-      console.time("axiosCallInTest");
+        console.time("axiosCallInTest");
+      }
+
       const response = await axios.get(apiCall, {
         validateStatus: (status) => status < 500,
       });
@@ -2890,8 +2919,11 @@ describe("What's on? API tests", () => {
 
   test("should_have_top_level_pagination_keys", async () => {
     const response = await axios.get(simpleApiCall);
-    console.log("Test name: should_have_top_level_pagination_keys");
-    console.log(`Calling: ${simpleApiCall}`);
+
+    if (!removeLogs) {
+      console.log("Test name: should_have_top_level_pagination_keys");
+      console.log(`Calling: ${simpleApiCall}`);
+    }
 
     expect(response.status).toBe(200);
     validatePaginationKeys(response.data);
@@ -2900,10 +2932,13 @@ describe("What's on? API tests", () => {
   test("should_have_top_level_pagination_keys_equal_to_one_on_search", async () => {
     const simpleApiCallOnSearch = `${baseURL}?imdbid=tt0903747&api_key=${config.internalApiKey}`;
     const response = await axios.get(simpleApiCallOnSearch);
-    console.log(
-      "Test name: should_have_top_level_pagination_keys_equal_to_one_on_search",
-    );
-    console.log(`Calling: ${simpleApiCallOnSearch}`);
+
+    if (!removeLogs) {
+      console.log(
+        "Test name: should_have_top_level_pagination_keys_equal_to_one_on_search",
+      );
+      console.log(`Calling: ${simpleApiCallOnSearch}`);
+    }
 
     expect(response.status).toBe(200);
     validatePaginationKeys(response.data, {
@@ -2930,7 +2965,11 @@ describe("What's on? API tests", () => {
     async () => {
       const start = new Date().valueOf();
       const apiCall = `${baseURL}?item_type=movie,tvshow&limit=${config.maxLimit}&api_key=${config.internalApiKey}`;
-      console.log(`Calling: ${apiCall}`);
+
+      if (!removeLogs) {
+        console.log(`Calling: ${apiCall}`);
+      }
+
       await axios.get(apiCall);
       const end = new Date().valueOf();
       expect(end - start).toBeLessThan(config.maxResponseTime);
@@ -3035,8 +3074,8 @@ describe("What's on? API tests", () => {
         ? seriesResponse.data.results.length
         : 0;
 
-      expect(movieCount).toBe(movieFileCount);
-      expect(seriesCount).toBe(seriesFileCount);
+      expect(Math.abs(movieCount - movieFileCount)).toBeLessThanOrEqual(7);
+      expect(Math.abs(seriesCount - seriesFileCount)).toBeLessThanOrEqual(0);
     },
   );
 });

@@ -9,13 +9,17 @@ const { logErrors } = require("./logErrors");
  * @async
  * @function getWhatsonResponse
  * @param {string} imdbId - The IMDb title ID to query.
+ * @param {string} [appendToResponse] - Optional comma-separated fields (e.g., `episodes_details`) to append to the response.
  * @returns {Promise<Object|null|undefined>} Resolves with the first result object when present,
  *     `null` when no results are found, or `undefined` when the request fails before a response is returned.
  *     The process exits with code 1 when the remote answers with a non-200 status.
  */
-const getWhatsonResponse = async (imdbId) => {
+const getWhatsonResponse = async (imdbId, appendToResponse) => {
   try {
-    const apiUrl = `${config.baseURLRemote}/?imdbId=${imdbId}&api_key=${config.internalApiKey}`;
+    const appendParam = appendToResponse
+      ? `&append_to_response=${appendToResponse}`
+      : "";
+    const apiUrl = `${config.baseURLRemote}/?imdbId=${imdbId}&api_key=${config.internalApiKey}${appendParam}`;
     const response = await axios.get(apiUrl);
 
     // Check if the status code is 200

@@ -140,7 +140,7 @@ const createJSON = async (
   const seasonsNumber =
     (config.specialItems.includes(imdbId) &&
       ((await getImdbRating(imdbHomepage))?.seasonsNumber ?? null)) ||
-    (await getSeasonsNumber(allocineHomepage, tmdbData));
+    (await getSeasonsNumber(allocineHomepage, tmdbData, imdbId));
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
     allocineURL,
