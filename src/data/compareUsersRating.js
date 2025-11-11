@@ -38,6 +38,28 @@ async function hasTvShowEnded(status, imdbId) {
   return formattedReleaseDate < formattedToday;
 }
 
+async function wasLastEpisodeReleasedRecently(imdbId) {
+  const whatsonResponse = await getWhatsonResponse(imdbId);
+  const lastWhatsOnEpisode = whatsonResponse?.episodes_details?.slice(-1)[0];
+
+  if (!lastWhatsOnEpisode?.release_date) {
+    return false;
+  }
+
+  const releaseDate = new Date(lastWhatsOnEpisode.release_date);
+  if (Number.isNaN(releaseDate.getTime())) {
+    return false;
+  }
+
+  const now = new Date();
+  if (releaseDate > now) {
+    return false;
+  }
+
+  const daysInMs = 6 * 24 * 60 * 60 * 1000; // 6 days
+  return now - releaseDate < daysInMs;
+}
+
 /**
  * Compares the users rating of a movie or tvshow from AlloCiné with the rating
  * fetched from the What's on? API.
@@ -78,13 +100,16 @@ const compareUsersRating = async (
       await getImdbRating(imdbHomepage);
 
     const isTvShow = item_type_api === "tvshow";
+    const lastEpisodeReleasedRecently = isTvShow
+      ? await wasLastEpisodeReleasedRecently(imdbId)
+      : false;
     const tvShowEnded = isTvShow ? await hasTvShowEnded(status, imdbId) : false;
     let episodesDetails,
       lastEpisode,
       nextEpisode,
       highestEpisode,
       lowestEpisode;
-    if (isTvShow && !tvShowEnded) {
+    if (isTvShow && !tvShowEnded && !lastEpisodeReleasedRecently) {
       const tmdbResponse = await getTMDBResponse(allocineHomepage, tmdbId);
       const data = tmdbResponse?.data;
 
