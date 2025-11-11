@@ -16,13 +16,10 @@ const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
 
-async function hasTvShowEnded(status, imdbId) {
+function hasTvShowEnded(status, lastWhatsOnEpisode) {
   if (status !== "Ended") {
     return false; // The show is not marked as ended
   }
-
-  const whatsonResponse = await getWhatsonResponse(imdbId);
-  const lastWhatsOnEpisode = whatsonResponse?.episodes_details?.slice(-1)[0];
 
   if (!lastWhatsOnEpisode?.release_date) {
     return false; // No release date info, assume not ended
@@ -38,10 +35,7 @@ async function hasTvShowEnded(status, imdbId) {
   return formattedReleaseDate < formattedToday;
 }
 
-async function wasLastEpisodeReleasedRecently(imdbId) {
-  const whatsonResponse = await getWhatsonResponse(imdbId, "last_episode");
-  const lastWhatsOnEpisode = whatsonResponse?.last_episode;
-
+function wasLastEpisodeReleasedRecently(lastWhatsOnEpisode) {
   if (!lastWhatsOnEpisode?.release_date) {
     return false;
   }
@@ -100,10 +94,16 @@ const compareUsersRating = async (
       await getImdbRating(imdbHomepage);
 
     const isTvShow = item_type_api === "tvshow";
+    const whatsonLastEpisode = isTvShow
+      ? ((await getWhatsonResponse(imdbId, "last_episode"))?.last_episode ??
+        null)
+      : null;
     const lastEpisodeReleasedRecently = isTvShow
-      ? await wasLastEpisodeReleasedRecently(imdbId)
+      ? wasLastEpisodeReleasedRecently(whatsonLastEpisode)
       : false;
-    const tvShowEnded = isTvShow ? await hasTvShowEnded(status, imdbId) : false;
+    const tvShowEnded = isTvShow
+      ? hasTvShowEnded(status, whatsonLastEpisode)
+      : false;
     let episodesDetails,
       lastEpisode,
       nextEpisode,
@@ -154,15 +154,16 @@ const compareUsersRating = async (
       item_type,
     );
 
-    const response = await axios.get(apiUrl);
+    const response = await axios.get(apiUrl, {
+      validateStatus: () => true,
+    });
 
+    if (response.status >= 500) {
+      throw new Error(
+        `Failed to fetch What's on? API data: status code ${response.status}`,
+      );
+    }
     if (response.status !== 200) {
-      if (response.status > 500) {
-        console.error(
-          `Failed to fetch What's on? API data: status code ${response.status}`,
-        );
-        process.exit(1);
-      }
       return isEqualObj;
     }
 
@@ -180,7 +181,7 @@ const compareUsersRating = async (
 
       dataWithoutId.is_active = isActive;
 
-      if (isTvShow && !tvShowEnded) {
+      if (isTvShow && !tvShowEnded && !lastEpisodeReleasedRecently) {
         dataWithoutId.episodes_details = episodesDetails;
         dataWithoutId.last_episode = lastEpisode;
         dataWithoutId.next_episode = nextEpisode;
