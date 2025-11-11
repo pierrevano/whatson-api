@@ -39,8 +39,8 @@ async function hasTvShowEnded(status, imdbId) {
 }
 
 async function wasLastEpisodeReleasedRecently(imdbId) {
-  const whatsonResponse = await getWhatsonResponse(imdbId);
-  const lastWhatsOnEpisode = whatsonResponse?.episodes_details?.slice(-1)[0];
+  const whatsonResponse = await getWhatsonResponse(imdbId, "last_episode");
+  const lastWhatsOnEpisode = whatsonResponse?.last_episode;
 
   if (!lastWhatsOnEpisode?.release_date) {
     return false;
