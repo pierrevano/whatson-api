@@ -5,6 +5,7 @@ MAX_INDEX=350000
 PROPERTY=P345
 REGEX_IDS="^\/\S+\/fiche\S+_gen_c\S+=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),([0-9]+|null),(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){10}[^,]*$"
+REGEX_IDS_SLASHS="^([^/]*/){2}[^/]*$"
 BASE_URL_IMDB=https://www.imdb.com/title/
 BASE_URL_LETTERBOXD=https://letterboxd.com/film/
 BASE_URL_TVTIME=https://www.tvtime.com/show/
@@ -378,6 +379,7 @@ elif [[ $1 == "update" ]]; then
 
   WRONG_LINES_NB=$(grep -E -v "$REGEX_IDS" $FILMS_IDS_FILE_PATH | wc -l)
   WRONG_LINES_NB_COMMAS=$(grep -E -v "$REGEX_IDS_COMMAS" $FILMS_IDS_FILE_PATH | wc -l)
+  WRONG_LINES_NB_SLASHS=$(awk 'NR==1 && /^URL/ {next} {print}' $FILMS_IDS_FILE_PATH | grep -E -v "$REGEX_IDS_SLASHS" | wc -l)
   WRONG_LINES_NB_INVISIBLE=$(perl -lne 'print if m/[^\x20-\x7E]/ || /[^[:ascii:]]/ || /[[:^print:]]/' $FILMS_IDS_FILE_PATH | wc -l)
   DUPLICATE_ALLOCINE_URLS=$(cut -d',' -f1 "$FILMS_IDS_FILE_PATH" | sort | uniq -d)
   ERRORS_FOUND=0
@@ -389,6 +391,10 @@ elif [[ $1 == "update" ]]; then
   elif [[ $WRONG_LINES_NB_COMMAS -gt 0 ]]; then
     echo "WRONG_LINES_NB_COMMAS / Something's wrong with commas in the file: $FILMS_IDS_FILE_PATH. Wrong Lines Commas Count: $WRONG_LINES_NB_COMMAS"
     grep -E -v "$REGEX_IDS_COMMAS" $FILMS_IDS_FILE_PATH | tail -1
+    ERRORS_FOUND=1
+  elif [[ $WRONG_LINES_NB_SLASHS -gt 0 ]]; then
+    echo "WRONG_LINES_NB_SLASHS / Something's wrong with slashs in the file: $FILMS_IDS_FILE_PATH. Wrong Lines Slashs Count: $WRONG_LINES_NB_SLASHS"
+    grep -E -v "$REGEX_IDS_SLASHS" $FILMS_IDS_FILE_PATH | tail -1
     ERRORS_FOUND=1
   elif [[ $WRONG_LINES_NB_INVISIBLE -gt 0 ]]; then
     echo "WRONG_LINES_NB_INVISIBLE / Something's wrong with invisible characters in the file: $FILMS_IDS_FILE_PATH. Wrong Lines Invisible Count: $WRONG_LINES_NB_INVISIBLE"

@@ -1,7 +1,48 @@
+const { appendFile } = require("fs");
+
+const { config } = require("../config");
 const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Fetches the Rotten Tomatoes media scorecard JSON, and retrying when missing.
+ *
+ * @param {string} url - The Rotten Tomatoes page URL we need to scrape.
+ * @param {object} options - Axios-compatible options used by getCheerioContent.
+ * @returns {Promise<string>} The raw JSON payload embedded in the page.
+ */
+const fetchMediaScorecardJson = async (url, options) => {
+  for (let attempt = 1; attempt <= config.maxAttempts; attempt += 1) {
+    const $ = await getCheerioContent(url, options, "getRottenTomatoesRating");
+
+    if ($?.error) {
+      throw $.error;
+    }
+
+    const rawJson = $("#media-scorecard-json").html();
+
+    if (rawJson) {
+      return rawJson;
+    }
+
+    if (attempt < config.maxAttempts) {
+      const attemptLog = `getRottenTomatoesRating - ${url}: media-scorecard-json not found (attempt ${attempt}). Retrying...`;
+      console.log(attemptLog);
+      appendFile(
+        "temp_error.log",
+        `${new Date().toISOString()} - ${attemptLog}\n`,
+        () => {},
+      );
+      await delay(config.retryDelayMs);
+    }
+  }
+
+  throw new Error("Failed to locate the Rotten Tomatoes JSON.");
+};
 
 /**
  * It takes a rottenTomatoesHomepage as an argument, and returns user and critic rating details.
@@ -56,17 +97,10 @@ const getRottenTomatoesRating = async (
     };
 
     if (isNotNull(rottenTomatoesId)) {
-      const $ = await getCheerioContent(
+      const rawJson = await fetchMediaScorecardJson(
         rottenTomatoesHomepage,
         options,
-        "getRottenTomatoesRating",
       );
-
-      const rawJson = $("#media-scorecard-json").html();
-
-      if (!rawJson) {
-        throw new Error("Failed to locate the Rotten Tomatoes JSON.");
-      }
 
       try {
         const mediaScorecard = JSON.parse(rawJson);

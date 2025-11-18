@@ -4,6 +4,10 @@ const { config } = require("../config");
 const { getNodeVarsValues } = require("./getNodeVarsValues");
 const { reportError } = require("./sendToNewRelic");
 
+const isBetaseriesResource = (value = "") =>
+  value.startsWith(config.baseURLBetaseriesFilm) ||
+  value.startsWith(config.baseURLBetaseriesSerie);
+
 function isErrorPresent(errorMsg, error, item) {
   const errorList = [
     "AxiosError: Request failed with status code 404",
@@ -26,18 +30,20 @@ function isErrorPresent(errorMsg, error, item) {
 const logErrors = (error, item, origin) => {
   let errorMsg = `${item} - ${origin} - ${error}`;
 
+  if (getNodeVarsValues.environment === "local") {
+    appendFile(
+      "temp_error.log",
+      `${new Date().toISOString()} - ${errorMsg}\n`,
+      () => {},
+    );
+  }
+
   if (
     errorMsg.includes("AxiosError: Request failed with status code 404") ||
     errorMsg.includes("Error: Failed to retrieve data.")
   ) {
     if (getNodeVarsValues.is_not_active === "active") {
       reportError(null, null, 404, new Error(errorMsg));
-    } else {
-      appendFile(
-        "temp_error.log",
-        `${new Date().toISOString()} - ${errorMsg}\n`,
-        () => {},
-      );
     }
   }
 
@@ -50,13 +56,7 @@ const logErrors = (error, item, origin) => {
 
   if (error.response && error.response.status >= 500) {
     console.log(`Error - status code ${error.response.status} - ${item}`);
-    if (
-      item &&
-      !(
-        item.startsWith(config.baseURLBetaseriesFilm) ||
-        item.startsWith(config.baseURLBetaseriesSerie)
-      )
-    ) {
+    if (item && !isBetaseriesResource(item)) {
       process.exit(1);
     }
   }
@@ -66,8 +66,7 @@ const logErrors = (error, item, origin) => {
     if (
       errorMsg &&
       !(
-        errorMsg.startsWith(config.baseURLBetaseriesFilm) ||
-        errorMsg.startsWith(config.baseURLBetaseriesSerie) ||
+        isBetaseriesResource(errorMsg) ||
         (errorMsg.includes("403") && errorMsg.includes("getMetacriticRating"))
       )
     ) {

@@ -1,5 +1,4 @@
 const { logErrors } = require("../utils/logErrors");
-const { writeItemsNumber } = require("../utils/writeItems");
 
 const directorsCount = {};
 
@@ -26,8 +25,6 @@ const getDirectors = async (allocineHomepage, data) => {
   } catch (error) {
     logErrors(error, allocineHomepage, "getDirectors");
   }
-
-  writeItemsNumber(allocineHomepage, directorsCount, "directors");
 
   return directorNames;
 };
