@@ -16,7 +16,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @returns {Promise<string>} The raw JSON payload embedded in the page.
  */
 const fetchMediaScorecardJson = async (url, options) => {
-  for (let attempt = 1; attempt <= config.maxAttempts; attempt += 1) {
+  for (let attempt = 1; attempt <= config.retries; attempt += 1) {
     const $ = await getCheerioContent(url, options, "getRottenTomatoesRating");
 
     if ($?.error) {
@@ -29,7 +29,7 @@ const fetchMediaScorecardJson = async (url, options) => {
       return rawJson;
     }
 
-    if (attempt < config.maxAttempts) {
+    if (attempt < config.retries) {
       const attemptLog = `getRottenTomatoesRating - ${url}: media-scorecard-json not found (attempt ${attempt}). Retrying...`;
       console.log(attemptLog);
       appendFile(
@@ -37,7 +37,7 @@ const fetchMediaScorecardJson = async (url, options) => {
         `${new Date().toISOString()} - ${attemptLog}\n`,
         () => {},
       );
-      await delay(config.retryDelayMs);
+      await delay(config.retryDelay);
     }
   }
 

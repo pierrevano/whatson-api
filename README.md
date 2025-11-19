@@ -1,10 +1,14 @@
-# What's on? API
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/698bc6b6-e89f-4269-a9aa-49f9e5476005" alt="What's on? API logo" width="90" />
+</p>
+
+<h1 align="center">What's on? API</h1>
 
 Companion to [What's on?](https://github.com/pierrevano/whatson)
 
 ---
 
-⚠️ This API is currently running on Render's free tier. If you'd like to keep it active at all times, please consider making a small donation here: [buymeacoffee.com/pierreschelde](https://buymeacoffee.com/pierreschelde). For any additional feedback, you can also join the Discord server: https://discord.gg/VcRTbyea.
+⚠️ This API is currently running on Render's free tier. If you'd like to keep it active at all times, please consider making a small donation here: [buymeacoffee.com/pierreschelde](https://buymeacoffee.com/pierreschelde). For any additional feedback, you can also join the Discord server: https://discord.gg/unwWEuUe.
 
 Note: A rate limit of `1000` requests per hour is in place to prevent abuse of the API. An API key can be requested on demand to remove this limit by contacting me at https://pierrevano.github.io.
 

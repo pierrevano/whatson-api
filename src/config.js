@@ -84,8 +84,7 @@ const config = {
   userAgentSafariAlt:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/538.36",
   heapLimit: 1500,
-  maxAttempts: 5,
-  retryDelayMs: 10000,
+  maxAgeInDays: 14,
 
   /* CircleCI settings */
   circleLimitPerDay: 1500,

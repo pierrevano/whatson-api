@@ -199,13 +199,15 @@ const compareUsersRating = async (
 
       dataWithoutId.mojo = mojoObj;
 
-      const lastMonth = new Date();
-      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      const updatedAtCutoffDate = new Date();
+      updatedAtCutoffDate.setDate(
+        updatedAtCutoffDate.getDate() - config.maxAgeInDays,
+      );
 
       if (
         (dataWithoutId.allocine?.users_rating !== null &&
           dataWithoutId.imdb?.users_rating === null) ||
-        new Date(dataWithoutId.updated_at) <= lastMonth
+        new Date(dataWithoutId.updated_at) <= updatedAtCutoffDate
       ) {
         return isEqualObj;
       }

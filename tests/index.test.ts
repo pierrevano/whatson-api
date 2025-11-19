@@ -2045,12 +2045,12 @@ const params = {
     },
   },
 
-  items_updated_within_last_2_months: {
+  items_updated_within_last_month: {
     query: `?item_type=movie,tvshow&is_active=true&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       const today = new Date();
       const dateInThePast = new Date(
-        today.getTime() - 60 * 24 * 60 * 60 * 1000,
+        today.getTime() - 30 * 24 * 60 * 60 * 1000,
       );
 
       items.forEach((item) => {
@@ -2781,13 +2781,24 @@ const params = {
 
       let previousRank = null;
       let smallestRank = Infinity;
+      let previousTopLifetimeGross = Infinity;
 
-      items.forEach((item) => {
+      items.forEach((item, index) => {
         expect(item.mojo).toBeDefined();
         expect(typeof item.mojo.rank).toBe("number");
         expect(item.mojo.rank).toBeGreaterThan(0);
 
         smallestRank = Math.min(smallestRank, item.mojo.rank);
+
+        if (index < 20) {
+          expect(item.mojo.rank).toBe(index + 1);
+          expect(typeof item.mojo.lifetime_gross).toBe("number");
+          expect(item.mojo.lifetime_gross).toBeGreaterThan(0);
+          expect(item.mojo.lifetime_gross).toBeLessThanOrEqual(
+            previousTopLifetimeGross,
+          );
+          previousTopLifetimeGross = item.mojo.lifetime_gross;
+        }
 
         if (previousRank) {
           expect(item.mojo.rank).toBeGreaterThanOrEqual(previousRank);
@@ -2796,6 +2807,7 @@ const params = {
         previousRank = item.mojo.rank;
       });
 
+      expect(items.length).toBeGreaterThanOrEqual(20);
       expect(items[0].mojo.rank).toBe(smallestRank);
     },
   },

@@ -37,7 +37,7 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
   if (isNotNull(tvtimeId)) {
     const apiUrl = `https://side-api.tvtime.com/sidecar/tvt?o=https://api2.tozelabs.com/v2/show/${tvtimeId}?fields%3Drating`;
 
-    for (let attempt = 1; attempt <= config.maxAttempts; attempt += 1) {
+    for (let attempt = 1; attempt <= config.retries; attempt += 1) {
       try {
         const response = await axios.get(apiUrl, options);
 
@@ -57,7 +57,7 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
 
         return tvtimeObj;
       } catch (error) {
-        const canRetry = attempt < config.maxAttempts;
+        const canRetry = attempt < config.retries;
 
         if (canRetry) {
           const attemptLog = `getTVTimeRating - ${
@@ -69,7 +69,7 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
             `${new Date().toISOString()} - ${attemptLog}\n`,
             () => {},
           );
-          await delay(config.retryDelayMs);
+          await delay(config.retryDelay);
         } else {
           logErrors(error, tvtimeHomepage, "getTVTimeRating");
         }
