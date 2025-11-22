@@ -46,7 +46,9 @@ const buildOptions = (options = {}) => ({
  * @returns {Promise<import("cheerio").CheerioAPI | { error: Error }>} The Cheerio instance or an error payload when the request fails.
  */
 const getCheerioContent = async (url, options, origin) => {
-  for (let attempt = 1; attempt <= config.retries; attempt += 1) {
+  const maxAttempts = origin === "getMetacriticRating" ? 2 : config.retries;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
       const startTime = Date.now();
 
@@ -73,7 +75,7 @@ const getCheerioContent = async (url, options, origin) => {
       return $;
     } catch (error) {
       const containsNullValue = url.includes("null");
-      const canRetry = attempt < config.retries && !containsNullValue;
+      const canRetry = attempt < maxAttempts && !containsNullValue;
 
       if (canRetry) {
         const attemptLog = `${

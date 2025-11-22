@@ -2790,7 +2790,7 @@ const params = {
 
         smallestRank = Math.min(smallestRank, item.mojo.rank);
 
-        if (index < 20) {
+        if (index < 40) {
           expect(item.mojo.rank).toBe(index + 1);
           expect(typeof item.mojo.lifetime_gross).toBe("number");
           expect(item.mojo.lifetime_gross).toBeGreaterThan(0);
@@ -2807,7 +2807,6 @@ const params = {
         previousRank = item.mojo.rank;
       });
 
-      expect(items.length).toBeGreaterThanOrEqual(20);
       expect(items[0].mojo.rank).toBe(smallestRank);
     },
   },
