@@ -137,7 +137,7 @@ const loopItems = async (
             }
           }
         } catch (error) {
-          const status = error.response.status;
+          const status = error.response?.status;
           if (status === 404) {
             console.log(
               `Item called on ${apiCall} not found in database, continuing...`,
@@ -181,8 +181,7 @@ const loopItems = async (
               mojoBoxOfficeArray,
               tmdbId,
             )
-          : false;
-        if (!getIsEqualValue) getIsEqualValue.isEqual = false;
+          : { isEqual: false };
         const data =
           (!force && getIsEqualValue.isEqual) || errorMetacritic
             ? getIsEqualValue.data

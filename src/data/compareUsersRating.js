@@ -1,7 +1,6 @@
 const axios = require("axios");
 
 const { config } = require("../config");
-const { formatDate } = require("../utils/formatDate");
 const { getAllocineInfo } = require("../content/getAllocineInfo");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
@@ -14,45 +13,11 @@ const { getNextEpisode } = require("../content/getNextEpisode");
 const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
+const {
+  hasTvShowEnded,
+  wasLastEpisodeReleasedRecently,
+} = require("../utils/tvShowStatus");
 const { logErrors } = require("../utils/logErrors");
-
-function hasTvShowEnded(status, lastWhatsOnEpisode) {
-  if (status !== "Ended") {
-    return false; // The show is not marked as ended
-  }
-
-  if (!lastWhatsOnEpisode?.release_date) {
-    return false; // No release date info, assume not ended
-  }
-
-  const formattedReleaseDate = formatDate(lastWhatsOnEpisode.release_date);
-  const formattedToday = formatDate(new Date());
-
-  if (!formattedReleaseDate || !formattedToday) {
-    return false;
-  }
-
-  return formattedReleaseDate < formattedToday;
-}
-
-function wasLastEpisodeReleasedRecently(lastWhatsOnEpisode) {
-  if (!lastWhatsOnEpisode?.release_date) {
-    return false;
-  }
-
-  const releaseDate = new Date(lastWhatsOnEpisode.release_date);
-  if (Number.isNaN(releaseDate.getTime())) {
-    return false;
-  }
-
-  const now = new Date();
-  if (releaseDate > now) {
-    return false;
-  }
-
-  const daysInMs = 6 * 24 * 60 * 60 * 1000; // 6 days
-  return now - releaseDate < daysInMs;
-}
 
 /**
  * Compares the users rating of a movie or tvshow from AlloCiné with the rating
@@ -142,11 +107,23 @@ const compareUsersRating = async (
       }
     }
 
+    const allocinePopularityResult = await getAllocinePopularity(
+      allocineURL,
+      item_type,
+    );
     const allocinePopularity =
-      (await getAllocinePopularity(allocineURL, item_type))?.popularity ?? null;
+      typeof allocinePopularityResult?.popularity === "number"
+        ? allocinePopularityResult.popularity
+        : undefined;
+    const imdbPopularityResult = await getImdbPopularity(
+      imdbHomepage,
+      allocineURL,
+      item_type,
+    );
     const imdbPopularity =
-      (await getImdbPopularity(imdbHomepage, allocineURL, item_type))
-        ?.popularity ?? null;
+      typeof imdbPopularityResult?.popularity === "number"
+        ? imdbPopularityResult.popularity
+        : undefined;
 
     const mojoValues = await getObjectByImdbId(
       mojoBoxOfficeArray,
@@ -189,11 +166,11 @@ const compareUsersRating = async (
         dataWithoutId.lowest_episode = lowestEpisode;
       }
 
-      if (dataWithoutId.allocine) {
+      if (dataWithoutId.allocine && typeof allocinePopularity === "number") {
         dataWithoutId.allocine.popularity = allocinePopularity;
       }
 
-      if (dataWithoutId.imdb) {
+      if (dataWithoutId.imdb && typeof imdbPopularity === "number") {
         dataWithoutId.imdb.popularity = imdbPopularity;
       }
 
