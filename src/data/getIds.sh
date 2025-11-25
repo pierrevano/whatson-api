@@ -15,7 +15,15 @@ SOURCE=$1
 TEMP_URLS_FILE_PATH=./temp_urls
 TYPE=$2
 URL_ESCAPE_FILE_PATH=./src/utils/urlEscape.sed
-USER_AGENT="$((RANDOM % 1000000000000))"
+user_agents=(
+"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
+"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+"Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+"Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36"
+)
+USER_AGENT="${user_agents[$RANDOM % ${#user_agents[@]}]}"
 REGEX_IDS="^\/\S+\/fiche\S+_gen_c\S+=[0-9]+\.html,tt[0-9]+,(\S+?),[0-9]+,(\S+?){3},([0-9]+|null),(\S+?),([0-9]+|null),(TRUE|FALSE)$"
 REGEX_IDS_COMMAS="^([^,]*,){10}[^,]*$"
 REGEX_IDS_SLASHS="^([^/]*/){2}[^/]*$"
@@ -69,6 +77,7 @@ fi
 
 echo "SOURCE: $SOURCE"
 echo "WHATSON_API_URL: $WHATSON_API_URL"
+echo "USER_AGENT: $USER_AGENT"
 echo $SEPARATOR
 
 if [[ -z $BETASERIES_API_KEY ]]; then
@@ -176,7 +185,8 @@ update_imdb_popularity_flags () {
 
   json=$(curl -s -H "User-Agent: $USER_AGENT" "$IMDB_CHART_URL" | grep -o '<script id="__NEXT_DATA__" type="application/json">.*</script>' | sed 's/<script id="__NEXT_DATA__" type="application\/json">//; s/<\/script>//')
   if [[ -z $json ]]; then
-    return
+    echo "Something went wrong when fetching the moviemeter JSON."
+    exit 1
   fi
 
   json=$(echo "$json" | sed "s/<script>if(typeof uet === 'function'){ uet('be', 'LoadFooterJS', {wb: 1}); }<\/script>//")
