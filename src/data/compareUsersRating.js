@@ -11,6 +11,7 @@ const { getLastEpisode } = require("../content/getLastEpisode");
 const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
 const { getNextEpisode } = require("../content/getNextEpisode");
 const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
+const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const {
@@ -50,6 +51,15 @@ const compareUsersRating = async (
   const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?append_to_response=${config.appendToResponse}&api_key=${config.internalApiKey}`;
 
   try {
+    const tmdbHomepage =
+      item_type_api === "movie"
+        ? `${config.baseURLTMDBFilm}${tmdbId}`
+        : `${config.baseURLTMDBSerie}${tmdbId}`;
+    const tmdbResponse = tmdbId
+      ? await getTMDBResponse(allocineHomepage, tmdbId)
+      : null;
+    const tmdbData = tmdbResponse?.data;
+
     const allocineInfo = await getAllocineInfo(allocineHomepage, false);
     if (!allocineInfo || allocineInfo.error) {
       return isEqualObj;
@@ -75,26 +85,23 @@ const compareUsersRating = async (
       highestEpisode,
       lowestEpisode;
     if (isTvShow && !tvShowEnded && !lastEpisodeReleasedRecently) {
-      const tmdbResponse = await getTMDBResponse(allocineHomepage, tmdbId);
-      const data = tmdbResponse?.data;
-
-      if (data) {
+      if (tmdbData) {
         episodesDetails = await getEpisodesDetails(
           allocineHomepage,
           imdbHomepage,
           imdbId,
-          data,
+          tmdbData,
         );
         lastEpisode = await getLastEpisode(
           allocineHomepage,
           episodesDetails,
-          data,
+          tmdbData,
         );
         nextEpisode = await getNextEpisode(
           allocineHomepage,
           episodesDetails,
           lastEpisode,
-          data,
+          tmdbData,
         );
         highestEpisode = await getHighestRatedEpisode(
           allocineHomepage,
@@ -123,6 +130,12 @@ const compareUsersRating = async (
     const imdbPopularity =
       typeof imdbPopularityResult?.popularity === "number"
         ? imdbPopularityResult.popularity
+        : undefined;
+    const tmdbPopularityResult =
+      tmdbData && (await getTmdbPopularity(tmdbHomepage, tmdbId, tmdbData));
+    const tmdbPopularity =
+      typeof tmdbPopularityResult?.popularity === "number"
+        ? tmdbPopularityResult.popularity
         : undefined;
 
     const mojoValues = await getObjectByImdbId(
@@ -172,6 +185,10 @@ const compareUsersRating = async (
 
       if (dataWithoutId.imdb && typeof imdbPopularity === "number") {
         dataWithoutId.imdb.popularity = imdbPopularity;
+      }
+
+      if (dataWithoutId.tmdb && typeof tmdbPopularity === "number") {
+        dataWithoutId.tmdb.popularity = tmdbPopularity;
       }
 
       dataWithoutId.mojo = mojoObj;

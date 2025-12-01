@@ -297,6 +297,11 @@ function checkItemProperties(items) {
           items.filter((item) => item.imdb?.popularity).length,
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
       : null;
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.tmdb?.popularity).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+      : null;
 
     /* AlloCiné */
     if (item.allocine) {
@@ -1736,6 +1741,10 @@ const params = {
           (item) => item.imdb?.popularity >= 1 && item.imdb?.popularity <= 5,
         ).length,
       ).toBeGreaterThan(0);
+      expect(
+        items.filter((item) => typeof item.tmdb?.popularity === "number")
+          .length,
+      ).toBeGreaterThan(0);
     },
   },
 
@@ -1752,6 +1761,10 @@ const params = {
         items.filter(
           (item) => item.imdb?.popularity >= 1 && item.imdb?.popularity <= 5,
         ).length,
+      ).toBeGreaterThan(0);
+      expect(
+        items.filter((item) => typeof item.tmdb?.popularity === "number")
+          .length,
       ).toBeGreaterThan(0);
     },
   },
@@ -1773,6 +1786,37 @@ const params = {
       for (let i = 1; i < items.length; i++) {
         expect(items[i].imdb.popularity).toBeGreaterThanOrEqual(
           items[i - 1].imdb.popularity,
+        );
+      }
+    },
+  },
+
+  correct_tmdb_popularity_order: {
+    query: `?item_type=tvshow&popularity_filters=tmdb_popularity&limit=${higherLimit}`,
+    expectedResult: (items) => {
+      const itemsWithPopularity = items.filter(
+        (item) => typeof item.tmdb?.popularity === "number",
+      );
+      expect(itemsWithPopularity.length).toBeGreaterThan(0);
+
+      for (let i = 1; i < itemsWithPopularity.length; i++) {
+        expect(itemsWithPopularity[i].tmdb.popularity).toBeLessThanOrEqual(
+          itemsWithPopularity[i - 1].tmdb.popularity,
+        );
+      }
+    },
+  },
+
+  popularity_average_not_below_one: {
+    query: `?item_type=movie,tvshow&limit=${higherLimit}`,
+    expectedResult: (items) => {
+      items.forEach((item) => {
+        expect(item.popularity_average).toBeGreaterThan(1);
+      });
+
+      for (let i = 1; i < items.length; i++) {
+        expect(items[i].popularity_average).toBeGreaterThanOrEqual(
+          items[i - 1].popularity_average,
         );
       }
     },
@@ -2662,7 +2706,7 @@ const params = {
   },
 
   should_sort_by_imdb_top_ranking_ascending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=asc&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(0);
@@ -2689,7 +2733,7 @@ const params = {
   },
 
   should_sort_by_imdb_top_ranking_descending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=desc&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=desc&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(0);
@@ -2716,7 +2760,7 @@ const params = {
   },
 
   should_keep_popularity_order_when_top_ranking_ties: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=asc&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(0);
@@ -2747,7 +2791,7 @@ const params = {
   },
 
   should_fallback_to_popularity_when_top_ranking_order_invalid: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=invalid&limit=${config.maxLimitRemote}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=invalid&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(0);

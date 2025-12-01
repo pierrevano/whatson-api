@@ -186,6 +186,7 @@ const schema = {
     url: "string", // URL to the TMDB page
     users_rating: "number", // Average rating given by TMDB users
     users_rating_count: "number", // Total number of ratings submitted by TMDB users
+    popularity: "number", // Popularity score on TMDB
   },
   trakt: {
     /* Information related to Trakt platform */
@@ -216,7 +217,7 @@ const schema = {
 
   updated_at: "string", // Timestamp of the last update
 
-  popularity_average: "number", // Average popularity score across platforms (AlloCiné and IMDb)
+  popularity_average: "number", // Average popularity score across platforms (AlloCiné, IMDb, and TMDB)
   ratings_average: "number", // Average rating score across platforms (all)
 };
 

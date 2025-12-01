@@ -33,7 +33,7 @@ Retrieves detailed information about either a movie or a tvshow based on the pro
 
 By default, when no query parameters are added (or when all are used), the results are sorted according to the following criteria:
 
-1. Sort by Popularity: The items are first sorted by their calculated average popularity, with higher popularity values appearing first.
+1. Sort by Popularity: The items are first sorted by their calculated average popularity rank, with lower rank values (more popular) appearing first.
 2. Sort by Ratings: Among items with the same popularity, sorting is then based on their average ratings, with higher ratings appearing first.
 3. Sort by Title: If items have the same popularity and ratings, they are further sorted alphabetically by their title in ascending order.
 
@@ -52,13 +52,13 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&popularity_filters=allocine_popularity,imdb_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&release_date=everything,new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&filtered_seasons=<string>&runtime=<number>&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=0,1,2,2.5,3,3.5,4,4.5&release_date=everything,new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode&filtered_seasons=<string>&runtime=<number>&page=<integer>&limit=<integer>
 > ```
 
 | Parameter            | Value                                                                                                                                                                                                               | Description                                                                                               |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | ratings_filters      | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users | Ratings filters source (or _all_ for every values)                                                        |
-| popularity_filters   | allocine_popularity,imdb_popularity                                                                                                                                                                                 | Popularity filters source (or _none_ to disable it)                                                       |
+| popularity_filters   | allocine_popularity,imdb_popularity,tmdb_popularity                                                                                                                                                                 | Popularity filters source (or _none_ to disable it)                                                       |
 | item_type            | movie,tvshow                                                                                                                                                                                                        | The type of the item (_movie_, _tvshow_ or both)                                                          |
 | is_active            | true,false                                                                                                                                                                                                          | Is the item currently on screens (_true_, _false_ or both)                                                |
 | is_adult             | true,false                                                                                                                                                                                                          | Is the item marked as adult content (_true_, _false_ or both)                                             |
@@ -329,7 +329,8 @@ Example of an item returned:
     "id": "number", // TMDB specific identifier
     "url": "string", // URL to the TMDB page
     "users_rating": "number", // Average rating given by TMDB users
-    "users_rating_count": "number" // Total number of ratings submitted by TMDB users
+    "users_rating_count": "number", // Total number of ratings submitted by TMDB users
+    "popularity": "number" // Popularity score on TMDB
   },
   "trakt": {
     /* Information related to Trakt platform */
@@ -360,7 +361,7 @@ Example of an item returned:
 
   "updated_at": "string", // Timestamp of the last update
 
-  "popularity_average": "number", // Average popularity score across platforms (AlloCiné and IMDb)
+  "popularity_average": "number", // Average popularity score across platforms (AlloCiné, IMDb, and TMDB)
   "ratings_average": "number" // Average rating score across platforms (all)
 }
 ```

@@ -28,6 +28,7 @@ const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { getSensCritiqueRating } = require("../content/getSensCritiqueRating");
 const { getTheTvdbSlug } = require("../content/getTheTvdbSlug");
 const { getTmdbRating } = require("../content/getTmdbRating");
+const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getTrailer } = require("../content/getTrailer");
 const { getTraktRating } = require("../content/getTraktRating");
@@ -193,6 +194,11 @@ const createJSON = async (
     sensCritiqueId,
   );
   const tmdbRating = await getTmdbRating(tmdbHomepage, tmdbId, tmdbData);
+  const tmdbPopularity = await getTmdbPopularity(
+    tmdbHomepage,
+    tmdbId,
+    tmdbData,
+  );
   const traktRating = await getTraktRating(
     allocineHomepage,
     traktHomepage,
@@ -318,6 +324,7 @@ const createJSON = async (
         url: tmdbRating.url,
         users_rating: tmdbRating.usersRating,
         users_rating_count: tmdbRating.usersRatingCount,
+        popularity: tmdbPopularity?.popularity ?? null,
       }
     : null;
 
@@ -352,12 +359,12 @@ const createJSON = async (
     id: tmdbId,
     item_type: item_type,
     is_active: isActive,
-    title: allocineFirstInfo.allocineTitle,
+    title: allocineFirstInfo?.allocineTitle,
     original_title: originalTitle,
 
     directors,
     genres,
-    image: allocineFirstInfo.image,
+    image: allocineFirstInfo?.image,
     is_adult: isAdult,
     certification,
     networks,
@@ -374,7 +381,7 @@ const createJSON = async (
     lowest_episode: lowestEpisode,
     platforms_links: platformsLinks,
     seasons_number: seasonsNumber,
-    status: allocineFirstInfo.status,
+    status: allocineFirstInfo?.status,
 
     allocine: allocineObj,
     betaseries: betaseriesObj,

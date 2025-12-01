@@ -183,7 +183,7 @@ const config = {
   margin: 10,
   maxResponseTime: 6000,
   maxNullValues: 650,
-  maxNullReleaseDates: 200,
+  maxNullReleaseDates: 220,
   minimumNumberOfItems: {
     default: 25,
     mojo: 15,

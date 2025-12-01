@@ -149,7 +149,7 @@ async function checkStatus(service) {
   /**
    * In `update_ids` mode, resets fields for items not in the current active ID list (`allTheMovieDbIds`):
    * - Sets `is_active` to false.
-   * - Sets `allocine.popularity` and `imdb.popularity` to null if their objects are not null.
+   * - Sets `allocine.popularity`, `imdb.popularity`, and `tmdb.popularity` to null if their objects are not null.
    * Only items matching `item_type` and excluded from the ID list are affected.
    * Logs the number of items excluded from the reset (i.e., still active).
    */
@@ -174,6 +174,12 @@ async function checkStatus(service) {
     await collectionData.updateMany(
       { ...filterQuery, imdb: { $ne: null } },
       { $set: { "imdb.popularity": null } },
+    );
+
+    // 4. Reset tmdb popularity ONLY if tmdb is not null
+    await collectionData.updateMany(
+      { ...filterQuery, tmdb: { $ne: null } },
+      { $set: { "tmdb.popularity": null } },
     );
 
     console.log(

@@ -203,7 +203,9 @@ const aggregateData = async (
 
   const addFields_popularity_and_ratings = {
     $addFields: {
-      popularity_average: { $avg: popularity_filters },
+      popularity_average: {
+        $round: [{ $avg: popularity_filters }, 2],
+      },
       ratings_average: {
         $round: [
           {
