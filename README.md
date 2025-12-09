@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/698bc6b6-e89f-4269-a9aa-49f9e5476005" alt="What's on? API logo" width="90" />
+  <img src="./public/logo.png" alt="What's on? API logo" width="90" />
 </p>
 
 <h1 align="center">What's on? API</h1>
