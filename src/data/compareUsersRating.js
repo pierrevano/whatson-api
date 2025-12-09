@@ -11,6 +11,7 @@ const { getLastEpisode } = require("../content/getLastEpisode");
 const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
 const { getNextEpisode } = require("../content/getNextEpisode");
 const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
+const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
@@ -79,13 +80,19 @@ const compareUsersRating = async (
     const tvShowEnded = isTvShow
       ? hasTvShowEnded(status, whatsonLastEpisode)
       : false;
-    let episodesDetails,
+    let seasonsNumber,
+      episodesDetails,
       lastEpisode,
       nextEpisode,
       highestEpisode,
       lowestEpisode;
     if (isTvShow && !tvShowEnded && !lastEpisodeReleasedRecently) {
       if (tmdbData) {
+        seasonsNumber = await getSeasonsNumber(
+          allocineHomepage,
+          tmdbData,
+          imdbId,
+        );
         episodesDetails = await getEpisodesDetails(
           allocineHomepage,
           imdbHomepage,
@@ -172,6 +179,7 @@ const compareUsersRating = async (
       dataWithoutId.is_active = isActive;
 
       if (isTvShow && !tvShowEnded && !lastEpisodeReleasedRecently) {
+        dataWithoutId.seasons_number = seasonsNumber;
         dataWithoutId.episodes_details = episodesDetails;
         dataWithoutId.last_episode = lastEpisode;
         dataWithoutId.next_episode = nextEpisode;

@@ -2307,6 +2307,48 @@ const params = {
     },
   },
 
+  should_filter_movies_within_release_date_range: {
+    query: `?item_type=movie&is_active=true&release_date=from:2010-01-01,to:2014-12-31&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+
+      const from = new Date("2010-01-01");
+      const to = new Date("2014-12-31");
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("release_date");
+
+        const releaseDate = new Date(item.release_date);
+
+        expect(releaseDate).toBeInstanceOf(Date);
+        expect(releaseDate).not.toBeNaN();
+        expect(releaseDate.getTime()).toBeGreaterThanOrEqual(from.getTime());
+        expect(releaseDate.getTime()).toBeLessThanOrEqual(to.getTime());
+      });
+    },
+  },
+
+  should_filter_tvshows_within_release_date_range: {
+    query: `?item_type=tvshow&is_active=true&release_date=from:2005-01-01,to:2020-12-31&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+
+      const from = new Date("2005-01-01");
+      const to = new Date("2020-12-31");
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("release_date");
+
+        const releaseDate = new Date(item.release_date);
+
+        expect(releaseDate).toBeInstanceOf(Date);
+        expect(releaseDate).not.toBeNaN();
+        expect(releaseDate.getTime()).toBeGreaterThanOrEqual(from.getTime());
+        expect(releaseDate.getTime()).toBeLessThanOrEqual(to.getTime());
+      });
+    },
+  },
+
   should_return_all_items_if_release_date_does_not_include_new: {
     query: `?item_type=movie&is_active=true&release_date=everything&limit=${config.maxLimitRemote}`,
     expectedResult: (items) => {
@@ -3071,7 +3113,7 @@ describe("What's on? API tests", () => {
     return { inFileNotInApi, inApiNotInFile };
   }
 
-  (isRemoteSource ? test.skip : test)(
+  (isRemoteSource || process.env.SKIP_DIFF === "true" ? test.skip : test)(
     "Local item count from files should match API response for active items",
     async () => {
       const movieFileCount = countTrueLines(config.filmsIdsFilePath);

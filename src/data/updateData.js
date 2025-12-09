@@ -76,7 +76,9 @@ async function checkStatus(service) {
     );
   }
 
-  if (getNodeVarsValues.get_ids === "update_ids") updateIds();
+  const isUpdateIds = getNodeVarsValues.get_ids === "update_ids";
+
+  if (isUpdateIds) updateIds();
 
   if (getNodeVarsValues.get_db !== "update_db") process.exit(0);
 
@@ -105,13 +107,35 @@ async function checkStatus(service) {
       : await getMojoBoxOffice(getNodeVarsValues.item_type);
 
   if (getNodeVarsValues.check_id) {
-    const imdbIdsToUpdate =
-      getNodeVarsValues.check_id === "all_ids"
-        ? mojoBoxOfficeArray.map((item) => item.imdbId).filter(Boolean)
-        : [getNodeVarsValues.check_id];
-    const filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) => {
+    const isCheckAllIds = getNodeVarsValues.check_id === "all_ids";
+
+    const imdbIdsToUpdate = isCheckAllIds
+      ? mojoBoxOfficeArray.map((item) => item.imdbId).filter(Boolean)
+      : [getNodeVarsValues.check_id];
+    let filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) => {
       return imdbIdsToUpdate.includes(item.IMDB_ID);
     });
+
+    const checkDate = parseInt(getNodeVarsValues.check_date, 10);
+    if (isCheckAllIds && !Number.isNaN(checkDate) && checkDate > 0) {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - checkDate);
+
+      const outdatedDocs = await collectionData
+        .find(
+          {
+            item_type: getNodeVarsValues.item_type,
+            updated_at: { $lt: cutoffDate.toISOString() },
+          },
+          { projection: { id: 1 } },
+        )
+        .toArray();
+
+      const outdatedIds = new Set(outdatedDocs.map((doc) => doc.id));
+      filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) =>
+        outdatedIds.has(parseInt(item.THEMOVIEDB_ID, 10)),
+      );
+    }
 
     writeFileSync(
       "./temp_mojo_box_office.json",
@@ -149,11 +173,11 @@ async function checkStatus(service) {
   /**
    * In `update_ids` mode, resets fields for items not in the current active ID list (`allTheMovieDbIds`):
    * - Sets `is_active` to false.
-   * - Sets `allocine.popularity`, `imdb.popularity`, and `tmdb.popularity` to null if their objects are not null.
+   * - Sets `allocine.popularity` and `imdb.popularity` to null if their objects are not null.
    * Only items matching `item_type` and excluded from the ID list are affected.
    * Logs the number of items excluded from the reset (i.e., still active).
    */
-  if (getNodeVarsValues.get_ids === "update_ids") {
+  if (isUpdateIds) {
     const filterQuery = {
       item_type: getNodeVarsValues.item_type,
       id: { $nin: allTheMovieDbIds },
@@ -174,12 +198,6 @@ async function checkStatus(service) {
     await collectionData.updateMany(
       { ...filterQuery, imdb: { $ne: null } },
       { $set: { "imdb.popularity": null } },
-    );
-
-    // 4. Reset tmdb popularity ONLY if tmdb is not null
-    await collectionData.updateMany(
-      { ...filterQuery, tmdb: { $ne: null } },
-      { $set: { "tmdb.popularity": null } },
     );
 
     console.log(

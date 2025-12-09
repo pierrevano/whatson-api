@@ -115,7 +115,7 @@ const loopItems = async (
       const isActive = urls.is_active;
 
       const checkDate = getNodeVarsValues.check_date;
-      if (parseInt(checkDate) >= 0) {
+      if (!Number.isNaN(checkDate) && checkDate >= 0) {
         const item_type_api = item_type === "movie" ? "movie" : "tvshow";
         const apiCall = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${config.internalApiKey}`;
 

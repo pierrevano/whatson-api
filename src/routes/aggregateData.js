@@ -313,14 +313,52 @@ const aggregateData = async (
     },
   ];
 
-  if (release_date.split(",").includes("new")) {
+  const releaseDateRange = {};
+  const releaseDateFilters = release_date
+    .split(",")
+    .map((value) => value.trim())
+    .filter((value) => value.length > 0);
+
+  if (releaseDateFilters.includes("new")) {
     const sixOrEighteenMonthsAgo = new Date();
     item_type === "movie"
       ? sixOrEighteenMonthsAgo.setMonth(sixOrEighteenMonthsAgo.getMonth() - 6)
       : sixOrEighteenMonthsAgo.setMonth(sixOrEighteenMonthsAgo.getMonth() - 18);
 
+    releaseDateRange.$gte = sixOrEighteenMonthsAgo;
+  }
+
+  const fromValue = releaseDateFilters.find((value) =>
+    value.toLowerCase().startsWith("from:"),
+  );
+  if (fromValue && fromValue.length > 5) {
+    const parsedDate = new Date(fromValue.slice(5));
+    if (!Number.isNaN(parsedDate.getTime())) {
+      releaseDateRange.$gte =
+        releaseDateRange.$gte &&
+        releaseDateRange.$gte.getTime() > parsedDate.getTime()
+          ? releaseDateRange.$gte
+          : parsedDate;
+    }
+  }
+
+  const toValue = releaseDateFilters.find((value) =>
+    value.toLowerCase().startsWith("to:"),
+  );
+  if (toValue && toValue.length > 3) {
+    const parsedDate = new Date(toValue.slice(3));
+    if (!Number.isNaN(parsedDate.getTime())) {
+      releaseDateRange.$lte =
+        releaseDateRange.$lte &&
+        releaseDateRange.$lte.getTime() < parsedDate.getTime()
+          ? releaseDateRange.$lte
+          : parsedDate;
+    }
+  }
+
+  if (Object.keys(releaseDateRange).length > 0) {
     matchConditions.push({
-      releaseDateAsDate: { $gte: sixOrEighteenMonthsAgo },
+      releaseDateAsDate: releaseDateRange,
     });
   }
 
