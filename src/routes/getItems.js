@@ -2,7 +2,11 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { aggregateData } = require("./aggregateData");
 const { config } = require("../config");
-const { sendInternalError, sendRequest } = require("../utils/sendRequest");
+const {
+  sendInternalError,
+  sendRequest,
+  sendResponse,
+} = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
 const findId = require("./findId");
 
@@ -29,7 +33,9 @@ const getItems = async (req, res) => {
 
     // Numeric query parameters
     const id_path = Number(req.params.id);
-    const limit_query = Number(req.query.limit);
+    const limit_raw = req.query.limit;
+    const limit_provided = typeof limit_raw !== "undefined";
+    const parsed_limit = Number(limit_raw);
     const page_query = Number(req.query.page);
 
     const {
@@ -56,6 +62,25 @@ const getItems = async (req, res) => {
       status: status_query,
       users_certified: is_users_certified_query,
     } = req.query;
+
+    if (
+      limit_provided &&
+      (!Number.isFinite(parsed_limit) ||
+        !Number.isInteger(parsed_limit) ||
+        parsed_limit <= 0)
+    ) {
+      return sendResponse(res, 400, {
+        message: "The limit must be a positive integer",
+      });
+    }
+
+    if (limit_provided && parsed_limit > config.maxLimit) {
+      return sendResponse(res, 400, {
+        message: `The limit exceeds maximum allowed (${config.maxLimit}). Please reduce the limit.`,
+      });
+    }
+
+    const limit_query = limit_provided ? parsed_limit : undefined;
 
     const internal_api_key = await collectionNameApiKey.findOne({
       name: "internal_api_key",

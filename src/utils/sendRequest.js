@@ -101,7 +101,7 @@ const sendRequest = (
 
   if (limit && limit > maxLimit) {
     return sendResponse(res, 400, {
-      message: `Limit exceeds maximum allowed (${maxLimit}). Please reduce the limit.`,
+      message: `The limit exceeds maximum allowed (${maxLimit}). Please reduce the limit.`,
     });
   }
 

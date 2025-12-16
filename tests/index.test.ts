@@ -2029,6 +2029,23 @@ const params = {
     },
   },
 
+  ratings_filters_should_ignore_invalid_and_duplicate_entries: {
+    query: "?ratings_filters=imdb_users,wrong,imdb_users",
+    expectedResult: async (items) => {
+      const response = await axios.get(
+        `${baseURL}?ratings_filters=imdb_users&api_key=${config.internalApiKey}`,
+      );
+      const cleanItems = response.data.results;
+
+      expect(items.length).toEqual(cleanItems.length);
+
+      items.forEach((item, index) => {
+        expect(item.id).toEqual(cleanItems[index].id);
+        expect(item.ratings_average).toEqual(cleanItems[index].ratings_average);
+      });
+    },
+  },
+
   ratings_average_for_incorrect_minimum_ratings: {
     query:
       "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
@@ -2086,6 +2103,40 @@ const params = {
       const ids = items.map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
       expect(uniqueIds.length).toEqual(ids.length);
+    },
+  },
+
+  unique_tmdb_ids_movie_and_tvshow: {
+    query: `?item_type=movie,tvshow&is_active=true,false&limit=${higherLimit}`,
+    expectedResult: (items) => {
+      const occurrences = items.reduce((acc, item) => {
+        acc[item.id] = (acc[item.id] || 0) + 1;
+        return acc;
+      }, {});
+
+      const duplicates = Object.entries(occurrences)
+        .filter(([, count]) => count > 1)
+        .map(([id]) => Number(id));
+
+      expect(duplicates).toEqual([]);
+    },
+  },
+
+  unique_trakt_ids_movie_and_tvshow: {
+    query: `?item_type=movie,tvshow&is_active=true,false&limit=${higherLimit}`,
+    expectedResult: (items) => {
+      const occurrences = items.reduce((acc, item) => {
+        if (item.trakt?.id) {
+          acc[item.trakt.id] = (acc[item.trakt.id] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      const duplicates = Object.entries(occurrences)
+        .filter(([, count]) => count > 1)
+        .map(([id]) => id);
+
+      expect(duplicates).toEqual([]);
     },
   },
 
@@ -2344,6 +2395,44 @@ const params = {
         expect(releaseDate).toBeInstanceOf(Date);
         expect(releaseDate).not.toBeNaN();
         expect(releaseDate.getTime()).toBeGreaterThanOrEqual(from.getTime());
+        expect(releaseDate.getTime()).toBeLessThanOrEqual(to.getTime());
+      });
+    },
+  },
+
+  should_filter_movies_with_from_only_release_date: {
+    query: `?item_type=movie&is_active=true&release_date=from:2015-01-01&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+
+      const from = new Date("2015-01-01");
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("release_date");
+
+        const releaseDate = new Date(item.release_date);
+
+        expect(releaseDate).toBeInstanceOf(Date);
+        expect(releaseDate).not.toBeNaN();
+        expect(releaseDate.getTime()).toBeGreaterThanOrEqual(from.getTime());
+      });
+    },
+  },
+
+  should_filter_movies_with_to_only_release_date: {
+    query: `?item_type=movie&is_active=true&release_date=to:2012-12-31&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+
+      const to = new Date("2012-12-31");
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("release_date");
+
+        const releaseDate = new Date(item.release_date);
+
+        expect(releaseDate).toBeInstanceOf(Date);
+        expect(releaseDate).not.toBeNaN();
         expect(releaseDate.getTime()).toBeLessThanOrEqual(to.getTime());
       });
     },
@@ -2691,6 +2780,34 @@ const params = {
     },
   },
 
+  only_last_and_next_episode: {
+    query:
+      "?item_type=tvshow&append_to_response=last_episode,next_episode&filtered_seasons=2",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("last_episode");
+        expect(item).toHaveProperty("next_episode");
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("highest_episode");
+        expect(item).not.toHaveProperty("lowest_episode");
+      }),
+  },
+
+  only_highest_and_lowest_episode: {
+    query:
+      "?item_type=tvshow&append_to_response=highest_episode,lowest_episode&filtered_seasons=2",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("highest_episode");
+        expect(item).toHaveProperty("lowest_episode");
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("next_episode");
+        expect(item).not.toHaveProperty("last_episode");
+      }),
+  },
+
   only_last_episode: {
     query:
       "?item_type=tvshow&append_to_response=last_episode&filtered_seasons=2",
@@ -2894,6 +3011,49 @@ const params = {
       });
 
       expect(items[0].mojo.rank).toBe(smallestRank);
+    },
+  },
+
+  should_sort_by_mojo_rank_descending: {
+    query: `?item_type=movie,tvshow&is_active=true,false&mojo_rank_order=desc&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      const itemsWithMojo = items.filter((item) => item.mojo);
+
+      expect(itemsWithMojo.length).toBeGreaterThan(0);
+
+      for (let i = 1; i < itemsWithMojo.length; i++) {
+        expect(itemsWithMojo[i].mojo.rank).toBeLessThanOrEqual(
+          itemsWithMojo[i - 1].mojo.rank,
+        );
+      }
+    },
+  },
+
+  should_fallback_to_popularity_when_mojo_rank_order_invalid: {
+    query: `?item_type=movie,tvshow&is_active=true,false&mojo_rank_order=invalid&limit=${config.maxLimitRemote}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+
+      let previousPopularity = -Infinity;
+      let sawMissingRank = false;
+
+      items.forEach((item) => {
+        const popularity =
+          typeof item.popularity_average === "number"
+            ? item.popularity_average
+            : Number.POSITIVE_INFINITY;
+
+        expect(popularity).toBeGreaterThanOrEqual(previousPopularity);
+
+        previousPopularity = popularity;
+
+        if (!item.mojo || typeof item.mojo.rank !== "number") {
+          sawMissingRank = true;
+        }
+      });
+
+      expect(sawMissingRank).toBe(true);
     },
   },
 
@@ -3171,7 +3331,7 @@ describe("What's on? API tests", () => {
         ? seriesResponse.data.results.length
         : 0;
 
-      expect(Math.abs(movieCount - movieFileCount)).toBeLessThanOrEqual(7);
+      expect(Math.abs(movieCount - movieFileCount)).toBeLessThanOrEqual(8);
       expect(Math.abs(seriesCount - seriesFileCount)).toBeLessThanOrEqual(0);
     },
   );

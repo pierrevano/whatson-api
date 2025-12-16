@@ -44,7 +44,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `Limit exceeds maximum allowed (${config.maxLimit}). Please reduce the limit.`,
+        `The limit exceeds maximum allowed (${config.maxLimit}). Please reduce the limit.`,
       );
       expect(data.code).toBe(400);
     },
@@ -232,6 +232,27 @@ const params = {
     },
   },
 
+  release_date_inverted_range_should_return_error: {
+    query:
+      "?item_type=movie,tvshow&is_active=true,false&release_date=from:2025-01-01,to:2010-01-01",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("No matching items found.");
+      expect(data.code).toBe(404);
+    },
+  },
+
+  minimum_ratings_too_high_should_return_404: {
+    query: "?item_type=movie,tvshow&is_active=true,false&minimum_ratings=9,9",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("No matching items found.");
+      expect(data.code).toBe(404);
+    },
+  },
+
   should_not_return_directors_values: {
     query: `?item_type=tvshow&is_active=true,false&directors=wrong_value`,
     expectedResult: (data) => {
@@ -314,8 +335,38 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("the limit must be positive");
-      expect(data.code).toBe(500);
+      expect(data.message).toBe("The limit must be a positive integer");
+      expect(data.code).toBe(400);
+    },
+  },
+
+  limit_is_negative: {
+    query: "?item_type=movie,tvshow&limit=-5",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("The limit must be a positive integer");
+      expect(data.code).toBe(400);
+    },
+  },
+
+  limit_is_decimal: {
+    query: "?item_type=movie,tvshow&limit=10.5",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("The limit must be a positive integer");
+      expect(data.code).toBe(400);
+    },
+  },
+
+  limit_is_not_a_number: {
+    query: "?item_type=movie,tvshow&limit=abc",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("The limit must be a positive integer");
+      expect(data.code).toBe(400);
     },
   },
 
