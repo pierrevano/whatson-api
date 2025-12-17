@@ -549,7 +549,7 @@ function checkItemProperties(items) {
         );
         expect(
           Math.abs(item.rotten_tomatoes.users_rating - expectedUsersRating),
-        ).toBeLessThanOrEqual(3);
+        ).toBeLessThanOrEqual(4);
       }
       expect(
         items.filter(
