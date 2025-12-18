@@ -1,4 +1,9 @@
 const { reportError } = require("./sendToNewRelic");
+const {
+  areQuerySearchKeysMissing,
+  invalidItemTypeMessage,
+  isValidItemType,
+} = require("./itemTypeValidation");
 
 /**
  * Normalises Express responses by attaching a status code and optional payload, while reporting
@@ -63,26 +68,14 @@ const sendRequest = (
 
   const { keysToCheckForSearch, maxLimit } = config;
   const areNoResults = json && json.results && json.results.length === 0;
-  const isValidItemType = [
-    "movie",
-    "tvshow",
-    "movie,tvshow",
-    "tvshow,movie",
-  ].includes(item_type_query);
-  const isQuerySearchKeyMissing = keysToCheckForSearch.every((key) => {
-    return !Object.keys(req.query).some(
-      (queryKey) => queryKey.toLowerCase() === key.toLowerCase(),
-    );
-  });
+  const isQuerySearchKeyMissing = areQuerySearchKeysMissing(
+    req.query,
+    keysToCheckForSearch,
+  );
 
-  if (
-    areNoResults &&
-    (!item_type_query || !isValidItemType) &&
-    isQuerySearchKeyMissing
-  ) {
-    return sendResponse(res, 404, {
-      message:
-        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
+  if (!isValidItemType(item_type_query)) {
+    return sendResponse(res, 400, {
+      message: invalidItemTypeMessage,
     });
   }
 
@@ -131,7 +124,7 @@ const sendPreferencesRequest = async (
   post,
 ) => {
   if (calculatedDigest !== digest) {
-    return sendResponse(res, 403, {
+    return sendResponse(res, 401, {
       message: "Unauthorized access: The provided digest is invalid.",
     });
   }

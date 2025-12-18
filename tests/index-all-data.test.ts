@@ -22,7 +22,7 @@ const params = {
       expect(data.message).toBe(
         "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
       );
-      expect(data.code).toBe(404);
+      expect(data.code).toBe(400);
     },
   },
 
@@ -34,7 +34,7 @@ const params = {
       expect(data.message).toBe(
         "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
       );
-      expect(data.code).toBe(404);
+      expect(data.code).toBe(400);
     },
   },
 
@@ -227,8 +227,10 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
-      expect(data.code).toBe(404);
+      expect(data.message).toBe(
+        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
+      );
+      expect(data.code).toBe(400);
     },
   },
 
@@ -293,7 +295,7 @@ const params = {
       expect(data.message).toBe(
         "Unauthorized access: The provided digest is invalid.",
       );
-      expect(data.code).toBe(403);
+      expect(data.code).toBe(401);
     },
   },
 
@@ -305,7 +307,7 @@ const params = {
       expect(data.message).toBe(
         "Unauthorized access: The provided digest is invalid.",
       );
-      expect(data.code).toBe(403);
+      expect(data.code).toBe(401);
     },
   },
 
@@ -324,9 +326,9 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `Invalid endpoint: /invalid-path?is_active&api_key=${config.internalApiKey}. Allowed endpoints are: '/', '/movie/:id', '/tvshow/:id'.`,
+        `Invalid endpoint: /invalid-path?is_active&api_key=${config.internalApiKey}. Allowed endpoints are: GET /, GET /movie/:id, GET /tvshow/:id.`,
       );
-      expect(data.code).toBe(500);
+      expect(data.code).toBe(404);
     },
   },
 
@@ -483,6 +485,23 @@ describe("What's on? API tests", () => {
       },
       config.timeout,
     );
+  });
+
+  test("Method Not Allowed should return 405 on known route", async () => {
+    const apiCall = `${baseURL}/movie/121?api_key=${config.internalApiKey}`;
+
+    const response = await axios.post(
+      apiCall,
+      {},
+      { validateStatus: (s) => s <= 500 },
+    );
+
+    expect(response.status).toBe(405);
+    expect(response.data).toHaveProperty("message");
+    expect(response.data).toHaveProperty("code");
+    expect(response.data.code).toBe(405);
+    expect(response.headers).toHaveProperty("allow");
+    expect(response.headers.allow).toContain("GET");
   });
 
   test("Rate Limiting should apply headers on successful requests", async () => {

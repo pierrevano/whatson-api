@@ -8,13 +8,13 @@ const app = express();
 const PORT = process.env.PORT || 8081;
 
 const { limiter } = require("./src/utils/rateLimiter");
-const { sendInternalError } = require("./src/utils/sendRequest");
 const {
   getUserPreferences,
   saveOrUpdateUserPreferences,
 } = require("./src/routes/getOrSaveUserPreferences");
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
+const { handleInvalidEndpoint } = require("./src/routes/handleInvalidEndpoint");
 
 // Use CORS middleware
 app.use(cors());
@@ -42,12 +42,7 @@ app.get("/preferences/:email", getUserPreferences);
 app.post("/preferences/:email", saveOrUpdateUserPreferences);
 
 /* Catch-all route for invalid endpoints */
-app.all("*", (req, res) => {
-  const error = new Error(
-    `Invalid endpoint: ${req.originalUrl}. Allowed endpoints are: '/', '/movie/:id', '/tvshow/:id'.`,
-  );
-  sendInternalError(res, error);
-});
+app.all("*", handleInvalidEndpoint);
 
 /* Starting the server on the port defined in the PORT variable. */
 app.listen(PORT, () => {

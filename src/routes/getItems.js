@@ -8,6 +8,10 @@ const {
   sendResponse,
 } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
+const {
+  invalidItemTypeMessage,
+  isValidItemType,
+} = require("../utils/itemTypeValidation");
 const findId = require("./findId");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
@@ -62,6 +66,12 @@ const getItems = async (req, res) => {
       status: status_query,
       users_certified: is_users_certified_query,
     } = req.query;
+
+    if (!isValidItemType(item_type_query)) {
+      return sendResponse(res, 400, {
+        message: invalidItemTypeMessage,
+      });
+    }
 
     if (
       limit_provided &&

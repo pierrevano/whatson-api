@@ -8,9 +8,9 @@ Companion to [What's on?](https://github.com/pierrevano/whatson)
 
 ---
 
-⚠️ This API is currently running on Render's free tier. If you'd like to keep it active at all times, please consider making a small donation here: [buymeacoffee.com/pierreschelde](https://buymeacoffee.com/pierreschelde). For any additional feedback, you can also join the Discord server: https://discord.gg/unwWEuUe.
+⚠️ This API is currently running on Render's free tier. If you'd like to keep it active at all times, please consider making a small donation here: [buymeacoffee.com/pierreschelde](https://buymeacoffee.com/pierreschelde). For any additional feedback, you can also join the Discord server: https://discord.gg/SpKw8Zg5vT.
 
-Note: A rate limit of `1000` requests per hour is in place to prevent abuse of the API. An API key can be requested on demand to remove this limit by contacting me at https://pierrevano.github.io.
+Note: A rate limit of `1000` requests per hour is in place to prevent abuse of the API. When the limit is exceeded, the API returns a `429` response with a `Retry-After` header. An API key can be requested on demand to remove this limit by contacting me at https://pierrevano.github.io.
 
 ---
 
@@ -113,7 +113,9 @@ The query parameters provided below are solely for item search purposes and must
 
 - `200` A successful response
 - `400` Invalid query parameters were passed
-- `404` No items have been found
+- `404` No items have been found (or invalid endpoint)
+- `405` Method not allowed
+- `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
 
 ---
@@ -135,7 +137,9 @@ Provides detailed information about specific item (movie or tvshow) by its type 
 
 - `200` A successful response
 - `400` Invalid query parameters were passed
-- `404` No items have been found
+- `404` No items have been found (or invalid endpoint)
+- `405` Method not allowed
+- `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
 
 ---

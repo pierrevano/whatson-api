@@ -3,8 +3,16 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 const { aggregateData } = require("./aggregateData");
 const { buildProjection } = require("./buildProjection");
 const { config } = require("../config");
-const { sendInternalError, sendRequest } = require("../utils/sendRequest");
+const {
+  sendInternalError,
+  sendRequest,
+  sendResponse,
+} = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
+const {
+  invalidItemTypeMessage,
+  isValidItemType,
+} = require("../utils/itemTypeValidation");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -34,6 +42,12 @@ const getId = async (req, res) => {
     const url = `${req.headers["host"]}${req.url}`;
     const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
     const append_to_response = req.query.append_to_response;
+
+    if (!isValidItemType(item_type_query)) {
+      return sendResponse(res, 400, {
+        message: invalidItemTypeMessage,
+      });
+    }
 
     const internal_api_key = await collectionNameApiKey.findOne({
       name: "internal_api_key",
