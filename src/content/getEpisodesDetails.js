@@ -10,6 +10,7 @@ const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getImdbRating } = require("./getImdbRating");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { logErrors } = require("../utils/logErrors");
+const { processEpisodesPagination } = require("./processEpisodesPagination");
 const { writeItems } = require("../utils/writeItems");
 
 /**
@@ -20,6 +21,7 @@ const { writeItems } = require("../utils/writeItems");
  */
 const parseImdbEpisodes = async (imdbHomepage, season) => {
   let episodesDetails = [];
+  let paginationCursor = null;
   const url = `${imdbHomepage}episodes?season=${season}`;
 
   try {
@@ -33,10 +35,14 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
     const jsonText = $("#__NEXT_DATA__").html();
     const nextData = JSON.parse(jsonText);
 
-    const items =
-      nextData?.props?.pageProps?.contentData?.section?.episodes?.items;
+    const section = nextData?.props?.pageProps?.contentData?.section;
+    const items = section?.episodes?.items;
+    const endCursor = section?.episodes?.endCursor;
+    paginationCursor = endCursor || null;
 
-    if (!Array.isArray(items)) return episodesDetails;
+    if (!Array.isArray(items)) {
+      return { episodesDetails, paginationCursor };
+    }
 
     const getUsersRating = (date, rating) => {
       if (!date) return null;
@@ -71,7 +77,7 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
     logErrors(error, url, "parseImdbEpisodes");
   }
 
-  return episodesDetails;
+  return { episodesDetails, paginationCursor };
 };
 
 /**
@@ -92,6 +98,7 @@ const getEpisodesDetails = async (
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
   let episodesDetails = [];
+  let shouldProcessPagination = false;
 
   try {
     let totalSeasons = null;
@@ -111,21 +118,34 @@ const getEpisodesDetails = async (
 
     if (!totalSeasons || totalSeasons < 1) return null;
 
+    let paginationCursor = null;
+
     for (let season = 1; season <= totalSeasons; season++) {
       const seasonEpisodesDetails = await parseImdbEpisodes(
         imdbHomepage,
         season,
       );
 
-      episodesDetails.push(...seasonEpisodesDetails);
-
-      /*
-       * We cannot parse more than 50 episodes at once on IMDb with Cheerio, so I prefer to return `null`.
-       * Ideally, it should be parsed with Puppeteer or Playwright to get all episodes.
-       */
-      if (seasonEpisodesDetails.length === 50) {
-        return null;
+      if (
+        paginationCursor === null &&
+        seasonEpisodesDetails?.paginationCursor
+      ) {
+        paginationCursor = seasonEpisodesDetails.paginationCursor;
       }
+
+      episodesDetails.push(...seasonEpisodesDetails.episodesDetails);
+
+      if (seasonEpisodesDetails?.episodesDetails?.length === 50) {
+        shouldProcessPagination = true;
+      }
+    }
+
+    if (shouldProcessPagination) {
+      episodesDetails = await processEpisodesPagination(
+        episodesDetails,
+        imdbId,
+        paginationCursor,
+      );
     }
 
     writeItems(

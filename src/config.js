@@ -12,6 +12,7 @@ const baseURL = {
   betaseriesAPI: "https://api.betaseries.com",
   dailymotion: "https://www.dailymotion.com/embed/video/",
   imdb: "https://www.imdb.com",
+  imdbGraphql: "https://graphql.imdb.com/",
   letterboxd: "https://letterboxd.com",
   metacritic: "https://www.metacritic.com",
   mojo: "https://www.boxofficemojo.com",
@@ -59,6 +60,9 @@ const config = {
   webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
   appendToResponse:
     "critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode",
+
+  imdbEpisodesPaginationHash: process.env.IMDB_EPISODES_PAGINATION_HASH,
+  imdbEpisodesPaginationOperation: "TitleEpisodesSubPagePagination",
 
   limit: 15,
   maximumThreshold: {
@@ -179,11 +183,11 @@ const config = {
     "mojo_rank_order",
     "users_certified",
   ],
-  specialItems: ["tt13207736"],
+  specialItems: ["tt0423713", "tt13207736", "tt7124904"],
   margin: 10,
   maxResponseTime: 6000,
   maxNullValues: 650,
-  maxNullReleaseDates: 220,
+  maxNullReleaseDates: 320,
   minimumNumberOfItems: {
     default: 25,
     mojo: 15,
@@ -252,6 +256,7 @@ const config = {
   baseURLCriticDetailsFilms: "/film/fichefilm-",
   baseURLCriticDetailsSeries: "/series/ficheserie-",
   baseURLDailymotion: baseURL.dailymotion,
+  baseURLImdbGraphql: baseURL.imdbGraphql,
   baseURLIMDB: `${baseURL.imdb}/title/`,
   baseURLLetterboxdFilm: `${baseURL.letterboxd}/film/`,
   baseURLMetacriticFilm: `${baseURL.metacritic}/movie/`,

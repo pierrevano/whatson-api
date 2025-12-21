@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const axios = require("axios");
-const { readFileSync } = require("fs");
+const { readFileSync, writeFileSync } = require("fs");
 
 const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");
@@ -2106,8 +2106,24 @@ const params = {
     },
   },
 
-  unique_tmdb_ids_movie_and_tvshow: {
-    query: `?item_type=movie,tvshow&is_active=true,false&limit=${higherLimit}`,
+  unique_tmdb_ids_movie: {
+    query: `?item_type=movie&is_active=true,false&limit=${higherLimit}`,
+    expectedResult: (items) => {
+      const occurrences = items.reduce((acc, item) => {
+        acc[item.id] = (acc[item.id] || 0) + 1;
+        return acc;
+      }, {});
+
+      const duplicates = Object.entries(occurrences)
+        .filter(([, count]) => count > 1)
+        .map(([id]) => Number(id));
+
+      expect(duplicates).toEqual([]);
+    },
+  },
+
+  unique_tmdb_ids_tvshow: {
+    query: `?item_type=tvshow&is_active=true,false&limit=${higherLimit}`,
     expectedResult: (items) => {
       const occurrences = items.reduce((acc, item) => {
         acc[item.id] = (acc[item.id] || 0) + 1;
@@ -2485,16 +2501,23 @@ const params = {
           if (item.item_type === "movie") {
             expect(item.episodes_details).toBeNull();
           } else {
-            let lastGlobalEpisodeNumber = -1;
+            let lastSeasonNumber = null;
+            let lastEpisodeNumber = null;
             item.episodes_details.forEach((episode) => {
               if (episode?.season && episode?.episode) {
-                const currentGlobalEpisodeNumber = parseInt(
-                  `${String(episode.season)}${String(episode.episode).padStart(2, "0")}`,
-                );
-                expect(currentGlobalEpisodeNumber).toBeGreaterThan(
-                  lastGlobalEpisodeNumber,
-                );
-                lastGlobalEpisodeNumber = currentGlobalEpisodeNumber;
+                const currentSeasonNumber = Number(episode.season);
+                const currentEpisodeNumber = Number(episode.episode);
+
+                if (lastSeasonNumber !== null && lastEpisodeNumber !== null) {
+                  expect(
+                    currentSeasonNumber > lastSeasonNumber ||
+                      (currentSeasonNumber === lastSeasonNumber &&
+                        currentEpisodeNumber > lastEpisodeNumber),
+                  ).toBe(true);
+                }
+
+                lastSeasonNumber = currentSeasonNumber;
+                lastEpisodeNumber = currentEpisodeNumber;
 
                 // Check that future episodes have null users_rating
                 if (episode.release_date) {
@@ -2596,10 +2619,23 @@ const params = {
               next.release_date &&
               current.release_date !== next.release_date
             ) {
-              const currentCombined = current.season * 100 + current.episode;
-              const nextCombined = next.season * 100 + next.episode;
+              if (
+                current.season != null &&
+                current.episode != null &&
+                next.season != null &&
+                next.episode != null
+              ) {
+                const currentSeason = Number(current.season);
+                const currentEpisode = Number(current.episode);
+                const nextSeason = Number(next.season);
+                const nextEpisode = Number(next.episode);
 
-              expect(nextCombined).toBeGreaterThan(currentCombined);
+                expect(
+                  nextSeason > currentSeason ||
+                    (nextSeason === currentSeason &&
+                      nextEpisode > currentEpisode),
+                ).toBe(true);
+              }
             }
           }
         }
