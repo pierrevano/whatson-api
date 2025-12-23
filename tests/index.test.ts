@@ -1595,6 +1595,16 @@ const params = {
     },
   },
 
+  tvshow_60715_should_have_many_episodes_details: {
+    query:
+      "/tvshow/60715?append_to_response=episodes_details,last_episode,next_episode,highest_episode,lowest_episode",
+    expectedResult: (item) => {
+      expect(item.id).toBe(60715);
+      expect(Array.isArray(item.episodes_details)).toBe(true);
+      expect(item.episodes_details.length).toBeGreaterThan(50);
+    },
+  },
+
   correct_tmdb_id_returned_on_search: {
     query: "?tmdbid=249042",
     expectedResult: (items) => {

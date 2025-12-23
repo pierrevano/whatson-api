@@ -22,6 +22,7 @@ const { writeItems } = require("../utils/writeItems");
 const parseImdbEpisodes = async (imdbHomepage, season) => {
   let episodesDetails = [];
   let paginationCursor = null;
+  let totalEpisodes = null;
   const url = `${imdbHomepage}episodes?season=${season}`;
 
   try {
@@ -39,9 +40,10 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
     const items = section?.episodes?.items;
     const endCursor = section?.episodes?.endCursor;
     paginationCursor = endCursor || null;
+    totalEpisodes = section?.episodes?.total;
 
     if (!Array.isArray(items)) {
-      return { episodesDetails, paginationCursor };
+      return { episodesDetails, paginationCursor, totalEpisodes };
     }
 
     const getUsersRating = (date, rating) => {
@@ -77,7 +79,7 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
     logErrors(error, url, "parseImdbEpisodes");
   }
 
-  return { episodesDetails, paginationCursor };
+  return { episodesDetails, paginationCursor, totalEpisodes };
 };
 
 /**
@@ -133,9 +135,13 @@ const getEpisodesDetails = async (
         paginationCursor = seasonEpisodesDetails.paginationCursor;
       }
 
+      const hasMoreThanOnePage =
+        seasonEpisodesDetails?.episodesDetails?.length === 50 &&
+        seasonEpisodesDetails?.totalEpisodes > 50;
+
       episodesDetails.push(...seasonEpisodesDetails.episodesDetails);
 
-      if (seasonEpisodesDetails?.episodesDetails?.length === 50) {
+      if (hasMoreThanOnePage) {
         shouldProcessPagination = true;
       }
     }
