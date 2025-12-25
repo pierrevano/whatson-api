@@ -73,7 +73,7 @@ const config = {
   maxSeasonsNumber: 5,
   minimumActiveItems: 150,
   page: 1,
-  retries: 20,
+  retries: 10,
   retryDelay: 5000,
   userAgentChrome:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/537.36",

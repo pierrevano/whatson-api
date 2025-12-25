@@ -56,18 +56,21 @@ const compareUsersRating = async (
       item_type_api === "movie"
         ? `${config.baseURLTMDBFilm}${tmdbId}`
         : `${config.baseURLTMDBSerie}${tmdbId}`;
-    const tmdbResponse = tmdbId
-      ? await getTMDBResponse(allocineHomepage, tmdbId)
-      : null;
+    const [tmdbResponse, allocineInfo, imdbRating] = await Promise.all([
+      tmdbId
+        ? getTMDBResponse(allocineHomepage, tmdbId)
+        : Promise.resolve(null),
+      getAllocineInfo(allocineHomepage, false),
+      getImdbRating(imdbHomepage),
+    ]);
     const tmdbData = tmdbResponse?.data;
 
-    const allocineInfo = await getAllocineInfo(allocineHomepage, false);
     if (!allocineInfo || allocineInfo.error) {
       return isEqualObj;
     }
+
     const { allocineUsersRating: allocine_users_rating, status } = allocineInfo;
-    const { usersRating: imdb_users_rating } =
-      await getImdbRating(imdbHomepage);
+    const { usersRating: imdb_users_rating } = imdbRating;
 
     const isTvShow = item_type_api === "tvshow";
     const whatsonLastEpisode = isTvShow
