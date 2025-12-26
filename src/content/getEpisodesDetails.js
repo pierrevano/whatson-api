@@ -120,30 +120,48 @@ const getEpisodesDetails = async (
 
     if (!totalSeasons || totalSeasons < 1) return null;
 
+    const maxParallelSeasonRequests = config.maxParallelSeasonRequests;
     let paginationCursor = null;
 
-    for (let season = 1; season <= totalSeasons; season++) {
-      const seasonEpisodesDetails = await parseImdbEpisodes(
-        imdbHomepage,
-        season,
+    for (
+      let season = 1;
+      season <= totalSeasons;
+      season += maxParallelSeasonRequests
+    ) {
+      const seasonsBatch = Array.from(
+        {
+          length: Math.min(
+            maxParallelSeasonRequests,
+            totalSeasons - season + 1,
+          ),
+        },
+        (_, index) => season + index,
       );
 
-      if (
-        paginationCursor === null &&
-        seasonEpisodesDetails?.paginationCursor
-      ) {
-        paginationCursor = seasonEpisodesDetails.paginationCursor;
-      }
+      const batchResults = await Promise.all(
+        seasonsBatch.map((seasonNumber) =>
+          parseImdbEpisodes(imdbHomepage, seasonNumber),
+        ),
+      );
 
-      const hasMoreThanOnePage =
-        seasonEpisodesDetails?.episodesDetails?.length === 50 &&
-        seasonEpisodesDetails?.totalEpisodes > 50;
+      batchResults.forEach((seasonEpisodesDetails, index) => {
+        if (
+          paginationCursor === null &&
+          seasonEpisodesDetails?.paginationCursor
+        ) {
+          paginationCursor = seasonEpisodesDetails.paginationCursor;
+        }
 
-      episodesDetails.push(...seasonEpisodesDetails.episodesDetails);
+        const hasMoreThanOnePage =
+          seasonEpisodesDetails?.episodesDetails?.length === 50 &&
+          seasonEpisodesDetails?.totalEpisodes > 50;
 
-      if (hasMoreThanOnePage) {
-        shouldProcessPagination = true;
-      }
+        episodesDetails.push(...seasonEpisodesDetails.episodesDetails);
+
+        if (hasMoreThanOnePage) {
+          shouldProcessPagination = true;
+        }
+      });
     }
 
     if (shouldProcessPagination) {
