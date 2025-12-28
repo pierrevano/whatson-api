@@ -1,7 +1,5 @@
 const { formatDate } = require("./formatDate");
 
-const SIX_DAYS_IN_MS = 6 * 24 * 60 * 60 * 1000;
-
 /**
  * Parses a release date string into a valid Date object.
  * @param {string|Date|null|undefined} releaseDate - Raw release date value.
@@ -40,29 +38,4 @@ const hasTvShowEnded = (status, lastWhatsOnEpisode) => {
   return formattedReleaseDate < formattedToday;
 };
 
-/**
- * Checks if the last episode aired within a recent time window.
- * @param {{ release_date?: string }} [lastWhatsOnEpisode] - Latest episode from What's on? API.
- * @param {number} [recencyThresholdMs=SIX_DAYS_IN_MS] - Window in milliseconds considered "recent".
- * @returns {boolean} True when the episode aired in the past and within the window.
- */
-const wasLastEpisodeReleasedRecently = (
-  lastWhatsOnEpisode,
-  recencyThresholdMs = SIX_DAYS_IN_MS,
-) => {
-  const releaseDate = parseReleaseDate(lastWhatsOnEpisode?.release_date);
-  if (!releaseDate) {
-    return false;
-  }
-
-  const now = Date.now();
-  const releaseTime = releaseDate.getTime();
-
-  if (releaseTime > now) {
-    return false;
-  }
-
-  return now - releaseTime < recencyThresholdMs;
-};
-
-module.exports = { hasTvShowEnded, wasLastEpisodeReleasedRecently };
+module.exports = { hasTvShowEnded };

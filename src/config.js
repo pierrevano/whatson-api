@@ -70,7 +70,7 @@ const config = {
     metacritic_or_rotten_tomatoes: 95,
     allocine_critics: 80,
   },
-  maxParallelSeasonRequests: 3,
+  maxParallelSeasonRequests: 10,
   maxSeasonsNumber: 5,
   minimumActiveItems: 150,
   page: 1,
@@ -99,7 +99,7 @@ const config = {
   baseURLLocal: "http://localhost:8081",
   baseURLRemote: process.env.WHATSON_API_URL,
   maxLimit: 900,
-  maxLimitRemote: 500,
+  maxLimitRemote: 450,
   checkItemsNumber: true,
   keysToCheck: [
     "_id",

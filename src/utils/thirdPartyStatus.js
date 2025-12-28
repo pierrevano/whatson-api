@@ -22,7 +22,7 @@ const isThirdPartyServiceOK = async (service) => {
       headers: {
         "User-Agent": generateUserAgent(),
       },
-      timeout: 120000,
+      timeout: 240000,
     };
 
     console.log(`Calling service: ${service}`);

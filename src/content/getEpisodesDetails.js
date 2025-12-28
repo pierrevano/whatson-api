@@ -11,6 +11,7 @@ const { getImdbRating } = require("./getImdbRating");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { logErrors } = require("../utils/logErrors");
 const { processEpisodesPagination } = require("./processEpisodesPagination");
+const { sortEpisodes } = require("../utils/sortEpisodes");
 const { writeItems } = require("../utils/writeItems");
 
 /**
@@ -107,7 +108,7 @@ const getEpisodesDetails = async (
 
     if (config.specialItems.includes(imdbId)) {
       const { seasonsNumber: imdbSeasonsNumber } =
-        (await getImdbRating(imdbHomepage)) || {};
+        await getImdbRating(imdbHomepage);
 
       if (imdbSeasonsNumber != null) {
         totalSeasons = imdbSeasonsNumber;
@@ -144,7 +145,7 @@ const getEpisodesDetails = async (
         ),
       );
 
-      batchResults.forEach((seasonEpisodesDetails, index) => {
+      batchResults.forEach((seasonEpisodesDetails, _) => {
         if (
           paginationCursor === null &&
           seasonEpisodesDetails?.paginationCursor
@@ -170,6 +171,8 @@ const getEpisodesDetails = async (
         imdbId,
         paginationCursor,
       );
+    } else {
+      episodesDetails = sortEpisodes(episodesDetails);
     }
 
     writeItems(

@@ -2590,7 +2590,8 @@ const params = {
 
           const isSequential =
             (nextSeason === lastSeason && nextEpisode === lastEpisode + 1) ||
-            (nextSeason === lastSeason + 1 && nextEpisode === 1);
+            (nextSeason === lastSeason + 1 &&
+              (nextEpisode === 0 || nextEpisode === 1));
 
           expect(isSequential).toBe(true);
 

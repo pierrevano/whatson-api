@@ -15,10 +15,7 @@ const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
-const {
-  hasTvShowEnded,
-  wasLastEpisodeReleasedRecently,
-} = require("../utils/tvShowStatus");
+const { hasTvShowEnded } = require("../utils/tvShowStatus");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -70,16 +67,16 @@ const compareUsersRating = async (
     }
 
     const { allocineUsersRating: allocine_users_rating, status } = allocineInfo;
-    const { usersRating: imdb_users_rating } = imdbRating;
+    const {
+      usersRating: imdb_users_rating,
+      seasonsNumber: imdb_seasons_number,
+    } = imdbRating;
 
     const isTvShow = item_type_api === "tvshow";
     const whatsonLastEpisode = isTvShow
       ? ((await getWhatsonResponse(imdbId, "last_episode"))?.last_episode ??
         null)
       : null;
-    const lastEpisodeReleasedRecently = isTvShow
-      ? wasLastEpisodeReleasedRecently(whatsonLastEpisode)
-      : false;
     const tvShowEnded = isTvShow
       ? hasTvShowEnded(status, whatsonLastEpisode)
       : false;
@@ -89,39 +86,36 @@ const compareUsersRating = async (
       nextEpisode,
       highestEpisode,
       lowestEpisode;
-    if (isTvShow && !tvShowEnded && !lastEpisodeReleasedRecently) {
-      if (tmdbData) {
-        seasonsNumber = await getSeasonsNumber(
-          allocineHomepage,
-          tmdbData,
-          imdbId,
-        );
-        episodesDetails = await getEpisodesDetails(
-          allocineHomepage,
-          imdbHomepage,
-          imdbId,
-          tmdbData,
-        );
-        lastEpisode = await getLastEpisode(
-          allocineHomepage,
-          episodesDetails,
-          tmdbData,
-        );
-        nextEpisode = await getNextEpisode(
-          allocineHomepage,
-          episodesDetails,
-          lastEpisode,
-          tmdbData,
-        );
-        highestEpisode = await getHighestRatedEpisode(
-          allocineHomepage,
-          episodesDetails,
-        );
-        lowestEpisode = await getLowestRatedEpisode(
-          allocineHomepage,
-          episodesDetails,
-        );
-      }
+    if (isTvShow && !tvShowEnded && tmdbData) {
+      seasonsNumber =
+        config.specialItems.includes(imdbId) && imdb_seasons_number != null
+          ? imdb_seasons_number
+          : await getSeasonsNumber(allocineHomepage, tmdbData, imdbId);
+      episodesDetails = await getEpisodesDetails(
+        allocineHomepage,
+        imdbHomepage,
+        imdbId,
+        tmdbData,
+      );
+      lastEpisode = await getLastEpisode(
+        allocineHomepage,
+        episodesDetails,
+        tmdbData,
+      );
+      nextEpisode = await getNextEpisode(
+        allocineHomepage,
+        episodesDetails,
+        lastEpisode,
+        tmdbData,
+      );
+      highestEpisode = await getHighestRatedEpisode(
+        allocineHomepage,
+        episodesDetails,
+      );
+      lowestEpisode = await getLowestRatedEpisode(
+        allocineHomepage,
+        episodesDetails,
+      );
     }
 
     const allocinePopularityResult = await getAllocinePopularity(
@@ -181,7 +175,7 @@ const compareUsersRating = async (
 
       dataWithoutId.is_active = isActive;
 
-      if (isTvShow && !tvShowEnded && !lastEpisodeReleasedRecently) {
+      if (isTvShow && !tvShowEnded) {
         dataWithoutId.seasons_number = seasonsNumber;
         dataWithoutId.episodes_details = episodesDetails;
         dataWithoutId.last_episode = lastEpisode;
