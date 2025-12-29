@@ -96,7 +96,17 @@ const getItems = async (req, res) => {
       name: "internal_api_key",
     });
 
-    sendToNewRelic(req, api_key_query, internal_api_key);
+    const newRelicQueryAttributes = {
+      ...req.query,
+      new_relic_route: "getItems",
+    };
+
+    sendToNewRelic(
+      req,
+      api_key_query,
+      internal_api_key,
+      newRelicQueryAttributes,
+    );
 
     let { items, limit, page, is_active_item } = await aggregateData(
       append_to_response,

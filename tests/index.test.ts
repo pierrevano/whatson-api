@@ -1832,6 +1832,30 @@ const params = {
     },
   },
 
+  correct_all_popularity_order: {
+    query: `?item_type=tvshow&popularity_filters=all&limit=${higherLimit}`,
+    expectedResult: (items) => {
+      const itemsWithPopularity = items.filter(
+        (item) =>
+          typeof item.popularity_average === "number" &&
+          Number.isFinite(item.popularity_average),
+      );
+      expect(itemsWithPopularity.length).toBeGreaterThan(0);
+
+      let previousPopularity = -Infinity;
+
+      items.forEach((item) => {
+        const popularity =
+          typeof item.popularity_average === "number"
+            ? item.popularity_average
+            : Number.POSITIVE_INFINITY;
+
+        expect(popularity).toBeGreaterThanOrEqual(previousPopularity);
+        previousPopularity = popularity;
+      });
+    },
+  },
+
   correct_none_popularity_order: {
     query: "?item_type=tvshow&popularity_filters=none,imdb_popularity",
     expectedResult: (items) => {

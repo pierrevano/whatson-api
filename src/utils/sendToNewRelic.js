@@ -12,18 +12,18 @@ if (isNewRelicEnabled) {
  * @param {import("express").Request} req - The processed request.
  * @param {string|undefined} api_key_query - API key provided by the consumer.
  * @param {{value: string}|null} internal_api_key - Cached internal API key document.
- * @param {Record<string, string|number>|undefined} rateLimitHeaders - Optional rate limit telemetry to forward.
+ * @param {Record<string, string|number>|undefined} customAttributes - Optional attributes to send.
  * @returns {void}
  */
 function sendToNewRelic(
   req,
   api_key_query,
   internal_api_key,
-  rateLimitHeaders,
+  customAttributes,
 ) {
   const isInternalApiKeyValid =
     internal_api_key && api_key_query === internal_api_key.value;
-  const attributes = rateLimitHeaders ? rateLimitHeaders : req.query;
+  const attributes = customAttributes ? customAttributes : req.query;
   console.log("New Relic custom attributes:", attributes);
 
   if (!newrelic) {

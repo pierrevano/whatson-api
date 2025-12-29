@@ -53,7 +53,18 @@ const getId = async (req, res) => {
       name: "internal_api_key",
     });
 
-    sendToNewRelic(req, api_key_query, internal_api_key);
+    const newRelicQueryAttributes = {
+      ...req.query,
+      path_id: Number.isFinite(id_path) ? id_path : "invalid_or_missing",
+      new_relic_route: "getId",
+    };
+
+    sendToNewRelic(
+      req,
+      api_key_query,
+      internal_api_key,
+      newRelicQueryAttributes,
+    );
 
     if (id_path && ratings_filters_query) {
       try {
