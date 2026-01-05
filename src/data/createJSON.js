@@ -109,14 +109,6 @@ const createJSON = async (
     allocineURL,
     item_type,
   );
-  const {
-    usersRating: usersRatingBetaseries,
-    usersRatingCount: usersRatingCountBetaseries,
-  } = await getBetaseriesRating(
-    allocineHomepage,
-    betaseriesHomepage,
-    betaseriesId,
-  );
   const platformsLinks = await getPlatformsLinks(
     betaseriesId,
     allocineHomepage,
@@ -177,23 +169,25 @@ const createJSON = async (
     imdbId,
     item_type,
   );
-  const metacriticRating = await getMetacriticRating(
-    metacriticHomepage,
-    metacriticId,
-  );
-  const rottenTomatoesRating = await getRottenTomatoesRating(
-    rottenTomatoesHomepage,
-    rottenTomatoesId,
-  );
-  const letterboxdRating = await getLetterboxdRating(
-    letterboxdHomepage,
-    letterboxdId,
-  );
-  const sensCritiqueRating = await getSensCritiqueRating(
-    sensCritiqueHomepage,
-    sensCritiqueId,
-  );
-  const tmdbRating = await getTmdbRating(tmdbHomepage, tmdbId, tmdbData);
+  const [
+    betaseriesRating,
+    letterboxdRating,
+    metacriticRating,
+    rottenTomatoesRating,
+    sensCritiqueRating,
+    tmdbRating,
+  ] = await Promise.all([
+    getBetaseriesRating(allocineHomepage, betaseriesHomepage, betaseriesId),
+    getLetterboxdRating(letterboxdHomepage, letterboxdId),
+    getMetacriticRating(metacriticHomepage, metacriticId),
+    getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId),
+    getSensCritiqueRating(sensCritiqueHomepage, sensCritiqueId),
+    getTmdbRating(tmdbHomepage, tmdbId, tmdbData),
+  ]);
+  const {
+    usersRating: usersRatingBetaseries,
+    usersRatingCount: usersRatingCountBetaseries,
+  } = betaseriesRating;
   const tmdbPopularity = await getTmdbPopularity(
     tmdbHomepage,
     tmdbId,

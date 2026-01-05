@@ -8,12 +8,33 @@ const schema = {
   title: "string", // Title of the item
   original_title: "string", // Original title of the item
 
+  /*
+   * To include this key in the response, add `directors` to the `append_to_response` query parameter.
+   */
   directors: "object", // Directors' names
+  /*
+   * To include this key in the response, add `genres` to the `append_to_response` query parameter.
+   */
   genres: "object", // Genres' names
   image: "string", // URL to the item's image
   is_adult: "boolean", // Indicates if the title is flagged as adult content on IMDb
   certification: "string", // Age classification assigned by IMDb (e.g., G, PG-13, R)
+  /*
+   * To include this key in the response, add `networks` to the `append_to_response` query parameter.
+   */
   networks: "object", // Networks' names
+  /*
+   * To include this key in the response, add `platforms_links` to the `append_to_response` query parameter.
+   */
+  platforms_links: [
+    {
+      name: "string", // Name of the streaming platform
+      link_url: "string", // URL to the streaming platform
+    },
+  ],
+  /*
+   * To include this key in the response, add `production_companies` to the `append_to_response` query parameter.
+   */
   production_companies: "object", // Production Companies' names
   release_date: "string", // Release date of the item
   runtime: "number", // Runtime duration expressed in seconds
@@ -99,12 +120,6 @@ const schema = {
     users_rating: "number", // Average rating given by IMDb users for the lowest-rated episode
     users_rating_count: "number", // Total number of ratings submitted by IMDb users for the lowest-rated episode
   },
-  platforms_links: [
-    {
-      name: "string", // Name of the streaming platform
-      link_url: "string", // URL to the streaming platform
-    },
-  ],
   seasons_number: "number", // Number of seasons available
   status: "string", // Current status of the item (e.g., ongoing, ended, etc.)
 

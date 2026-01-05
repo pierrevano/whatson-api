@@ -59,7 +59,7 @@ const config = {
   IPinfo: "https://ipinfo.io/country",
   webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
   appendToResponse:
-    "critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode",
+    "critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies",
 
   imdbEpisodesPaginationHash: process.env.IMDB_EPISODES_PAGINATION_HASH,
   imdbEpisodesPaginationOperation: "TitleEpisodesSubPagePagination",
@@ -99,7 +99,7 @@ const config = {
   baseURLLocal: "http://localhost:8081",
   baseURLRemote: process.env.WHATSON_API_URL,
   maxLimit: 900,
-  maxLimitRemote: 450,
+  maxLimitLargeDocuments: 135,
   checkItemsNumber: true,
   keysToCheck: [
     "_id",
@@ -184,7 +184,14 @@ const config = {
     "mojo_rank_order",
     "users_certified",
   ],
-  specialItems: ["tt0423713", "tt13207736", "tt7124904"],
+  specialItems: [
+    "tt0161952",
+    "tt0423713",
+    "tt0426769",
+    "tt13207736",
+    "tt7124904",
+    "tt7441658",
+  ],
   margin: 10,
   maxResponseTime: 6000,
   maxNullValues: 650,
@@ -193,6 +200,7 @@ const config = {
     default: 25,
     mojo: 15,
     mustSee: 3,
+    directors: 20,
     nextEpisodes: 20,
     platformsLinksMovies: 5,
     popularity: 10,

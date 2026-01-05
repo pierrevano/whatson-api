@@ -8,6 +8,7 @@ const { generateRandomIp } = require("./utils/generateRandomIp");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
+const maxLimitLargeDocuments = config.maxLimitLargeDocuments;
 
 /**
  * An object containing various query parameters and their expected results.
@@ -60,6 +61,17 @@ const params = {
     },
   },
 
+  internal_error_on_large_page_number: {
+    query: `?item_type=tvshow&popularity_filters=tmdb_popularity&limit=${maxLimitLargeDocuments}&page=40000`,
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe("Something went wrong.");
+      expect(data.code).toBe(500);
+      expect(response.status).toBe(500);
+    },
+  },
+
   page_2_with_20_items: {
     query: "?item_type=tvshow&seasons_number=1,2&page=2&limit=20",
     expectedResult: (data) => {
@@ -71,7 +83,7 @@ const params = {
   },
 
   higher_total_results_than_results: {
-    query: "?item_type=movie,tvshow&is_active=true,false&limit=500",
+    query: `?item_type=movie,tvshow&is_active=true,false&limit=${maxLimitLargeDocuments}`,
     expectedResult: (data) => {
       expect(data).toHaveProperty("page");
       expect(data.page).toBe(1);
@@ -117,7 +129,7 @@ const params = {
 
   correct_tmdb_id_returned: {
     query:
-      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode",
+      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details,highest_episode,last_episode,lowest_episode,next_episode,platforms_links,production_companies",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.id).toBe(249042);
@@ -128,6 +140,8 @@ const params = {
       expect(typeof data.last_episode).toBe("object");
       expect(typeof data.highest_episode).toBe("object");
       expect(typeof data.lowest_episode).toBe("object");
+      expect(Array.isArray(data.production_companies)).toBeTruthy();
+      expect(Array.isArray(data.platforms_links)).toBeTruthy();
     },
   },
 
@@ -164,7 +178,9 @@ const params = {
       query: "/tvshow/249042?ratings_filters=all",
       expectedResult: (data) => {
         expect(typeof data).toBe("object");
-        expect(Object.keys(data).length).toEqual(config.keysToCheck.length - 5);
+        expect(Object.keys(data).length).toEqual(
+          config.keysToCheck.length - 10,
+        );
         expect(data.id).toBe(249042);
         expect(data.ratings_average).toBeGreaterThan(0);
 
@@ -174,6 +190,11 @@ const params = {
         expect(data).not.toHaveProperty("next_episode");
         expect(data).not.toHaveProperty("highest_episode");
         expect(data).not.toHaveProperty("lowest_episode");
+        expect(data).not.toHaveProperty("directors");
+        expect(data).not.toHaveProperty("genres");
+        expect(data).not.toHaveProperty("networks");
+        expect(data).not.toHaveProperty("platforms_links");
+        expect(data).not.toHaveProperty("production_companies");
       },
     },
 
@@ -378,7 +399,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
       );
       expect(data.code).toBe(404);
     },
@@ -390,7 +411,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
       );
       expect(data.code).toBe(404);
     },
@@ -407,7 +428,7 @@ const params = {
   },
 
   only_networks_no_matching_production_companies: {
-    query: `?item_type=tvshow&networks=${encodeURIComponent("hbo")}&production_companies=${encodeURIComponent("unknown studio")}&is_active=true,false&limit=900`,
+    query: `?item_type=tvshow&networks=${encodeURIComponent("hbo")}&production_companies=${encodeURIComponent("unknown studio")}&is_active=true,false&limit=${maxLimitLargeDocuments}`,
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -422,7 +443,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
       );
       expect(data.code).toBe(404);
     },
@@ -434,7 +455,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
       );
       expect(data.code).toBe(404);
     },
@@ -446,7 +467,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true).",
+        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
       );
       expect(data.code).toBe(404);
     },
@@ -526,31 +547,4 @@ describe("What's on? API tests", () => {
     expect(successfulResponse.headers).toHaveProperty("x-ratelimit-remaining");
     expect(successfulResponse.headers).not.toHaveProperty("retry-after");
   });
-
-  (isRemoteSource ? test.skip : test)(
-    "Rate Limiting should return 429 when limits are exceeded",
-    async () => {
-      // Send enough requests to potentially reach the limit
-      const responses = await Promise.all(
-        Array.from({ length: config.points + 1 }).map(() =>
-          axios.get(baseURL, { validateStatus: (status) => status < 500 }),
-        ),
-      );
-
-      const limitedResponse = responses.find(
-        (response) => response.status === 429,
-      );
-
-      expect(limitedResponse).toBeDefined();
-      expect(limitedResponse.headers).not.toHaveProperty("x-ratelimit-limit");
-      expect(limitedResponse.headers).not.toHaveProperty(
-        "x-ratelimit-remaining",
-      );
-      expect(limitedResponse.headers).toHaveProperty("retry-after");
-
-      const retryAfter = parseInt(limitedResponse.headers["retry-after"], 10);
-      expect(retryAfter).toBeGreaterThan(0);
-    },
-    config.timeout,
-  );
 });

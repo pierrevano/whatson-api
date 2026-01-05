@@ -23,6 +23,11 @@ const sendResponse = (res, statusCode, data) => {
       code: statusCode,
     };
 
+    if (statusCode === 500) {
+      console.error("Internal server error:", data);
+      responseWithCode.message = "Something went wrong.";
+    }
+
     reportError(data, responseWithCode, statusCode);
 
     return res.status(statusCode).json(responseWithCode);
@@ -72,6 +77,27 @@ const sendRequest = (
     req.query,
     keysToCheckForSearch,
   );
+  const resolveIsActiveValue = () => {
+    if (is_active_item) {
+      if (typeof is_active_item.is_active !== "undefined") {
+        return is_active_item.is_active;
+      }
+
+      if (Array.isArray(is_active_item.$or)) {
+        const activeFlags = is_active_item.$or
+          .map((condition) => condition.is_active)
+          .filter((value) => typeof value !== "undefined");
+
+        if (activeFlags.length > 0) {
+          return activeFlags.join(",");
+        }
+      }
+    }
+
+    return typeof req.query.is_active !== "undefined"
+      ? req.query.is_active
+      : "true,false";
+  };
 
   if (!isValidItemType(item_type_query)) {
     return sendResponse(res, 400, {
@@ -85,7 +111,7 @@ const sendRequest = (
     const isRootPath = req.path === "/";
     const errorMessage = `No matching items found.${
       isActiveUndefinedOrMissing && isQuerySearchKeyMissing && isRootPath
-        ? ` Ensure 'is_active' is correctly set (currently ${is_active_item.is_active}).`
+        ? ` Ensure 'is_active' is correctly set (currently ${resolveIsActiveValue()}).`
         : ""
     }`;
 

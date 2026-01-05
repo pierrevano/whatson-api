@@ -16,6 +16,16 @@ const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
 
 /**
+ * Returns a helper that checks whether an append key is requested via `append_to_response`.
+ * @param {string|undefined} append_to_response - Comma-separated keys to append.
+ * @returns {(key: string) => boolean} Predicate indicating if the key should be appended.
+ */
+const buildAppendIncludes = (append_to_response) => {
+  const appendList = append_to_response?.split(",") || [];
+  return (key) => appendList.includes(key);
+};
+
+/**
  * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.
  * It normalises query parameters, constructs dynamic `$match` stages, attaches optional lookups,
  * and returns both the raw pipeline results and paging metadata used by the HTTP layer.
@@ -74,26 +84,25 @@ const aggregateData = async (
   top_ranking_order_query,
   mojo_rank_order_query,
 ) => {
-  const critics_rating_details =
-    append_to_response &&
-    append_to_response.split(",").includes("critics_rating_details")
-      ? true
-      : false;
+  const appendIncludes = buildAppendIncludes(append_to_response);
+
+  const critics_rating_details = appendIncludes("critics_rating_details");
+  const directors_append = appendIncludes("directors");
   const directors =
     typeof directors_query !== "undefined" && directors_query
       ? directors_query
       : "";
-  const episodes_details =
-    append_to_response &&
-    append_to_response.split(",").includes("episodes_details")
-      ? true
-      : false;
+  const episodes_details = appendIncludes("episodes_details");
+  const production_companies_details = appendIncludes("production_companies");
+  const genres_append = appendIncludes("genres");
   const genres =
     typeof genres_query !== "undefined" && genres_query ? genres_query : "";
+  const networks_append = appendIncludes("networks");
   const networks =
     typeof networks_query !== "undefined" && networks_query
       ? networks_query
       : "";
+  const platforms_links_append = appendIncludes("platforms_links");
   const production_companies =
     typeof production_companies_query !== "undefined" &&
     production_companies_query
@@ -103,7 +112,7 @@ const aggregateData = async (
   const is_active =
     typeof is_active_query !== "undefined" && is_active_query
       ? is_active_query
-      : true;
+      : "true,false";
   const is_adult =
     typeof is_adult_query !== "undefined" && is_adult_query
       ? is_adult_query
@@ -125,24 +134,10 @@ const aggregateData = async (
     typeof item_type_query !== "undefined" && item_type_query
       ? item_type_query
       : "movie,tvshow";
-  const last_episode =
-    append_to_response && append_to_response.split(",").includes("last_episode")
-      ? true
-      : false;
-  const next_episode =
-    append_to_response && append_to_response.split(",").includes("next_episode")
-      ? true
-      : false;
-  const highest_episode =
-    append_to_response &&
-    append_to_response.split(",").includes("highest_episode")
-      ? true
-      : false;
-  const lowest_episode =
-    append_to_response &&
-    append_to_response.split(",").includes("lowest_episode")
-      ? true
-      : false;
+  const last_episode = appendIncludes("last_episode");
+  const next_episode = appendIncludes("next_episode");
+  const highest_episode = appendIncludes("highest_episode");
+  const lowest_episode = appendIncludes("lowest_episode");
   const limit = isNaN(limit_query) ? config.limit : limit_query;
   const minimum_ratings =
     typeof minimum_ratings_query !== "undefined" && minimum_ratings_query
@@ -441,11 +436,16 @@ const aggregateData = async (
       ...(critics_rating_details
         ? {}
         : { "allocine.critics_rating_details": 0 }),
+      ...(directors_append ? {} : { directors: 0 }),
       ...(episodes_details ? {} : { episodes_details: 0 }),
-      ...(last_episode ? {} : { last_episode: 0 }),
-      ...(next_episode ? {} : { next_episode: 0 }),
+      ...(genres_append ? {} : { genres: 0 }),
       ...(highest_episode ? {} : { highest_episode: 0 }),
+      ...(last_episode ? {} : { last_episode: 0 }),
       ...(lowest_episode ? {} : { lowest_episode: 0 }),
+      ...(networks_append ? {} : { networks: 0 }),
+      ...(next_episode ? {} : { next_episode: 0 }),
+      ...(platforms_links_append ? {} : { platforms_links: 0 }),
+      ...(production_companies_details ? {} : { production_companies: 0 }),
     },
   };
 

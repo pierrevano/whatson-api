@@ -99,17 +99,17 @@ const generateURLs = (item_type, config, json) => {
       homepage: allocineHomepage,
       criticsDetails: allocineCriticsDetails,
     },
-    imdb: { id: imdbId, homepage: imdbHomepage },
     betaseries: { id: betaseriesId, homepage: betaseriesHomepage },
+    imdb: { id: imdbId, homepage: imdbHomepage },
+    is_active: isActive,
+    letterboxd: { id: letterboxdId, homepage: letterboxdHomepage },
     metacritic: { id: metacriticId, homepage: metacriticHomepage },
     rotten_tomatoes: { id: rottenTomatoesId, homepage: rottenTomatoesHomepage },
-    letterboxd: { id: letterboxdId, homepage: letterboxdHomepage },
     senscritique: { id: sensCritiqueId, homepage: sensCritiqueHomepage },
+    thetvdb: { id: theTvdbId, homepage: theTvdbHomepage },
     tmdb: { id: tmdbId, homepage: tmdbHomepage },
     trakt: { id: traktId, homepage: traktHomepage },
     tv_time: { id: tvtimeId, homepage: tvtimeHomepage },
-    thetvdb: { id: theTvdbId, homepage: theTvdbHomepage },
-    is_active: isActive,
   };
 };
 

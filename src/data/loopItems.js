@@ -1,5 +1,4 @@
 const { appendFile } = require("fs");
-const axios = require("axios");
 
 const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
 const { getAllocineInfo } = require("../content/getAllocineInfo");
@@ -65,92 +64,28 @@ const loopItems = async (
       // Generate URLs based on the current JSON item
       const urls = generateURLs(item_type, config, json);
 
-      /* Handle AlloCiné related data */
-      const allocineId = urls.allocine.id;
-      const allocineURL = urls.allocine.lastPartUrl;
-      const allocineHomepage = urls.allocine.homepage;
-      const allocineCriticsDetails = urls.allocine.criticsDetails;
-
-      /* Handle IMDb related data */
-      const imdbId = urls.imdb.id;
-      const imdbHomepage = urls.imdb.homepage;
-
-      /* Handle BetaSeries related data */
-      const betaseriesId = urls.betaseries.id;
-      const betaseriesHomepage = urls.betaseries.homepage;
-
-      /* Handle Metacritic related data */
-      const metacriticId = urls.metacritic.id;
-      const metacriticHomepage = urls.metacritic.homepage;
-
-      /* Handle Rotten Tomatoes related data */
-      const rottenTomatoesId = urls.rotten_tomatoes.id;
-      const rottenTomatoesHomepage = urls.rotten_tomatoes.homepage;
-
-      /* Handle Letterboxd related data */
-      const letterboxdId = urls.letterboxd.id;
-      const letterboxdHomepage = urls.letterboxd.homepage;
-
-      /* Handle SensCritique related data */
-      const sensCritiqueId = urls.senscritique.id;
-      const sensCritiqueHomepage = urls.senscritique.homepage;
-
-      /* Handle TMDB related data */
-      const tmdbId = urls.tmdb.id;
-      const tmdbHomepage = urls.tmdb.homepage;
-
-      /* Handle Trakt related data */
-      const traktId = urls.trakt.id;
-      const traktHomepage = urls.trakt.homepage;
-
-      /* Handle TV Time related data */
-      const tvtimeId = urls.tv_time.id;
-      const tvtimeHomepage = urls.tv_time.homepage;
-
-      /* Handle TheTVDB related data */
-      const theTvdbId = urls.thetvdb.id;
-      const theTvdbHomepage = urls.thetvdb.homepage;
-
-      // Determine if the URL is active
-      const isActive = urls.is_active;
-
-      const checkDate = getNodeVarsValues.check_date;
-      if (!Number.isNaN(checkDate) && checkDate >= 0) {
-        const item_type_api = item_type === "movie" ? "movie" : "tvshow";
-        const apiCall = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?api_key=${config.internalApiKey}`;
-
-        try {
-          const response = await axios.get(apiCall);
-
-          if (response && response.data && response.data.updated_at) {
-            const { updated_at } = response.data;
-            const updatedAtDate = new Date(updated_at);
-            const dateValue = new Date();
-            dateValue.setDate(dateValue.getDate() - parseInt(checkDate));
-
-            if (updatedAtDate >= dateValue) {
-              console.log(
-                `Skipping because updated less than ${parseInt(checkDate)} days ago.`,
-              );
-
-              continue;
-            }
-          }
-        } catch (error) {
-          const status = error.response?.status;
-          if (status === 404) {
-            console.log(
-              `Item called on ${apiCall} not found in database, continuing...`,
-            );
-          } else if (status === 503) {
-            throw new Error(
-              "Render service has been suspended. Please re-enable it.",
-            );
-          } else {
-            throw new Error(`Error fetching data: ${error}`);
-          }
-        }
-      }
+      const {
+        allocine: {
+          id: allocineId,
+          lastPartUrl: allocineURL,
+          homepage: allocineHomepage,
+          criticsDetails: allocineCriticsDetails,
+        },
+        betaseries: { id: betaseriesId, homepage: betaseriesHomepage },
+        imdb: { id: imdbId, homepage: imdbHomepage },
+        is_active: isActive,
+        letterboxd: { id: letterboxdId, homepage: letterboxdHomepage },
+        metacritic: { id: metacriticId, homepage: metacriticHomepage },
+        rotten_tomatoes: {
+          id: rottenTomatoesId,
+          homepage: rottenTomatoesHomepage,
+        },
+        senscritique: { id: sensCritiqueId, homepage: sensCritiqueHomepage },
+        thetvdb: { id: theTvdbId, homepage: theTvdbHomepage },
+        tmdb: { id: tmdbId, homepage: tmdbHomepage },
+        trakt: { id: traktId, homepage: traktHomepage },
+        tv_time: { id: tvtimeId, homepage: tvtimeHomepage },
+      } = urls;
 
       // Check if page is existing before upsert to DB
       const { error } = await getAllocineInfo(allocineHomepage, true);
