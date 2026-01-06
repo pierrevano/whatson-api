@@ -220,6 +220,7 @@ const config = {
     tvtime: 3,
     thetvdb: 3,
   },
+  minimumNumberOfMojoItems: 50,
   maximumIsActiveItems: 400,
   maxPopularityDiff: 20,
   ratings_filters:

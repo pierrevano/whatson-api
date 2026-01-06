@@ -2353,7 +2353,7 @@ const params = {
 
         smallestRank = Math.min(smallestRank, item.mojo.rank);
 
-        if (index < 40) {
+        if (index < config.minimumNumberOfMojoItems) {
           expect(item.mojo.rank).toBe(index + 1);
           expect(typeof item.mojo.lifetime_gross).toBe("number");
           expect(item.mojo.lifetime_gross).toBeGreaterThan(0);
