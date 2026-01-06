@@ -428,24 +428,30 @@ const aggregateData = async (
     },
   };
 
+  const remove_keys_base = {
+    ...(critics_rating_details ? {} : { "allocine.critics_rating_details": 0 }),
+    ...(directors_append ? {} : { directors: 0 }),
+    ...(episodes_details ? {} : { episodes_details: 0 }),
+    ...(genres_append ? {} : { genres: 0 }),
+    ...(highest_episode ? {} : { highest_episode: 0 }),
+    ...(last_episode ? {} : { last_episode: 0 }),
+    ...(lowest_episode ? {} : { lowest_episode: 0 }),
+    ...(networks_append ? {} : { networks: 0 }),
+    ...(next_episode ? {} : { next_episode: 0 }),
+    ...(platforms_links_append ? {} : { platforms_links: 0 }),
+    ...(production_companies_details ? {} : { production_companies: 0 }),
+  };
+
+  const prune_keys_before_sort = Object.keys(remove_keys_base).length
+    ? { $project: remove_keys_base }
+    : null;
+
   // Dynamically build the remove_keys object based on query parameters
   const remove_keys = {
     $project: {
       releaseDateAsDate: 0,
       sortAvgField: 0,
-      ...(critics_rating_details
-        ? {}
-        : { "allocine.critics_rating_details": 0 }),
-      ...(directors_append ? {} : { directors: 0 }),
-      ...(episodes_details ? {} : { episodes_details: 0 }),
-      ...(genres_append ? {} : { genres: 0 }),
-      ...(highest_episode ? {} : { highest_episode: 0 }),
-      ...(last_episode ? {} : { last_episode: 0 }),
-      ...(lowest_episode ? {} : { lowest_episode: 0 }),
-      ...(networks_append ? {} : { networks: 0 }),
-      ...(next_episode ? {} : { next_episode: 0 }),
-      ...(platforms_links_append ? {} : { platforms_links: 0 }),
-      ...(production_companies_details ? {} : { production_companies: 0 }),
+      ...remove_keys_base,
     },
   };
 
@@ -535,6 +541,10 @@ const aggregateData = async (
       is_users_certified_item,
       is_critics_certified_item,
     );
+  }
+
+  if (prune_keys_before_sort) {
+    pipeline.push(prune_keys_before_sort);
   }
 
   pipeline.push(facet);

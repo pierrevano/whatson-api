@@ -61,12 +61,14 @@ const params = {
     },
   },
 
-  internal_error_on_large_page_number: {
-    query: `?item_type=tvshow&popularity_filters=tmdb_popularity&limit=${maxLimitLargeDocuments}&page=40000`,
+  mongo_memory_limit_error_message: {
+    query: `?page=4000`,
     expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("Something went wrong.");
+      expect(data.message).toBe(
+        "Something went wrong. Please reduce the number of pages requested or lower the limit and try again.",
+      );
       expect(data.code).toBe(500);
       expect(response.status).toBe(500);
     },

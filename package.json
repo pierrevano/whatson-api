@@ -69,7 +69,7 @@
     "rate-limiter-flexible": "^9.0.1",
     "shelljs": "^0.10.0",
     "tough-cookie": "^6.0.0",
-    "vercel": "^50.1.3"
+    "vercel": "^50.1.4"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

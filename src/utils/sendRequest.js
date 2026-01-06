@@ -1,9 +1,10 @@
-const { reportError } = require("./sendToNewRelic");
 const {
   areQuerySearchKeysMissing,
   invalidItemTypeMessage,
   isValidItemType,
 } = require("./itemTypeValidation");
+const { isMongoMemoryLimitError } = require("./mongoMemoryLimitError");
+const { reportError } = require("./sendToNewRelic");
 
 /**
  * Normalises Express responses by attaching a status code and optional payload, while reporting
@@ -22,11 +23,6 @@ const sendResponse = (res, statusCode, data) => {
       ...data,
       code: statusCode,
     };
-
-    if (statusCode === 500) {
-      console.error("Internal server error:", data);
-      responseWithCode.message = "Something went wrong.";
-    }
 
     reportError(data, responseWithCode, statusCode);
 
@@ -198,9 +194,18 @@ const sendPreferencesRequest = async (
  * @returns {Promise<import("express").Response>} The generated error response.
  */
 const sendInternalError = async (res, error) => {
+  console.error("Internal server error:", error);
+
   reportError(null, null, null, error);
 
-  return sendResponse(res, 500, { message: error.message });
+  if (isMongoMemoryLimitError(error)) {
+    return sendResponse(res, 500, {
+      message:
+        "Something went wrong. Please reduce the number of pages requested or lower the limit and try again.",
+    });
+  }
+
+  return sendResponse(res, 500, { message: "Something went wrong." });
 };
 
 module.exports = {
