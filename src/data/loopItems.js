@@ -90,19 +90,6 @@ const loopItems = async (
       // Check if page is existing before upsert to DB
       const { error } = await getAllocineInfo(allocineHomepage, true);
 
-      let errorMetacritic = false;
-      try {
-        const result = await getMetacriticRating(
-          metacriticHomepage,
-          metacriticId,
-        );
-        const metacriticError = result?.error;
-        if (metacriticError && metacriticError.includes("403")) {
-          console.log(metacriticError);
-          errorMetacritic = true;
-        }
-      } catch (error) {}
-
       // Determine if user ratings are equal and fetch the data
       if (!error) {
         const getIsEqualValue = !force
@@ -117,8 +104,26 @@ const loopItems = async (
               tmdbId,
             )
           : { isEqual: false };
+
+        const isEqual = getIsEqualValue.isEqual;
+
+        let errorMetacritic = false;
+        if (!isEqual) {
+          try {
+            const result = await getMetacriticRating(
+              metacriticHomepage,
+              metacriticId,
+            );
+            const metacriticError = result?.error;
+            if (metacriticError && metacriticError.includes("403")) {
+              console.log(metacriticError);
+              errorMetacritic = true;
+            }
+          } catch (error) {}
+        }
+
         const data =
-          (!force && getIsEqualValue.isEqual) || errorMetacritic
+          (!force && isEqual) || errorMetacritic
             ? getIsEqualValue.data
             : (createJsonCounter++,
               await createJSON(
@@ -161,7 +166,7 @@ const loopItems = async (
 
         // Perform upsert operation on the database with the fetched data
         try {
-          await upsertToDatabase(data, collectionData, getIsEqualValue.isEqual);
+          await upsertToDatabase(data, collectionData, isEqual);
         } catch (error) {
           if (areAllNullOrUndefined(data, config.ratingsKeys)) {
             appendFile(
