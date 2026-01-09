@@ -16,7 +16,7 @@ const parseReleaseDate = (releaseDate) => {
  * Determines whether a TV show has ended based on status and last episode date.
  * @param {string} status - Allocine status string (e.g., "Ended").
  * @param {{ release_date?: string }} [lastWhatsOnEpisode] - Latest episode from What's on? API.
- * @returns {boolean} True when the show is marked ended and the last episode aired before today.
+ * @returns {boolean} True when the show is marked ended and the last episode aired over a year ago.
  */
 const hasTvShowEnded = (status, lastWhatsOnEpisode) => {
   if (status !== "Ended") {
@@ -29,13 +29,15 @@ const hasTvShowEnded = (status, lastWhatsOnEpisode) => {
   }
 
   const formattedReleaseDate = formatDate(releaseDate);
-  const formattedToday = formatDate(new Date());
+  const oneYearAgo = new Date();
+  oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
+  const formattedOneYearAgo = formatDate(oneYearAgo);
 
-  if (!formattedReleaseDate || !formattedToday) {
+  if (!formattedReleaseDate || !formattedOneYearAgo) {
     return false;
   }
 
-  return formattedReleaseDate < formattedToday;
+  return formattedReleaseDate < formattedOneYearAgo;
 };
 
 module.exports = { hasTvShowEnded };
