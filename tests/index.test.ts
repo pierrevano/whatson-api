@@ -16,7 +16,6 @@ const {
   expectIdRatingConsistency,
 } = require("./utils/idExpectations");
 const { formatDate } = require("../src/utils/formatDate");
-const { schema } = require("../src/schema");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -1271,6 +1270,12 @@ const params = {
     query: "?traktid=783557",
     expectedResult: (items) => {
       checkSingleItemId(items, 974950);
+    },
+  },
+  should_return_trakt_id_as_number_on_search: {
+    query: "?traktId=62544",
+    expectedResult: (items) => {
+      checkSingleItemId(items, 83533);
     },
   },
   should_return_tmdb_id_on_search: {

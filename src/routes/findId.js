@@ -58,6 +58,7 @@ const findId = async (json, append_to_response, filtered_seasons) => {
     const mappedKey = mappedKeyRaw ?? key;
 
     const isTitleKey = key === "title";
+    const isTraktIdKey = key === "traktid";
     const isNumericIdKey = [
       "allocineid",
       "senscritiqueid",
@@ -100,6 +101,19 @@ const findId = async (json, append_to_response, filtered_seasons) => {
           ],
         },
       };
+    } else if (isTraktIdKey) {
+      const stringValue = typeof value === "string" ? value : String(value);
+      const numericValue =
+        typeof value === "number"
+          ? value
+          : /^[0-9]+$/.test(stringValue)
+            ? parseInt(stringValue, 10)
+            : null;
+
+      query[mappedKey] =
+        typeof numericValue === "number" && !Number.isNaN(numericValue)
+          ? { $in: [stringValue, numericValue] }
+          : stringValue;
     } else {
       query[mappedKey] = isNumericIdKey ? parseInt(value, 10) : value;
     }

@@ -19,7 +19,7 @@ const generateURLs = (item_type, config, json) => {
   if (!allocineIdMatch) {
     throw new Error(`Invalid AlloCiné URL: ${allocineURL}`);
   }
-  const allocineId = parseInt(allocineIdMatch.pop());
+  const allocineId = parseInt(allocineIdMatch.pop(), 10);
   const allocineHomepage = `${config.baseURLAllocine}${baseURLType}${allocineId}.html`;
   const allocineCriticsDetails = `${config.baseURLAllocine}${baseURLCriticDetails}${allocineId}${config.endURLCriticDetails}`;
 
@@ -55,25 +55,29 @@ const generateURLs = (item_type, config, json) => {
       ? `${config.baseURLLetterboxdFilm}${letterboxdId}`
       : null;
 
-  const sensCritiqueId = parseInt(json.SENSCRITIQUE_ID);
+  const sensCritiqueId = parseInt(json.SENSCRITIQUE_ID, 10);
   const sensCritiqueHomepage =
     item_type === "movie"
       ? `${config.baseURLSensCritiqueFilm}${sensCritiqueId}`
       : `${config.baseURLSensCritiqueSerie}${sensCritiqueId}`;
 
-  const tmdbId = parseInt(json.THEMOVIEDB_ID);
+  const tmdbId = parseInt(json.THEMOVIEDB_ID, 10);
   const tmdbHomepage =
     item_type === "movie"
       ? `${config.baseURLTMDBFilm}${tmdbId}`
       : `${config.baseURLTMDBSerie}${tmdbId}`;
 
-  const traktId = json.TRAKT_ID;
+  const traktIdRaw = json.TRAKT_ID;
+  const traktId =
+    typeof traktIdRaw === "string" && /^\d+$/.test(traktIdRaw)
+      ? parseInt(traktIdRaw, 10)
+      : traktIdRaw;
   const traktHomepage =
     item_type === "movie"
       ? `${config.baseURLTraktFilm}${traktId}`
       : `${config.baseURLTraktSerie}${traktId}`;
 
-  const theTvdbId = parseInt(json.THETVDB_ID);
+  const theTvdbId = parseInt(json.THETVDB_ID, 10);
   const theTvdbHomepage =
     item_type === "movie"
       ? `${config.baseURLTheTVDBFilm}`

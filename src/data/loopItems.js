@@ -122,45 +122,45 @@ const loopItems = async (
           } catch (error) {}
         }
 
-        const data =
-          (!force && isEqual) || errorMetacritic
-            ? getIsEqualValue.data
-            : (createJsonCounter++,
-              await createJSON(
-                allocineCriticsDetails,
-                allocineURL,
-                allocineHomepage,
-                allocineId,
-                betaseriesHomepage,
-                betaseriesId,
-                imdbHomepage,
-                imdbId,
-                isActive,
-                item_type,
-                metacriticHomepage,
-                metacriticId,
-                rottenTomatoesHomepage,
-                rottenTomatoesId,
-                letterboxdHomepage,
-                letterboxdId,
-                sensCritiqueHomepage,
-                sensCritiqueId,
-                traktHomepage,
-                traktId,
-                mojoBoxOfficeArray,
-                tmdbId,
-                tmdbHomepage,
-                tvtimeHomepage,
-                tvtimeId,
-                theTvdbHomepage,
-                theTvdbId,
-              ));
+        const useExistingData = (!force && isEqual) || errorMetacritic;
+        const data = useExistingData
+          ? getIsEqualValue.data
+          : (createJsonCounter++,
+            await createJSON(
+              allocineCriticsDetails,
+              allocineURL,
+              allocineHomepage,
+              allocineId,
+              betaseriesHomepage,
+              betaseriesId,
+              imdbHomepage,
+              imdbId,
+              isActive,
+              item_type,
+              metacriticHomepage,
+              metacriticId,
+              rottenTomatoesHomepage,
+              rottenTomatoesId,
+              letterboxdHomepage,
+              letterboxdId,
+              sensCritiqueHomepage,
+              sensCritiqueId,
+              traktHomepage,
+              traktId,
+              mojoBoxOfficeArray,
+              tmdbId,
+              tmdbHomepage,
+              tvtimeHomepage,
+              tvtimeId,
+              theTvdbHomepage,
+              theTvdbId,
+            ));
 
-        if (!errorMetacritic) {
+        if (!useExistingData) {
           data.updated_at = new Date().toISOString();
         } else {
           console.log(
-            `The 'updated_at' date was not modified because 'errorMetacritic' is: ${errorMetacritic}`,
+            `The 'updated_at' date was not modified because existing data was reused.`,
           );
         }
 

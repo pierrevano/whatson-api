@@ -205,7 +205,7 @@ const schema = {
   },
   trakt: {
     /* Information related to Trakt platform */
-    id: "string", // Trakt specific identifier
+    id: ["string", "number"], // Trakt specific identifier
     url: "string", // URL to the Trakt page
     users_rating: "number", // Average rating given by Trakt users
     users_rating_count: "number", // Total number of ratings submitted by Trakt users

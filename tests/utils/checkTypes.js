@@ -24,15 +24,20 @@ function checkTypes(item, schema) {
 
       if (item[key] === null) return;
 
-      // Check for an array of objects
-      if (
-        Array.isArray(expectedType) &&
-        expectedType.length > 0 &&
-        typeof expectedType[0] === "object"
-      ) {
-        item[key].forEach((obj) => {
-          checkTypes(obj, expectedType[0]);
-        });
+      if (Array.isArray(expectedType)) {
+        // Array of objects schema
+        if (expectedType.length > 0 && typeof expectedType[0] === "object") {
+          item[key].forEach((obj) => {
+            checkTypes(obj, expectedType[0]);
+          });
+        } else if (expectedType.every((type) => typeof type === "string")) {
+          // Union type schema like ["string", "number"]
+          expect(expectedType).toContain(actualType);
+        } else {
+          throw new Error(
+            `Invalid schema for key '${key}': array types must be objects or strings.`,
+          );
+        }
       } else if (
         typeof expectedType === "object" &&
         !Array.isArray(expectedType)

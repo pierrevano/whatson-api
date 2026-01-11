@@ -103,7 +103,7 @@ The query parameters provided below are solely for item search purposes and must
 | rottentomatoesId   | _string_                                                                                                                                                        | Rotten Tomatoes ID of the movie or tvshow      |
 | senscritiqueId     | _integer_                                                                                                                                                       | SensCritique ID of the movie or tvshow         |
 | tmdbId             | _integer_                                                                                                                                                       | The Movie Database ID of the movie or tvshow   |
-| traktId            | _string_                                                                                                                                                        | Trakt ID of the movie or tvshow                |
+| traktId            | _string_ or _integer_                                                                                                                                           | Trakt ID of the movie or tvshow                |
 | tvtimeId           | _integer_                                                                                                                                                       | TV Time ID of the tvshow                       |
 | thetvdbId          | _integer_                                                                                                                                                       | TheTVDB ID of the movie or tvshow              |
 | append_to_response | critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies | Should we return specific keys in the response |
@@ -146,7 +146,7 @@ Provides detailed information about specific item (movie or tvshow) by its type 
 
 Example of an item returned:
 
-```json
+```jsonc
 {
   "_id": "string", // Unique MongoDB identifier for the item
 
@@ -177,8 +177,8 @@ Example of an item returned:
   "platforms_links": [
     {
       "name": "string", // Name of the streaming platform
-      "link_url": "string" // URL to the streaming platform
-    }
+      "link_url": "string", // URL to the streaming platform
+    },
   ],
   /*
    * To include this key in the response, add `production_companies` to the `append_to_response` query parameter.
@@ -203,8 +203,8 @@ Example of an item returned:
       "url": "string", // URL to the IMDb page
       "release_date": "string", // Release date of the episode
       "users_rating": "number", // Average rating given by IMDb users
-      "users_rating_count": "number" // Total number of ratings submitted by IMDb users
-    }
+      "users_rating_count": "number", // Total number of ratings submitted by IMDb users
+    },
   ],
   /*
    * To include this key in the response, add `last_episode` to the `append_to_response` query parameter.
@@ -220,7 +220,7 @@ Example of an item returned:
     "url": "string", // URL to the IMDb page of the most recent episode
     "release_date": "string", // Release date of the most recent episode
     "users_rating": "number", // Average rating given by IMDb users for the most recent episode
-    "users_rating_count": "number" // Total number of ratings submitted by IMDb users for the most recent episode
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the most recent episode
   },
   /*
    * To include this key in the response, add `next_episode` to the `append_to_response` query parameter.
@@ -236,7 +236,7 @@ Example of an item returned:
     "url": "string", // URL to the IMDb page of the next episode to air
     "release_date": "string", // Release date of the next episode to air
     "users_rating": "number", // Average rating given by IMDb users for the next episode to air
-    "users_rating_count": "number" // Total number of ratings submitted by IMDb users for the next episode to air
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the next episode to air
   },
   /*
    * To include this key in the response, add `highest_episode` to the `append_to_response` query parameter.
@@ -251,7 +251,7 @@ Example of an item returned:
     "url": "string", // URL to the IMDb page of the highest-rated episode
     "release_date": "string", // Release date of the highest-rated episode
     "users_rating": "number", // Average rating given by IMDb users for the highest-rated episode
-    "users_rating_count": "number" // Total number of ratings submitted by IMDb users for the highest-rated episode
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the highest-rated episode
   },
   /*
    * To include this key in the response, add `lowest_episode` to the `append_to_response` query parameter.
@@ -266,7 +266,7 @@ Example of an item returned:
     "url": "string", // URL to the IMDb page of the lowest-rated episode
     "release_date": "string", // Release date of the lowest-rated episode
     "users_rating": "number", // Average rating given by IMDb users for the lowest-rated episode
-    "users_rating_count": "number" // Total number of ratings submitted by IMDb users for the lowest-rated episode
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the lowest-rated episode
   },
   "seasons_number": "number", // Number of seasons available
   "status": "string", // Current status of the item (e.g., ongoing, ended, etc.)
@@ -283,17 +283,17 @@ Example of an item returned:
       // To display this key, add `critics_rating_details` to the query parameter `append_to_response`
       {
         "critic_name": "string", // Name of the critic
-        "critic_rating": "number" // Average rating given by the critic
-      }
+        "critic_rating": "number", // Average rating given by the critic
+      },
     ],
-    "popularity": "number" // Popularity score on AlloCiné
+    "popularity": "number", // Popularity score on AlloCiné
   },
   "betaseries": {
     /* Information related to BetaSeries platform */
     "id": "string", // BetaSeries specific identifier
     "url": "string", // URL to the BetaSeries page
     "users_rating": "number", // Average rating given by BetaSeries users
-    "users_rating_count": "number" // Total number of ratings submitted by BetaSeries users
+    "users_rating_count": "number", // Total number of ratings submitted by BetaSeries users
   },
   "imdb": {
     /* Information related to IMDb platform */
@@ -302,14 +302,14 @@ Example of an item returned:
     "users_rating": "number", // Average rating given by IMDb users
     "users_rating_count": "number", // Total number of ratings submitted by IMDb users
     "popularity": "number", // Popularity score on IMDb
-    "top_ranking": "number" // Position of the title in IMDb top charts
+    "top_ranking": "number", // Position of the title in IMDb top charts
   },
   "letterboxd": {
     /* Information related to Letterboxd platform */
     "id": "string", // Letterboxd specific identifier
     "url": "string", // URL to the Letterboxd page
     "users_rating": "number", // Average rating given by Letterboxd users
-    "users_rating_count": "number" // Total number of ratings submitted by Letterboxd users
+    "users_rating_count": "number", // Total number of ratings submitted by Letterboxd users
   },
   "metacritic": {
     /* Information related to Metacritic platform */
@@ -319,7 +319,7 @@ Example of an item returned:
     "users_rating_count": "number", // Total number of ratings submitted by Metacritic users
     "critics_rating": "number", // Average rating given by Metacritic critics
     "critics_rating_count": "number", // Total number of ratings submitted by Metacritic critics
-    "must_see": "boolean" // Whether the title has received the "Must-See" badge on Metacritic
+    "must_see": "boolean", // Whether the title has received the "Must-See" badge on Metacritic
   },
   "rotten_tomatoes": {
     /* Information related to Rotten Tomatoes platform */
@@ -334,14 +334,14 @@ Example of an item returned:
     "critics_rating_count": "number", // Total number of ratings submitted by Rotten Tomatoes critics
     "critics_rating_liked_count": "number", // Total number of liked ratings submitted by Rotten Tomatoes critics
     "critics_rating_not_liked_count": "number", // Total number of not liked ratings submitted by Rotten Tomatoes critics
-    "critics_certified": "boolean" // Has the item received the Rotten Tomatoes "Certified Fresh" status from critics
+    "critics_certified": "boolean", // Has the item received the Rotten Tomatoes "Certified Fresh" status from critics
   },
   "senscritique": {
     /* Information related to SensCritique platform */
     "id": "number", // SensCritique specific identifier
     "url": "string", // URL to the SensCritique page
     "users_rating": "number", // Average rating given by SensCritique users
-    "users_rating_count": "number" // Total number of ratings submitted by SensCritique users
+    "users_rating_count": "number", // Total number of ratings submitted by SensCritique users
   },
   "tmdb": {
     /* Information related to The Movie Database (TMDB) platform */
@@ -349,39 +349,39 @@ Example of an item returned:
     "url": "string", // URL to the TMDB page
     "users_rating": "number", // Average rating given by TMDB users
     "users_rating_count": "number", // Total number of ratings submitted by TMDB users
-    "popularity": "number" // Popularity score on TMDB
+    "popularity": "number", // Popularity score on TMDB
   },
   "trakt": {
     /* Information related to Trakt platform */
-    "id": "string", // Trakt specific identifier
+    "id": ["string", "number"], // Trakt specific identifier
     "url": "string", // URL to the Trakt page
     "users_rating": "number", // Average rating given by Trakt users
-    "users_rating_count": "number" // Total number of ratings submitted by Trakt users
+    "users_rating_count": "number", // Total number of ratings submitted by Trakt users
   },
   "tv_time": {
     /* Information related to TV Time platform */
     "id": "number", // TV Time specific identifier
     "url": "string", // URL to the TV Time page
-    "users_rating": "number" // Average rating given by TV Time users
+    "users_rating": "number", // Average rating given by TV Time users
   },
   "thetvdb": {
     /* Information related to TheTVDB platform */
     "id": "number", // TheTVDB specific identifier
     "slug": "string", // Slug for the identifier on TheTVDB
-    "url": "string" // URL to TheTVDB page
+    "url": "string", // URL to TheTVDB page
   },
 
   "mojo": {
     /* Information related to Box Office Mojo platform */
     "rank": "number", // Ranking according to Box Office Mojo
     "url": "string", // URL to the Box Office Mojo page
-    "lifetime_gross": "number" // Lifetime gross revenue in US dollars
+    "lifetime_gross": "number", // Lifetime gross revenue in US dollars
   },
 
   "updated_at": "string", // Timestamp of the last update
 
   "popularity_average": "number", // Average popularity score across platforms (AlloCiné, IMDb, and TMDB)
-  "ratings_average": "number" // Average rating score across platforms (all)
+  "ratings_average": "number", // Average rating score across platforms (all)
 }
 ```
 

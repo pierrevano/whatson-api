@@ -901,212 +901,212 @@ function checkSingleItemId(items, expectedId) {
  * @type {Record<string, { query: string, expectedResult: (items: any) => void }>}
  */
 const params = {
-  // valid_users_ratings: {
-  //   query: `?item_type=movie,tvshow&is_active=true&limit=${maxLimitLargeDocuments}`,
-  //   expectedResult: (items) =>
-  //     items.forEach((item) => {
-  //       const ratingItems = [
-  //         {
-  //           source: item.allocine,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.allocine,
-  //           max: config.ratingsValues.maximum.allocine,
-  //           isStrict: true,
-  //         },
-  //         {
-  //           source: item.allocine,
-  //           ratingType: "critics_rating",
-  //           min: config.ratingsValues.minimum.allocine,
-  //           max: config.ratingsValues.maximum.allocine,
-  //           isStrict: true,
-  //         },
-  //         {
-  //           source: item.betaseries,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.betaseries,
-  //           max: config.ratingsValues.maximum.betaseries,
-  //         },
-  //         {
-  //           source: item.imdb,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.imdb,
-  //           max: config.ratingsValues.maximum.imdb,
-  //           isStrict: true,
-  //         },
-  //         {
-  //           source: item.metacritic,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.metacriticUsers,
-  //           max: config.ratingsValues.maximum.metacriticUsers,
-  //         },
-  //         {
-  //           source: item.metacritic,
-  //           ratingType: "critics_rating",
-  //           min: config.ratingsValues.minimum.metacriticCritics,
-  //           max: config.ratingsValues.maximum.metacriticCritics,
-  //         },
-  //         {
-  //           source: item.rotten_tomatoes,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.rottenTomatoes,
-  //           max: config.ratingsValues.maximum.rottenTomatoes,
-  //         },
-  //         {
-  //           source: item.rotten_tomatoes,
-  //           ratingType: "critics_rating",
-  //           min: config.ratingsValues.minimum.rottenTomatoes,
-  //           max: config.ratingsValues.maximum.rottenTomatoes,
-  //         },
-  //         {
-  //           source: item.letterboxd,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.letterboxd,
-  //           max: config.ratingsValues.maximum.letterboxd,
-  //         },
-  //         {
-  //           source: item.senscritique,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.senscritique,
-  //           max: config.ratingsValues.maximum.senscritique,
-  //         },
-  //         {
-  //           source: item.tmdb,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.tmdb,
-  //           max: config.ratingsValues.maximum.tmdb,
-  //           isStrict: true,
-  //         },
-  //         {
-  //           source: item.trakt,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.trakt,
-  //           max: config.ratingsValues.maximum.trakt,
-  //           isStrict: true,
-  //         },
-  //         {
-  //           source: item.tv_time,
-  //           ratingType: "users_rating",
-  //           min: config.ratingsValues.minimum.tvtime,
-  //           max: config.ratingsValues.maximum.tvtime,
-  //           isStrict: true,
-  //         },
-  //       ];
+  valid_users_ratings: {
+    query: `?item_type=movie,tvshow&is_active=true&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        const ratingItems = [
+          {
+            source: item.allocine,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.allocine,
+            max: config.ratingsValues.maximum.allocine,
+            isStrict: true,
+          },
+          {
+            source: item.allocine,
+            ratingType: "critics_rating",
+            min: config.ratingsValues.minimum.allocine,
+            max: config.ratingsValues.maximum.allocine,
+            isStrict: true,
+          },
+          {
+            source: item.betaseries,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.betaseries,
+            max: config.ratingsValues.maximum.betaseries,
+          },
+          {
+            source: item.imdb,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.imdb,
+            max: config.ratingsValues.maximum.imdb,
+            isStrict: true,
+          },
+          {
+            source: item.metacritic,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.metacriticUsers,
+            max: config.ratingsValues.maximum.metacriticUsers,
+          },
+          {
+            source: item.metacritic,
+            ratingType: "critics_rating",
+            min: config.ratingsValues.minimum.metacriticCritics,
+            max: config.ratingsValues.maximum.metacriticCritics,
+          },
+          {
+            source: item.rotten_tomatoes,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.rottenTomatoes,
+            max: config.ratingsValues.maximum.rottenTomatoes,
+          },
+          {
+            source: item.rotten_tomatoes,
+            ratingType: "critics_rating",
+            min: config.ratingsValues.minimum.rottenTomatoes,
+            max: config.ratingsValues.maximum.rottenTomatoes,
+          },
+          {
+            source: item.letterboxd,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.letterboxd,
+            max: config.ratingsValues.maximum.letterboxd,
+          },
+          {
+            source: item.senscritique,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.senscritique,
+            max: config.ratingsValues.maximum.senscritique,
+          },
+          {
+            source: item.tmdb,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.tmdb,
+            max: config.ratingsValues.maximum.tmdb,
+            isStrict: true,
+          },
+          {
+            source: item.trakt,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.trakt,
+            max: config.ratingsValues.maximum.trakt,
+            isStrict: true,
+          },
+          {
+            source: item.tv_time,
+            ratingType: "users_rating",
+            min: config.ratingsValues.minimum.tvtime,
+            max: config.ratingsValues.maximum.tvtime,
+            isStrict: true,
+          },
+        ];
 
-  //       for (let ratingItem of ratingItems) {
-  //         checkRatings(
-  //           ratingItem.source,
-  //           ratingItem.ratingType,
-  //           ratingItem.min,
-  //           ratingItem.max,
-  //           ratingItem.isStrict,
-  //         );
-  //       }
-  //     }),
-  // },
+        for (let ratingItem of ratingItems) {
+          checkRatings(
+            ratingItem.source,
+            ratingItem.ratingType,
+            ratingItem.min,
+            ratingItem.max,
+            ratingItem.isStrict,
+          );
+        }
+      }),
+  },
 
-  // all_keys_type_check: {
-  //   query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies&limit=${maxLimitLargeDocuments}`,
-  //   expectedResult: (items) =>
-  //     items.forEach((item) => checkTypes(item, schema)),
-  // },
+  all_keys_type_check: {
+    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) =>
+      items.forEach((item) => checkTypes(item, schema)),
+  },
 
-  // only_tvshows: {
-  //   query: "?item_type=tvshow",
-  //   expectedResult: (items) =>
-  //     items.forEach((item) => {
-  //       expect(item).toHaveProperty("item_type");
-  //       expect(item.item_type).toBe("tvshow");
+  only_tvshows: {
+    query: "?item_type=tvshow",
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("tvshow");
 
-  //       item.metacritic
-  //         ? expect([true, false]).toContain(item.metacritic.must_see)
-  //         : null;
+        item.metacritic
+          ? expect([true, false]).toContain(item.metacritic.must_see)
+          : null;
 
-  //       expect(item).toHaveProperty("is_adult");
-  //       expect(item.is_adult).toBeFalsy();
-  //     }),
-  // },
+        expect(item).toHaveProperty("is_adult");
+        expect(item.is_adult).toBeFalsy();
+      }),
+  },
 
-  // tvshows_with_runtime_between_30_and_60_minutes: {
-  //   query: "?item_type=tvshow&runtime=1800,3600",
-  //   expectedResult: (items) => {
-  //     expect(Array.isArray(items)).toBe(true);
-  //     expect(items.length).toBeGreaterThan(0);
+  tvshows_with_runtime_between_30_and_60_minutes: {
+    query: "?item_type=tvshow&runtime=1800,3600",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
 
-  //     items.forEach((item) => {
-  //       expect(item).toHaveProperty("item_type");
-  //       expect(item.item_type).toBe("tvshow");
-  //       expect(item).toHaveProperty("runtime");
-  //       expect(typeof item.runtime).toBe("number");
-  //       expect(item.runtime).toBeGreaterThanOrEqual(1800);
-  //       expect(item.runtime).toBeLessThanOrEqual(3600);
-  //     });
-  //   },
-  // },
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("tvshow");
+        expect(item).toHaveProperty("runtime");
+        expect(typeof item.runtime).toBe("number");
+        expect(item.runtime).toBeGreaterThanOrEqual(1800);
+        expect(item.runtime).toBeLessThanOrEqual(3600);
+      });
+    },
+  },
 
-  // should_limit_null_values_for_specific_keys_in_active_movies_and_tvshows: {
-  //   query: `?item_type=movie,tvshow&is_active=true&limit=${maxLimitLargeDocuments}`,
-  //   expectedResult: (items) => {
-  //     const result = countNullValues(items);
+  should_limit_null_values_for_specific_keys_in_active_movies_and_tvshows: {
+    query: `?item_type=movie,tvshow&is_active=true&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) => {
+      const result = countNullValues(items);
 
-  //     expect(result.totalMovieNullCount).toBeLessThanOrEqual(
-  //       config.maxNullValues,
-  //     );
-  //     expect(result.totalTVShowNullCount).toBeLessThanOrEqual(
-  //       config.maxNullValues,
-  //     );
-  //   },
-  // },
+      expect(result.totalMovieNullCount).toBeLessThanOrEqual(
+        config.maxNullValues,
+      );
+      expect(result.totalTVShowNullCount).toBeLessThanOrEqual(
+        config.maxNullValues,
+      );
+    },
+  },
 
-  // only_tvshows_with_1_season: {
-  //   query: "?item_type=tvshow&seasons_number=1",
-  //   expectedResult: (items) => {
-  //     expect(Array.isArray(items)).toBe(true);
-  //     expect(items.length).toBeGreaterThan(0);
+  only_tvshows_with_1_season: {
+    query: "?item_type=tvshow&seasons_number=1",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
 
-  //     items.forEach((item) => {
-  //       expect(item).toHaveProperty("item_type");
-  //       expect(item.item_type).toBe("tvshow");
-  //       expect(item).toHaveProperty("seasons_number");
-  //       expect(item.seasons_number).toBe(1);
-  //     });
-  //   },
-  // },
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("tvshow");
+        expect(item).toHaveProperty("seasons_number");
+        expect(item.seasons_number).toBe(1);
+      });
+    },
+  },
 
-  // only_tvshows_with_1_and_2_seasons: {
-  //   query: "?item_type=tvshow&seasons_number=1,2",
-  //   expectedResult: (items) => {
-  //     expect(Array.isArray(items)).toBe(true);
-  //     expect(items.length).toBeGreaterThan(0);
+  only_tvshows_with_1_and_2_seasons: {
+    query: "?item_type=tvshow&seasons_number=1,2",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
 
-  //     items.forEach((item) => {
-  //       expect(item).toHaveProperty("item_type");
-  //       expect(item.item_type).toBe("tvshow");
-  //       expect(item).toHaveProperty("seasons_number");
-  //       expect(item.seasons_number).toBeLessThanOrEqual(2);
-  //     });
-  //   },
-  // },
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("tvshow");
+        expect(item).toHaveProperty("seasons_number");
+        expect(item.seasons_number).toBeLessThanOrEqual(2);
+      });
+    },
+  },
 
-  // should_return_all_tvshows_since_max_season_number_is_included: {
-  //   query: `?item_type=tvshow&seasons_number=1,2,3,4,5&limit=${maxLimitLargeDocuments}`,
-  //   expectedResult: (items) => {
-  //     expect(Array.isArray(items)).toBe(true);
-  //     expect(items.length).toBeGreaterThan(0);
+  should_return_all_tvshows_since_max_season_number_is_included: {
+    query: `?item_type=tvshow&seasons_number=1,2,3,4,5&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
 
-  //     const hasSeason1 = items.some((item) => item.seasons_number === 1);
-  //     const hasManySeasons = items.some((item) => item.seasons_number > 5);
+      const hasSeason1 = items.some((item) => item.seasons_number === 1);
+      const hasManySeasons = items.some((item) => item.seasons_number > 5);
 
-  //     expect(hasSeason1).toBe(true);
-  //     expect(hasManySeasons).toBe(true);
+      expect(hasSeason1).toBe(true);
+      expect(hasManySeasons).toBe(true);
 
-  //     items.forEach((item) => {
-  //       expect(item).toHaveProperty("item_type");
-  //       expect(item.item_type).toBe("tvshow");
-  //       expect(item).toHaveProperty("seasons_number");
-  //       expect(typeof item.seasons_number).toBe("number");
-  //     });
-  //   },
-  // },
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("tvshow");
+        expect(item).toHaveProperty("seasons_number");
+        expect(typeof item.seasons_number).toBe("number");
+      });
+    },
+  },
 
   tvshows_seasons_number_should_be_at_least_episode_season: {
     query: `?item_type=tvshow&append_to_response=last_episode,next_episode&limit=${maxLimitLargeDocuments}`,

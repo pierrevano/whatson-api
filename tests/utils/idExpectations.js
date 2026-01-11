@@ -14,11 +14,14 @@ function expectImdbId(value) {
 }
 
 function expectSlugLikeId(value) {
-  expect(typeof value).toBe("string");
-  const trimmedValue = value.trim();
+  const isString = typeof value === "string";
+  const isNumber = typeof value === "number";
+  expect(isString || isNumber).toBe(true);
+  const stringValue = isNumber ? String(value) : value;
+  const trimmedValue = stringValue.trim();
   expect(trimmedValue.length).toBeGreaterThan(0);
-  expect(value).toBe(trimmedValue);
-  expect(ALPHANUMERIC_ID_REGEX.test(value)).toBe(true);
+  expect(stringValue).toBe(trimmedValue);
+  expect(ALPHANUMERIC_ID_REGEX.test(stringValue)).toBe(true);
 }
 
 function expectPersistentId(value) {
