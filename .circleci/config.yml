@@ -83,26 +83,25 @@ jobs:
       - image: cimg/node:20.5.1
     environment:
       NODE_OPTIONS: "--max-old-space-size=8192"
-    parallelism: 30
+    parallelism: 3
     steps:
       - ping_service
       - setup_env
       - run:
-          name: Update all movie data first half
-          command: npm run update-movie-data-first-half
+          name: Update all movie data
+          command: npm run update-all-movie-data
   build_all_second:
     docker:
       - image: cimg/node:20.5.1
-    parallelism: 30
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=8192"
+    parallelism: 3
     steps:
       - ping_service
       - setup_env
       - run:
-          name: Update all movie data second half
-          command: npm run update-movie-data-second-half
-      - run:
-          name: Update all tvshow data all
-          command: npm run update-tvshow-data-all
+          name: Update all tvshow data
+          command: npm run update-all-tvshow-data
   force:
     docker:
       - image: cimg/node:20.5.1
