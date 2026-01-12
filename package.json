@@ -65,12 +65,12 @@
     "he": "^1.2.0",
     "jshashes": "^1.0.8",
     "mongodb": "^7.0.0",
-    "newrelic": "^13.9.0",
+    "newrelic": "^13.9.1",
     "prettier": "^3.7.4",
     "rate-limiter-flexible": "^9.0.1",
     "shelljs": "^0.10.0",
     "tough-cookie": "^6.0.0",
-    "vercel": "^50.1.6"
+    "vercel": "^50.3.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
