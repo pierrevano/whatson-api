@@ -1,38 +1,24 @@
 const { config } = require("../config");
-const {
-  getAllocineCriticsRating,
-} = require("../content/getAllocineCriticsRating");
-const { getAllocineInfo } = require("../content/getAllocineInfo");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
-const { getBetaseriesRating } = require("../content/getBetaseriesRating");
 const { getDirectors } = require("../content/getDirectors");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
 const { getGenres } = require("../content/getGenres");
 const { getHighestRatedEpisode } = require("../content/getHighestRatedEpisode");
 const { getImdbPopularity } = require("../content/getImdbPopularity");
-const { getImdbRating } = require("../content/getImdbRating");
 const { getLastEpisode } = require("../content/getLastEpisode");
-const { getLetterboxdRating } = require("../content/getLetterboxdRating");
 const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
-const { getMetacriticRating } = require("../content/getMetacriticRating");
 const { getNetworks } = require("../content/getNetworks");
 const { getNextEpisode } = require("../content/getNextEpisode");
 const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
 const { getOriginalTitle } = require("../content/getOriginalTitle");
 const { getPlatformsLinks } = require("../content/getPlatformsLinks");
 const { getProductionCompanies } = require("../content/getProductionCompanies");
-const {
-  getRottenTomatoesRating,
-} = require("../content/getRottenTomatoesRating");
+const { getRatingsData } = require("./getRatingsData");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
-const { getSensCritiqueRating } = require("../content/getSensCritiqueRating");
 const { getTheTvdbSlug } = require("../content/getTheTvdbSlug");
-const { getTmdbRating } = require("../content/getTmdbRating");
 const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getTrailer } = require("../content/getTrailer");
-const { getTraktRating } = require("../content/getTraktRating");
-const { getTVTimeRating } = require("../content/getTVTimeRating");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -96,15 +82,52 @@ const createJSON = async (
 ) => {
   const { data: tmdbData } = await getTMDBResponse(allocineHomepage, tmdbId);
 
-  const allocineFirstInfo = await getAllocineInfo(
-    allocineHomepage,
-    false,
-    tmdbData,
-  );
-  const originalTitle = await getOriginalTitle(allocineHomepage, tmdbData);
-  const allocineCriticInfo = await getAllocineCriticsRating(
+  const {
+    allocineCriticInfo,
+    allocineFirstInfo,
+    betaseriesRating,
+    imdbRatingData,
+    letterboxdRating,
+    metacriticRating,
+    rottenTomatoesRating,
+    sensCritiqueRating,
+    tmdbRating,
+    traktRating,
+    tvtimeRating,
+  } = await getRatingsData({
     allocineCriticsDetails,
-  );
+    allocineHomepage,
+    betaseriesHomepage,
+    betaseriesId,
+    imdbHomepage,
+    letterboxdHomepage,
+    letterboxdId,
+    metacriticHomepage,
+    metacriticId,
+    rottenTomatoesHomepage,
+    rottenTomatoesId,
+    sensCritiqueHomepage,
+    sensCritiqueId,
+    tmdbData,
+    tmdbHomepage,
+    tmdbId,
+    traktHomepage,
+    traktId,
+    tvtimeHomepage,
+    tvtimeId,
+  });
+
+  const theTvdbSlug = await getTheTvdbSlug(allocineHomepage, theTvdbId);
+  const {
+    usersRating,
+    usersRatingCount,
+    isAdult,
+    runtime,
+    certification,
+    topRanking,
+    seasonsNumber: imdbSeasonsNumber,
+  } = imdbRatingData;
+  const originalTitle = await getOriginalTitle(allocineHomepage, tmdbData);
   const allocinePopularity = await getAllocinePopularity(
     allocineURL,
     item_type,
@@ -122,18 +145,6 @@ const createJSON = async (
     tmdbData,
   );
   const trailer = await getTrailer(allocineHomepage, betaseriesHomepage);
-  const {
-    usersRating,
-    usersRatingCount,
-    isAdult,
-    runtime,
-    certification,
-    topRanking,
-  } = await getImdbRating(imdbHomepage);
-  const seasonsNumber =
-    (config.specialItems.includes(imdbId) &&
-      ((await getImdbRating(imdbHomepage))?.seasonsNumber ?? null)) ||
-    (await getSeasonsNumber(allocineHomepage, tmdbData, imdbId));
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
     allocineURL,
@@ -169,21 +180,9 @@ const createJSON = async (
     imdbId,
     item_type,
   );
-  const [
-    betaseriesRating,
-    letterboxdRating,
-    metacriticRating,
-    rottenTomatoesRating,
-    sensCritiqueRating,
-    tmdbRating,
-  ] = await Promise.all([
-    getBetaseriesRating(allocineHomepage, betaseriesHomepage, betaseriesId),
-    getLetterboxdRating(letterboxdHomepage, letterboxdId),
-    getMetacriticRating(metacriticHomepage, metacriticId),
-    getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId),
-    getSensCritiqueRating(sensCritiqueHomepage, sensCritiqueId),
-    getTmdbRating(tmdbHomepage, tmdbId, tmdbData),
-  ]);
+  const seasonsNumber =
+    (config.specialItems.includes(imdbId) && (imdbSeasonsNumber ?? null)) ||
+    (await getSeasonsNumber(allocineHomepage, tmdbData, imdbId));
   const {
     usersRating: usersRatingBetaseries,
     usersRatingCount: usersRatingCountBetaseries,
@@ -193,13 +192,6 @@ const createJSON = async (
     tmdbId,
     tmdbData,
   );
-  const traktRating = await getTraktRating(
-    allocineHomepage,
-    traktHomepage,
-    traktId,
-  );
-  const tvtimeRating = await getTVTimeRating(tvtimeHomepage, tvtimeId);
-  const theTvdbSlug = await getTheTvdbSlug(allocineHomepage, theTvdbId);
 
   /* Creating an object called allocineObj. */
   let allocineObj = {

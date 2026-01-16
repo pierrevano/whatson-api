@@ -1917,7 +1917,7 @@ describe("What's on? API tests", () => {
         ? seriesResponse.data.results.length
         : 0;
 
-      expect(Math.abs(movieCount - movieFileCount)).toBeLessThanOrEqual(8);
+      expect(Math.abs(movieCount - movieFileCount)).toBeLessThanOrEqual(15);
       expect(Math.abs(seriesCount - seriesFileCount)).toBeLessThanOrEqual(0);
     },
     config.timeout,

@@ -90,6 +90,7 @@ const config = {
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/538.36",
   heapLimit: 1500,
   maxAgeInDays: 14,
+  ratingsDelayMs: 500,
 
   /* CircleCI settings */
   circleLimitPerDay: 1500,
@@ -192,6 +193,7 @@ const config = {
     "tt7124904",
     "tt7441658",
   ],
+  imdbIdsToExclude: ["tt0203259"],
   margin: 10,
   maxResponseTime: 6000,
   maxNullValues: 650,

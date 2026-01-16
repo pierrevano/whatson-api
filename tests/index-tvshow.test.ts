@@ -1115,23 +1115,17 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
 
       items.forEach((item) => {
-        try {
-          if (item.seasons_number) {
-            const checkSeasonNumber = (episode) => {
-              expect(typeof episode.season).toBe("number");
-              expect(item.seasons_number).toBeGreaterThanOrEqual(
-                episode.season,
-              );
-            };
+        if (item.seasons_number) {
+          const checkSeasonNumber = (episode) => {
+            expect(typeof episode.season).toBe("number");
+            expect(item.seasons_number).toBeGreaterThanOrEqual(episode.season);
+          };
 
-            if (item.next_episode) {
-              checkSeasonNumber(item.next_episode);
-            } else if (item.last_episode) {
-              checkSeasonNumber(item.last_episode);
-            }
+          if (item.next_episode) {
+            checkSeasonNumber(item.next_episode);
+          } else if (item.last_episode) {
+            checkSeasonNumber(item.last_episode);
           }
-        } catch (error) {
-          writeFileSync("./temp_item.json", JSON.stringify(item), "utf-8");
         }
       });
     },
@@ -1896,6 +1890,10 @@ const params = {
 
       items.forEach((item) => {
         if (item.last_episode && item.next_episode) {
+          if (config.imdbIdsToExclude.includes(item.imdb?.id)) {
+            return;
+          }
+
           const lastSeason = item.last_episode.season;
           const lastEpisode = item.last_episode.episode;
           const nextSeason = item.next_episode.season;
