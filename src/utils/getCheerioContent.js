@@ -5,6 +5,7 @@ const { config } = require("../config");
 const { generateUserAgent } = require("./generateUserAgent");
 const { httpClient } = require("./httpClient");
 const { logErrors } = require("./logErrors");
+const { logExecutionTime } = require("./logExecutionTime");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -64,14 +65,7 @@ const getCheerioContent = async (url, options, origin) => {
       }
 
       const $ = cheerio.load(response.data);
-      const endTime = Date.now();
-      const executionTime = endTime - startTime;
-      console.log(
-        `${origin} - ${url}:`,
-        response.status,
-        "- Execution time:",
-        executionTime + "ms",
-      );
+      logExecutionTime(origin, url, response.status, startTime);
       return $;
     } catch (error) {
       const containsNullValue = url.includes("null");

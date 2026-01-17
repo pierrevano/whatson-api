@@ -5,6 +5,7 @@ const axiosRetry = require("axios-retry").default;
 const { config } = require("../config");
 const { getNodeVarsValues } = require("./getNodeVarsValues");
 const { logErrors } = require("./logErrors");
+const { logExecutionTime } = require("./logExecutionTime");
 
 /**
  * Makes an API call to The Movie Database (TMDB) to retrieve information about a movie or tvshow.
@@ -28,14 +29,7 @@ const getTMDBResponse = async (allocineHomepage, tmdbId) => {
     const options = { validateStatus: (status) => status < 500 };
     const { data, status } = await axios.get(url, options);
 
-    const endTime = Date.now();
-    const executionTime = endTime - startTime;
-    console.log(
-      `getTMDBResponse - ${url}:`,
-      status,
-      "- Execution time:",
-      executionTime + "ms",
-    );
+    logExecutionTime("getTMDBResponse", url, status, startTime);
 
     if (
       status !== 200 &&

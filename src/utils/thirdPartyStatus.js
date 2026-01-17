@@ -33,8 +33,12 @@ const isThirdPartyServiceOK = async (service) => {
       data: response.data,
     };
   } catch (error) {
-    if (service === "https://trakt.tv" && error.response?.status === 403) {
-      console.log("Skipping Trakt service due to 403 Forbidden");
+    const skip403Services = new Set([
+      "https://trakt.tv",
+      "https://letterboxd.com",
+    ]);
+    if (skip403Services.has(service) && error.response?.status === 403) {
+      console.log(`Skipping ${service} due to 403 Forbidden`);
       return {
         success: true,
         data: null,
