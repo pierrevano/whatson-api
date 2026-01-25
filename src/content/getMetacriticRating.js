@@ -45,7 +45,7 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
 
       if (homepageResponse.status !== 200) {
         throw new Error(
-          `Metacritic homepage status ${homepageResponse.status} - ${metacriticHomepage} - ${metacriticId}`,
+          `Metacritic homepage returned status ${homepageResponse.status} - ${metacriticHomepage} - ${metacriticId}`,
         );
       }
 
@@ -79,7 +79,6 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
 
       const usersRating =
         rawUserData.score && rawUserData.score !== 0 ? rawUserData.score : null;
-
       const usersRatingCount =
         usersRating !== null ? (rawUserData.reviewCount ?? null) : null;
 
