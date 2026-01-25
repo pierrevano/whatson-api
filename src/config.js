@@ -70,7 +70,7 @@ const config = {
     metacritic_or_rotten_tomatoes: 95,
     allocine_critics: 80,
   },
-  maxParallelSeasonRequests: 25,
+  maxParallelSeasonRequests: 5,
   maxSeasonsNumber: 5,
   minimumActiveItems: 150,
   page: 1,

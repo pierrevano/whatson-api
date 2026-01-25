@@ -143,6 +143,8 @@ elif [[ -n $DUPLICATE_ALLOCINE_URLS ]]; then
 fi
 
 if [[ $ERRORS_FOUND -eq 1 ]]; then
+  export GET_IDS_ERRORS_FOUND=1
+
   exit 1
 fi
 
@@ -179,6 +181,13 @@ update_imdb_popularity_flags () {
   local json
 
   json=$(curl -s -H "User-Agent: $USER_AGENT" "$IMDB_CHART_URL" | grep -o '<script id="__NEXT_DATA__" type="application/json">.*</script>' | sed 's/<script id="__NEXT_DATA__" type="application\/json">//; s/<\/script>//')
+
+  if [[ -z $json ]]; then
+    if ! json=$(node -e 'const { getCheerioContentWithBrowser } = require("./src/utils/getCheerioContentWithBrowser"); const url = process.argv[1]; (async () => { console.log = console.error; const $ = await getCheerioContentWithBrowser(url, "imdb chart"); const payload = $("script#__NEXT_DATA__").text(); if (!payload) { process.exit(2); } process.stdout.write(payload); })().catch((err) => { console.error("Failed to fetch IMDb __NEXT_DATA__.", err); process.exit(1); });' "$IMDB_CHART_URL"); then
+      json=""
+    fi
+  fi
+
   if [[ -z $json ]]; then
     echo "Something went wrong when fetching the moviemeter JSON."
     exit 1

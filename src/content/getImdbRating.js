@@ -99,10 +99,24 @@ const getImdbRating = async (imdbHomepage) => {
     const $ = await getCheerioContent(imdbHomepage, options, "getImdbRating");
 
     const jsonText = $("#__NEXT_DATA__").html();
-    const nextData = JSON.parse(jsonText);
+
+    if (!jsonText) {
+      throw new Error("IMDb NEXT_DATA payload is missing.");
+    }
+
+    let nextData;
+    try {
+      nextData = JSON.parse(jsonText);
+    } catch (parseError) {
+      throw new Error("IMDb NEXT_DATA payload is invalid.");
+    }
 
     const mainColumnData = nextData?.props?.pageProps?.mainColumnData;
     const aboveTheFoldData = nextData?.props?.pageProps?.aboveTheFoldData;
+
+    if (!mainColumnData || !aboveTheFoldData) {
+      throw new Error("IMDb NEXT_DATA payload is missing required fields.");
+    }
 
     const ratingsSummary = mainColumnData?.ratingsSummary;
     const runtimeSeconds = mainColumnData?.runtime?.seconds;

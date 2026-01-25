@@ -29,7 +29,7 @@ const isThirdPartyServiceOK = async (service) => {
     const response = await axios.get(service, options);
 
     return {
-      success: response.status === 200,
+      success: response.status >= 200 && response.status < 300,
       data: response.data,
     };
   } catch (error) {

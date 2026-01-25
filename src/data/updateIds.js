@@ -19,7 +19,10 @@ const updateIds = () => {
   console.log(
     "----------------------------------------------------------------------------------------------------",
   );
-  shell.exec(command);
+  const result = shell.exec(command);
+  if (result.code !== 0) {
+    process.env.GET_IDS_ERRORS_FOUND = "1";
+  }
 };
 
 module.exports = { updateIds };

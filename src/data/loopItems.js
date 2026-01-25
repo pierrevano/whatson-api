@@ -2,7 +2,6 @@ const { appendFile } = require("fs");
 
 const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
 const { getAllocineInfo } = require("../content/getAllocineInfo");
-const { getMetacriticRating } = require("../content/getMetacriticRating");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
@@ -107,22 +106,7 @@ const loopItems = async (
 
         const isEqual = getIsEqualValue.isEqual;
 
-        let errorMetacritic = false;
-        if (!isEqual) {
-          try {
-            const result = await getMetacriticRating(
-              metacriticHomepage,
-              metacriticId,
-            );
-            const metacriticError = result?.error;
-            if (metacriticError && metacriticError.includes("403")) {
-              console.log(metacriticError);
-              errorMetacritic = true;
-            }
-          } catch (error) {}
-        }
-
-        const useExistingData = (!force && isEqual) || errorMetacritic;
+        const useExistingData = !force && isEqual;
         const data = useExistingData
           ? getIsEqualValue.data
           : (createJsonCounter++,

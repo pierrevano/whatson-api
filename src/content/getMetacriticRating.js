@@ -38,6 +38,17 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
     };
 
     if (isNotNull(metacriticId)) {
+      const homepageResponse = await axios.get(metacriticHomepage, {
+        ...options,
+        validateStatus: () => true,
+      });
+
+      if (homepageResponse.status !== 200) {
+        throw new Error(
+          `Metacritic homepage status ${homepageResponse.status} - ${metacriticHomepage} - ${metacriticId}`,
+        );
+      }
+
       const $ = await getCheerioContent(
         metacriticHomepage,
         options,
@@ -68,6 +79,7 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
 
       const usersRating =
         rawUserData.score && rawUserData.score !== 0 ? rawUserData.score : null;
+
       const usersRatingCount =
         usersRating !== null ? (rawUserData.reviewCount ?? null) : null;
 
@@ -92,8 +104,6 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
     }
   } catch (error) {
     logErrors(error, metacriticHomepage, "getMetacriticRating");
-
-    return { error };
   }
 
   return metacriticObj;

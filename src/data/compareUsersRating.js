@@ -67,10 +67,11 @@ const compareUsersRating = async (
     }
 
     const { allocineUsersRating: allocine_users_rating, status } = allocineInfo;
-    const {
-      usersRating: imdb_users_rating,
-      seasonsNumber: imdb_seasons_number,
-    } = imdbRating;
+    const { seasonsNumber: imdb_seasons_number } = imdbRating;
+    const tmdb_users_rating =
+      tmdbData?.vote_count && tmdbData?.vote_average
+        ? parseFloat(tmdbData.vote_average.toFixed(2))
+        : null;
 
     const isTvShow = item_type_api === "tvshow";
     const whatsonLastEpisode = isTvShow
@@ -213,7 +214,7 @@ const compareUsersRating = async (
 
       if (
         dataWithoutId.allocine?.users_rating === allocine_users_rating &&
-        dataWithoutId.imdb?.users_rating === imdb_users_rating
+        dataWithoutId.tmdb?.users_rating === tmdb_users_rating
       ) {
         return {
           isEqual: true,

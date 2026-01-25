@@ -20,6 +20,7 @@ const filterByCheckId = async ({
   if (!getNodeVarsValues.check_id) return jsonArraySortedHighestToLowest;
 
   const isCheckAllIds = getNodeVarsValues.check_id === "all_ids";
+  const isCheckAllIdsRecent = getNodeVarsValues.check_id === "all_ids_recent";
 
   const imdbIdsToUpdate = isCheckAllIds
     ? mojoBoxOfficeArray.map((item) => item.imdbId).filter(Boolean)
@@ -50,6 +51,35 @@ const filterByCheckId = async ({
     );
   }
 
+  if (isCheckAllIdsRecent) {
+    const recentWindowMinutes = Number.parseInt(
+      process.env.CHECK_ALL_IDS_RECENT_MINUTES,
+      10,
+    );
+    const recentWindowMs =
+      (Number.isNaN(recentWindowMinutes) || recentWindowMinutes <= 0
+        ? 120
+        : recentWindowMinutes) *
+      60 *
+      1000;
+    const cutoffDate = new Date(Date.now() - recentWindowMs);
+
+    const recentDocs = await collectionData
+      .find(
+        {
+          item_type: getNodeVarsValues.item_type,
+          updated_at: { $gte: cutoffDate.toISOString() },
+        },
+        { projection: { id: 1 } },
+      )
+      .toArray();
+
+    const recentIds = new Set(recentDocs.map((doc) => doc.id));
+    filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) =>
+      recentIds.has(parseInt(item.THEMOVIEDB_ID, 10)),
+    );
+  }
+
   writeFileSync(
     "./temp_mojo_box_office.json",
     JSON.stringify(filteredByImdbId),
@@ -57,6 +87,11 @@ const filterByCheckId = async ({
   );
 
   if (filteredByImdbId.length === 0) {
+    if (isCheckAllIdsRecent) {
+      console.log("No recently updated items found. Aborting.");
+      process.exit(0);
+    }
+
     console.log(
       `IMDb ID${
         imdbIdsToUpdate.length > 1 ? "s" : ""

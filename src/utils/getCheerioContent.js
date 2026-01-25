@@ -3,6 +3,9 @@ const cheerio = require("cheerio");
 
 const { config } = require("../config");
 const { generateUserAgent } = require("./generateUserAgent");
+const {
+  getCheerioContentWithBrowser,
+} = require("./getCheerioContentWithBrowser");
 const { httpClient } = require("./httpClient");
 const { logErrors } = require("./logErrors");
 const { logExecutionTime } = require("./logExecutionTime");
@@ -61,7 +64,10 @@ const getCheerioContent = async (url, options, origin) => {
       const response = await httpClient.get(url, requestOptions);
 
       if (response.status !== 200) {
-        throw new Error("Failed to retrieve data.");
+        const statusError = new Error("Failed to retrieve data.");
+        statusError.response = response;
+        statusError.config = response.config;
+        throw statusError;
       }
 
       const $ = cheerio.load(response.data);
@@ -70,6 +76,27 @@ const getCheerioContent = async (url, options, origin) => {
     } catch (error) {
       const containsNullValue = url.includes("null");
       const canRetry = attempt < maxAttempts && !containsNullValue;
+      const statusCode = error?.response?.status;
+      const isBlocked = statusCode === 403 || statusCode === 202;
+
+      if (isBlocked) {
+        try {
+          const fallbackHeaders = buildHeaders(options?.headers);
+          const $ = await getCheerioContentWithBrowser(
+            url,
+            origin,
+            fallbackHeaders,
+          );
+          return $;
+        } catch (browserError) {
+          browserError.cause = error;
+          logErrors(browserError, url, `${origin} (browser)`);
+
+          return {
+            error: browserError,
+          };
+        }
+      }
 
       if (canRetry) {
         const attemptLog = `${
