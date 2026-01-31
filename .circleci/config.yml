@@ -43,8 +43,8 @@ commands:
           name: Install dependencies
           command: npm install
       - run:
-          name: Install Playwright browsers
-          command: npx playwright install
+          name: Install Playwright browsers + deps
+          command: npx playwright install --with-deps
       - run:
           name: Start Xvfb
           command: |
