@@ -1,7 +1,6 @@
 const { appendFile } = require("fs");
 
 const { config } = require("../config");
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
@@ -82,25 +81,15 @@ const getRottenTomatoesRating = async (
   let criticsCertified = null;
 
   try {
-    const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        Referer: "https://www.rottentomatoes.com/",
-        Connection: "keep-alive",
-        DNT: "1",
-        "Upgrade-Insecure-Requests": "1",
-      },
-    };
-
     if (isNotNull(rottenTomatoesId)) {
       const rawJson = await fetchMediaScorecardJson(
         rottenTomatoesHomepage,
-        options,
+        undefined,
       );
+
+      if (!rawJson) {
+        throw new Error("Failed to fetch the Rotten Tomatoes JSON.");
+      }
 
       try {
         const mediaScorecard = JSON.parse(rawJson);

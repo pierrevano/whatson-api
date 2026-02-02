@@ -1,7 +1,8 @@
+const { config } = require("../config");
+
 const handleConsentBanner = async (page) => {
   const consentSelector = ".fc-cta-consent";
   const consentLabelRegex = /consent/i;
-  const maxAttempts = 5;
   const delayMs = 1000;
   const contexts = [page, ...page.frames()];
   const tryClickFirst = async (locator) => {
@@ -16,7 +17,7 @@ const handleConsentBanner = async (page) => {
     return false;
   };
 
-  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+  for (let attempt = 0; attempt < config.retries; attempt += 1) {
     await page.waitForTimeout(delayMs);
     for (const context of contexts) {
       try {

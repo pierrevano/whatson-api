@@ -1,7 +1,6 @@
 const axios = require("axios");
 
 const { config } = require("../config");
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 const { logExecutionTime } = require("../utils/logExecutionTime");
@@ -26,9 +25,6 @@ const getBetaseriesRating = async (
   try {
     if (isNotNull(betaseriesId)) {
       const options = {
-        headers: {
-          "User-Agent": generateUserAgent(),
-        },
         validateStatus: (status) => status < 500,
       };
 
@@ -38,7 +34,6 @@ const getBetaseriesRating = async (
       const rangeResponse = await axios.get(betaseriesHomepage, {
         ...options,
         headers: {
-          ...options.headers,
           Range: "bytes=0-16383",
         },
       });

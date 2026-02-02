@@ -3,7 +3,7 @@ const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
-const { generateUserAgent } = require("../utils/generateUserAgent");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -28,13 +28,15 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
   });
 
   const options = {
-    headers: {
-      "User-Agent": generateUserAgent(),
-    },
     validateStatus: (status) => status < 500,
   };
 
   if (isNotNull(tvtimeId)) {
+    await getHomepageResponse(tvtimeHomepage, {
+      serviceName: "TV Time",
+      id: tvtimeId,
+    });
+
     const apiUrl = `https://side-api.tvtime.com/sidecar/tvt?o=https://api2.tozelabs.com/v2/show/${tvtimeId}?fields%3Drating`;
 
     for (let attempt = 1; attempt <= config.retries; attempt += 1) {

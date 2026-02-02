@@ -1,5 +1,5 @@
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -18,16 +18,15 @@ const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
   let usersRatingCount = null;
 
   try {
-    const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-      },
-    };
-
     if (isNotNull(sensCritiqueId)) {
+      await getHomepageResponse(sensCritiqueHomepage, {
+        serviceName: "SensCritique",
+        id: sensCritiqueId,
+      });
+
       const $ = await getCheerioContent(
         sensCritiqueHomepage,
-        options,
+        undefined,
         "getSensCritiqueRating",
       );
       const ldJsonTag = $('script[type="application/ld+json"]').html();

@@ -2,7 +2,6 @@ const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
-const { generateUserAgent } = require("./generateUserAgent");
 const { logErrors } = require("./logErrors");
 
 /**
@@ -18,33 +17,20 @@ const isThirdPartyServiceOK = async (service) => {
       retryDelay: () => config.retryDelay,
     });
 
+    const isImdb = service.includes("imdb.com");
     const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-      },
       timeout: 240000,
+      validateStatus: (status) => status === 200 || (isImdb && status === 202),
     };
 
     console.log(`Calling service: ${service}`);
     const response = await axios.get(service, options);
 
     return {
-      success: response.status >= 200 && response.status < 300,
+      success: response.status === 200 || (isImdb && response.status === 202),
       data: response.data,
     };
   } catch (error) {
-    const skip403Services = new Set([
-      "https://trakt.tv",
-      "https://letterboxd.com",
-    ]);
-    if (skip403Services.has(service) && error.response?.status === 403) {
-      console.log(`Skipping ${service} due to 403 Forbidden`);
-      return {
-        success: true,
-        data: null,
-      };
-    }
-
     logErrors(error, service, null);
 
     return {

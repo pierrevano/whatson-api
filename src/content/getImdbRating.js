@@ -2,8 +2,8 @@ const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -91,12 +91,13 @@ const getImdbRating = async (imdbHomepage) => {
       retries: config.retries,
       retryDelay: () => config.retryDelay,
     });
-    const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-      },
-    };
-    const $ = await getCheerioContent(imdbHomepage, options, "getImdbRating");
+
+    await getHomepageResponse(imdbHomepage, {
+      serviceName: "IMDb",
+      allowedStatuses: [200, 202],
+    });
+
+    const $ = await getCheerioContent(imdbHomepage, undefined, "getImdbRating");
 
     const jsonText = $("#__NEXT_DATA__").html();
 

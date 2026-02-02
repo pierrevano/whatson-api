@@ -1,5 +1,4 @@
 const { convertTitleToNumber } = require("../utils/convertTitleToNumber");
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
@@ -21,15 +20,9 @@ const getAllocineCriticsRating = async (allocineCriticsDetails) => {
   let allocineCriticInfo = null;
 
   try {
-    const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-      },
-    };
-
     const $ = await getCheerioContent(
       allocineCriticsDetails,
-      options,
+      undefined,
       "getAllocineCriticsRating",
     );
 

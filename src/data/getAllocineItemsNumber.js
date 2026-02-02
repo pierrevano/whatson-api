@@ -1,5 +1,4 @@
 const { config } = require("../config");
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { logErrors } = require("../utils/logErrors");
@@ -36,14 +35,8 @@ const getAllocineItemsNumber = async (
   let countItems = 0;
 
   try {
-    const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-      },
-    };
-
     const url = `${baseURLAllocineType}${index > 1 ? "?page=" + index : ""}`;
-    const $ = await getCheerioContent(url, options, "getAllocineItemsNumber");
+    const $ = await getCheerioContent(url, undefined, "getAllocineItemsNumber");
     const links = $("a.meta-title-link");
 
     links.each((_i, link) => {

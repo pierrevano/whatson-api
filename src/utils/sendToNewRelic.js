@@ -27,7 +27,6 @@ function sendToNewRelic(
   console.log("New Relic custom attributes:", attributes);
 
   if (!newrelic) {
-    console.log("New Relic is not enabled.");
     return;
   }
 
@@ -51,7 +50,6 @@ function sendToNewRelic(
  */
 function reportError(data, responseWithCode, statusCode, error) {
   if (!newrelic) {
-    console.log("New Relic is not enabled.");
     return;
   }
 

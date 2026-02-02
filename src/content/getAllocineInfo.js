@@ -3,7 +3,9 @@ const {
   convertFrenchDateToISOString,
 } = require("../utils/convertFrenchDateToISOString");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { getImageFromTMDB } = require("./getImageFromTMDB");
+const { getRateLimitWaitMs } = require("../utils/getRateLimitWaitMs");
 const { getStatus } = require("./getStatus");
 const { logErrors } = require("../utils/logErrors");
 
@@ -28,12 +30,38 @@ const getAllocineInfo = async (allocineHomepage, compare, data) => {
   let allocineFirstInfo = null;
 
   try {
-    const options = {
-      validateStatus: (status) => status < 500 && status !== 404,
-    };
+    let homepageResponse = await getHomepageResponse(allocineHomepage, {
+      serviceName: "AlloCiné",
+      allowedStatuses: [200, 429],
+    });
+
+    if (homepageResponse.status === 429) {
+      const waitMs = getRateLimitWaitMs(homepageResponse.headers);
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+      if (waitMs > 0) {
+        console.log(
+          `AlloCiné rate limit hit. Waiting ${Math.ceil(
+            waitMs / 1000,
+          )}s before retrying...`,
+        );
+        await delay(waitMs);
+      }
+
+      homepageResponse = await getHomepageResponse(allocineHomepage, {
+        serviceName: "AlloCiné",
+        allowedStatuses: [200, 429],
+      });
+
+      if (homepageResponse.status === 429) {
+        console.log("AlloCiné rate limit still active after retry.");
+        process.exit(1);
+      }
+    }
+
     const $ = await getCheerioContent(
       allocineHomepage,
-      options,
+      undefined,
       "getAllocineInfo",
     );
 
@@ -98,10 +126,6 @@ const getAllocineInfo = async (allocineHomepage, compare, data) => {
     };
   } catch (error) {
     logErrors(error, allocineHomepage, "getAllocineInfo");
-
-    return {
-      error: error,
-    };
   }
 
   return allocineFirstInfo;

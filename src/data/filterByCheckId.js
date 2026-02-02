@@ -30,8 +30,10 @@ const filterByCheckId = async ({
   });
 
   const checkDate = parseInt(getNodeVarsValues.check_date, 10);
+  const isCheckDateFilterActive =
+    isCheckAllIds && !Number.isNaN(checkDate) && checkDate > 0;
 
-  if (isCheckAllIds && !Number.isNaN(checkDate) && checkDate > 0) {
+  if (isCheckDateFilterActive) {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - checkDate);
 
@@ -89,6 +91,15 @@ const filterByCheckId = async ({
   if (filteredByImdbId.length === 0) {
     if (isCheckAllIdsRecent) {
       console.log("No recently updated items found. Aborting.");
+      process.exit(0);
+    }
+
+    if (isCheckDateFilterActive) {
+      console.log(
+        `No items older than ${checkDate} day${
+          checkDate > 1 ? "s" : ""
+        } found. Aborting.`,
+      );
       process.exit(0);
     }
 

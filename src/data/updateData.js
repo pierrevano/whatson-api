@@ -9,8 +9,8 @@ const client = new MongoClient(uri, {
 });
 
 const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
-const { getMojoBoxOffice } = require("../content/getMojoBoxOffice");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
+const { getMojoBoxOfficeArray } = require("../utils/getMojoBoxOfficeArray");
 const { jsonArrayFiltered } = require("../utils/jsonArrayFiltered");
 const { updateIds } = require("./updateIds");
 const checkDbIds = require("./checkDbIds");
@@ -103,10 +103,10 @@ async function checkStatus(service) {
     (a, b) => b.THEMOVIEDB_ID - a.THEMOVIEDB_ID,
   );
 
-  const mojoBoxOfficeArray =
-    getNodeVarsValues.skip_mojo === "skip_mojo"
-      ? []
-      : await getMojoBoxOffice(getNodeVarsValues.item_type);
+  const mojoBoxOfficeArray = await getMojoBoxOfficeArray(
+    getNodeVarsValues.item_type,
+    getNodeVarsValues.skip_mojo,
+  );
 
   checkMissingImdbIds(mojoBoxOfficeArray, jsonArraySortedHighestToLowest);
 

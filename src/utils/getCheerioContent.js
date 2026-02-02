@@ -12,34 +12,9 @@ const { logExecutionTime } = require("./logExecutionTime");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const buildHeaders = (headers = {}) => {
-  const defaultHeaders = {
-    Accept:
-      "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9,fr-FR;q=0.8",
-    "Accept-Encoding": "gzip, deflate, br",
-    Connection: "keep-alive",
-    DNT: "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
-  };
-
-  const mergedHeaders = {
-    ...defaultHeaders,
-    ...headers,
-  };
-
-  mergedHeaders["User-Agent"] = headers["User-Agent"] || generateUserAgent();
-
-  return mergedHeaders;
-};
-
 const buildOptions = (options = {}) => ({
   ...options,
-  headers: buildHeaders(options.headers),
+  headers: { "User-Agent": generateUserAgent() },
 });
 
 /**
@@ -74,19 +49,16 @@ const getCheerioContent = async (url, options, origin) => {
       logExecutionTime(origin, url, response.status, startTime);
       return $;
     } catch (error) {
-      const containsNullValue = url.includes("null");
-      const canRetry = attempt < maxAttempts && !containsNullValue;
       const statusCode = error?.response?.status;
+      const containsNullValue = url.includes("null");
+      const isImdbTitleUrl =
+        url.includes("imdb.com") && !url.includes("/episodes");
+      let canRetry = attempt < maxAttempts && !containsNullValue;
       const isBlocked = statusCode === 403 || statusCode === 202;
 
       if (isBlocked) {
         try {
-          const fallbackHeaders = buildHeaders(options?.headers);
-          const $ = await getCheerioContentWithBrowser(
-            url,
-            origin,
-            fallbackHeaders,
-          );
+          const $ = await getCheerioContentWithBrowser(url, origin);
           return $;
         } catch (browserError) {
           browserError.cause = error;
@@ -111,6 +83,14 @@ const getCheerioContent = async (url, options, origin) => {
         await delay(config.retryDelay);
       } else {
         logErrors(error, url, origin);
+
+        if (isImdbTitleUrl && attempt >= maxAttempts) {
+          console.log(
+            `${origin || "No Origin specified"} - ${url}: Max attempts reached. Exiting.`,
+          );
+          process.exit(1);
+        }
+
         return {
           error: error,
         };

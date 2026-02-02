@@ -1,7 +1,6 @@
 const axios = require("axios");
 
 const { config } = require("../config");
-const { getAllocineInfo } = require("../content/getAllocineInfo");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
 const { getHighestRatedEpisode } = require("../content/getHighestRatedEpisode");
@@ -53,21 +52,20 @@ const compareUsersRating = async (
       item_type_api === "movie"
         ? `${config.baseURLTMDBFilm}${tmdbId}`
         : `${config.baseURLTMDBSerie}${tmdbId}`;
-    const [tmdbResponse, allocineInfo, imdbRating] = await Promise.all([
+    const [tmdbResponse, imdbRating, response] = await Promise.all([
       tmdbId
         ? getTMDBResponse(allocineHomepage, tmdbId)
         : Promise.resolve(null),
-      getAllocineInfo(allocineHomepage, false),
       getImdbRating(imdbHomepage),
+      axios.get(apiUrl, { validateStatus: () => true }),
     ]);
     const tmdbData = tmdbResponse?.data;
 
-    if (!allocineInfo || allocineInfo.error) {
-      return isEqualObj;
-    }
-
-    const { allocineUsersRating: allocine_users_rating, status } = allocineInfo;
-    const { seasonsNumber: imdb_seasons_number } = imdbRating;
+    const status = response?.data?.status;
+    const {
+      seasonsNumber: imdb_seasons_number,
+      usersRating: imdb_users_rating,
+    } = imdbRating;
     const tmdb_users_rating =
       tmdbData?.vote_count && tmdbData?.vote_average
         ? parseFloat(tmdbData.vote_average.toFixed(2))
@@ -149,10 +147,6 @@ const compareUsersRating = async (
       item_type,
     );
 
-    const response = await axios.get(apiUrl, {
-      validateStatus: () => true,
-    });
-
     if (response.status >= 500) {
       throw new Error(
         `Failed to fetch What's on? API data: status code ${response.status}`,
@@ -213,7 +207,7 @@ const compareUsersRating = async (
       }
 
       if (
-        dataWithoutId.allocine?.users_rating === allocine_users_rating &&
+        dataWithoutId.imdb?.users_rating === imdb_users_rating &&
         dataWithoutId.tmdb?.users_rating === tmdb_users_rating
       ) {
         return {

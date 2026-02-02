@@ -1,5 +1,5 @@
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -17,16 +17,16 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
   let usersRatingCount = null;
 
   try {
-    const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-      },
-    };
-
     if (isNotNull(letterboxdId)) {
+      await getHomepageResponse(letterboxdHomepage, {
+        serviceName: "Letterboxd",
+        id: letterboxdId,
+        allowedStatuses: [200, 403],
+      });
+
       const $ = await getCheerioContent(
         letterboxdHomepage,
-        options,
+        undefined,
         "getLetterboxdRating",
       );
       const ldJsonTag = $('script[type="application/ld+json"]').html();

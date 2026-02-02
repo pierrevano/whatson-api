@@ -86,99 +86,89 @@ const loopItems = async (
         tv_time: { id: tvtimeId, homepage: tvtimeHomepage },
       } = urls;
 
-      // Check if page is existing before upsert to DB
-      const { error } = await getAllocineInfo(allocineHomepage, true);
+      const getIsEqualValue = !force
+        ? await compareUsersRating(
+            allocineHomepage,
+            allocineURL,
+            imdbHomepage,
+            imdbId,
+            isActive,
+            item_type,
+            mojoBoxOfficeArray,
+            tmdbId,
+          )
+        : { isEqual: false };
 
-      // Determine if user ratings are equal and fetch the data
-      if (!error) {
-        const getIsEqualValue = !force
-          ? await compareUsersRating(
-              allocineHomepage,
-              allocineURL,
-              imdbHomepage,
-              imdbId,
-              isActive,
-              item_type,
-              mojoBoxOfficeArray,
-              tmdbId,
-            )
-          : { isEqual: false };
+      const isEqual = getIsEqualValue.isEqual;
 
-        const isEqual = getIsEqualValue.isEqual;
+      const useExistingData = !force && isEqual;
+      const data = useExistingData
+        ? getIsEqualValue.data
+        : (createJsonCounter++,
+          await createJSON(
+            allocineCriticsDetails,
+            allocineURL,
+            allocineHomepage,
+            allocineId,
+            betaseriesHomepage,
+            betaseriesId,
+            imdbHomepage,
+            imdbId,
+            isActive,
+            item_type,
+            metacriticHomepage,
+            metacriticId,
+            rottenTomatoesHomepage,
+            rottenTomatoesId,
+            letterboxdHomepage,
+            letterboxdId,
+            sensCritiqueHomepage,
+            sensCritiqueId,
+            traktHomepage,
+            traktId,
+            mojoBoxOfficeArray,
+            tmdbId,
+            tmdbHomepage,
+            tvtimeHomepage,
+            tvtimeId,
+            theTvdbHomepage,
+            theTvdbId,
+          ));
 
-        const useExistingData = !force && isEqual;
-        const data = useExistingData
-          ? getIsEqualValue.data
-          : (createJsonCounter++,
-            await createJSON(
-              allocineCriticsDetails,
-              allocineURL,
-              allocineHomepage,
-              allocineId,
-              betaseriesHomepage,
-              betaseriesId,
-              imdbHomepage,
-              imdbId,
-              isActive,
-              item_type,
-              metacriticHomepage,
-              metacriticId,
-              rottenTomatoesHomepage,
-              rottenTomatoesId,
-              letterboxdHomepage,
-              letterboxdId,
-              sensCritiqueHomepage,
-              sensCritiqueId,
-              traktHomepage,
-              traktId,
-              mojoBoxOfficeArray,
-              tmdbId,
-              tmdbHomepage,
-              tvtimeHomepage,
-              tvtimeId,
-              theTvdbHomepage,
-              theTvdbId,
-            ));
-
-        if (!useExistingData) {
-          data.updated_at = new Date().toISOString();
-        } else {
-          console.log(
-            `The 'updated_at' date was not modified because existing data was reused.`,
-          );
-        }
-
-        // Perform upsert operation on the database with the fetched data
-        try {
-          await upsertToDatabase(data, collectionData, isEqual);
-        } catch (error) {
-          if (areAllNullOrUndefined(data, config.ratingsKeys)) {
-            appendFile(
-              "temp_error.log",
-              `${new Date().toISOString()} - All ratings are null for the item at index ${index} - ${JSON.stringify(data)}\n`,
-              () => {},
-            );
-          }
-
-          console.log(
-            `Item at index ${index} was not updated because AlloCiné is null.`,
-          );
-        }
-
-        itemCounter++;
-
-        if (
-          itemCounter === config.circleLimitPerInstance &&
-          getNodeVarsValues.environment === "circleci" &&
-          !max_index
-        ) {
-          console.log(
-            "CircleCI limit per instance has been reached, aborting.",
-          );
-          process.exit(0);
-        }
+      if (!useExistingData) {
+        data.updated_at = new Date().toISOString();
       } else {
-        console.error(error);
+        console.log(
+          `The 'updated_at' date was not modified because existing data was reused.`,
+        );
+      }
+
+      // Perform upsert operation on the database with the fetched data
+      try {
+        await upsertToDatabase(data, collectionData, isEqual);
+      } catch (error) {
+        if (areAllNullOrUndefined(data, config.ratingsKeys)) {
+          appendFile(
+            "temp_error.log",
+            `${new Date().toISOString()} - All ratings are null for the item at index ${index} - ${JSON.stringify(data)}\n`,
+            () => {},
+          );
+        }
+
+        console.log(
+          `Item at index ${index} was not updated because AlloCiné is null.`,
+        );
+      }
+
+      itemCounter++;
+
+      if (
+        itemCounter === config.circleLimitPerInstance &&
+        getNodeVarsValues.environment === "circleci" &&
+        !max_index
+      ) {
+        console.log("CircleCI limit per instance has been reached, aborting.");
+        process.exit(0);
       }
     } catch (error) {
       throw new Error(

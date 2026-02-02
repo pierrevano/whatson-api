@@ -5,7 +5,6 @@ const {
   convertImdbDateToISOString,
 } = require("../utils/convertFrenchDateToISOString");
 const { formatDate } = require("../utils/formatDate");
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getImdbRating } = require("./getImdbRating");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
@@ -27,12 +26,7 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
   const url = `${imdbHomepage}episodes?season=${season}`;
 
   try {
-    const options = {
-      headers: {
-        "User-Agent": generateUserAgent(),
-      },
-    };
-    const $ = await getCheerioContent(url, options, "parseImdbEpisodes");
+    const $ = await getCheerioContent(url, undefined, "parseImdbEpisodes");
 
     const jsonText = $("#__NEXT_DATA__").html();
     const nextData = JSON.parse(jsonText);

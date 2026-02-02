@@ -5,7 +5,6 @@ const {
   convertImdbDateToISOString,
 } = require("../utils/convertFrenchDateToISOString");
 const { formatDate } = require("../utils/formatDate");
-const { generateUserAgent } = require("../utils/generateUserAgent");
 const { httpClient } = require("../utils/httpClient");
 const { logErrors } = require("../utils/logErrors");
 
@@ -92,7 +91,6 @@ const fetchEpisodesPage = async (imdbId, cursor) => {
 
   const headers = {
     "Content-Type": "application/json",
-    "User-Agent": generateUserAgent(),
   };
 
   const response = await httpClient.get(GRAPHQL_URL, {
