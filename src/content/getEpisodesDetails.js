@@ -110,7 +110,7 @@ const getEpisodesDetails = async (
     }
 
     if (!totalSeasons) {
-      totalSeasons = await getSeasonsNumber(allocineHomepage, data, imdbId);
+      totalSeasons = await getSeasonsNumber(allocineHomepage, data);
     }
 
     if (!totalSeasons || totalSeasons < 1) return null;

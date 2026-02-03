@@ -182,7 +182,7 @@ const createJSON = async (
   );
   const seasonsNumber =
     (config.specialItems.includes(imdbId) && (imdbSeasonsNumber ?? null)) ||
-    (await getSeasonsNumber(allocineHomepage, tmdbData, imdbId));
+    (await getSeasonsNumber(allocineHomepage, tmdbData));
   const {
     usersRating: usersRatingBetaseries,
     usersRatingCount: usersRatingCountBetaseries,

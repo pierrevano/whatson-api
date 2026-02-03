@@ -1,7 +1,7 @@
 const { appendFile } = require("fs");
 
 const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
-const { getAllocineInfo } = require("../content/getAllocineInfo");
+const { checkRatings403 } = require("../utils/checkRatings403");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
@@ -101,39 +101,50 @@ const loopItems = async (
 
       const isEqual = getIsEqualValue.isEqual;
 
-      const useExistingData = !force && isEqual;
-      const data = useExistingData
-        ? getIsEqualValue.data
-        : (createJsonCounter++,
-          await createJSON(
-            allocineCriticsDetails,
-            allocineURL,
-            allocineHomepage,
-            allocineId,
-            betaseriesHomepage,
-            betaseriesId,
-            imdbHomepage,
-            imdbId,
-            isActive,
-            item_type,
-            metacriticHomepage,
-            metacriticId,
-            rottenTomatoesHomepage,
-            rottenTomatoesId,
-            letterboxdHomepage,
-            letterboxdId,
-            sensCritiqueHomepage,
-            sensCritiqueId,
-            traktHomepage,
-            traktId,
-            mojoBoxOfficeArray,
-            tmdbId,
-            tmdbHomepage,
-            tvtimeHomepage,
-            tvtimeId,
-            theTvdbHomepage,
-            theTvdbId,
-          ));
+      const { errorMetacritic, errorLetterboxd } = await checkRatings403({
+        metacriticHomepage,
+        metacriticId,
+        letterboxdHomepage,
+        letterboxdId,
+      });
+
+      let useExistingData =
+        (!force && isEqual) || errorMetacritic || errorLetterboxd;
+      let data = useExistingData ? getIsEqualValue.data : null;
+
+      if (!data) {
+        useExistingData = false;
+        createJsonCounter++;
+        data = await createJSON(
+          allocineCriticsDetails,
+          allocineURL,
+          allocineHomepage,
+          allocineId,
+          betaseriesHomepage,
+          betaseriesId,
+          imdbHomepage,
+          imdbId,
+          isActive,
+          item_type,
+          metacriticHomepage,
+          metacriticId,
+          rottenTomatoesHomepage,
+          rottenTomatoesId,
+          letterboxdHomepage,
+          letterboxdId,
+          sensCritiqueHomepage,
+          sensCritiqueId,
+          traktHomepage,
+          traktId,
+          mojoBoxOfficeArray,
+          tmdbId,
+          tmdbHomepage,
+          tvtimeHomepage,
+          tvtimeId,
+          theTvdbHomepage,
+          theTvdbId,
+        );
+      }
 
       if (!useExistingData) {
         data.updated_at = new Date().toISOString();

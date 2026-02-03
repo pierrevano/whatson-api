@@ -1,5 +1,3 @@
-const axios = require("axios");
-
 const { config } = require("../config");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
@@ -45,7 +43,6 @@ const compareUsersRating = async (
   const isEqualObj = { isEqual: false };
 
   const item_type_api = item_type === "movie" ? "movie" : "tvshow";
-  const apiUrl = `${config.baseURLRemote}/${item_type_api}/${tmdbId}?append_to_response=${config.appendToResponse}&api_key=${config.internalApiKey}`;
 
   try {
     const tmdbHomepage =
@@ -57,11 +54,27 @@ const compareUsersRating = async (
         ? getTMDBResponse(allocineHomepage, tmdbId)
         : Promise.resolve(null),
       getImdbRating(imdbHomepage),
-      axios.get(apiUrl, { validateStatus: () => true }),
+      getWhatsonResponse(item_type_api, tmdbId, config.appendToResponse),
     ]);
     const tmdbData = tmdbResponse?.data;
 
-    const status = response?.data?.status;
+    const { status: responseStatus, data: responseData } = response ?? {};
+
+    if (responseStatus >= 500) {
+      throw new Error(
+        `Failed to fetch What's on? API data: status code ${responseStatus}`,
+      );
+    }
+
+    if (responseStatus !== 200) {
+      return isEqualObj;
+    }
+
+    if (!responseData) {
+      return isEqualObj;
+    }
+
+    const status = responseData.status;
     const {
       seasonsNumber: imdb_seasons_number,
       usersRating: imdb_users_rating,
@@ -73,8 +86,7 @@ const compareUsersRating = async (
 
     const isTvShow = item_type_api === "tvshow";
     const whatsonLastEpisode = isTvShow
-      ? ((await getWhatsonResponse(imdbId, "last_episode"))?.last_episode ??
-        null)
+      ? (responseData.last_episode ?? null)
       : null;
     const tvShowEnded = isTvShow
       ? hasTvShowEnded(status, whatsonLastEpisode)
@@ -89,7 +101,7 @@ const compareUsersRating = async (
       seasonsNumber =
         config.specialItems.includes(imdbId) && imdb_seasons_number != null
           ? imdb_seasons_number
-          : await getSeasonsNumber(allocineHomepage, tmdbData, imdbId);
+          : await getSeasonsNumber(allocineHomepage, tmdbData);
       episodesDetails = await getEpisodesDetails(
         allocineHomepage,
         imdbHomepage,
@@ -147,15 +159,6 @@ const compareUsersRating = async (
       item_type,
     );
 
-    if (response.status >= 500) {
-      throw new Error(
-        `Failed to fetch What's on? API data: status code ${response.status}`,
-      );
-    }
-    if (response.status !== 200) {
-      return isEqualObj;
-    }
-
     const mojoObj =
       mojoValues !== null
         ? {
@@ -165,61 +168,59 @@ const compareUsersRating = async (
           }
         : null;
 
-    if (response && response.data) {
-      const { _id, ...dataWithoutId } = response.data;
+    const { _id, ...dataWithoutId } = responseData;
 
-      dataWithoutId.is_active = isActive;
+    dataWithoutId.is_active = isActive;
 
-      if (isTvShow && !tvShowEnded) {
-        dataWithoutId.seasons_number = seasonsNumber;
-        dataWithoutId.episodes_details = episodesDetails;
-        dataWithoutId.last_episode = lastEpisode;
-        dataWithoutId.next_episode = nextEpisode;
-        dataWithoutId.highest_episode = highestEpisode;
-        dataWithoutId.lowest_episode = lowestEpisode;
-      }
+    if (isTvShow && !tvShowEnded) {
+      dataWithoutId.seasons_number = seasonsNumber;
+      dataWithoutId.episodes_details = episodesDetails;
+      dataWithoutId.last_episode = lastEpisode;
+      dataWithoutId.next_episode = nextEpisode;
+      dataWithoutId.highest_episode = highestEpisode;
+      dataWithoutId.lowest_episode = lowestEpisode;
+    }
 
-      if (dataWithoutId.allocine && typeof allocinePopularity === "number") {
-        dataWithoutId.allocine.popularity = allocinePopularity;
-      }
+    if (dataWithoutId.allocine && typeof allocinePopularity === "number") {
+      dataWithoutId.allocine.popularity = allocinePopularity;
+    }
 
-      if (dataWithoutId.imdb && typeof imdbPopularity === "number") {
-        dataWithoutId.imdb.popularity = imdbPopularity;
-      }
+    if (dataWithoutId.imdb && typeof imdbPopularity === "number") {
+      dataWithoutId.imdb.popularity = imdbPopularity;
+    }
 
-      if (dataWithoutId.tmdb && typeof tmdbPopularity === "number") {
-        dataWithoutId.tmdb.popularity = tmdbPopularity;
-      }
+    if (dataWithoutId.tmdb && typeof tmdbPopularity === "number") {
+      dataWithoutId.tmdb.popularity = tmdbPopularity;
+    }
 
-      dataWithoutId.mojo = mojoObj;
+    dataWithoutId.mojo = mojoObj;
 
-      const updatedAtCutoffDate = new Date();
-      updatedAtCutoffDate.setDate(
-        updatedAtCutoffDate.getDate() - config.maxAgeInDays,
-      );
+    const updatedAtCutoffDate = new Date();
+    updatedAtCutoffDate.setDate(
+      updatedAtCutoffDate.getDate() - config.maxAgeInDays,
+    );
 
-      if (
-        (dataWithoutId.allocine?.users_rating !== null &&
-          dataWithoutId.imdb?.users_rating === null) ||
-        new Date(dataWithoutId.updated_at) <= updatedAtCutoffDate
-      ) {
-        return isEqualObj;
-      }
+    if (
+      (dataWithoutId.allocine?.users_rating !== null &&
+        dataWithoutId.imdb?.users_rating === null) ||
+      new Date(dataWithoutId.updated_at) <= updatedAtCutoffDate
+    ) {
+      return isEqualObj;
+    }
 
-      if (
-        dataWithoutId.imdb?.users_rating === imdb_users_rating &&
-        dataWithoutId.tmdb?.users_rating === tmdb_users_rating
-      ) {
-        return {
-          isEqual: true,
-          data: dataWithoutId,
-        };
-      }
+    if (
+      dataWithoutId.imdb?.users_rating === imdb_users_rating &&
+      dataWithoutId.tmdb?.users_rating === tmdb_users_rating
+    ) {
+      return {
+        isEqual: true,
+        data: dataWithoutId,
+      };
     }
 
     return isEqualObj;
   } catch (error) {
-    logErrors(error, apiUrl, "compareUsersRating");
+    logErrors(error, tmdbId, "compareUsersRating");
 
     return isEqualObj;
   }

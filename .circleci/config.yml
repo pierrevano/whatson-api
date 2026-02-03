@@ -43,16 +43,6 @@ commands:
           name: Install dependencies
           command: npm install
       - run:
-          name: Install Playwright browsers + deps
-          command: npx playwright install --with-deps
-      - run:
-          name: Start Xvfb
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y xvfb
-            Xvfb :99 -screen 0 1280x720x24 &
-            echo 'export DISPLAY=:99' >> $BASH_ENV
-      - run:
           name: Install vercel globally
           command: sudo npm install -g vercel
   run_tests:

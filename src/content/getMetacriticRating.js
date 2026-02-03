@@ -29,10 +29,21 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
 
   try {
     if (isNotNull(metacriticId)) {
-      await getHomepageResponse(metacriticHomepage, {
+      const homepageResponse = await getHomepageResponse(metacriticHomepage, {
         serviceName: "Metacritic",
         id: metacriticId,
+        allowedStatuses: [200, 404],
       });
+
+      if (homepageResponse.status === 404) {
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        await delay(config.retryDelay);
+
+        await getHomepageResponse(metacriticHomepage, {
+          serviceName: "Metacritic",
+          id: metacriticId,
+        });
+      }
 
       const $ = await getCheerioContent(
         metacriticHomepage,
