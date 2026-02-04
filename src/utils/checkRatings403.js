@@ -47,7 +47,7 @@ const checkRatings403 = async ({
   letterboxdHomepage,
   letterboxdId,
 }) => {
-  if (getNodeVarsValues.environment !== "circleci") {
+  if (getNodeVarsValues.environment === "local") {
     return { errorMetacritic: false, errorLetterboxd: false };
   }
 
