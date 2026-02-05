@@ -19,7 +19,7 @@ const isThirdPartyServiceOK = async (service) => {
 
     const isImdb = service.includes("imdb.com");
     const options = {
-      timeout: 240000,
+      timeout: config.thirdPartyStatusTimeoutMs,
       validateStatus: (status) => status === 200 || (isImdb && status === 202),
     };
 

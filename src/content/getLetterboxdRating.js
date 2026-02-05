@@ -1,3 +1,4 @@
+const { config } = require("../config");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
@@ -12,6 +13,7 @@ const { logErrors } = require("../utils/logErrors");
  * @returns {{ id: string, url: string, usersRating: number|null, usersRatingCount: number|null }|null} An object containing the rating information, or null if not available
  */
 const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
+  const maxAttempts = config.retries;
   let letterboxdObj = null;
   let usersRating = null;
   let usersRatingCount = null;
@@ -24,43 +26,64 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
         allowedStatuses: [200, 403],
       });
 
-      const $ = await getCheerioContent(
-        letterboxdHomepage,
-        undefined,
-        "getLetterboxdRating",
-      );
-      const ldJsonTag = $('script[type="application/ld+json"]').html();
-
-      if (!ldJsonTag || !ldJsonTag.includes("CDATA")) {
-        throw new Error("Failed to fetch the Letterboxd JSON data.");
-      }
-
-      try {
-        const cleanJsonText = ldJsonTag.replace(/\/\*.*?\*\//gs, "").trim();
-        const movieMetadata = JSON.parse(cleanJsonText);
-
-        usersRating = parseFloat(movieMetadata?.aggregateRating?.ratingValue);
-        if (isNaN(usersRating)) usersRating = null;
-
-        if (usersRating) {
-          usersRatingCount = parseInt(
-            movieMetadata?.aggregateRating?.ratingCount,
-            10,
-          );
-          if (isNaN(usersRatingCount)) usersRatingCount = null;
-        }
-      } catch (parseErr) {
-        throw new Error(
-          `Invalid or malformed JSON-LD in Letterboxd page: ${parseErr}`,
+      for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+        const $ = await getCheerioContent(
+          letterboxdHomepage,
+          undefined,
+          "getLetterboxdRating",
         );
-      }
+        const ldJsonTag = $('script[type="application/ld+json"]').html();
 
-      letterboxdObj = {
-        id: letterboxdId,
-        url: letterboxdHomepage,
-        usersRating,
-        usersRatingCount,
-      };
+        if (!ldJsonTag || !ldJsonTag.includes("CDATA")) {
+          if (attempt < maxAttempts) {
+            console.log(
+              `getLetterboxdRating - ${letterboxdHomepage}: JSON-LD missing or invalid (attempt ${attempt}). Retrying...`,
+            );
+            await new Promise((resolve) =>
+              setTimeout(resolve, config.retryDelay),
+            );
+            continue;
+          }
+          throw new Error("Failed to fetch the Letterboxd JSON data.");
+        }
+
+        try {
+          const cleanJsonText = ldJsonTag.replace(/\/\*.*?\*\//gs, "").trim();
+          const movieMetadata = JSON.parse(cleanJsonText);
+
+          usersRating = parseFloat(movieMetadata?.aggregateRating?.ratingValue);
+          if (isNaN(usersRating)) usersRating = null;
+
+          if (usersRating) {
+            usersRatingCount = parseInt(
+              movieMetadata?.aggregateRating?.ratingCount,
+              10,
+            );
+            if (isNaN(usersRatingCount)) usersRatingCount = null;
+          }
+        } catch (parseErr) {
+          if (attempt < maxAttempts) {
+            console.log(
+              `getLetterboxdRating - ${letterboxdHomepage}: JSON-LD missing or invalid (attempt ${attempt}). Retrying...`,
+            );
+            await new Promise((resolve) =>
+              setTimeout(resolve, config.retryDelay),
+            );
+            continue;
+          }
+          throw new Error(
+            `Invalid or malformed JSON-LD in Letterboxd page: ${parseErr}`,
+          );
+        }
+
+        letterboxdObj = {
+          id: letterboxdId,
+          url: letterboxdHomepage,
+          usersRating,
+          usersRatingCount,
+        };
+        break;
+      }
     }
   } catch (error) {
     logErrors(error, letterboxdHomepage, "getLetterboxdRating");

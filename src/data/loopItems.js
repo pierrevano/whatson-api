@@ -108,9 +108,13 @@ const loopItems = async (
         letterboxdId,
       });
 
-      let useExistingData =
-        (!force && isEqual) || errorMetacritic || errorLetterboxd;
+      const isCircleciRatings403 = errorMetacritic || errorLetterboxd;
+      let useExistingData = (!force && isEqual) || isCircleciRatings403;
       let data = useExistingData ? getIsEqualValue.data : null;
+
+      if (useExistingData && !data) {
+        continue;
+      }
 
       if (!data) {
         useExistingData = false;

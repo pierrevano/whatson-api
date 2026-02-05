@@ -19,8 +19,13 @@ const getCheerioContentWithBrowser = async (url, origin) => {
       .includes("letterboxd");
     const waitUntil = isLetterboxd ? "domcontentloaded" : "networkidle";
 
-    browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext();
+    browser = await chromium.launch({
+      headless: false,
+      args: ["--window-size=1,1", "--window-position=0,0"],
+    });
+    const context = await browser.newContext({
+      viewport: { width: 1, height: 1 },
+    });
     const page = await context.newPage();
 
     for (let attempt = 0; attempt < 3; attempt++) {

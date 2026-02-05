@@ -91,6 +91,7 @@ const config = {
   heapLimit: 1500,
   maxAgeInDays: 14,
   ratingsDelayMs: 500,
+  thirdPartyStatusTimeoutMs: 480000,
 
   /* CircleCI settings */
   circleLimitPerDay: 1500,
