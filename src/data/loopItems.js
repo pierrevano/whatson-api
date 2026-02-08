@@ -158,20 +158,23 @@ const loopItems = async (
         );
       }
 
-      // Perform upsert operation on the database with the fetched data
-      try {
-        await upsertToDatabase(data, collectionData, isEqual);
-      } catch (error) {
-        if (areAllNullOrUndefined(data, config.ratingsKeys)) {
-          appendFile(
-            "temp_error.log",
-            `${new Date().toISOString()} - All ratings are null for the item at index ${index} - ${JSON.stringify(data)}\n`,
-            () => {},
-          );
-        }
+      if (areAllNullOrUndefined(data, config.ratingsKeys)) {
+        appendFile(
+          "temp_error.log",
+          `${new Date().toISOString()} - All ratings are null for the item at index ${index} - ${JSON.stringify(data)}\n`,
+          () => {},
+        );
 
+        console.log(`All ratings are null for the item at index ${index}.`);
+
+        continue;
+      }
+
+      try {
+        await upsertToDatabase(allocineHomepage, collectionData, data, isEqual);
+      } catch (error) {
         console.log(
-          `Item at index ${index} was not updated because AlloCiné is null.`,
+          `Item at index ${index} was not updated because upsert failed: ${error.message}`,
         );
       }
 

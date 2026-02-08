@@ -1,5 +1,8 @@
 const { writeFileSync } = require("fs");
 
+const { b64Encode } = require("../utils/b64EncodeAndDecode");
+const { config } = require("../config");
+
 /**
  * Filters the dataset when `check_id` is provided, optionally limiting results to outdated items.
  * Writes the filtered list to `./temp_mojo_box_office.json` and aborts when nothing matches.
@@ -43,14 +46,31 @@ const filterByCheckId = async ({
           item_type: getNodeVarsValues.item_type,
           updated_at: { $lt: cutoffDate.toISOString() },
         },
-        { projection: { id: 1 } },
+        { projection: { _id: 1 } },
       )
       .toArray();
 
-    const outdatedIds = new Set(outdatedDocs.map((doc) => doc.id));
-    filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) =>
-      outdatedIds.has(parseInt(item.THEMOVIEDB_ID, 10)),
+    const existingDocs = await collectionData
+      .find(
+        { item_type: getNodeVarsValues.item_type },
+        { projection: { _id: 1 } },
+      )
+      .toArray();
+
+    const outdatedAllocineIds = new Set(
+      outdatedDocs.map((doc) => doc._id).filter(Boolean),
     );
+    const existingAllocineIds = new Set(
+      existingDocs.map((doc) => doc._id).filter(Boolean),
+    );
+    filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) => {
+      const allocineDbId = b64Encode(`${config.baseURLAllocine}${item.URL}`);
+
+      return (
+        outdatedAllocineIds.has(allocineDbId) ||
+        !existingAllocineIds.has(allocineDbId)
+      );
+    });
   }
 
   if (isCheckAllIdsRecent) {

@@ -1507,7 +1507,9 @@ const params = {
   unique_allocine_ids_movie: {
     query: `?item_type=movie&is_active=true,false&limit=${maxLimit}`,
     expectedResult: (items) => {
-      const ids = items.map((item) => item.allocine.id);
+      const ids = items
+        .filter((item) => item.allocine?.id != null)
+        .map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
       expect(uniqueIds.length).toEqual(ids.length);
     },

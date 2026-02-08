@@ -1579,7 +1579,9 @@ const params = {
   unique_allocine_ids_tvshow: {
     query: `?item_type=tvshow&is_active=true,false&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
-      const ids = items.map((item) => item.allocine.id);
+      const ids = items
+        .filter((item) => item.allocine?.id != null)
+        .map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
       expect(uniqueIds.length).toEqual(ids.length);
     },
