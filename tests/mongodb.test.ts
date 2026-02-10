@@ -53,4 +53,19 @@ describe("Items are up to date", () => {
       config.timeout,
     );
   });
+
+  test(
+    "no item has all ratings keys set to null",
+    async () => {
+      const allRatingsNullQuery = {
+        $and: config.ratingsKeys.map((key) => ({ [key]: null })),
+      };
+
+      const itemsWithAllRatingsNull =
+        await collectionData.countDocuments(allRatingsNullQuery);
+
+      expect(itemsWithAllRatingsNull).toBe(0);
+    },
+    config.timeout,
+  );
 });
