@@ -21,7 +21,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
+        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'. Received 'movies'.",
       );
       expect(data.code).toBe(400);
     },
@@ -33,7 +33,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
+        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'. Received 'moviE'.",
       );
       expect(data.code).toBe(400);
     },
@@ -251,7 +251,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
+        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'. Received 'movies'.",
       );
       expect(data.code).toBe(400);
     },

@@ -35,6 +35,8 @@ const filterByCheckId = async ({
   const checkDate = parseInt(getNodeVarsValues.check_date, 10);
   const isCheckDateFilterActive =
     isCheckAllIds && !Number.isNaN(checkDate) && checkDate > 0;
+  const shouldIncludeMissingAllocineIds =
+    process.env.CHECK_MISSING_ALLOCINE_IDS === "true";
 
   if (isCheckDateFilterActive) {
     const cutoffDate = new Date();
@@ -68,7 +70,8 @@ const filterByCheckId = async ({
 
       return (
         outdatedAllocineIds.has(allocineDbId) ||
-        !existingAllocineIds.has(allocineDbId)
+        (shouldIncludeMissingAllocineIds &&
+          !existingAllocineIds.has(allocineDbId))
       );
     });
   }

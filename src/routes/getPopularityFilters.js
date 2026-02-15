@@ -10,6 +10,11 @@ const getPopularityFilters = async (popularity_filters_query) => {
 
   if (popularity_filters_array.includes("none")) return popularity_filters;
 
+  /**
+   * Assign a worst-rank fallback to missing/invalid popularity values to avoid biasing aggregate scores.
+   */
+  const POPULARITY_MISSING_RANK = 1000000;
+
   const buildTmdbPopularityFilter = () => ({
     $filter: {
       input: [
@@ -36,7 +41,7 @@ const getPopularityFilters = async (popularity_filters_query) => {
                 },
               ],
             },
-            null,
+            POPULARITY_MISSING_RANK,
           ],
         },
       ],
@@ -48,8 +53,8 @@ const getPopularityFilters = async (popularity_filters_query) => {
   if (popularity_filters_array.includes("all")) {
     // prettier-ignore
     popularity_filters = [
-      { $filter: { input: ["$allocine.popularity"], as: "val", cond: { $ne: ["$$val", null] } } },
-      { $filter: { input: ["$imdb.popularity"], as: "val", cond: { $ne: ["$$val", null] } } },
+      { $filter: { input: [{ $ifNull: ["$allocine.popularity", POPULARITY_MISSING_RANK] }], as: "val", cond: { $ne: ["$$val", null] } } },
+      { $filter: { input: [{ $ifNull: ["$imdb.popularity", POPULARITY_MISSING_RANK] }], as: "val", cond: { $ne: ["$$val", null] } } },
       buildTmdbPopularityFilter()
     ];
 
@@ -60,7 +65,9 @@ const getPopularityFilters = async (popularity_filters_query) => {
     if (popularity_filters_array.includes("allocine_popularity")) {
       const filter = {
         $filter: {
-          input: ["$allocine.popularity"],
+          input: [
+            { $ifNull: ["$allocine.popularity", POPULARITY_MISSING_RANK] },
+          ],
           as: "val",
           cond: { $ne: ["$$val", null] },
         },
@@ -71,7 +78,7 @@ const getPopularityFilters = async (popularity_filters_query) => {
     if (popularity_filters_array.includes("imdb_popularity")) {
       const filter = {
         $filter: {
-          input: ["$imdb.popularity"],
+          input: [{ $ifNull: ["$imdb.popularity", POPULARITY_MISSING_RANK] }],
           as: "val",
           cond: { $ne: ["$$val", null] },
         },

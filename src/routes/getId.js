@@ -45,7 +45,7 @@ const getId = async (req, res) => {
 
     if (!isValidItemType(item_type_query)) {
       return sendResponse(res, 400, {
-        message: invalidItemTypeMessage,
+        message: invalidItemTypeMessage(item_type_query),
       });
     }
 

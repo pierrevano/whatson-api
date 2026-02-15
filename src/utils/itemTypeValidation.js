@@ -15,8 +15,10 @@ const areQuerySearchKeysMissing = (query, keysToCheckForSearch) => {
   });
 };
 
-const invalidItemTypeMessage =
-  "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.";
+const invalidItemTypeMessage = (itemTypeQuery) =>
+  `Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.${
+    itemTypeQuery ? ` Received '${itemTypeQuery}'.` : ""
+  }`;
 
 module.exports = {
   areQuerySearchKeysMissing,
