@@ -1,6 +1,5 @@
-const axios = require("axios");
-
 const { config } = require("../config");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -23,15 +22,17 @@ const getTraktRating = async (allocineHomepage, traktHomepage, traktId) => {
         ? "shows"
         : "movies";
 
-      const response = await axios.get(
-        `${config.baseURLTraktAPI}/${type}/${traktId}?extended=full`,
-        {
+      const apiUrl = `${config.baseURLTraktAPI}/${type}/${traktId}?extended=full`;
+      const response = await getHomepageResponse(apiUrl, {
+        serviceName: "Trakt API",
+        id: traktId,
+        requestConfig: {
           headers: {
             "trakt-api-key": config.traktApiKey,
             "trakt-api-version": 2,
           },
         },
-      );
+      });
 
       const data = response?.data;
 

@@ -1,6 +1,7 @@
 const axios = require("axios");
 
 const { config } = require("../config");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 const { logExecutionTime } = require("../utils/logExecutionTime");
@@ -24,6 +25,11 @@ const getBetaseriesRating = async (
 
   try {
     if (isNotNull(betaseriesId)) {
+      await getHomepageResponse(betaseriesHomepage, {
+        serviceName: "BetaSeries",
+        id: betaseriesId,
+      });
+
       const options = {
         validateStatus: (status) => status < 500,
       };

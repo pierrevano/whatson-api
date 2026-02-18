@@ -114,11 +114,24 @@ const getImdbEpisodesPagination = async (imdbId, afterCursor = null) => {
   let episodes = [];
 
   try {
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     let cursor = afterCursor;
     let hasNextPage = true;
 
     while (hasNextPage) {
-      const page = await fetchEpisodesPage(imdbId, cursor);
+      let page = null;
+
+      for (let attempt = 1; attempt <= config.retries; attempt += 1) {
+        page = await fetchEpisodesPage(imdbId, cursor);
+
+        if (page) {
+          break;
+        }
+
+        if (attempt < config.retries) {
+          await delay(config.retryDelay);
+        }
+      }
 
       if (!page) {
         throw new Error("No page returned from fetchEpisodesPage");

@@ -1,7 +1,7 @@
-const axios = require("axios");
 const cheerio = require("cheerio");
 
 const { config } = require("../config");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -28,9 +28,11 @@ async function fetchTableData(offset) {
   let tableData = [];
 
   try {
-    const response = await axios.get(
+    const response = await getHomepageResponse(
       `${config.mojo.baseURL}${config.mojo.urlToFetch}?offset=${offset}`,
+      { serviceName: "Mojo", id: offset },
     );
+
     const html = response.data;
     const $ = cheerio.load(html);
 

@@ -12,16 +12,28 @@ const { logErrors } = require("../utils/logErrors");
  */
 const getTheTvdbSlug = async (allocineHomepage, theTvdbId) => {
   let theTvdbSlug = null;
+  let slugUrl = null;
 
   try {
     if (isNotNull(theTvdbId)) {
       const type = allocineHomepage.includes(config.baseURLTypeSeries)
         ? "series"
         : "movies";
+      slugUrl = `${config.baseURLTheTVDBAPI}/${type}/${theTvdbId}`;
 
       axiosRetry(axios, {
         retries: config.retries,
         retryDelay: () => config.retryDelay,
+        retryCondition: (error) => {
+          if (
+            error?.config?.url === slugUrl &&
+            error?.response?.status !== 200
+          ) {
+            return true;
+          }
+
+          return axiosRetry.isNetworkOrIdempotentRequestError(error);
+        },
       });
 
       // Step 1: Login to TheTVDB API to get access token
@@ -42,9 +54,9 @@ const getTheTvdbSlug = async (allocineHomepage, theTvdbId) => {
       const accessToken = loginResponse.data.data.token;
 
       // Step 2: Fetch movie or tvshow details using TheTVDB API
-      const url = `${config.baseURLTheTVDBAPI}/${type}/${theTvdbId}`;
-      const { data } = await axios.get(url, {
+      const { data } = await axios.get(slugUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
+        validateStatus: (status) => status === 200,
       });
 
       theTvdbSlug = data?.data?.slug;
@@ -52,6 +64,19 @@ const getTheTvdbSlug = async (allocineHomepage, theTvdbId) => {
       if (!theTvdbSlug) theTvdbSlug = null;
     }
   } catch (error) {
+    if (
+      slugUrl &&
+      error?.config?.url === slugUrl &&
+      error?.response?.status !== 200
+    ) {
+      console.error(
+        `Failed to fetch TheTVDB slug after ${config.retries} retries. Status: ${
+          error?.response?.status ?? "unknown"
+        }`,
+      );
+      process.exit(1);
+    }
+
     logErrors(error, allocineHomepage, "getTheTvdbSlug");
   }
 

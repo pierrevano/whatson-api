@@ -2,6 +2,7 @@ const { appendFile } = require("fs");
 
 const { config } = require("../config");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -82,6 +83,11 @@ const getRottenTomatoesRating = async (
 
   try {
     if (isNotNull(rottenTomatoesId)) {
+      await getHomepageResponse(rottenTomatoesHomepage, {
+        serviceName: "Rotten Tomatoes",
+        id: rottenTomatoesId,
+      });
+
       const rawJson = await fetchMediaScorecardJson(
         rottenTomatoesHomepage,
         undefined,
