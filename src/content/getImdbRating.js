@@ -73,7 +73,8 @@ const determineSeasonsInfo = (episodesInfo) => {
  *   runtime: number|null,
  *   certification: string|null,
  *   topRanking: number|null,
- *   seasonsNumber: number|null
+ *   seasonsNumber: number|null,
+ *   releaseDate: object|null
  * }>} Resolves with the IMDb users rating, vote count, adult flag, runtime in seconds, certification rating,
  *     top ranking position, and the number of seasons.
  */
@@ -85,6 +86,7 @@ const getImdbRating = async (imdbHomepage) => {
   let certification = null;
   let topRanking = null;
   let seasonsNumber = null;
+  let releaseDate = null;
 
   try {
     axiosRetry(axios, {
@@ -123,6 +125,7 @@ const getImdbRating = async (imdbHomepage) => {
     const runtimeSeconds = mainColumnData?.runtime?.seconds;
     const certificate = aboveTheFoldData?.certificate?.rating;
     const episodesInfo = mainColumnData?.episodes;
+    releaseDate = mainColumnData?.releaseDate ?? null;
 
     const parsedRating = parseFloat(ratingsSummary?.aggregateRating);
     const parsedCount = parseInt(ratingsSummary?.voteCount, 10);
@@ -160,6 +163,7 @@ const getImdbRating = async (imdbHomepage) => {
     certification,
     topRanking,
     seasonsNumber,
+    releaseDate,
   };
 };
 

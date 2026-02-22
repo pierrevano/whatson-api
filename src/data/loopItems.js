@@ -3,6 +3,9 @@ const { appendFile } = require("fs");
 const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
 const { checkRatings403 } = require("../utils/checkRatings403");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
+const {
+  shouldCreateFromImdbReleaseDate,
+} = require("../utils/shouldCreateFromImdbReleaseDate");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
 const createJSON = require("./createJSON");
@@ -118,6 +121,17 @@ const loopItems = async (
 
       if (!data) {
         useExistingData = false;
+
+        const { shouldCreate } =
+          await shouldCreateFromImdbReleaseDate(imdbHomepage);
+
+        if (!shouldCreate) {
+          console.log(
+            `Skipping item at index ${index} because IMDb release date is in the future or incomplete.`,
+          );
+          continue;
+        }
+
         createJsonCounter++;
         data = await createJSON(
           allocineCriticsDetails,
