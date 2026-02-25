@@ -1,5 +1,6 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
+const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
 const { config } = require("../config");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
 const { getPipelineByNames } = require("./getPipelineByNames");
@@ -14,16 +15,6 @@ const client = new MongoClient(uri, {
 
 const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
-
-/**
- * Returns a helper that checks whether an append key is requested via `append_to_response`.
- * @param {string|undefined} append_to_response - Comma-separated keys to append.
- * @returns {(key: string) => boolean} Predicate indicating if the key should be appended.
- */
-const buildAppendIncludes = (append_to_response) => {
-  const appendList = append_to_response?.split(",") || [];
-  return (key) => appendList.includes(key);
-};
 
 /**
  * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.

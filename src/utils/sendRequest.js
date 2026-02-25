@@ -105,7 +105,7 @@ const sendRequest = (
     const isActiveUndefinedOrMissing =
       !req.query.is_active || typeof req.query.is_active === "undefined";
     const isRootPath = req.path === "/";
-    const errorMessage = `No matching items found.${
+    const errorMessage = `${config.noMatchingItemsFoundMessage}${
       isActiveUndefinedOrMissing && isQuerySearchKeyMissing && isRootPath
         ? ` Ensure 'is_active' is correctly set (currently ${resolveIsActiveValue()}).`
         : ""

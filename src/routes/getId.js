@@ -4,15 +4,16 @@ const { aggregateData } = require("./aggregateData");
 const { buildProjection } = require("./buildProjection");
 const { config } = require("../config");
 const {
+  invalidItemTypeMessage,
+  isValidItemType,
+} = require("../utils/itemTypeValidation");
+const {
   sendInternalError,
   sendRequest,
   sendResponse,
 } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
-const {
-  invalidItemTypeMessage,
-  isValidItemType,
-} = require("../utils/itemTypeValidation");
+const getInternalApiKey = require("./getInternalApiKey");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -21,7 +22,6 @@ const client = new MongoClient(uri, {
 
 const database = client.db(config.dbName);
 const collectionData = database.collection(config.collectionName);
-const collectionNameApiKey = database.collection(config.collectionNameApiKey);
 
 /**
  * Resolves a single item by its numeric identifier, optionally applying ratings filters or
@@ -49,9 +49,7 @@ const getId = async (req, res) => {
       });
     }
 
-    const internal_api_key = await collectionNameApiKey.findOne({
-      name: "internal_api_key",
-    });
+    const internal_api_key = await getInternalApiKey();
 
     const newRelicQueryAttributes = {
       ...req.query,

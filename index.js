@@ -14,6 +14,11 @@ const {
 } = require("./src/routes/getOrSaveUserPreferences");
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
+const {
+  getTvShowSeasonEpisodeDetails,
+  getTvShowSeasonEpisodes,
+  getTvShowSeasons,
+} = require("./src/routes/getTvShowSeasons");
 const { handleInvalidEndpoint } = require("./src/routes/handleInvalidEndpoint");
 
 // Use CORS middleware
@@ -34,6 +39,23 @@ app.get("/movie/:id", limiter, getId);
 
 /* A route that is used to get the data for a specific tvshow. */
 app.get("/tvshow/:id", limiter, getId);
+
+/* A route that is used to get all seasons for a specific tvshow. */
+app.get("/tvshow/:id/seasons", limiter, getTvShowSeasons);
+
+/* A route that is used to get all episodes for a specific tvshow season. */
+app.get(
+  "/tvshow/:id/seasons/:season_number/episodes",
+  limiter,
+  getTvShowSeasonEpisodes,
+);
+
+/* A route that is used to get a specific episode for a specific tvshow season. */
+app.get(
+  "/tvshow/:id/seasons/:season_number/episodes/:episode_number",
+  limiter,
+  getTvShowSeasonEpisodeDetails,
+);
 
 /* A route to get user preferences */
 app.get("/preferences/:email", getUserPreferences);

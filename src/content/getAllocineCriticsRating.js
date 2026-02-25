@@ -42,7 +42,7 @@ const getAllocineCriticsRating = async (allocineCriticsDetails) => {
     const criticsRatingCount = criticsRatingDetails.length;
     const criticsRating =
       criticsRatingCount > 0
-        ? parseFloat((sumRatings / criticsRatingCount).toFixed(1))
+        ? parseFloat((sumRatings / criticsRatingCount).toFixed(2))
         : null;
 
     allocineCriticInfo = {

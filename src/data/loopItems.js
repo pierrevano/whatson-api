@@ -60,7 +60,7 @@ const loopItems = async (
       // Log the progress in terms of percentage
       console.timeLog(
         "Duration",
-        `- ${parseInt(index) + 1} / ${jsonArray.length} (${(((parseInt(index) + 1) * 100) / jsonArray.length).toFixed(1)}%)`,
+        `- ${parseInt(index) + 1} / ${jsonArray.length} (${(((parseInt(index) + 1) * 100) / jsonArray.length).toFixed(2)}%)`,
       );
 
       // Generate URLs based on the current JSON item

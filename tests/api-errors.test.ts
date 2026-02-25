@@ -99,7 +99,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -110,7 +110,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -221,7 +221,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -240,7 +240,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -263,7 +263,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -273,7 +273,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -283,7 +283,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -294,7 +294,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -349,7 +349,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `Invalid endpoint: /invalid-path?is_active&api_key=${config.internalApiKey}. Allowed endpoints are: GET /, GET /movie/:id, GET /tvshow/:id.`,
+        `Invalid endpoint: /invalid-path?is_active&api_key=${config.internalApiKey}. Allowed endpoints are: GET /, GET /movie/:id, GET /tvshow/:id, GET /tvshow/:id/seasons, GET /tvshow/:id/seasons/:season_number/episodes, GET /tvshow/:id/seasons/:season_number/episodes/:episode_number.`,
       );
       expect(data.code).toBe(404);
     },
@@ -401,7 +401,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
+        `${config.noMatchingItemsFoundMessage} Ensure 'is_active' is correctly set (currently true,false).`,
       );
       expect(data.code).toBe(404);
     },
@@ -413,7 +413,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
+        `${config.noMatchingItemsFoundMessage} Ensure 'is_active' is correctly set (currently true,false).`,
       );
       expect(data.code).toBe(404);
     },
@@ -424,7 +424,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -434,7 +434,7 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("No matching items found.");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
       expect(data.code).toBe(404);
     },
   },
@@ -445,7 +445,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
+        `${config.noMatchingItemsFoundMessage} Ensure 'is_active' is correctly set (currently true,false).`,
       );
       expect(data.code).toBe(404);
     },
@@ -457,7 +457,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
+        `${config.noMatchingItemsFoundMessage} Ensure 'is_active' is correctly set (currently true,false).`,
       );
       expect(data.code).toBe(404);
     },
@@ -469,7 +469,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "No matching items found. Ensure 'is_active' is correctly set (currently true,false).",
+        `${config.noMatchingItemsFoundMessage} Ensure 'is_active' is correctly set (currently true,false).`,
       );
       expect(data.code).toBe(404);
     },

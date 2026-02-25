@@ -17,6 +17,7 @@ const {
 } = require("./utils/idExpectations");
 const { formatDate } = require("../src/utils/formatDate");
 const { schema } = require("../src/schema");
+const { tvshowSeasonSchema } = require("../src/tvshowSeasonSchema");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -1253,6 +1254,296 @@ const params = {
         expect(item).toHaveProperty("seasons_number");
         expect(item.seasons_number).toBeLessThanOrEqual(2);
       }),
+  },
+
+  return_tvshow_seasons_with_metadata: {
+    query: "/tvshow/1416/seasons?append_to_response",
+    expectedResult: (item) => {
+      checkTypes(item, tvshowSeasonSchema.tvshowSeasonsSchema);
+      expect(item).not.toHaveProperty("_id");
+      expect(item.id).toBe(1416);
+      expect(item.item_type).toBe("tvshow");
+      expect(Array.isArray(item.seasons)).toBe(true);
+      expect(item.seasons.length).toBeGreaterThan(0);
+
+      item.seasons.forEach((season) => {
+        expect(typeof season.season_number).toBe("number");
+        expect(typeof season.episodes_count).toBe("number");
+        expect(season.episodes_count).toBeGreaterThanOrEqual(0);
+        expect(typeof season.average_users_rating).toBe("number");
+        expect(season).not.toHaveProperty("rating_distribution");
+        expect(season).not.toHaveProperty("rating_distribution_episodes");
+      });
+
+      expect(item).not.toHaveProperty("highest_episode");
+      expect(item).not.toHaveProperty("last_episode");
+      expect(item).not.toHaveProperty("lowest_episode");
+      expect(item).not.toHaveProperty("next_episode");
+    },
+  },
+
+  return_tvshow_seasons_with_show_episode_metadata: {
+    query:
+      "/tvshow/1416/seasons?append_to_response=highest_episode,last_episode,lowest_episode,next_episode",
+    expectedResult: (item) => {
+      checkTypes(item, tvshowSeasonSchema.tvshowSeasonsWithShowEpisodesSchema);
+      expect(item).not.toHaveProperty("_id");
+      expect(item.id).toBe(1416);
+      expect(item.item_type).toBe("tvshow");
+      expect(item).toHaveProperty("highest_episode");
+      expect(item).toHaveProperty("last_episode");
+      expect(item).toHaveProperty("lowest_episode");
+      expect(item).toHaveProperty("next_episode");
+
+      expect(typeof item.last_episode.users_rating).toBe("number");
+
+      if (item.next_episode !== null) {
+        expect(typeof item.next_episode.release_date).toBe("string");
+      }
+
+      expect(item.highest_episode.users_rating).toBeGreaterThanOrEqual(
+        item.lowest_episode.users_rating,
+      );
+    },
+  },
+
+  return_tvshow_seasons_with_rating_distribution_metadata: {
+    query:
+      "/tvshow/1416/seasons?append_to_response=rating_distribution,rating_distribution_episodes",
+    expectedResult: (item) => {
+      checkTypes(
+        item,
+        tvshowSeasonSchema.tvshowSeasonsWithRatingDistributionSchema,
+      );
+      expect(item).not.toHaveProperty("_id");
+      expect(item.id).toBe(1416);
+      expect(item.item_type).toBe("tvshow");
+      expect(Array.isArray(item.seasons)).toBe(true);
+      expect(item.seasons.length).toBeGreaterThan(0);
+
+      item.seasons.forEach((season) => {
+        const seasonKeys = Object.keys(season);
+        expect(seasonKeys[seasonKeys.length - 2]).toBe("rating_distribution");
+        expect(seasonKeys[seasonKeys.length - 1]).toBe(
+          "rating_distribution_episodes",
+        );
+
+        expect(typeof season.season_number).toBe("number");
+        expect(typeof season.episodes_count).toBe("number");
+        expect(season.episodes_count).toBeGreaterThanOrEqual(0);
+        expect(typeof season.average_users_rating).toBe("number");
+
+        Object.entries(season.rating_distribution).forEach(
+          ([rating, count]) => {
+            expect(Number(rating)).toBeGreaterThanOrEqual(1);
+            expect(Number(rating)).toBeLessThanOrEqual(10);
+            expect(typeof count).toBe("number");
+            expect(count).toBeGreaterThan(0);
+          },
+        );
+
+        Object.entries(season.rating_distribution_episodes).forEach(
+          ([ratingBucket, episodes]) => {
+            expect(Array.isArray(episodes)).toBe(true);
+            expect(episodes.length).toBeGreaterThan(0);
+            episodes.forEach((episode) => {
+              expect(Math.round(episode.users_rating)).toBe(
+                Number(ratingBucket),
+              );
+            });
+            expect(season.rating_distribution[ratingBucket]).toBe(
+              episodes.length,
+            );
+          },
+        );
+
+        expect(typeof season.highest_episode.users_rating).toBe("number");
+        expect(typeof season.lowest_episode.users_rating).toBe("number");
+        expect(season.highest_episode.users_rating).toBeGreaterThanOrEqual(
+          season.lowest_episode.users_rating,
+        );
+      });
+    },
+  },
+
+  return_tvshow_season_rating_distribution_episodes_shape_matches_highest_episode:
+    {
+      query:
+        "/tvshow/1416/seasons?append_to_response=rating_distribution_episodes",
+      expectedResult: (item) => {
+        expect(item).not.toHaveProperty("_id");
+        expect(item.id).toBe(1416);
+        expect(item.item_type).toBe("tvshow");
+        expect(Array.isArray(item.seasons)).toBe(true);
+        expect(item.seasons.length).toBeGreaterThan(0);
+
+        const getValueType = (value) =>
+          value === null ? "null" : typeof value;
+
+        item.seasons.forEach((season) => {
+          const distributionEpisodes =
+            season.rating_distribution_episodes || {};
+
+          if (Object.keys(distributionEpisodes).length === 0) {
+            return;
+          }
+
+          expect(season.highest_episode).not.toBeNull();
+
+          const highestEpisodeKeys = Object.keys(season.highest_episode).sort();
+          expect(highestEpisodeKeys.length).toBeGreaterThan(0);
+          const highestEpisodeBucket = String(
+            Math.round(season.highest_episode.users_rating),
+          );
+          const episodesInHighestBucket =
+            distributionEpisodes[highestEpisodeBucket] || [];
+          expect(episodesInHighestBucket.length).toBeGreaterThan(0);
+          expect(
+            episodesInHighestBucket.some((episode) =>
+              highestEpisodeKeys.every(
+                (key) => episode[key] === season.highest_episode[key],
+              ),
+            ),
+          ).toBe(true);
+
+          Object.values(distributionEpisodes).forEach((episodes) => {
+            expect(Array.isArray(episodes)).toBe(true);
+
+            episodes.forEach((episode) => {
+              const episodeKeys = Object.keys(episode).sort();
+
+              expect(episodeKeys.length).toBe(highestEpisodeKeys.length);
+              expect(episodeKeys).toEqual(highestEpisodeKeys);
+
+              episodeKeys.forEach((key) => {
+                expect(getValueType(episode[key])).toBe(
+                  getValueType(season.highest_episode[key]),
+                );
+              });
+            });
+          });
+        });
+      },
+    },
+
+  return_tvshow_season_rating_distribution_with_partial_append: {
+    query: "/tvshow/1416/seasons?append_to_response=rating_distribution",
+    expectedResult: (item) => {
+      checkTypes(
+        item,
+        tvshowSeasonSchema.tvshowSeasonsWithRatingDistributionOnlySchema,
+      );
+      expect(item).not.toHaveProperty("_id");
+      expect(item.id).toBe(1416);
+      expect(item.item_type).toBe("tvshow");
+      expect(Array.isArray(item.seasons)).toBe(true);
+      expect(item.seasons.length).toBeGreaterThan(0);
+
+      item.seasons.forEach((season) => {
+        const seasonKeys = Object.keys(season);
+        expect(seasonKeys[seasonKeys.length - 1]).toBe("rating_distribution");
+
+        expect(season).toHaveProperty("rating_distribution");
+        expect(season).not.toHaveProperty("rating_distribution_episodes");
+      });
+    },
+  },
+
+  return_tvshow_season_rating_distribution_episodes_with_partial_append: {
+    query:
+      "/tvshow/1416/seasons?append_to_response=rating_distribution_episodes",
+    expectedResult: (item) => {
+      checkTypes(
+        item,
+        tvshowSeasonSchema.tvshowSeasonsWithRatingDistributionEpisodesOnlySchema,
+      );
+      expect(item).not.toHaveProperty("_id");
+      expect(item.id).toBe(1416);
+      expect(item.item_type).toBe("tvshow");
+      expect(Array.isArray(item.seasons)).toBe(true);
+      expect(item.seasons.length).toBeGreaterThan(0);
+
+      item.seasons.forEach((season) => {
+        const seasonKeys = Object.keys(season);
+        expect(seasonKeys[seasonKeys.length - 1]).toBe(
+          "rating_distribution_episodes",
+        );
+
+        expect(season).not.toHaveProperty("rating_distribution");
+        expect(season).toHaveProperty("rating_distribution_episodes");
+
+        Object.entries(season.rating_distribution_episodes).forEach(
+          ([ratingBucket, episodes]) => {
+            expect(Array.isArray(episodes)).toBe(true);
+            expect(episodes.length).toBeGreaterThan(0);
+            episodes.forEach((episode) => {
+              expect(Math.round(episode.users_rating)).toBe(
+                Number(ratingBucket),
+              );
+            });
+          },
+        );
+      });
+    },
+  },
+
+  return_only_requested_tvshow_season_episodes: {
+    query: "/tvshow/1416/seasons/1/episodes?append_to_response",
+    expectedResult: (item) => {
+      checkTypes(item, tvshowSeasonSchema.tvshowSeasonEpisodesSchema);
+      expect(item).not.toHaveProperty("_id");
+      expect(item.id).toBe(1416);
+      expect(item.item_type).toBe("tvshow");
+      expect(item.season_number).toBe(1);
+      expect(Array.isArray(item.episodes)).toBe(true);
+      expect(item.total_episodes).toBe(item.episodes.length);
+
+      item.episodes.forEach((episode) => {
+        expect(episode.season).toBe(1);
+      });
+    },
+  },
+
+  return_filtered_tvshow_season_episodes_by_rating_and_date: {
+    query:
+      "/tvshow/1416/seasons/1/episodes?minimum_ratings=7&release_date=from:2023-01-01,to:2025-12-31",
+    expectedResult: (item) => {
+      checkTypes(item, tvshowSeasonSchema.tvshowSeasonEpisodesSchema);
+      expect(item).not.toHaveProperty("_id");
+      expect(item.id).toBe(1416);
+      expect(item.item_type).toBe("tvshow");
+      expect(item.season_number).toBe(1);
+      expect(Array.isArray(item.episodes)).toBe(true);
+
+      item.episodes.forEach((episode) => {
+        expect(typeof episode.users_rating).toBe("number");
+        expect(episode.users_rating).toBeGreaterThanOrEqual(7);
+        expect(new Date(episode.release_date).getTime()).toBeGreaterThanOrEqual(
+          new Date("2023-01-01").getTime(),
+        );
+        expect(new Date(episode.release_date).getTime()).toBeLessThanOrEqual(
+          new Date("2025-12-31").getTime(),
+        );
+      });
+    },
+  },
+
+  return_specific_tvshow_episode_details: {
+    query: "/tvshow/60715/seasons/1/episodes/1?append_to_response",
+    expectedResult: (item) => {
+      checkTypes(item, tvshowSeasonSchema.tvshowSeasonEpisodeDetailsSchema);
+      expect(item).not.toHaveProperty("_id");
+      expect(item.id).toBe(60715);
+      expect(item.item_type).toBe("tvshow");
+      expect(item.season_number).toBe(1);
+      expect(item.episode_number).toBe(1);
+      expect(typeof item.episode).toBe("object");
+      expect(item.episode.season).toBe(1);
+      expect(item.episode.episode).toBe(1);
+      expect(typeof item.episode.title).toBe("string");
+      expect(typeof item.episode.id).toBe("string");
+      expect(typeof item.episode.url).toBe("string");
+    },
   },
 
   return_correct_tvshow_item_type_on_same_path_id: {

@@ -60,6 +60,7 @@ const config = {
   webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
   appendToResponse:
     "critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies",
+  noMatchingItemsFoundMessage: "No matching items found.",
 
   imdbEpisodesPaginationHash: process.env.IMDB_EPISODES_PAGINATION_HASH,
   imdbEpisodesPaginationOperation: "TitleEpisodesSubPagePagination",

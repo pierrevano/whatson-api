@@ -1,3 +1,5 @@
+const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
+
 /**
  * Builds a MongoDB projection object based on the append_to_response query param.
  * @param {string} [appendToResponse] - Optional comma-separated list of fields to include.
@@ -5,8 +7,7 @@
  */
 function buildProjection(appendToResponse) {
   const projection = {};
-  const appendList = appendToResponse?.split(",").map((f) => f.trim()) || [];
-  const includes = (field) => appendList.includes(field);
+  const includes = buildAppendIncludes(appendToResponse);
 
   if (!includes("critics_rating_details")) {
     projection["allocine.critics_rating_details"] = 0;

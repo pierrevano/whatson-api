@@ -1,11 +1,24 @@
 const { sendResponse } = require("../utils/sendRequest");
 
-const allowedEndpoints = ["GET /", "GET /movie/:id", "GET /tvshow/:id"];
+const allowedEndpoints = [
+  "GET /",
+  "GET /movie/:id",
+  "GET /tvshow/:id",
+  "GET /tvshow/:id/seasons",
+  "GET /tvshow/:id/seasons/:season_number/episodes",
+  "GET /tvshow/:id/seasons/:season_number/episodes/:episode_number",
+];
 
 const routeSpecs = [
   { pattern: /^\/$/, methods: ["GET"] },
   { pattern: /^\/movie\/[^/]+$/, methods: ["GET"] },
   { pattern: /^\/tvshow\/[^/]+$/, methods: ["GET"] },
+  { pattern: /^\/tvshow\/[^/]+\/seasons$/, methods: ["GET"] },
+  { pattern: /^\/tvshow\/[^/]+\/seasons\/[^/]+\/episodes$/, methods: ["GET"] },
+  {
+    pattern: /^\/tvshow\/[^/]+\/seasons\/[^/]+\/episodes\/[^/]+$/,
+    methods: ["GET"],
+  },
 ];
 
 const handleInvalidEndpoint = (req, res) => {

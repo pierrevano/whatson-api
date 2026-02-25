@@ -1,25 +1,17 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
 const { aggregateData } = require("./aggregateData");
 const { config } = require("../config");
+const {
+  invalidItemTypeMessage,
+  isValidItemType,
+} = require("../utils/itemTypeValidation");
 const {
   sendInternalError,
   sendRequest,
   sendResponse,
 } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
-const {
-  invalidItemTypeMessage,
-  isValidItemType,
-} = require("../utils/itemTypeValidation");
 const findId = require("./findId");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, {
-  serverApi: ServerApiVersion.v1,
-});
-const database = client.db(config.dbName);
-const collectionNameApiKey = database.collection(config.collectionNameApiKey);
+const getInternalApiKey = require("./getInternalApiKey");
 
 /**
  * Handles the public `/` endpoint by translating query parameters into a Mongo aggregation
@@ -92,9 +84,7 @@ const getItems = async (req, res) => {
 
     const limit_query = limit_provided ? parsed_limit : undefined;
 
-    const internal_api_key = await collectionNameApiKey.findOne({
-      name: "internal_api_key",
-    });
+    const internal_api_key = await getInternalApiKey();
 
     const newRelicQueryAttributes = {
       ...req.query,
