@@ -5,10 +5,8 @@ const {
 } = require("./tvshowHelpers");
 const { config } = require("../config");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
-const {
-  parseMinimumRatings,
-  parseReleaseDateRange,
-} = require("../utils/tvshowValidators");
+const { parseMinimumRatings } = require("../utils/parseMinimumRatings");
+const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
 const { sendInternalError, sendResponse } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
 const { sortEpisodes } = require("../utils/sortEpisodes");

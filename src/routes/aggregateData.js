@@ -7,6 +7,7 @@ const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
 const { getRatingsFilters } = require("./getRatingsFilters");
+const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 const client = new MongoClient(uri, {
@@ -314,32 +315,22 @@ const aggregateData = async (
     releaseDateRange.$gte = sixOrEighteenMonthsAgo;
   }
 
-  const fromValue = releaseDateFilters.find((value) =>
-    value.toLowerCase().startsWith("from:"),
-  );
-  if (fromValue && fromValue.length > 5) {
-    const parsedDate = new Date(fromValue.slice(5));
-    if (!Number.isNaN(parsedDate.getTime())) {
-      releaseDateRange.$gte =
-        releaseDateRange.$gte &&
-        releaseDateRange.$gte.getTime() > parsedDate.getTime()
-          ? releaseDateRange.$gte
-          : parsedDate;
-    }
+  const parsedReleaseDateRange = parseReleaseDateRange(release_date);
+
+  if (parsedReleaseDateRange.gte) {
+    releaseDateRange.$gte =
+      releaseDateRange.$gte &&
+      releaseDateRange.$gte.getTime() > parsedReleaseDateRange.gte.getTime()
+        ? releaseDateRange.$gte
+        : parsedReleaseDateRange.gte;
   }
 
-  const toValue = releaseDateFilters.find((value) =>
-    value.toLowerCase().startsWith("to:"),
-  );
-  if (toValue && toValue.length > 3) {
-    const parsedDate = new Date(toValue.slice(3));
-    if (!Number.isNaN(parsedDate.getTime())) {
-      releaseDateRange.$lte =
-        releaseDateRange.$lte &&
-        releaseDateRange.$lte.getTime() < parsedDate.getTime()
-          ? releaseDateRange.$lte
-          : parsedDate;
-    }
+  if (parsedReleaseDateRange.lte) {
+    releaseDateRange.$lte =
+      releaseDateRange.$lte &&
+      releaseDateRange.$lte.getTime() < parsedReleaseDateRange.lte.getTime()
+        ? releaseDateRange.$lte
+        : parsedReleaseDateRange.lte;
   }
 
   if (Object.keys(releaseDateRange).length > 0) {
