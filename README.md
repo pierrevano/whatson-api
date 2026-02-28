@@ -144,243 +144,6 @@ Provides detailed information about specific item (movie or tvshow) by its type 
 
 ---
 
-### **GET /tvshow/{id}/seasons**
-
-Returns season-level metadata for a tvshow.
-
-> ```
-> https://whatson-api.onrender.com/tvshow/:id/seasons?append_to_response=highest_episode,last_episode,lowest_episode,next_episode,rating_distribution,rating_distribution_episodes
-> ```
-
-| Parameter          | Value                                                                                                                       | Description                                    |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| append_to_response | highest_episode,last_episode,lowest_episode,next_episode,rating_distribution,rating_distribution_episodes (comma-separated) | Should we return specific keys in the response |
-
-#### Responses:
-
-- `200` A successful response
-- `400` Invalid path/query parameters were passed
-- `404` No items have been found (or invalid endpoint)
-- `405` Method not allowed
-- `429` Too many requests (rate limit exceeded)
-- `500` Internal server error
-
----
-
-### **GET /tvshow/{id}/seasons/{season_number}/episodes**
-
-Returns the list of episodes for a specific season, with optional episode-level filters.
-
-> ```
-> https://whatson-api.onrender.com/tvshow/:id/seasons/:season_number/episodes?minimum_ratings=<number>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>
-> ```
-
-| Parameter       | Value                         | Description                                                        |
-| --------------- | ----------------------------- | ------------------------------------------------------------------ |
-| minimum_ratings | _number_                      | Minimum ratings to return                                          |
-| release_date    | from:yyyy-mm-dd,to:yyyy-mm-dd | Use `from:`/`to:` with `yyyy-mm-dd` to set an inclusive date range |
-
-#### Responses:
-
-- `200` A successful response
-- `400` Invalid path/query parameters were passed
-- `404` No items have been found (or invalid endpoint)
-- `405` Method not allowed
-- `429` Too many requests (rate limit exceeded)
-- `500` Internal server error
-
----
-
-### **GET /tvshow/{id}/seasons/{season_number}/episodes/{episode_number}**
-
-Returns details for a specific episode inside a specific season.
-
-> ```
-> https://whatson-api.onrender.com/tvshow/:id/seasons/:season_number/episodes/:episode_number
-> ```
-
-#### Responses:
-
-- `200` A successful response
-- `400` Invalid path/query parameters were passed
-- `404` No items have been found (or invalid endpoint)
-- `405` Method not allowed
-- `429` Too many requests (rate limit exceeded)
-- `500` Internal server error
-
----
-
-Example of a specific tvshow response returned on season-level endpoints:
-
-```jsonc
-{
-  "id": "number", // General identifier (The Movie Database ID)
-  "item_type": "string", // Type of the item (e.g., tvshow)
-  "title": "string", // Title of the item
-
-  /*
-   * Returned on `/tvshow/{id}/seasons`.
-   */
-  "seasons_number": "number", // Number of seasons available
-  "seasons": [
-    {
-      "season_number": "number", // Season number of the episode
-      "episodes_count": "number", // Number of episodes available in the season
-      "average_users_rating": "number", // Average rating given by IMDb users
-      "users_rating_count": "number", // Total number of ratings submitted by IMDb users
-      "highest_episode": {
-        "season": "number", // Season number of the highest-rated episode
-        "episode": "number", // Episode number of the highest-rated episode
-        "title": "string", // Title of the highest-rated episode
-        "description": "string", // Description of the highest-rated episode
-        "id": "string", // IMDb specific identifier for the highest-rated episode
-        "url": "string", // URL to the IMDb page of the highest-rated episode
-        "release_date": "string", // Release date of the highest-rated episode
-        "users_rating": "number", // Average rating given by IMDb users for the highest-rated episode
-        "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the highest-rated episode
-      },
-      "lowest_episode": {
-        "season": "number", // Season number of the lowest-rated episode
-        "episode": "number", // Episode number of the lowest-rated episode
-        "title": "string", // Title of the lowest-rated episode
-        "description": "string", // Description of the lowest-rated episode
-        "id": "string", // IMDb specific identifier for the lowest-rated episode
-        "url": "string", // URL to the IMDb page of the lowest-rated episode
-        "release_date": "string", // Release date of the lowest-rated episode
-        "users_rating": "number", // Average rating given by IMDb users for the lowest-rated episode
-        "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the lowest-rated episode
-      },
-      /*
-       * Returned on `/tvshow/{id}/seasons` when
-       * `append_to_response` includes `rating_distribution`.
-       */
-      "rating_distribution": {
-        "5": "number", // Number of episodes with users rating rounded to 5 (only returned when count > 0)
-      }, // Number of episodes grouped by users rating buckets (1 to 10)
-      /*
-       * Returned on `/tvshow/{id}/seasons` when
-       * `append_to_response` includes `rating_distribution_episodes`.
-       */
-      "rating_distribution_episodes": {
-        "5": [
-          {
-            "season": "number", // Season number of the episode
-            "episode": "number", // Episode number within the season
-            "title": "string", // Title of the episode
-            "description": "string", // Description of the episode
-            "id": "string", // IMDb specific identifier
-            "url": "string", // URL to the IMDb page
-            "release_date": "string", // Release date of the episode
-            "users_rating": "number", // Average rating given by IMDb users
-            "users_rating_count": "number", // Total number of ratings submitted by IMDb users
-          },
-        ], // Episodes associated to rating bucket 5
-      }, // Episodes grouped by users rating buckets (1 to 10)
-    },
-  ],
-
-  /*
-   * Returned on `/tvshow/{id}/seasons/{season_number}/episodes`.
-   */
-  "season_number": "number", // Season number of the episode
-  "total_episodes": "number", // Number of episodes returned in the season
-  "episodes": [
-    {
-      "season": "number", // Season number of the episode
-      "episode": "number", // Episode number within the season
-      "title": "string", // Title of the episode
-      "description": "string", // Description of the episode
-      "id": "string", // IMDb specific identifier
-      "url": "string", // URL to the IMDb page
-      "release_date": "string", // Release date of the episode
-      "users_rating": "number", // Average rating given by IMDb users
-      "users_rating_count": "number", // Total number of ratings submitted by IMDb users
-    },
-  ],
-
-  /*
-   * Returned on `/tvshow/{id}/seasons/{season_number}/episodes/{episode_number}`.
-   */
-  "episode_number": "number", // Episode number within the season
-  "episode": {
-    "season": "number", // Season number of the episode
-    "episode": "number", // Episode number within the season
-    "title": "string", // Title of the episode
-    "description": "string", // Description of the episode
-    "id": "string", // IMDb specific identifier
-    "url": "string", // URL to the IMDb page
-    "release_date": "string", // Release date of the episode
-    "users_rating": "number", // Average rating given by IMDb users
-    "users_rating_count": "number", // Total number of ratings submitted by IMDb users
-  },
-
-  /*
-   * Returned on `/tvshow/{id}/seasons` when
-   * `append_to_response` includes `highest_episode`.
-   */
-  "highest_episode": {
-    "season": "number", // Season number of the highest-rated episode
-    "episode": "number", // Episode number of the highest-rated episode
-    "title": "string", // Title of the highest-rated episode
-    "description": "string", // Description of the highest-rated episode
-    "id": "string", // IMDb specific identifier for the highest-rated episode
-    "url": "string", // URL to the IMDb page of the highest-rated episode
-    "release_date": "string", // Release date of the highest-rated episode
-    "users_rating": "number", // Average rating given by IMDb users for the highest-rated episode
-    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the highest-rated episode
-  },
-  /*
-   * Returned on `/tvshow/{id}/seasons` when
-   * `append_to_response` includes `last_episode`.
-   */
-  "last_episode": {
-    "season": "number", // Season number of the most recent episode
-    "episode": "number", // Episode number for the most recent episode
-    "episode_type": "string", // Type of the most recent episode
-    "title": "string", // Title of the most recent episode
-    "description": "string", // Description of the most recent episode
-    "id": "string", // IMDb specific identifier for the most recent episode
-    "url": "string", // URL to the IMDb page of the most recent episode
-    "release_date": "string", // Release date of the most recent episode
-    "users_rating": "number", // Average rating given by IMDb users for the most recent episode
-    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the most recent episode
-  },
-  /*
-   * Returned on `/tvshow/{id}/seasons` when
-   * `append_to_response` includes `lowest_episode`.
-   */
-  "lowest_episode": {
-    "season": "number", // Season number of the lowest-rated episode
-    "episode": "number", // Episode number of the lowest-rated episode
-    "title": "string", // Title of the lowest-rated episode
-    "description": "string", // Description of the lowest-rated episode
-    "id": "string", // IMDb specific identifier for the lowest-rated episode
-    "url": "string", // URL to the IMDb page of the lowest-rated episode
-    "release_date": "string", // Release date of the lowest-rated episode
-    "users_rating": "number", // Average rating given by IMDb users for the lowest-rated episode
-    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the lowest-rated episode
-  },
-  /*
-   * Returned on `/tvshow/{id}/seasons` when
-   * `append_to_response` includes `next_episode`.
-   */
-  "next_episode": {
-    "season": "number", // Season number of the next episode to air
-    "episode": "number", // Episode number for the next episode to air
-    "episode_type": "string", // Type of the next episode to air
-    "title": "string", // Title of the next episode to air
-    "description": "string", // Description of the next episode to air
-    "id": "string", // IMDb specific identifier for the next episode to air
-    "url": "string", // URL to the IMDb page of the next episode to air
-    "release_date": "string", // Release date of the next episode to air
-    "users_rating": "number", // Average rating given by IMDb users for the next episode to air
-    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the next episode to air
-  },
-}
-```
-
----
-
 Example of an item returned:
 
 ```jsonc
@@ -619,6 +382,243 @@ Example of an item returned:
 
   "popularity_average": "number", // Average popularity score across platforms (AlloCiné, IMDb, and TMDB)
   "ratings_average": "number", // Average rating score across platforms (all)
+}
+```
+
+---
+
+### **GET /tvshow/{id}/seasons**
+
+Returns season-level metadata for a tvshow.
+
+> ```
+> https://whatson-api.onrender.com/tvshow/:id/seasons?append_to_response=highest_episode,last_episode,lowest_episode,next_episode,rating_distribution,rating_distribution_episodes
+> ```
+
+| Parameter          | Value                                                                                                                       | Description                                    |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| append_to_response | highest_episode,last_episode,lowest_episode,next_episode,rating_distribution,rating_distribution_episodes (comma-separated) | Should we return specific keys in the response |
+
+#### Responses:
+
+- `200` A successful response
+- `400` Invalid path/query parameters were passed
+- `404` No items have been found (or invalid endpoint)
+- `405` Method not allowed
+- `429` Too many requests (rate limit exceeded)
+- `500` Internal server error
+
+---
+
+### **GET /tvshow/{id}/seasons/{season_number}/episodes**
+
+Returns the list of episodes for a specific season, with optional episode-level filters.
+
+> ```
+> https://whatson-api.onrender.com/tvshow/:id/seasons/:season_number/episodes?minimum_ratings=<number>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>
+> ```
+
+| Parameter       | Value                         | Description                                                        |
+| --------------- | ----------------------------- | ------------------------------------------------------------------ |
+| minimum_ratings | _number_                      | Minimum ratings to return                                          |
+| release_date    | from:yyyy-mm-dd,to:yyyy-mm-dd | Use `from:`/`to:` with `yyyy-mm-dd` to set an inclusive date range |
+
+#### Responses:
+
+- `200` A successful response
+- `400` Invalid path/query parameters were passed
+- `404` No items have been found (or invalid endpoint)
+- `405` Method not allowed
+- `429` Too many requests (rate limit exceeded)
+- `500` Internal server error
+
+---
+
+### **GET /tvshow/{id}/seasons/{season_number}/episodes/{episode_number}**
+
+Returns details for a specific episode inside a specific season.
+
+> ```
+> https://whatson-api.onrender.com/tvshow/:id/seasons/:season_number/episodes/:episode_number
+> ```
+
+#### Responses:
+
+- `200` A successful response
+- `400` Invalid path/query parameters were passed
+- `404` No items have been found (or invalid endpoint)
+- `405` Method not allowed
+- `429` Too many requests (rate limit exceeded)
+- `500` Internal server error
+
+---
+
+Example of a specific tvshow response returned on season-level endpoints:
+
+```jsonc
+{
+  "id": "number", // General identifier (The Movie Database ID)
+  "item_type": "string", // Type of the item (e.g., tvshow)
+  "title": "string", // Title of the item
+
+  /*
+   * Returned on `/tvshow/{id}/seasons`.
+   */
+  "seasons_number": "number", // Number of seasons available
+  "seasons": [
+    {
+      "season_number": "number", // Season number of the episode
+      "episodes_count": "number", // Number of episodes available in the season
+      "average_users_rating": "number", // Average rating given by IMDb users
+      "users_rating_count": "number", // Total number of ratings submitted by IMDb users
+      "highest_episode": {
+        "season": "number", // Season number of the highest-rated episode
+        "episode": "number", // Episode number of the highest-rated episode
+        "title": "string", // Title of the highest-rated episode
+        "description": "string", // Description of the highest-rated episode
+        "id": "string", // IMDb specific identifier for the highest-rated episode
+        "url": "string", // URL to the IMDb page of the highest-rated episode
+        "release_date": "string", // Release date of the highest-rated episode
+        "users_rating": "number", // Average rating given by IMDb users for the highest-rated episode
+        "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the highest-rated episode
+      },
+      "lowest_episode": {
+        "season": "number", // Season number of the lowest-rated episode
+        "episode": "number", // Episode number of the lowest-rated episode
+        "title": "string", // Title of the lowest-rated episode
+        "description": "string", // Description of the lowest-rated episode
+        "id": "string", // IMDb specific identifier for the lowest-rated episode
+        "url": "string", // URL to the IMDb page of the lowest-rated episode
+        "release_date": "string", // Release date of the lowest-rated episode
+        "users_rating": "number", // Average rating given by IMDb users for the lowest-rated episode
+        "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the lowest-rated episode
+      },
+      /*
+       * Returned on `/tvshow/{id}/seasons` when
+       * `append_to_response` includes `rating_distribution`.
+       */
+      "rating_distribution": {
+        "[1-10]": "number", // Number of episodes with users rating rounded to a value between 1 and 10 (only returned when count > 0)
+      }, // Number of episodes grouped by users rating ranges (1 to 10)
+      /*
+       * Returned on `/tvshow/{id}/seasons` when
+       * `append_to_response` includes `rating_distribution_episodes`.
+       */
+      "rating_distribution_episodes": {
+        "[1-10]": [
+          {
+            "season": "number", // Season number of the episode
+            "episode": "number", // Episode number within the season
+            "title": "string", // Title of the episode
+            "description": "string", // Description of the episode
+            "id": "string", // IMDb specific identifier
+            "url": "string", // URL to the IMDb page
+            "release_date": "string", // Release date of the episode
+            "users_rating": "number", // Average rating given by IMDb users
+            "users_rating_count": "number", // Total number of ratings submitted by IMDb users
+          },
+        ], // Episodes associated to rating range 5
+      }, // Episodes grouped by users rating ranges (1 to 10)
+    },
+  ],
+
+  /*
+   * Returned on `/tvshow/{id}/seasons/{season_number}/episodes`.
+   */
+  "season_number": "number", // Season number of the episode
+  "total_episodes": "number", // Number of episodes returned in the season
+  "episodes": [
+    {
+      "season": "number", // Season number of the episode
+      "episode": "number", // Episode number within the season
+      "title": "string", // Title of the episode
+      "description": "string", // Description of the episode
+      "id": "string", // IMDb specific identifier
+      "url": "string", // URL to the IMDb page
+      "release_date": "string", // Release date of the episode
+      "users_rating": "number", // Average rating given by IMDb users
+      "users_rating_count": "number", // Total number of ratings submitted by IMDb users
+    },
+  ],
+
+  /*
+   * Returned on `/tvshow/{id}/seasons/{season_number}/episodes/{episode_number}`.
+   */
+  "episode_number": "number", // Episode number within the season
+  "episode": {
+    "season": "number", // Season number of the episode
+    "episode": "number", // Episode number within the season
+    "title": "string", // Title of the episode
+    "description": "string", // Description of the episode
+    "id": "string", // IMDb specific identifier
+    "url": "string", // URL to the IMDb page
+    "release_date": "string", // Release date of the episode
+    "users_rating": "number", // Average rating given by IMDb users
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users
+  },
+
+  /*
+   * Returned on `/tvshow/{id}/seasons` when
+   * `append_to_response` includes `highest_episode`.
+   */
+  "highest_episode": {
+    "season": "number", // Season number of the highest-rated episode
+    "episode": "number", // Episode number of the highest-rated episode
+    "title": "string", // Title of the highest-rated episode
+    "description": "string", // Description of the highest-rated episode
+    "id": "string", // IMDb specific identifier for the highest-rated episode
+    "url": "string", // URL to the IMDb page of the highest-rated episode
+    "release_date": "string", // Release date of the highest-rated episode
+    "users_rating": "number", // Average rating given by IMDb users for the highest-rated episode
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the highest-rated episode
+  },
+  /*
+   * Returned on `/tvshow/{id}/seasons` when
+   * `append_to_response` includes `last_episode`.
+   */
+  "last_episode": {
+    "season": "number", // Season number of the most recent episode
+    "episode": "number", // Episode number for the most recent episode
+    "episode_type": "string", // Type of the most recent episode
+    "title": "string", // Title of the most recent episode
+    "description": "string", // Description of the most recent episode
+    "id": "string", // IMDb specific identifier for the most recent episode
+    "url": "string", // URL to the IMDb page of the most recent episode
+    "release_date": "string", // Release date of the most recent episode
+    "users_rating": "number", // Average rating given by IMDb users for the most recent episode
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the most recent episode
+  },
+  /*
+   * Returned on `/tvshow/{id}/seasons` when
+   * `append_to_response` includes `lowest_episode`.
+   */
+  "lowest_episode": {
+    "season": "number", // Season number of the lowest-rated episode
+    "episode": "number", // Episode number of the lowest-rated episode
+    "title": "string", // Title of the lowest-rated episode
+    "description": "string", // Description of the lowest-rated episode
+    "id": "string", // IMDb specific identifier for the lowest-rated episode
+    "url": "string", // URL to the IMDb page of the lowest-rated episode
+    "release_date": "string", // Release date of the lowest-rated episode
+    "users_rating": "number", // Average rating given by IMDb users for the lowest-rated episode
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the lowest-rated episode
+  },
+  /*
+   * Returned on `/tvshow/{id}/seasons` when
+   * `append_to_response` includes `next_episode`.
+   */
+  "next_episode": {
+    "season": "number", // Season number of the next episode to air
+    "episode": "number", // Episode number for the next episode to air
+    "episode_type": "string", // Type of the next episode to air
+    "title": "string", // Title of the next episode to air
+    "description": "string", // Description of the next episode to air
+    "id": "string", // IMDb specific identifier for the next episode to air
+    "url": "string", // URL to the IMDb page of the next episode to air
+    "release_date": "string", // Release date of the next episode to air
+    "users_rating": "number", // Average rating given by IMDb users for the next episode to air
+    "users_rating_count": "number", // Total number of ratings submitted by IMDb users for the next episode to air
+  },
 }
 ```
 

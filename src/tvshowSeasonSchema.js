@@ -62,8 +62,8 @@ const tvshowSeasonsWithRatingDistributionSchema = {
   seasons: [
     {
       ...seasonSummarySchema,
-      rating_distribution: "object", // Number of episodes grouped by users rating buckets (1 to 10)
-      rating_distribution_episodes: "object", // Episodes grouped by users rating buckets (1 to 10)
+      rating_distribution: "object", // Number of episodes grouped by users rating ranges (1 to 10)
+      rating_distribution_episodes: "object", // Episodes grouped by users rating ranges (1 to 10)
     },
   ],
 };
@@ -73,7 +73,7 @@ const tvshowSeasonsWithRatingDistributionOnlySchema = {
   seasons: [
     {
       ...seasonSummarySchema,
-      rating_distribution: "object", // Number of episodes grouped by users rating buckets (1 to 10)
+      rating_distribution: "object", // Number of episodes grouped by users rating ranges (1 to 10)
     },
   ],
 };
@@ -83,7 +83,7 @@ const tvshowSeasonsWithRatingDistributionEpisodesOnlySchema = {
   seasons: [
     {
       ...seasonSummarySchema,
-      rating_distribution_episodes: "object", // Episodes grouped by users rating buckets (1 to 10)
+      rating_distribution_episodes: "object", // Episodes grouped by users rating ranges (1 to 10)
     },
   ],
 };

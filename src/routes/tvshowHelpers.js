@@ -86,16 +86,16 @@ const buildSeasonsMetadata = (tvShow, options = {}) => {
       season.ratings_sum += episode.users_rating;
       season.ratings_count += 1;
 
-      const ratingBucket = String(
+      const ratingRange = String(
         Math.min(10, Math.max(1, Math.round(episode.users_rating))),
       );
 
       if (includeRatingDistribution) {
-        season.rating_distribution[ratingBucket] += 1;
+        season.rating_distribution[ratingRange] += 1;
       }
 
       if (includeRatingDistributionEpisodes) {
-        season.rating_distribution_episodes[ratingBucket].push(
+        season.rating_distribution_episodes[ratingRange].push(
           toEpisodeSummary(episode),
         );
       }

@@ -83,7 +83,8 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
       const criticsRatingCount =
         criticsRating !== null ? (rawCriticData.reviewCount ?? null) : null;
 
-      const mustSee = $(".c-productScoreInfo_must").length > 0;
+      const mustSee =
+        $('img[alt="must-see"], img[alt="must-watch"]').length > 0;
 
       metacriticObj = {
         id: metacriticId,
