@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const axios = require("axios");
-const { readFileSync, writeFileSync } = require("fs");
 
 const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");

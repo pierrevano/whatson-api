@@ -110,7 +110,7 @@ const getImdbRating = async (imdbHomepage) => {
     let nextData;
     try {
       nextData = JSON.parse(jsonText);
-    } catch (parseError) {
+    } catch {
       throw new Error("IMDb NEXT_DATA payload is invalid.");
     }
 

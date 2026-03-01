@@ -8,7 +8,7 @@ const formatDate = (date) => {
 
   try {
     return new Date(date).toISOString().split("T")[0];
-  } catch (error) {
+  } catch {
     console.error("Invalid date input passed to formatDate:", date);
     return null;
   }

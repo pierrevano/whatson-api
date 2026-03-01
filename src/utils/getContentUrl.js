@@ -18,7 +18,7 @@ function getContentUrl($, backup, allocineHomepage) {
     let contentParsed;
     try {
       contentParsed = JSON.parse(cleanedJsonString);
-    } catch (error) {
+    } catch {
       return null;
     }
 

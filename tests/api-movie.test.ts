@@ -1,12 +1,9 @@
 require("dotenv").config();
 
 const axios = require("axios");
-const { readFileSync, writeFileSync } = require("fs");
+const { readFileSync } = require("fs");
 
-const { checkRatings } = require("./utils/checkRatings");
-const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
-const { countNullValues } = require("./utils/countNullValues");
 const {
   expectPositiveInteger,
   expectImdbId,
@@ -15,7 +12,6 @@ const {
   expectNumericIdOrNumericString,
   expectIdRatingConsistency,
 } = require("./utils/idExpectations");
-const { formatDate } = require("../src/utils/formatDate");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -1847,7 +1843,7 @@ describe("What's on? API tests", () => {
         const fullUrl = item.allocine?.url;
         try {
           return new URL(fullUrl).pathname;
-        } catch (e) {
+        } catch {
           return null;
         }
       })
