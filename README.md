@@ -122,7 +122,7 @@ The query parameters provided below are solely for item search purposes and must
 
 ### **GET /{item_type}/{id}**
 
-Provides detailed information about specific item (movie or tvshow) by its type and unique identifier (TMDB ID).
+Provides detailed information about a specific item (movie or tvshow) by its type and unique identifier (TMDB ID).
 
 > ```
 > https://whatson-api.onrender.com/{item_type}/:id?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users&append_to_response=critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies
@@ -402,7 +402,6 @@ Returns season-level metadata for a tvshow.
 #### Responses:
 
 - `200` A successful response
-- `400` Invalid path/query parameters were passed
 - `404` No items have been found (or invalid endpoint)
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
@@ -426,7 +425,6 @@ Returns the list of episodes for a specific season, with optional episode-level 
 #### Responses:
 
 - `200` A successful response
-- `400` Invalid path/query parameters were passed
 - `404` No items have been found (or invalid endpoint)
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
@@ -445,7 +443,6 @@ Returns details for a specific episode inside a specific season.
 #### Responses:
 
 - `200` A successful response
-- `400` Invalid path/query parameters were passed
 - `404` No items have been found (or invalid endpoint)
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
@@ -498,8 +495,8 @@ Example of a specific tvshow response returned on season-level endpoints:
        * `append_to_response` includes `rating_distribution`.
        */
       "rating_distribution": {
-        "[1-10]": "number", // Number of episodes with users rating rounded to a value between 1 and 10 (only returned when count > 0)
-      }, // Number of episodes grouped by users rating ranges (1 to 10)
+        "[1-10]": "number", // Rating bucket (1-10, rounded users rating) mapped to episode count; only returned when count > 0
+      },
       /*
        * Returned on `/tvshow/{id}/seasons` when
        * `append_to_response` includes `rating_distribution_episodes`.
@@ -517,8 +514,8 @@ Example of a specific tvshow response returned on season-level endpoints:
             "users_rating": "number", // Average rating given by IMDb users
             "users_rating_count": "number", // Total number of ratings submitted by IMDb users
           },
-        ], // Episodes associated to rating range 5
-      }, // Episodes grouped by users rating ranges (1 to 10)
+        ], // Episodes for the corresponding rating bucket key (1-10)
+      },
     },
   ],
 

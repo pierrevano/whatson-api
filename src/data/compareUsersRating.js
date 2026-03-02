@@ -49,11 +49,10 @@ const compareUsersRating = async (
       item_type_api === "movie"
         ? `${config.baseURLTMDBFilm}${tmdbId}`
         : `${config.baseURLTMDBSerie}${tmdbId}`;
-    const [tmdbResponse, imdbRating, response] = await Promise.all([
+    const [tmdbResponse, response] = await Promise.all([
       tmdbId
         ? getTMDBResponse(allocineHomepage, tmdbId)
         : Promise.resolve(null),
-      getImdbRating(imdbHomepage),
       getWhatsonResponse(item_type_api, tmdbId, config.appendToResponse),
     ]);
     const tmdbData = tmdbResponse?.data;
@@ -75,10 +74,6 @@ const compareUsersRating = async (
     }
 
     const status = responseData.status;
-    const {
-      seasonsNumber: imdb_seasons_number,
-      usersRating: imdb_users_rating,
-    } = imdbRating;
     const tmdb_users_rating =
       tmdbData?.vote_count && tmdbData?.vote_average
         ? parseFloat(tmdbData.vote_average.toFixed(2))
@@ -98,8 +93,11 @@ const compareUsersRating = async (
       highestEpisode,
       lowestEpisode;
     if (isTvShow && !tvShowEnded && tmdbData) {
+      const imdb_seasons_number = config.specialItems.includes(imdbId)
+        ? (await getImdbRating(imdbHomepage)).seasonsNumber
+        : null;
       seasonsNumber =
-        config.specialItems.includes(imdbId) && imdb_seasons_number != null
+        imdb_seasons_number != null
           ? imdb_seasons_number
           : await getSeasonsNumber(allocineHomepage, tmdbData);
       episodesDetails = await getEpisodesDetails(
@@ -200,18 +198,11 @@ const compareUsersRating = async (
       updatedAtCutoffDate.getDate() - config.maxAgeInDays,
     );
 
-    if (
-      (dataWithoutId.allocine?.users_rating !== null &&
-        dataWithoutId.imdb?.users_rating === null) ||
-      new Date(dataWithoutId.updated_at) <= updatedAtCutoffDate
-    ) {
+    if (new Date(dataWithoutId.updated_at) <= updatedAtCutoffDate) {
       return isEqualObj;
     }
 
-    if (
-      dataWithoutId.imdb?.users_rating === imdb_users_rating &&
-      dataWithoutId.tmdb?.users_rating === tmdb_users_rating
-    ) {
+    if (dataWithoutId.tmdb?.users_rating === tmdb_users_rating) {
       return {
         isEqual: true,
         data: dataWithoutId,
