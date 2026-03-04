@@ -31,7 +31,7 @@ const getLowestRatedEpisode = (allocineHomepage, episodesDetails) => {
       }
 
       if (a.users_rating_count !== b.users_rating_count) {
-        return a.users_rating_count - b.users_rating_count;
+        return b.users_rating_count - a.users_rating_count;
       }
 
       if (formatDate(a.release_date) !== formatDate(b.release_date)) {

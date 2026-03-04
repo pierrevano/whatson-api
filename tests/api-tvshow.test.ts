@@ -2097,7 +2097,7 @@ const params = {
                 return a.users_rating - b.users_rating;
               }
               if (a.users_rating_count !== b.users_rating_count) {
-                return a.users_rating_count - b.users_rating_count;
+                return b.users_rating_count - a.users_rating_count;
               }
               return new Date(a.release_date) - new Date(b.release_date);
             });
@@ -2108,7 +2108,7 @@ const params = {
               secondWorst.users_rating,
             );
             if (worst.users_rating === secondWorst.users_rating) {
-              expect(worst.users_rating_count).toBeLessThanOrEqual(
+              expect(worst.users_rating_count).toBeGreaterThanOrEqual(
                 secondWorst.users_rating_count,
               );
             }

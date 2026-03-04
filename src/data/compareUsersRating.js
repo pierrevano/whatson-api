@@ -12,7 +12,6 @@ const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
-const { hasTvShowEnded } = require("../utils/tvShowStatus");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -73,26 +72,20 @@ const compareUsersRating = async (
       return isEqualObj;
     }
 
-    const status = responseData.status;
     const tmdb_users_rating =
       tmdbData?.vote_count && tmdbData?.vote_average
         ? parseFloat(tmdbData.vote_average.toFixed(2))
         : null;
 
     const isTvShow = item_type_api === "tvshow";
-    const whatsonLastEpisode = isTvShow
-      ? (responseData.last_episode ?? null)
-      : null;
-    const tvShowEnded = isTvShow
-      ? hasTvShowEnded(status, whatsonLastEpisode)
-      : false;
+    const hasTvShowTmdbData = isTvShow && Boolean(tmdbData);
     let seasonsNumber,
       episodesDetails,
       lastEpisode,
       nextEpisode,
       highestEpisode,
       lowestEpisode;
-    if (isTvShow && !tvShowEnded && tmdbData) {
+    if (hasTvShowTmdbData) {
       const imdb_seasons_number = config.specialItems.includes(imdbId)
         ? (await getImdbRating(imdbHomepage)).seasonsNumber
         : null;
@@ -170,7 +163,7 @@ const compareUsersRating = async (
 
     dataWithoutId.is_active = isActive;
 
-    if (isTvShow && !tvShowEnded) {
+    if (hasTvShowTmdbData) {
       dataWithoutId.seasons_number = seasonsNumber;
       dataWithoutId.episodes_details = episodesDetails;
       dataWithoutId.last_episode = lastEpisode;

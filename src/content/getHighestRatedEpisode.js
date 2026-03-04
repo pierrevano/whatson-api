@@ -17,7 +17,9 @@ const getHighestRatedEpisode = (allocineHomepage, episodesDetails) => {
     const validEpisodes = Array.isArray(episodesDetails)
       ? episodesDetails.filter(
           (ep) =>
-            ep?.release_date && ep?.users_rating && ep?.users_rating_count,
+            ep?.release_date &&
+            ep?.users_rating != null &&
+            ep?.users_rating_count != null,
         )
       : [];
 
