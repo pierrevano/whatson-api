@@ -95,6 +95,8 @@ const aggregateData = async (
       ? networks_query
       : "";
   const platforms_links_append = appendIncludes("platforms_links");
+  const title_variants_append = appendIncludes("title_variants");
+  const image_variants_append = appendIncludes("image_variants");
   const production_companies =
     typeof production_companies_query !== "undefined" &&
     production_companies_query
@@ -422,6 +424,8 @@ const aggregateData = async (
     ...(next_episode ? {} : { next_episode: 0 }),
     ...(platforms_links_append ? {} : { platforms_links: 0 }),
     ...(production_companies_details ? {} : { production_companies: 0 }),
+    ...(title_variants_append ? {} : { title_variants: 0 }),
+    ...(image_variants_append ? {} : { image_variants: 0 }),
   };
 
   const prune_keys_before_sort = Object.keys(remove_keys_base).length

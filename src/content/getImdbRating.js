@@ -99,7 +99,17 @@ const getImdbRating = async (imdbHomepage) => {
       allowedStatuses: [200, 202],
     });
 
-    const $ = await getCheerioContent(imdbHomepage, undefined, "getImdbRating");
+    const localeRequestOptions = {
+      headers: {
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    };
+
+    const $ = await getCheerioContent(
+      imdbHomepage,
+      localeRequestOptions,
+      "getImdbRating",
+    );
 
     const jsonText = $("#__NEXT_DATA__").html();
 

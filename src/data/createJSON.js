@@ -4,6 +4,7 @@ const { getDirectors } = require("../content/getDirectors");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
 const { getGenres } = require("../content/getGenres");
 const { getHighestRatedEpisode } = require("../content/getHighestRatedEpisode");
+const { getImageFromTMDB } = require("../content/getImageFromTMDB");
 const { getImdbPopularity } = require("../content/getImdbPopularity");
 const { getLastEpisode } = require("../content/getLastEpisode");
 const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
@@ -16,6 +17,7 @@ const { getProductionCompanies } = require("../content/getProductionCompanies");
 const { getRatingsData } = require("./getRatingsData");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { getTheTvdbSlug } = require("../content/getTheTvdbSlug");
+const { getTitle, getTitleVariants } = require("../content/getTitle");
 const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getTrailer } = require("../content/getTrailer");
@@ -127,6 +129,12 @@ const createJSON = async (
     topRanking,
     seasonsNumber: imdbSeasonsNumber,
   } = imdbRatingData;
+  const title = await getTitle(allocineHomepage, tmdbData);
+  const titleVariants = await getTitleVariants(allocineHomepage, tmdbData);
+  const image = await getImageFromTMDB(allocineHomepage, tmdbData);
+  const imageVariants = {
+    fr: allocineFirstInfo?.image || null,
+  };
   const originalTitle = await getOriginalTitle(allocineHomepage, tmdbData);
   const allocinePopularity = await getAllocinePopularity(
     allocineURL,
@@ -345,12 +353,14 @@ const createJSON = async (
     id: tmdbId,
     item_type: item_type,
     is_active: isActive,
-    title: allocineFirstInfo?.allocineTitle,
+    title,
+    title_variants: titleVariants,
     original_title: originalTitle,
 
     directors,
     genres,
-    image: allocineFirstInfo?.image,
+    image,
+    image_variants: imageVariants,
     is_adult: isAdult,
     certification,
     networks,

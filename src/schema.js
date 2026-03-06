@@ -6,6 +6,12 @@ const schema = {
   item_type: "string", // Type of the item (e.g., movie or tvshow)
   is_active: "boolean", // Indicates if the item is currently active
   title: "string", // Title of the item
+  /*
+   * To include this key in the response, add `title_variants` to the `append_to_response` query parameter.
+   */
+  title_variants: {
+    fr: "string", // French title variant
+  },
   original_title: "string", // Original title of the item
 
   /*
@@ -17,6 +23,12 @@ const schema = {
    */
   genres: "object", // Genres' names
   image: "string", // URL to the item's image
+  /*
+   * To include this key in the response, add `image_variants` to the `append_to_response` query parameter.
+   */
+  image_variants: {
+    fr: "string", // French image variant
+  },
   is_adult: "boolean", // Indicates if the title is flagged as adult content on IMDb
   certification: "string", // Age classification assigned by IMDb (e.g., G, PG-13, R)
   /*

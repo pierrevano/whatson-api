@@ -17,7 +17,6 @@ const { logErrors } = require("../utils/logErrors");
  * @param {boolean} compare - Whether to skip heavy metadata parsing (used for performance comparisons)
  * @param {object} [data] - Optional TMDB API response data for the item.
  * @returns {{
- *   allocineTitle: string|null,
  *   image: string|null,
  *   allocineUsersRating: number|null,
  *   allocineUsersRatingCount: number|null,
@@ -71,8 +70,6 @@ const getAllocineInfo = async (allocineHomepage, compare, data) => {
       );
     }
 
-    const title = $('meta[property="og:title"]').attr("content");
-
     let image = $('meta[property="og:image"]').attr("content");
     if (!image)
       image =
@@ -117,7 +114,6 @@ const getAllocineInfo = async (allocineHomepage, compare, data) => {
         : convertFrenchDateToISOString(frenchDateStr, true);
 
     allocineFirstInfo = {
-      allocineTitle: title,
       image,
       allocineUsersRating,
       allocineUsersRatingCount,

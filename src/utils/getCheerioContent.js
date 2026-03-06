@@ -12,10 +12,25 @@ const { logExecutionTime } = require("./logExecutionTime");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const buildOptions = (options = {}) => ({
-  ...options,
-  headers: { "User-Agent": generateUserAgent() },
-});
+const buildConfig = (configOverrides) => {
+  if (typeof configOverrides !== "undefined") {
+    const { headers: customHeaders, ...requestOptions } = configOverrides;
+
+    return {
+      ...requestOptions,
+      headers: {
+        ...(customHeaders || {}),
+        "User-Agent": generateUserAgent(),
+      },
+    };
+  }
+
+  return {
+    headers: {
+      "User-Agent": generateUserAgent(),
+    },
+  };
+};
 
 /**
  * Fetches HTML content and returns a Cheerio wrapper for subsequent parsing.
@@ -31,9 +46,11 @@ const getCheerioContent = async (url, options, origin) => {
     try {
       const startTime = Date.now();
 
-      const requestOptions = buildOptions(options);
-      requestOptions.metadata = {
-        origin: origin || "No Origin specified",
+      const requestOptions = {
+        ...buildConfig(options),
+        metadata: {
+          origin: origin || "No Origin specified",
+        },
       };
 
       const response = await httpClient.get(url, requestOptions);

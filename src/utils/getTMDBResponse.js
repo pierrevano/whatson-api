@@ -20,7 +20,7 @@ const getTMDBResponse = async (allocineHomepage, tmdbId) => {
     const type = allocineHomepage.includes(config.baseURLTypeSeries)
       ? "tv"
       : "movie";
-    const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}&append_to_response=credits`;
+    const url = `${config.baseURLTMDBAPI}/${type}/${tmdbId}?api_key=${config.tmdbApiKey}&append_to_response=credits,translations`;
 
     axiosRetry(axios, {
       retries: config.retries,

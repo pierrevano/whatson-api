@@ -45,6 +45,14 @@ function buildProjection(appendToResponse) {
     projection["production_companies"] = 0;
   }
 
+  if (!includes("title_variants")) {
+    projection["title_variants"] = 0;
+  }
+
+  if (!includes("image_variants")) {
+    projection["image_variants"] = 0;
+  }
+
   if (!includes("networks")) {
     projection["networks"] = 0;
   }

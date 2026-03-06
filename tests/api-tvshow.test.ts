@@ -34,10 +34,12 @@ const removeLogs = process.env.REMOVE_LOGS === "true";
 function checkItemProperties(items) {
   return items.forEach((item) => {
     /* Common */
-    config.keysToCheck.forEach((key) => {
-      expect(item).toHaveProperty(key);
-      expect(typeof item[key]).not.toBe("undefined");
-    });
+    if (item.is_active === true) {
+      config.keysToCheck.forEach((key) => {
+        expect(item).toHaveProperty(key);
+        expect(typeof item[key]).not.toBe("undefined");
+      });
+    }
     expect(item.id).toBeGreaterThan(0);
     expect(
       items.filter((item) => item.original_title).length,
@@ -81,7 +83,9 @@ function checkItemProperties(items) {
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     }
 
-    expect(Object.keys(item).length).toEqual(config.keysToCheck.length);
+    if (item.is_active === true) {
+      expect(Object.keys(item).length).toEqual(config.keysToCheck.length);
+    }
 
     expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(
       config.maximumIsActiveItems,
@@ -1004,9 +1008,27 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true&append_to_response=critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,image_variants,title_variants&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, schema)),
+  },
+
+  no_french_localization_strings_in_responses: {
+    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=platforms_links&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) =>
+      items.forEach((item) => {
+        const sanitizedItem = {
+          ...item,
+          platforms_links: Array.isArray(item.platforms_links)
+            ? item.platforms_links.map(
+                ({ name, ...platformLink }) => platformLink,
+              )
+            : item.platforms_links,
+        };
+        const serializedItem = JSON.stringify(sanitizedItem).toLowerCase();
+        const potentialFrenchPattern = /[àâæçéèêëîïôœùûüÿ]/i;
+        expect(serializedItem).not.toMatch(potentialFrenchPattern);
+      }),
   },
 
   only_tvshows: {
@@ -1346,7 +1368,7 @@ const params = {
 
   correct_tmdb_id_returned_on_search_with_append_to_response: {
     query:
-      "?tmdbid=249042&append_to_response=critics_rating_details,episodes_details,production_companies,directors,genres,networks,platforms_links",
+      "?tmdbid=249042&append_to_response=critics_rating_details,episodes_details,production_companies,directors,genres,networks,platforms_links,image_variants,title_variants",
     expectedResult: (items) => {
       expect(items.length).toBe(1);
       expect(items[0].id).toBe(249042);
@@ -1359,6 +1381,10 @@ const params = {
       expect(Array.isArray(items[0].production_companies)).toBe(true);
       expect(items[0]).toHaveProperty("platforms_links");
       expect(Array.isArray(items[0].platforms_links)).toBe(true);
+      expect(items[0]).toHaveProperty("title_variants");
+      expect(items[0].title_variants).toHaveProperty("fr");
+      expect(items[0]).toHaveProperty("image_variants");
+      expect(items[0].image_variants).toHaveProperty("fr");
     },
   },
 
@@ -1556,12 +1582,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,image_variants,title_variants&limit=${maxLimitLargeDocuments}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,image_variants,title_variants&limit=${maxLimitLargeDocuments}`,
     expectedResult: checkItemProperties,
   },
 

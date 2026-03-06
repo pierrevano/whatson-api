@@ -131,7 +131,7 @@ const params = {
 
   correct_tmdb_id_returned: {
     query:
-      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details,highest_episode,last_episode,lowest_episode,next_episode,platforms_links,production_companies",
+      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details,highest_episode,last_episode,lowest_episode,next_episode,platforms_links,production_companies,image_variants,title_variants",
     expectedResult: (data) => {
       expect(typeof data).toBe("object");
       expect(data.id).toBe(249042);
@@ -144,6 +144,11 @@ const params = {
       expect(typeof data.lowest_episode).toBe("object");
       expect(Array.isArray(data.production_companies)).toBeTruthy();
       expect(Array.isArray(data.platforms_links)).toBeTruthy();
+      expect(typeof data.title).toBe("string");
+      expect(typeof data.title_variants).toBe("object");
+      expect(data.title_variants).toHaveProperty("fr");
+      expect(typeof data.image_variants).toBe("object");
+      expect(data.image_variants).toHaveProperty("fr");
     },
   },
 
@@ -181,7 +186,7 @@ const params = {
       expectedResult: (data) => {
         expect(typeof data).toBe("object");
         expect(Object.keys(data).length).toEqual(
-          config.keysToCheck.length - 10,
+          config.keysToCheck.length - 12,
         );
         expect(data.id).toBe(249042);
         expect(data.ratings_average).toBeGreaterThan(0);
@@ -197,6 +202,9 @@ const params = {
         expect(data).not.toHaveProperty("networks");
         expect(data).not.toHaveProperty("platforms_links");
         expect(data).not.toHaveProperty("production_companies");
+        expect(typeof data.title).toBe("string");
+        expect(data).not.toHaveProperty("title_variants");
+        expect(data).not.toHaveProperty("image_variants");
       },
     },
 

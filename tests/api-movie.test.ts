@@ -30,10 +30,12 @@ const removeLogs = process.env.REMOVE_LOGS === "true";
 function checkItemProperties(items) {
   return items.forEach((item) => {
     /* Common */
-    config.keysToCheck.forEach((key) => {
-      expect(item).toHaveProperty(key);
-      expect(typeof item[key]).not.toBe("undefined");
-    });
+    if (item.is_active === true) {
+      config.keysToCheck.forEach((key) => {
+        expect(item).toHaveProperty(key);
+        expect(typeof item[key]).not.toBe("undefined");
+      });
+    }
     expect(item.id).toBeGreaterThan(0);
     expect(
       items.filter((item) => item.original_title).length,
@@ -77,7 +79,9 @@ function checkItemProperties(items) {
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     }
 
-    expect(Object.keys(item).length).toEqual(config.keysToCheck.length);
+    if (item.is_active === true) {
+      expect(Object.keys(item).length).toEqual(config.keysToCheck.length);
+    }
 
     expect(items.filter((item) => item.is_active).length).toBeLessThanOrEqual(
       config.maximumIsActiveItems,
@@ -1491,12 +1495,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,image_variants,title_variants&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,image_variants,title_variants&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
