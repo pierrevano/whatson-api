@@ -7,9 +7,9 @@ const axios = require("axios");
  * @param {{
  *   serviceName?: string,
  *   id?: string|number,
- *   allowedStatuses?: number[]
+ *   allowedStatuses?: number[],
  *   requestConfig?: import("axios").AxiosRequestConfig
- * }} [options] - Optional metadata for error messages and allowed HTTP statuses.
+ * }} [options={}] - Optional metadata for error messages and allowed HTTP statuses.
  * @returns {Promise<import("axios").AxiosResponse>} The axios response when the status is allowed.
  */
 const getHomepageResponse = async (homepageUrl, options = {}) => {

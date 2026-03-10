@@ -97,6 +97,9 @@ const aggregateData = async (
   const platforms_links_append = appendIncludes("platforms_links");
   const title_variants_append = appendIncludes("title_variants");
   const image_variants_append = appendIncludes("image_variants");
+  const certification_variants_append = appendIncludes(
+    "certification_variants",
+  );
   const production_companies =
     typeof production_companies_query !== "undefined" &&
     production_companies_query
@@ -426,6 +429,7 @@ const aggregateData = async (
     ...(production_companies_details ? {} : { production_companies: 0 }),
     ...(title_variants_append ? {} : { title_variants: 0 }),
     ...(image_variants_append ? {} : { image_variants: 0 }),
+    ...(certification_variants_append ? {} : { certification_variants: 0 }),
   };
 
   const prune_keys_before_sort = Object.keys(remove_keys_base).length

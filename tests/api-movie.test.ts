@@ -40,6 +40,17 @@ function checkItemProperties(items) {
     expect(
       items.filter((item) => item.original_title).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    if (item.is_active === true) {
+      expect(
+        items.filter((item) => item.certification_variants?.fr).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        items.filter((item) => item.image_variants?.fr).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        items.filter((item) => item.title_variants?.fr).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    }
     expect(item.image).not.toBeNull();
     expect(item.image).toMatch(
       /^https:\/\/.*\.(jpg|jpeg|png|gif|jfif)(\?[a-zA-Z0-9=&]*)?$/i,
@@ -1218,6 +1229,14 @@ const params = {
       }),
   },
 
+  localized_title_search_should_return_expected_first_match: {
+    query: "?title=La femme de ménage",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      expect(items[0].title).toBe("The Housemaid");
+    },
+  },
+
   should_return_allocine_id_on_search: {
     query: "?allocineid=304508",
     expectedResult: (items) => {
@@ -1495,12 +1514,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,image_variants,title_variants&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,image_variants,title_variants&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 

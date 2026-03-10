@@ -70,7 +70,7 @@ const findId = async (json, append_to_response, filtered_seasons) => {
     if (isTitleKey) {
       const normalizedInput = normalizeString(value);
 
-      // Match both title and original_title
+      // Match title, original_title, and every stored localized title variant.
       query = {
         $expr: {
           $or: [
@@ -96,6 +96,32 @@ const findId = async (json, append_to_response, filtered_seasons) => {
                   },
                 },
                 regex: normalizedInput,
+              },
+            },
+            {
+              $anyElementTrue: {
+                $map: {
+                  input: {
+                    $objectToArray: { $ifNull: ["$title_variants", {}] },
+                  },
+                  as: "variant",
+                  in: {
+                    $regexMatch: {
+                      input: {
+                        $replaceAll: {
+                          input: {
+                            $toLower: {
+                              $ifNull: ["$$variant.v", ""],
+                            },
+                          },
+                          find: ",",
+                          replacement: "",
+                        },
+                      },
+                      regex: normalizedInput,
+                    },
+                  },
+                },
               },
             },
           ],

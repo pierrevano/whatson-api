@@ -1,10 +1,11 @@
 const { config } = require("../config");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
+const { getCertificationData } = require("../content/getCertification");
 const { getDirectors } = require("../content/getDirectors");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
 const { getGenres } = require("../content/getGenres");
 const { getHighestRatedEpisode } = require("../content/getHighestRatedEpisode");
-const { getImageFromTMDB } = require("../content/getImageFromTMDB");
+const { getImage, getImageVariants } = require("../content/getImage");
 const { getImdbPopularity } = require("../content/getImdbPopularity");
 const { getLastEpisode } = require("../content/getLastEpisode");
 const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
@@ -125,17 +126,22 @@ const createJSON = async (
     usersRatingCount,
     isAdult,
     runtime,
-    certification,
     topRanking,
     seasonsNumber: imdbSeasonsNumber,
   } = imdbRatingData;
   const title = await getTitle(allocineHomepage, tmdbData);
-  const titleVariants = await getTitleVariants(allocineHomepage, tmdbData);
-  const image = await getImageFromTMDB(allocineHomepage, tmdbData);
-  const imageVariants = {
-    fr: allocineFirstInfo?.image || null,
-  };
+  const titleVariants = await getTitleVariants(
+    allocineHomepage,
+    allocineFirstInfo,
+  );
   const originalTitle = await getOriginalTitle(allocineHomepage, tmdbData);
+  const image = await getImage(allocineHomepage, tmdbData);
+  const imageVariants = await getImageVariants(
+    allocineHomepage,
+    allocineFirstInfo,
+  );
+  const { certification, certificationVariants } =
+    await getCertificationData(imdbHomepage);
   const allocinePopularity = await getAllocinePopularity(
     allocineURL,
     item_type,
@@ -363,6 +369,7 @@ const createJSON = async (
     image_variants: imageVariants,
     is_adult: isAdult,
     certification,
+    certification_variants: certificationVariants,
     networks,
     production_companies: productionCompanies,
     release_date: allocineFirstInfo?.releaseDate,

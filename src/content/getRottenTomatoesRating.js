@@ -12,7 +12,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * Fetches the Rotten Tomatoes media scorecard JSON, and retrying when missing.
  *
  * @param {string} url - The Rotten Tomatoes page URL we need to scrape.
- * @param {object} options - Axios-compatible options used by getCheerioContent.
+ * @param {import("axios").AxiosRequestConfig} [options] - Axios-compatible options used by getCheerioContent.
  * @returns {Promise<string>} The raw JSON payload embedded in the page.
  */
 const fetchMediaScorecardJson = async (url, options) => {

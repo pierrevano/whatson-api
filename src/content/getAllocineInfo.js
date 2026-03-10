@@ -4,19 +4,18 @@ const {
 } = require("../utils/convertFrenchDateToISOString");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getHomepageResponse } = require("../utils/getHomepageResponse");
-const { getImageFromTMDB } = require("./getImageFromTMDB");
 const { getRateLimitWaitMs } = require("../utils/getRateLimitWaitMs");
 const { getStatus } = require("./getStatus");
 const { logErrors } = require("../utils/logErrors");
 
 /**
  * It takes an allocineHomepage as an argument, and returns various metadata about the movie or tvshow.
- * It fetches and parses the AlloCiné page content, optionally enhancing data via TMDB and BetaSeries, unless in compare mode.
+ * It fetches and parses the AlloCiné page content unless in compare mode.
  *
  * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow
  * @param {boolean} compare - Whether to skip heavy metadata parsing (used for performance comparisons)
- * @param {object} [data] - Optional TMDB API response data for the item.
  * @returns {{
+ *   allocineTitle: string|null,
  *   image: string|null,
  *   allocineUsersRating: number|null,
  *   allocineUsersRatingCount: number|null,
@@ -25,7 +24,7 @@ const { logErrors } = require("../utils/logErrors");
  * }|null|{ error: Error }} AlloCiné metadata when resolved, null when data is
  * unavailable, or an error wrapper when the scrape fails
  */
-const getAllocineInfo = async (allocineHomepage, compare, data) => {
+const getAllocineInfo = async (allocineHomepage, compare) => {
   let allocineFirstInfo = null;
 
   try {
@@ -70,12 +69,9 @@ const getAllocineInfo = async (allocineHomepage, compare, data) => {
       );
     }
 
-    let image = $('meta[property="og:image"]').attr("content");
-    if (!image)
-      image =
-        !compare && data
-          ? await getImageFromTMDB(allocineHomepage, data)
-          : null;
+    const title = $('meta[property="og:title"]').attr("content") || null;
+
+    const image = $('meta[property="og:image"]').attr("content") || null;
 
     let allocineUsersRating = parseFloat(
       $(".stareval-note").eq(1).text().replace(",", "."),
@@ -114,6 +110,7 @@ const getAllocineInfo = async (allocineHomepage, compare, data) => {
         : convertFrenchDateToISOString(frenchDateStr, true);
 
     allocineFirstInfo = {
+      allocineTitle: title,
       image,
       allocineUsersRating,
       allocineUsersRatingCount,

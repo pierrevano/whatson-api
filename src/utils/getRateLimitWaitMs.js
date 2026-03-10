@@ -1,6 +1,6 @@
 /**
  * Compute a wait time (ms) from common rate-limit headers.
- * @param {Object} headers - Response headers map (case-insensitive keys).
+ * @param {Record<string, string|number|Array<string>|undefined>} [headers={}] - Response headers map (case-insensitive keys).
  * @returns {number|null} Milliseconds to wait, or null if no valid header found.
  */
 const getRateLimitWaitMs = (headers = {}) => {

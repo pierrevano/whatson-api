@@ -22,29 +22,24 @@ const getTitle = async (allocineHomepage, data) => {
 };
 
 /**
- * Retrieves title variants from TMDB translations payload.
+ * Retrieves title variants from provider-specific metadata.
  *
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the movie or tvshow.
- * @param {object} data - The TMDB API response data for the item.
- * @returns {Promise<{ fr: string|null }|null>} Title variants.
+ * @param {object} allocineFirstInfo - AlloCiné metadata payload.
+ * @returns {Promise<Record<string, string|null>>} Title variants keyed by locale.
  */
-const getTitleVariants = async (allocineHomepage, data) => {
-  let variants = null;
-
+const getTitleVariants = async (allocineHomepage, allocineFirstInfo) => {
   try {
-    const translationsList = data?.translations?.translations || [];
-    const frenchTranslation = translationsList.find(
-      (item) => item?.iso_639_1 === "fr" && item?.iso_3166_1 === "FR",
-    );
-
-    variants = {
-      fr: frenchTranslation?.data?.title || null,
+    return {
+      fr: allocineFirstInfo?.allocineTitle || null,
     };
   } catch (error) {
     logErrors(error, allocineHomepage, "getTitleVariants");
   }
 
-  return variants;
+  return {
+    fr: null,
+  };
 };
 
 module.exports = { getTitle, getTitleVariants };

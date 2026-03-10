@@ -62,7 +62,7 @@ const determineSeasonsInfo = (episodesInfo) => {
 
 /**
  * It takes an imdbHomepage as an argument, and returns the usersRating, usersRatingCount,
- * isAdult flag, runtime (in seconds), certification rating, and topRanking position of the item. The data is extracted
+ * isAdult flag, runtime (in seconds), and topRanking position of the item. The data is extracted
  * from the embedded JSON structure found in the IMDb page content.
  *
  * @param {string} imdbHomepage - The IMDb homepage URL of the item
@@ -71,11 +71,10 @@ const determineSeasonsInfo = (episodesInfo) => {
  *   usersRatingCount: number|null,
  *   isAdult: boolean|null,
  *   runtime: number|null,
- *   certification: string|null,
  *   topRanking: number|null,
  *   seasonsNumber: number|null,
  *   releaseDate: object|null
- * }>} Resolves with the IMDb users rating, vote count, adult flag, runtime in seconds, certification rating,
+ * }>} Resolves with the IMDb users rating, vote count, adult flag, runtime in seconds,
  *     top ranking position, and the number of seasons.
  */
 const getImdbRating = async (imdbHomepage) => {
@@ -83,7 +82,6 @@ const getImdbRating = async (imdbHomepage) => {
   let usersRatingCount = null;
   let isAdult = null;
   let runtime = null;
-  let certification = null;
   let topRanking = null;
   let seasonsNumber = null;
   let releaseDate = null;
@@ -133,7 +131,6 @@ const getImdbRating = async (imdbHomepage) => {
 
     const ratingsSummary = mainColumnData?.ratingsSummary;
     const runtimeSeconds = mainColumnData?.runtime?.seconds;
-    const certificate = aboveTheFoldData?.certificate?.rating;
     const episodesInfo = mainColumnData?.episodes;
     releaseDate = mainColumnData?.releaseDate ?? null;
 
@@ -151,10 +148,6 @@ const getImdbRating = async (imdbHomepage) => {
       ? runtimeSeconds
       : parseInt(runtimeSeconds, 10);
     runtime = Number.isNaN(runtime) ? null : runtime;
-    certification =
-      typeof certificate === "string" && certificate.trim().length > 0
-        ? certificate.trim()
-        : null;
     topRanking = isNaN(parsedTopRanking) ? null : parsedTopRanking;
 
     const validatedSeasonsCount = determineSeasonsInfo(episodesInfo);
@@ -170,7 +163,6 @@ const getImdbRating = async (imdbHomepage) => {
     usersRatingCount,
     isAdult,
     runtime,
-    certification,
     topRanking,
     seasonsNumber,
     releaseDate,

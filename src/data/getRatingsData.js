@@ -61,7 +61,7 @@ const getRatingsData = async ({
     tvtimeRating,
   ] = await Promise.all([
     getAllocineCriticsRating(allocineCriticsDetails),
-    getAllocineInfo(allocineHomepage, false, tmdbData),
+    getAllocineInfo(allocineHomepage, false),
     getBetaseriesRating(allocineHomepage, betaseriesHomepage, betaseriesId),
     getImdbRating(imdbHomepage),
     getLetterboxdRating(letterboxdHomepage, letterboxdId),

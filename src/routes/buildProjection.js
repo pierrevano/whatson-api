@@ -53,6 +53,10 @@ function buildProjection(appendToResponse) {
     projection["image_variants"] = 0;
   }
 
+  if (!includes("certification_variants")) {
+    projection["certification_variants"] = 0;
+  }
+
   if (!includes("networks")) {
     projection["networks"] = 0;
   }
