@@ -1,6 +1,6 @@
 const { config } = require("../config");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
-const { getCertificationData } = require("../content/getCertification");
+const { getCertification } = require("../content/getCertification");
 const { getDirectors } = require("../content/getDirectors");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
 const { getGenres } = require("../content/getGenres");
@@ -142,7 +142,7 @@ const createJSON = async (
     allocineFirstInfo,
   );
   const { certification, certificationVariants } =
-    await getCertificationData(imdbHomepage);
+    await getCertification(imdbHomepage);
   const parentsGuide = await getParentsGuide(imdbHomepage);
   const allocinePopularity = await getAllocinePopularity(
     allocineURL,

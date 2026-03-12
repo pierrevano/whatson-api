@@ -1,7 +1,15 @@
 const { config } = require("../config");
 const { getNextData } = require("./getCertification");
 
-const getParentsGuideFromNextData = (nextData, imdbHomepage = null) => {
+/**
+ * @param {string} imdbHomepage - The IMDb homepage URL.
+ * @returns {Promise<{
+ *   url: string|null,
+ *   categories: Array<{title: string|undefined, severity: string|null}>|null
+ * }>} Parents guide categories derived from the parental guide payload.
+ */
+const getParentsGuide = async (imdbHomepage) => {
+  const nextData = await getNextData(imdbHomepage, "getParentsGuide");
   const categories = (
     nextData?.props?.pageProps?.contentData?.categories || []
   ).map((category) => ({
@@ -15,13 +23,4 @@ const getParentsGuideFromNextData = (nextData, imdbHomepage = null) => {
   };
 };
 
-const getParentsGuide = async (imdbHomepage) =>
-  getParentsGuideFromNextData(
-    await getNextData(imdbHomepage, "getParentsGuide"),
-    imdbHomepage,
-  );
-
-module.exports = {
-  getParentsGuide,
-  getParentsGuideFromNextData,
-};
+module.exports = { getParentsGuide };
