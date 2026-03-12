@@ -13,6 +13,7 @@ const { getNetworks } = require("../content/getNetworks");
 const { getNextEpisode } = require("../content/getNextEpisode");
 const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
 const { getOriginalTitle } = require("../content/getOriginalTitle");
+const { getParentsGuide } = require("../content/getParentsGuide");
 const { getPlatformsLinks } = require("../content/getPlatformsLinks");
 const { getProductionCompanies } = require("../content/getProductionCompanies");
 const { getRatingsData } = require("./getRatingsData");
@@ -142,6 +143,7 @@ const createJSON = async (
   );
   const { certification, certificationVariants } =
     await getCertificationData(imdbHomepage);
+  const parentsGuide = await getParentsGuide(imdbHomepage);
   const allocinePopularity = await getAllocinePopularity(
     allocineURL,
     item_type,
@@ -370,6 +372,7 @@ const createJSON = async (
     is_adult: isAdult,
     certification,
     certification_variants: certificationVariants,
+    parents_guide: parentsGuide,
     networks,
     production_companies: productionCompanies,
     release_date: allocineFirstInfo?.releaseDate,

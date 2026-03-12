@@ -58,17 +58,19 @@ const getCertificationRating = (nextData, countryId) => {
  *   certificationVariants: Record<string, string|null>
  * }} Certification values derived from a single parental guide payload fetch.
  */
-const getCertificationData = async (imdbHomepage) => {
-  const nextData = await getNextData(imdbHomepage, "getCertificationData");
+const getCertificationDataFromNextData = (nextData) => ({
+  certification: getCertificationRating(nextData, "US"),
+  certificationVariants: {
+    fr: getCertificationRating(nextData, "FR"),
+  },
+});
 
-  return {
-    certification: getCertificationRating(nextData, "US"),
-    certificationVariants: {
-      fr: getCertificationRating(nextData, "FR"),
-    },
-  };
-};
+const getCertificationData = async (imdbHomepage) =>
+  getCertificationDataFromNextData(
+    await getNextData(imdbHomepage, "getCertificationData"),
+  );
 
 module.exports = {
   getCertificationData,
+  getNextData,
 };

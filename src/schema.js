@@ -38,6 +38,18 @@ const schema = {
     fr: "string", // French certification variant
   },
   /*
+   * To include this key in the response, add `parents_guide` to the `append_to_response` query parameter.
+   */
+  parents_guide: {
+    url: "string", // URL to the IMDb parents guide page
+    categories: [
+      {
+        title: "string", // Parents guide category title
+        severity: "string", // Dominant severity label
+      },
+    ],
+  },
+  /*
    * To include this key in the response, add `networks` to the `append_to_response` query parameter.
    */
   networks: "object", // Networks' names

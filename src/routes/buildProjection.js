@@ -57,6 +57,10 @@ function buildProjection(appendToResponse) {
     projection["certification_variants"] = 0;
   }
 
+  if (!includes("parents_guide")) {
+    projection["parents_guide"] = 0;
+  }
+
   if (!includes("networks")) {
     projection["networks"] = 0;
   }

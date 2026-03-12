@@ -59,7 +59,7 @@ const config = {
   IPinfo: "https://ipinfo.io/country",
   webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
   appendToResponse:
-    "critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants",
+    "critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
   noMatchingItemsFoundMessage: "No matching items found.",
 
   imdbEpisodesPaginationHash: process.env.IMDB_EPISODES_PAGINATION_HASH,
@@ -110,6 +110,7 @@ const config = {
     "betaseries",
     "certification",
     "certification_variants",
+    "parents_guide",
     "directors",
     "episodes_details",
     "genres",

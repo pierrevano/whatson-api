@@ -100,6 +100,7 @@ const aggregateData = async (
   const certification_variants_append = appendIncludes(
     "certification_variants",
   );
+  const parents_guide_append = appendIncludes("parents_guide");
   const production_companies =
     typeof production_companies_query !== "undefined" &&
     production_companies_query
@@ -430,6 +431,7 @@ const aggregateData = async (
     ...(title_variants_append ? {} : { title_variants: 0 }),
     ...(image_variants_append ? {} : { image_variants: 0 }),
     ...(certification_variants_append ? {} : { certification_variants: 0 }),
+    ...(parents_guide_append ? {} : { parents_guide: 0 }),
   };
 
   const prune_keys_before_sort = Object.keys(remove_keys_base).length

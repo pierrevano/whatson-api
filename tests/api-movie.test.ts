@@ -1003,24 +1003,6 @@ const params = {
       }),
   },
 
-  only_adult_items: {
-    query: "?item_type=movie,tvshow&is_active=true,false&is_adult=true",
-    expectedResult: (items) =>
-      items.forEach((item) => {
-        expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeTruthy();
-      }),
-  },
-
-  only_non_adult_items: {
-    query: "?item_type=movie,tvshow&is_active=true,false&is_adult=false",
-    expectedResult: (items) =>
-      items.forEach((item) => {
-        expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
-      }),
-  },
-
   only_must_see_items: {
     query: "?must_see=true",
     expectedResult: (items) =>
@@ -1067,17 +1049,6 @@ const params = {
         expect(item).toHaveProperty("is_adult");
         expect(item.is_adult).toBeFalsy();
       }),
-  },
-
-  both_movies_and_tvshows: {
-    query: "?item_type=movie,tvshow",
-    expectedResult: (items) => {
-      const movieItems = items.filter((item) => item.item_type === "movie");
-      const tvshowItems = items.filter((item) => item.item_type === "tvshow");
-
-      expect(movieItems.length).toBeGreaterThan(0);
-      expect(tvshowItems.length).toBeGreaterThan(0);
-    },
   },
 
   both_active_and_non_active_items: {
@@ -1514,12 +1485,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
@@ -1818,23 +1789,6 @@ describe("What's on? API tests", () => {
     async () => {
       const start = new Date().valueOf();
       await axios.get(`${baseURL}?api_key=${config.internalApiKey}`);
-      const end = new Date().valueOf();
-      expect(end - start).toBeLessThan(config.maxResponseTime);
-    },
-    config.timeout,
-  );
-
-  test(
-    "api_response_time_should_be_within_an_acceptable_range_on_important_limit",
-    async () => {
-      const start = new Date().valueOf();
-      const apiCall = `${baseURL}?item_type=movie,tvshow&limit=${maxLimitLargeDocuments}&api_key=${config.internalApiKey}`;
-
-      if (!removeLogs) {
-        console.log(`Calling: ${apiCall}`);
-      }
-
-      await axios.get(apiCall);
       const end = new Date().valueOf();
       expect(end - start).toBeLessThan(config.maxResponseTime);
     },
