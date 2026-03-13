@@ -66,6 +66,7 @@ const determineSeasonsInfo = (episodesInfo) => {
  * from the embedded JSON structure found in the IMDb page content.
  *
  * @param {string} imdbHomepage - The IMDb homepage URL of the item
+ * @param {object|null} [imdbData] - IMDb data.
  * @returns {Promise<{
  *   usersRating: number|null,
  *   usersRatingCount: number|null,
@@ -77,7 +78,7 @@ const determineSeasonsInfo = (episodesInfo) => {
  * }>} Resolves with the IMDb users rating, vote count, adult flag, runtime in seconds,
  *     top ranking position, and the number of seasons.
  */
-const getImdbRating = async (imdbHomepage) => {
+const getImdbRating = async (imdbHomepage, imdbData) => {
   let usersRating = null;
   let usersRatingCount = null;
   let isAdult = null;
@@ -87,39 +88,42 @@ const getImdbRating = async (imdbHomepage) => {
   let releaseDate = null;
 
   try {
-    axiosRetry(axios, {
-      retries: config.retries,
-      retryDelay: () => config.retryDelay,
-    });
+    let nextData = imdbData?.nextData;
 
-    await getHomepageResponse(imdbHomepage, {
-      serviceName: "IMDb",
-      allowedStatuses: [200, 202],
-    });
+    if (!nextData) {
+      axiosRetry(axios, {
+        retries: config.retries,
+        retryDelay: () => config.retryDelay,
+      });
 
-    const localeRequestOptions = {
-      headers: {
-        "Accept-Language": "en-US,en;q=0.9",
-      },
-    };
+      await getHomepageResponse(imdbHomepage, {
+        serviceName: "IMDb",
+        allowedStatuses: [200, 202],
+      });
 
-    const $ = await getCheerioContent(
-      imdbHomepage,
-      localeRequestOptions,
-      "getImdbRating",
-    );
+      const localeRequestOptions = {
+        headers: {
+          "Accept-Language": "en-US,en;q=0.9",
+        },
+      };
 
-    const jsonText = $("#__NEXT_DATA__").html();
+      if (imdbData?.$) {
+        nextData = imdbData.nextData;
+      } else {
+        const $ = await getCheerioContent(
+          imdbHomepage,
+          localeRequestOptions,
+          "getImdbRating",
+        );
 
-    if (!jsonText) {
-      throw new Error("IMDb NEXT_DATA payload is missing.");
-    }
+        const jsonText = $("#__NEXT_DATA__").html();
 
-    let nextData;
-    try {
-      nextData = JSON.parse(jsonText);
-    } catch {
-      throw new Error("IMDb NEXT_DATA payload is invalid.");
+        if (!jsonText) {
+          throw new Error("IMDb NEXT_DATA payload is missing.");
+        }
+
+        nextData = JSON.parse(jsonText);
+      }
     }
 
     const mainColumnData = nextData?.props?.pageProps?.mainColumnData;

@@ -49,6 +49,7 @@ const { getTrailer } = require("../content/getTrailer");
  * @param {Array<Object>} mojoBoxOfficeArray - Box office entries used to enrich Mojo data.
  * @param {number} tmdbId - TMDB ID
  * @param {string} tmdbHomepage - TMDB homepage URL
+ * @param {object|null} imdbData - IMDb data.
  * @param {string} tvtimeHomepage - TV Time homepage URL
  * @param {number} tvtimeId - TV Time ID
  * @param {string} theTvdbHomepage - TheTVDB homepage URL
@@ -79,6 +80,7 @@ const createJSON = async (
   mojoBoxOfficeArray,
   tmdbId,
   tmdbHomepage,
+  imdbData,
   tvtimeHomepage,
   tvtimeId,
   theTvdbHomepage,
@@ -103,6 +105,7 @@ const createJSON = async (
     allocineHomepage,
     betaseriesHomepage,
     betaseriesId,
+    imdbData,
     imdbHomepage,
     letterboxdHomepage,
     letterboxdId,
@@ -165,6 +168,7 @@ const createJSON = async (
     imdbHomepage,
     allocineURL,
     item_type,
+    imdbData,
   );
   const episodesDetails = await getEpisodesDetails(
     allocineHomepage,

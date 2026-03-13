@@ -26,6 +26,7 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} item_type - The type of item (movie or tvshow).
  * @param {Array<Object>} mojoBoxOfficeArray - Array of Mojo box office objects.
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
+ * @param {object|null} [imdbData] - IMDb data.
  * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
  * @throws {Error} - If the API request fails.
  */
@@ -38,6 +39,7 @@ const compareUsersRating = async (
   item_type,
   mojoBoxOfficeArray,
   tmdbId,
+  imdbData,
 ) => {
   const isEqualObj = { isEqual: false };
 
@@ -87,7 +89,7 @@ const compareUsersRating = async (
       lowestEpisode;
     if (hasTvShowTmdbData) {
       const imdb_seasons_number = config.specialItems.includes(imdbId)
-        ? (await getImdbRating(imdbHomepage)).seasonsNumber
+        ? (await getImdbRating(imdbHomepage, imdbData)).seasonsNumber
         : null;
       seasonsNumber =
         imdb_seasons_number != null
@@ -132,6 +134,7 @@ const compareUsersRating = async (
       imdbHomepage,
       allocineURL,
       item_type,
+      imdbData,
     );
     const imdbPopularity =
       typeof imdbPopularityResult?.popularity === "number"

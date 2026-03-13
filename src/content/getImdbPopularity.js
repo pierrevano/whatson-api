@@ -1,9 +1,5 @@
-const axios = require("axios");
-const axiosRetry = require("axios-retry").default;
-
 const { config } = require("../config");
 const { getAllocinePopularity } = require("./getAllocinePopularity");
-const { getCheerioContent } = require("../utils/getCheerioContent");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -11,39 +7,29 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} imdbHomepage - The IMDb homepage URL for the movie or tvshow.
  * @param {string} allocineURL - The AlloCiné URL used to fetch AlloCiné popularity.
  * @param {string} item_type - Type of item ("movie" or "tvshow").
+ * @param {object|null} [imdbData] - IMDb data.
  * @returns {Promise<{ popularity: number | null } | undefined>} The IMDb popularity information, or undefined if the lookup fails.
  */
-const getImdbPopularity = async (imdbHomepage, allocineURL, item_type) => {
+const getImdbPopularity = async (
+  imdbHomepage,
+  allocineURL,
+  item_type,
+  imdbData,
+) => {
   try {
-    axiosRetry(axios, {
-      retries: config.retries,
-      retryDelay: () => config.retryDelay,
-    });
-    const $ = await getCheerioContent(
-      imdbHomepage,
-      undefined,
-      "getImdbPopularity",
-    );
+    const $ = imdbData?.$;
+    const nextData = imdbData?.nextData;
 
     let popularity = null;
-    const jsonText = $("#__NEXT_DATA__").html();
 
-    if (jsonText) {
-      try {
-        const nextData = JSON.parse(jsonText);
-        const nextPopularity =
-          nextData?.props?.pageProps?.aboveTheFoldData?.meterRanking
-            ?.currentRank;
-        const parsedPopularity = Number(nextPopularity);
-        if (Number.isFinite(parsedPopularity)) {
-          popularity = parsedPopularity;
-        }
-      } catch (parseError) {
-        logErrors(parseError, imdbHomepage, "getImdbPopularity.parseNextData");
-      }
+    const nextPopularity =
+      nextData?.props?.pageProps?.aboveTheFoldData?.meterRanking?.currentRank;
+    const parsedPopularity = Number(nextPopularity);
+    if (Number.isFinite(parsedPopularity)) {
+      popularity = parsedPopularity;
     }
 
-    if (popularity === null) {
+    if (popularity === null && typeof $ === "function") {
       const rawPopularity = $(
         'div[data-testid="hero-rating-bar__popularity__score"]',
       )

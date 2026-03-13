@@ -1,12 +1,10 @@
-const { getImdbRating } = require("../content/getImdbRating");
-
-const shouldCreateFromImdbReleaseDate = async (imdbHomepage) => {
+const shouldCreateFromImdbReleaseDate = async (imdbData) => {
   if (process.env.CHECK_MISSING_ALLOCINE_IDS !== "true") {
     return { shouldCreate: true, reason: null };
   }
 
-  const imdbInfo = imdbHomepage ? await getImdbRating(imdbHomepage) : null;
-  const releaseDate = imdbInfo?.releaseDate ?? null;
+  const releaseDate =
+    imdbData?.nextData?.props?.pageProps?.mainColumnData?.releaseDate;
   const releaseYear = Number.parseInt(releaseDate?.year, 10);
   const releaseMonth = Number.parseInt(releaseDate?.month, 10);
   const releaseDay = Number.parseInt(releaseDate?.day, 10);

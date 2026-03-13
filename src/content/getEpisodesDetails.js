@@ -78,7 +78,7 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
 };
 
 /**
- * Fetches episode details including ratings for all seasons of a tvshow using IMDb and What's On API data.
+ * Fetches episode details including ratings for all seasons of a tvshow using IMDb and TMDB data.
  * Prefers the season count returned by `getImdbRating`; falls back to TMDB-derived totals when unavailable.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {string} imdbHomepage - The IMDb homepage URL for the tvshow.

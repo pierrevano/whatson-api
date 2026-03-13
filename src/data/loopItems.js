@@ -6,6 +6,7 @@ const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const {
   shouldCreateFromImdbReleaseDate,
 } = require("../utils/shouldCreateFromImdbReleaseDate");
+const { getImdbData } = require("../content/getImdbData");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
 const createJSON = require("./createJSON");
@@ -88,6 +89,7 @@ const loopItems = async (
         trakt: { id: traktId, homepage: traktHomepage },
         tv_time: { id: tvtimeId, homepage: tvtimeHomepage },
       } = urls;
+      const imdbData = await getImdbData(imdbHomepage);
 
       const getIsEqualValue = !force
         ? await compareUsersRating(
@@ -99,6 +101,7 @@ const loopItems = async (
             item_type,
             mojoBoxOfficeArray,
             tmdbId,
+            imdbData,
           )
         : { isEqual: false };
 
@@ -123,7 +126,7 @@ const loopItems = async (
         useExistingData = false;
 
         const { shouldCreate } =
-          await shouldCreateFromImdbReleaseDate(imdbHomepage);
+          await shouldCreateFromImdbReleaseDate(imdbData);
 
         if (!shouldCreate) {
           console.log(
@@ -157,6 +160,7 @@ const loopItems = async (
           mojoBoxOfficeArray,
           tmdbId,
           tmdbHomepage,
+          imdbData,
           tvtimeHomepage,
           tvtimeId,
           theTvdbHomepage,
