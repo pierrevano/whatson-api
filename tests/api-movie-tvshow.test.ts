@@ -43,8 +43,12 @@ const params = {
       const movieItems = items.filter((item) => item.item_type === "movie");
       const tvshowItems = items.filter((item) => item.item_type === "tvshow");
 
-      expect(movieItems.length).toBeGreaterThan(0);
-      expect(tvshowItems.length).toBeGreaterThan(0);
+      expect(movieItems.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
+      expect(tvshowItems.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
     },
   },
 
@@ -201,7 +205,7 @@ const params = {
     },
   },
 
-  certification_variants_should_include_tous_public_at_least_once: {
+  certification_variants_should_include_tous_public: {
     query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=certification_variants&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       const matchingCertificationVariantsCount = items
@@ -211,7 +215,9 @@ const params = {
             certificationVariant?.trim() === "Tous publics",
         ).length;
 
-      expect(matchingCertificationVariantsCount).toBeGreaterThan(0);
+      expect(matchingCertificationVariantsCount).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
     },
   },
 
@@ -360,7 +366,9 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       let previousRanking = null;
       let smallestRanking = Infinity;
@@ -387,7 +395,9 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=desc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       let previousRanking = null;
       let largestRanking = -Infinity;
@@ -414,7 +424,9 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       let previousPopularity = null;
       let previousTopRanking = null;
@@ -445,7 +457,9 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=invalid&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       let previousPopularity = -Infinity;
       let sawMissingTopRanking = false;
@@ -472,7 +486,9 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&mojo_rank_order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       let previousRank = null;
       let smallestRank = Infinity;
@@ -511,7 +527,9 @@ const params = {
     expectedResult: (items) => {
       const itemsWithMojo = items.filter((item) => item.mojo);
 
-      expect(itemsWithMojo.length).toBeGreaterThan(0);
+      expect(itemsWithMojo.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       for (let i = 1; i < itemsWithMojo.length; i++) {
         expect(itemsWithMojo[i].mojo.rank).toBeLessThanOrEqual(
@@ -525,7 +543,9 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&mojo_rank_order=invalid&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       let previousPopularity = -Infinity;
       let sawMissingRank = false;
@@ -552,7 +572,9 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&mojo_rank_order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       items.forEach((item) => {
         expect(item.imdb).toBeDefined();

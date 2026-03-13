@@ -64,7 +64,9 @@ describe("What's on? API tvshow seasons metadata tests", () => {
       .filter((id) => Number.isInteger(id) && id > 0);
 
     activeTvshowIds.push(...new Set(ids));
-    expect(activeTvshowIds.length).toBeGreaterThan(0);
+    expect(activeTvshowIds.length).toBeGreaterThan(
+      config.minimumNumberOfItems.softDefault,
+    );
   }, config.timeout);
 
   test(

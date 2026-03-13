@@ -1,9 +1,4 @@
-const axios = require("axios");
-const axiosRetry = require("axios-retry").default;
-
-const { config } = require("../config");
-const { getCheerioContent } = require("../utils/getCheerioContent");
-const { getHomepageResponse } = require("../utils/getHomepageResponse");
+const { getImdbData } = require("./getImdbData");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -91,39 +86,7 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
     let nextData = imdbData?.nextData;
 
     if (!nextData) {
-      axiosRetry(axios, {
-        retries: config.retries,
-        retryDelay: () => config.retryDelay,
-      });
-
-      await getHomepageResponse(imdbHomepage, {
-        serviceName: "IMDb",
-        allowedStatuses: [200, 202],
-      });
-
-      const localeRequestOptions = {
-        headers: {
-          "Accept-Language": "en-US,en;q=0.9",
-        },
-      };
-
-      if (imdbData?.$) {
-        nextData = imdbData.nextData;
-      } else {
-        const $ = await getCheerioContent(
-          imdbHomepage,
-          localeRequestOptions,
-          "getImdbRating",
-        );
-
-        const jsonText = $("#__NEXT_DATA__").html();
-
-        if (!jsonText) {
-          throw new Error("IMDb NEXT_DATA payload is missing.");
-        }
-
-        nextData = JSON.parse(jsonText);
-      }
+      ({ nextData } = await getImdbData(imdbHomepage));
     }
 
     const mainColumnData = nextData?.props?.pageProps?.mainColumnData;

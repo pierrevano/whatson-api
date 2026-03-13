@@ -944,8 +944,12 @@ const params = {
         const movieItems = items.filter((item) => item.item_type === "movie");
         const tvshowItems = items.filter((item) => item.item_type === "tvshow");
 
-        expect(movieItems.length).toBeGreaterThan(0);
-        expect(tvshowItems.length).toBeGreaterThan(0);
+        expect(movieItems.length).toBeGreaterThan(
+          config.minimumNumberOfItems.softDefault,
+        );
+        expect(tvshowItems.length).toBeGreaterThan(
+          config.minimumNumberOfItems.softDefault,
+        );
 
         expect(item.allocine).not.toHaveProperty("critics_rating_details");
         expect(item).not.toHaveProperty("episodes_details");
@@ -1069,7 +1073,9 @@ const params = {
     query: "?item_type=movie&runtime=3600,7200",
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
@@ -1086,7 +1092,9 @@ const params = {
     query: "?item_type=movie&runtime=7200,3600",
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
@@ -1103,7 +1111,9 @@ const params = {
     query: "?item_type=movie&runtime=5400",
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       const expectedRuntime = items[0].runtime;
       expect(typeof expectedRuntime).toBe("number");
@@ -1122,7 +1132,9 @@ const params = {
     query: "?item_type=movie&runtime=invalid",
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       const itemsWithRuntime = items.filter(
         (item) => typeof item.runtime === "number" && item.runtime > 0,
@@ -1176,7 +1188,9 @@ const params = {
   only_movies_directed_by_christopher_nolan: {
     query: `?is_active=true,false&item_type=movie&directors=${encodeURIComponent("Christopher Nolan")}&append_to_response=directors`,
     expectedResult: (items) => {
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
       items.forEach((item) => {
         expect(Array.isArray(item.directors)).toBe(true);
         expect(item.directors).toContain("Christopher Nolan");
@@ -1572,7 +1586,9 @@ const params = {
   should_filter_movies_within_release_date_range: {
     query: `?item_type=movie&is_active=true&release_date=from:2010-01-01,to:2014-12-31&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       const from = new Date("2010-01-01");
       const to = new Date("2014-12-31");
@@ -1593,7 +1609,9 @@ const params = {
   should_filter_movies_with_from_only_release_date: {
     query: `?item_type=movie&is_active=true&release_date=from:2015-01-01&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       const from = new Date("2015-01-01");
 
@@ -1612,7 +1630,9 @@ const params = {
   should_filter_movies_with_to_only_release_date: {
     query: `?item_type=movie&is_active=true&release_date=to:2012-12-31&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       const to = new Date("2012-12-31");
 

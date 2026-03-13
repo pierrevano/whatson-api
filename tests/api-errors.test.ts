@@ -115,6 +115,39 @@ const params = {
     },
   },
 
+  unknown_tvshow_on_seasons_path_should_return_404: {
+    query: "/tvshow/999999999/seasons?append_to_response",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+      expect(response.status).toBe(404);
+    },
+  },
+
+  invalid_tvshow_season_number_on_episodes_path_should_return_404: {
+    query: "/tvshow/1396/seasons/0/episodes?append_to_response",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+      expect(response.status).toBe(404);
+    },
+  },
+
+  unknown_tvshow_episode_on_episode_details_path_should_return_404: {
+    query: "/tvshow/1396/seasons/1/episodes/999999?append_to_response",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+      expect(response.status).toBe(404);
+    },
+  },
+
   same_files_line_number_as_remote: {
     query: "?item_type=movie,tvshow&is_active=true,false",
     expectedResult: (items) => {

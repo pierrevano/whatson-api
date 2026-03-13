@@ -931,7 +931,9 @@ const params = {
     query: "?item_type=tvshow&runtime=1800,3600",
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
@@ -948,7 +950,9 @@ const params = {
     query: "?item_type=tvshow&seasons_number=1",
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
@@ -963,7 +967,9 @@ const params = {
     query: "?item_type=tvshow&seasons_number=1,2",
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       items.forEach((item) => {
         expect(item).toHaveProperty("item_type");
@@ -978,7 +984,9 @@ const params = {
     query: `?item_type=tvshow&seasons_number=1,2,3,4,5&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       const hasSeason1 = items.some((item) => item.seasons_number === 1);
       const hasManySeasons = items.some((item) => item.seasons_number > 5);
@@ -999,7 +1007,9 @@ const params = {
     query: `?item_type=tvshow&append_to_response=last_episode,next_episode&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       items.forEach((item) => {
         if (item.seasons_number) {
@@ -1621,7 +1631,9 @@ const params = {
   should_filter_tvshows_within_release_date_range: {
     query: `?item_type=tvshow&is_active=true&release_date=from:2005-01-01,to:2020-12-31&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
-      expect(items.length).toBeGreaterThan(0);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
 
       const from = new Date("2005-01-01");
       const to = new Date("2020-12-31");

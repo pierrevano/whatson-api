@@ -65,7 +65,7 @@ const config = {
   imdbEpisodesPaginationHash: process.env.IMDB_EPISODES_PAGINATION_HASH,
   imdbEpisodesPaginationOperation: "TitleEpisodesSubPagePagination",
 
-  limit: 15,
+  limit: 20,
   maximumThreshold: {
     default: 30,
     metacritic_or_rotten_tomatoes: 95,
@@ -206,6 +206,7 @@ const config = {
   maxNullReleaseDates: 320,
   minimumNumberOfItems: {
     default: 25,
+    softDefault: 5,
     mojo: 15,
     mustSee: 3,
     directors: 20,
