@@ -1,6 +1,6 @@
-const { getCheerioContent } = require("../utils/getCheerioContent");
-const { getHomepageResponse } = require("../utils/getHomepageResponse");
-const { logErrors } = require("../utils/logErrors");
+const { getCheerioContent } = require("./getCheerioContent");
+const { getHomepageResponse } = require("./getHomepageResponse");
+const { logErrors } = require("./logErrors");
 
 const imdbLocaleRequestOptions = {
   headers: {

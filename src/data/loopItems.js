@@ -2,11 +2,11 @@ const { appendFile } = require("fs");
 
 const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
 const { checkRatings403 } = require("../utils/checkRatings403");
+const { getImdbData } = require("../utils/getImdbData");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const {
   shouldCreateFromImdbReleaseDate,
 } = require("../utils/shouldCreateFromImdbReleaseDate");
-const { getImdbData } = require("../content/getImdbData");
 const { upsertToDatabase } = require("./upsertToDatabase");
 const compareUsersRating = require("./compareUsersRating");
 const createJSON = require("./createJSON");

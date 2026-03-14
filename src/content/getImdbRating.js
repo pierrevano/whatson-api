@@ -1,4 +1,4 @@
-const { getImdbData } = require("./getImdbData");
+const { getImdbData } = require("../utils/getImdbData");
 const { logErrors } = require("../utils/logErrors");
 
 /**
