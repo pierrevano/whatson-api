@@ -75,7 +75,10 @@ const getTvShowSeasons = async (req, res) => {
       id: tvShow.id,
       item_type: tvShow.item_type,
       title: tvShow.title,
+      image: tvShow.image,
+      networks: tvShow.networks,
       seasons_number: tvShow.seasons_number,
+      status: tvShow.status,
       seasons,
       ...appendToResponseConfig.buildAppendedEpisodeFields(tvShow),
     });
@@ -136,7 +139,11 @@ const getTvShowSeasonEpisodes = async (req, res) => {
       id: tvShow.id,
       item_type: tvShow.item_type,
       title: tvShow.title,
+      image: tvShow.image,
+      networks: tvShow.networks,
       season_number: seasonNumber,
+      seasons_number: tvShow.seasons_number,
+      status: tvShow.status,
       total_episodes: episodes.length,
       episodes,
     });
@@ -189,8 +196,12 @@ const getTvShowSeasonEpisodeDetails = async (req, res) => {
       id: tvShow.id,
       item_type: tvShow.item_type,
       title: tvShow.title,
+      image: tvShow.image,
+      networks: tvShow.networks,
       season_number: seasonNumber,
       episode_number: episodeNumber,
+      seasons_number: tvShow.seasons_number,
+      status: tvShow.status,
       episode,
     });
   } catch (error) {

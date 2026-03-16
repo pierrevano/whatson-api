@@ -122,6 +122,78 @@ The query parameters provided below are solely for item search purposes and must
 
 ---
 
+### **GET /episodes/rated**
+
+Returns the highest or lowest rated episodes across all tvshows combined.
+
+> ```
+> https://whatson-api.onrender.com/episodes/rated?order=asc,desc&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<number>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&page=<integer>&limit=<integer>
+> ```
+
+| Parameter                  | Value                                | Description                                                                                    |
+| -------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| order                      | asc,desc                             | `desc` returns top rated episodes, `asc` returns lowest rated episodes                         |
+| is_active                  | true,false                           | Is the tvshow currently active (`true`, `false` or both)                                       |
+| is_adult                   | true,false                           | Is the tvshow marked as adult content (`true`, `false` or both)                                |
+| must_see                   | true,false                           | Is the tvshow a Metacritic must see (`true`, `false` or both)                                  |
+| users_certified            | true,false                           | Has the tvshow received Rotten Tomatoes user certification                                     |
+| critics_certified          | true,false                           | Has the tvshow received Rotten Tomatoes critics certification                                  |
+| minimum_ratings            | _number_                             | Minimum IMDb users rating to return on episodes                                                |
+| minimum_users_rating_count | _number_                             | Minimum number of IMDb users ratings required for each episode. Defaults to `100` when omitted |
+| release_date               | from:yyyy-mm-dd,to:yyyy-mm-dd        | Use `from:`/`to:` with `yyyy-mm-dd` to set an inclusive date range                             |
+| filtered_seasons           | _string_                             | Filter episodes by one or more seasons                                                         |
+| directors                  | _string_                             | Filter tvshows by directors                                                                    |
+| genres                     | _string_                             | Filter tvshows by genres                                                                       |
+| platforms                  | _string_                             | Filter tvshows by streaming platforms                                                          |
+| networks                   | _string_                             | Filter tvshows by networks                                                                     |
+| production_companies       | _string_                             | Filter tvshows by production companies                                                         |
+| status                     | canceled,ended,ongoing,pilot,unknown | Filter tvshows by status                                                                       |
+| page                       | _integer_                            | Requested page number                                                                          |
+| limit                      | _integer_                            | Number of rated episodes to return                                                             |
+
+#### Responses:
+
+- `200` A successful response
+- `400` Invalid query parameters were passed
+- `404` No items have been found (or invalid endpoint)
+- `405` Method not allowed
+- `429` Too many requests (rate limit exceeded)
+- `500` Internal server error
+
+Example of a rated episodes response returned:
+
+```jsonc
+{
+  "page": "number",
+  "results": [
+    {
+      "tvshow": {
+        "id": "number", // The Movie Database ID of the tvshow
+        "item_type": "string", // Type of the item (e.g. tvshow)
+        "title": "string", // Title of the tvshow
+        "image": "string", // Image of the tvshow
+        "networks": "object", // Networks attached to the tvshow
+        "seasons_number": "number", // Number of seasons available on the tvshow
+        "status": "string", // Status of the tvshow
+      },
+      "season": "number", // Season number of the episode
+      "episode": "number", // Episode number within the season
+      "title": "string", // Title of the episode
+      "description": "string", // Description of the episode
+      "id": "string", // IMDb specific identifier
+      "url": "string", // URL to the IMDb page
+      "release_date": "string", // Release date of the episode
+      "users_rating": "number", // Average rating given by IMDb users
+      "users_rating_count": "number", // Total number of ratings submitted by IMDb users
+    },
+  ],
+  "total_pages": "number",
+  "total_results": "number",
+}
+```
+
+---
+
 ### **GET /{item_type}/{id}**
 
 Provides detailed information about a specific item (movie or tvshow) by its type and unique identifier (TMDB ID).
@@ -489,11 +561,14 @@ Example of a specific tvshow response returned on season-level endpoints:
   "id": "number", // General identifier (The Movie Database ID)
   "item_type": "string", // Type of the item (e.g., tvshow)
   "title": "string", // Title of the item
+  "image": "string", // Image of the tvshow
+  "networks": "object", // Networks attached to the tvshow
+  "seasons_number": "number", // Number of seasons available on the tvshow
+  "status": "string", // Status of the tvshow
 
   /*
    * Returned on `/tvshow/{id}/seasons`.
    */
-  "seasons_number": "number", // Number of seasons available
   "seasons": [
     {
       "season_number": "number", // Season number of the episode

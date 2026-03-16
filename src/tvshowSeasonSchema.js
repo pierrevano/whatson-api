@@ -53,7 +53,10 @@ const tvshowSeasonsSchema = {
   id: "number", // General identifier (The Movie Database ID)
   item_type: "string", // Type of the item (e.g., movie or tvshow)
   title: "string", // Title of the item
+  image: "string", // Image of the tvshow
+  networks: "object", // Networks' names
   seasons_number: "number", // Number of seasons available
+  status: "string", // Current status of the tvshow
   seasons: [seasonSummarySchema],
 };
 
@@ -100,7 +103,11 @@ const tvshowSeasonEpisodesSchema = {
   id: "number", // General identifier (The Movie Database ID)
   item_type: "string", // Type of the item (e.g., movie or tvshow)
   title: "string", // Title of the item
+  image: "string", // Image of the tvshow
+  networks: "object", // Networks' names
   season_number: "number", // Season number of the episode
+  seasons_number: "number", // Number of seasons available
+  status: "string", // Current status of the tvshow
   total_episodes: "number", // Number of episodes returned in the season
   episodes: [episodeSchema],
 };
@@ -109,8 +116,12 @@ const tvshowSeasonEpisodeDetailsSchema = {
   id: "number", // General identifier (The Movie Database ID)
   item_type: "string", // Type of the item (e.g., movie or tvshow)
   title: "string", // Title of the item
+  image: "string", // Image of the tvshow
+  networks: "object", // Networks' names
   season_number: "number", // Season number of the episode
   episode_number: "number", // Episode number within the season
+  seasons_number: "number", // Number of seasons available
+  status: "string", // Current status of the tvshow
   episode: episodeSchema,
 };
 

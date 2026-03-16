@@ -266,4 +266,36 @@ const schema = {
   ratings_average: "number", // Average rating score across platforms (all)
 };
 
-module.exports = { schema };
+const ratedEpisodeSchema = {
+  tvshow: {
+    id: "number",
+    item_type: "string",
+    title: "string",
+    image: "string",
+    networks: "object",
+    seasons_number: "number",
+    status: "string",
+  },
+  season: "number",
+  episode: "number",
+  title: "string",
+  description: "string",
+  id: "string",
+  url: "string",
+  release_date: "string",
+  users_rating: "number",
+  users_rating_count: "number",
+};
+
+const ratedEpisodesSchema = {
+  page: "number",
+  results: [ratedEpisodeSchema],
+  total_pages: "number",
+  total_results: "number",
+};
+
+module.exports = {
+  ratedEpisodeSchema,
+  ratedEpisodesSchema,
+  schema,
+};

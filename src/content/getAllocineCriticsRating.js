@@ -1,5 +1,6 @@
 const { convertTitleToNumber } = require("../utils/convertTitleToNumber");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -20,6 +21,13 @@ const getAllocineCriticsRating = async (allocineCriticsDetails) => {
   let allocineCriticInfo = null;
 
   try {
+    const homepageResponse = await getHomepageResponse(allocineCriticsDetails, {
+      serviceName: "AlloCiné",
+      allowedStatuses: [200, 500],
+    });
+
+    if (homepageResponse.status === 500) return null;
+
     const $ = await getCheerioContent(
       allocineCriticsDetails,
       undefined,

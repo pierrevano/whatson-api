@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.24.2",
+  "version": "3.25.0",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -73,7 +73,7 @@
     "newrelic": "^13.16.0",
     "playwright": "^1.58.2",
     "prettier": "^3.8.1",
-    "rate-limiter-flexible": "^9.1.1",
+    "rate-limiter-flexible": "^10.0.1",
     "shelljs": "^0.10.0",
     "tough-cookie": "^6.0.1",
     "vercel": "^50.32.5"

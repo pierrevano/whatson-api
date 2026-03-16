@@ -14,6 +14,7 @@ const {
 } = require("./src/routes/getOrSaveUserPreferences");
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
+const getRatedEpisodes = require("./src/routes/getRatedEpisodes");
 const {
   getTvShowSeasonEpisodeDetails,
   getTvShowSeasonEpisodes,
@@ -33,6 +34,9 @@ app.use(express.json());
 
 /* A route that is used to get the data for all items. */
 app.get("/", limiter, getItems);
+
+/* A route that is used to get the rated episodes across all tvshows. */
+app.get("/episodes/rated", limiter, getRatedEpisodes);
 
 /* A route that is used to get the data for a specific movie. */
 app.get("/movie/:id", limiter, getId);

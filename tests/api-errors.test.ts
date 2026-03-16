@@ -326,6 +326,17 @@ const params = {
     },
   },
 
+  rated_episodes_minimum_users_rating_count_too_high_should_return_404: {
+    query: "/episodes/rated?minimum_users_rating_count=999999999",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+      expect(response.status).toBe(404);
+    },
+  },
+
   should_not_return_directors_values: {
     query: `?item_type=tvshow&is_active=true,false&directors=wrong_value`,
     expectedResult: (data) => {
@@ -397,7 +408,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `Invalid endpoint: /invalid-path?is_active&api_key=${config.internalApiKey}. Allowed endpoints are: GET /, GET /movie/:id, GET /tvshow/:id, GET /tvshow/:id/seasons, GET /tvshow/:id/seasons/:season_number/episodes, GET /tvshow/:id/seasons/:season_number/episodes/:episode_number.`,
+        `Invalid endpoint: /invalid-path?is_active&api_key=${config.internalApiKey}. Allowed endpoints are: GET /, GET /episodes/rated, GET /movie/:id, GET /tvshow/:id, GET /tvshow/:id/seasons, GET /tvshow/:id/seasons/:season_number/episodes, GET /tvshow/:id/seasons/:season_number/episodes/:episode_number.`,
       );
       expect(data.code).toBe(404);
     },

@@ -601,6 +601,37 @@ const params = {
       expect(actualOrder).toEqual(expectedOrder);
     },
   },
+
+  order_and_minimum_users_rating_count_should_not_influence_movie_tvshow_results:
+    {
+      query:
+        "?item_type=movie,tvshow&is_active=true,false&append_to_response=episodes_details&limit=20&order=asc&minimum_users_rating_count=5000",
+      expectedResult: (items) => {
+        const tvshowItems = items.filter((item) => item.item_type === "tvshow");
+        const episodeUsersRatingCounts = tvshowItems.flatMap((item) =>
+          Array.isArray(item.episodes_details)
+            ? item.episodes_details
+                .map((episode) => episode?.users_rating_count)
+                .filter((count) => typeof count === "number")
+            : [],
+        );
+        const isAscending = episodeUsersRatingCounts.every(
+          (count, index) =>
+            index === 0 || count >= episodeUsersRatingCounts[index - 1],
+        );
+
+        expect(tvshowItems.length).toBeGreaterThan(
+          config.minimumNumberOfItems.softDefault,
+        );
+        expect(episodeUsersRatingCounts.length).toBeGreaterThan(
+          config.minimumNumberOfItems.softDefault,
+        );
+        expect(
+          episodeUsersRatingCounts.some((count) => count < 5000),
+        ).toBeTruthy();
+        expect(isAscending).toBeFalsy();
+      },
+    },
 };
 
 /**

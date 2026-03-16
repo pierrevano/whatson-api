@@ -81,6 +81,12 @@ describe("What's on? API tvshow seasons metadata tests", () => {
         expect(item).not.toHaveProperty("_id");
         expect(item.id).toBe(tvshowId);
         expect(item.item_type).toBe("tvshow");
+        expect(item.image).toMatch(/^https:\/\//);
+        expect(item.seasons_number).toBeGreaterThan(0);
+        expect(config.allowedTvshowStatuses).toContain(item.status);
+        if (item.networks !== null) {
+          expect(Array.isArray(item.networks)).toBe(true);
+        }
         expect(Array.isArray(item.seasons)).toBe(true);
         expect(item.seasons.length).toBeGreaterThan(0);
 
@@ -121,6 +127,12 @@ describe("What's on? API tvshow seasons metadata tests", () => {
         expect(item).not.toHaveProperty("_id");
         expect(item.id).toBe(tvshowId);
         expect(item.item_type).toBe("tvshow");
+        expect(item.image).toMatch(/^https:\/\//);
+        expect(item.seasons_number).toBeGreaterThan(0);
+        expect(config.allowedTvshowStatuses).toContain(item.status);
+        if (item.networks !== null) {
+          expect(Array.isArray(item.networks)).toBe(true);
+        }
         expect(item).toHaveProperty("highest_episode");
         expect(item).toHaveProperty("last_episode");
         expect(item).toHaveProperty("lowest_episode");
@@ -159,6 +171,12 @@ describe("What's on? API tvshow seasons metadata tests", () => {
         expect(item).not.toHaveProperty("_id");
         expect(item.id).toBe(tvshowId);
         expect(item.item_type).toBe("tvshow");
+        expect(item.image).toMatch(/^https:\/\//);
+        expect(item.seasons_number).toBeGreaterThan(0);
+        expect(config.allowedTvshowStatuses).toContain(item.status);
+        if (item.networks !== null) {
+          expect(Array.isArray(item.networks)).toBe(true);
+        }
         expect(Array.isArray(item.seasons)).toBe(true);
         expect(item.seasons.length).toBeGreaterThan(0);
 
@@ -379,6 +397,12 @@ describe("What's on? API tvshow seasons metadata tests", () => {
         expect(item).not.toHaveProperty("_id");
         expect(item.id).toBe(tvshowId);
         expect(item.item_type).toBe("tvshow");
+        expect(item.image).toMatch(/^https:\/\//);
+        expect(item.seasons_number).toBeGreaterThan(0);
+        expect(config.allowedTvshowStatuses).toContain(item.status);
+        if (item.networks !== null) {
+          expect(Array.isArray(item.networks)).toBe(true);
+        }
         expect(item.season_number).toBe(1);
         expect(Array.isArray(item.episodes)).toBe(true);
         expect(item.total_episodes).toBe(item.episodes.length);
@@ -403,6 +427,12 @@ describe("What's on? API tvshow seasons metadata tests", () => {
         expect(item).not.toHaveProperty("_id");
         expect(item.id).toBe(tvshowId);
         expect(item.item_type).toBe("tvshow");
+        expect(item.image).toMatch(/^https:\/\//);
+        expect(item.seasons_number).toBeGreaterThan(0);
+        expect(config.allowedTvshowStatuses).toContain(item.status);
+        if (item.networks !== null) {
+          expect(Array.isArray(item.networks)).toBe(true);
+        }
         expect(item.season_number).toBe(1);
         expect(Array.isArray(item.episodes)).toBe(true);
 
@@ -445,6 +475,12 @@ describe("What's on? API tvshow seasons metadata tests", () => {
         expect(item).not.toHaveProperty("_id");
         expect(item.id).toBe(tvshowId);
         expect(item.item_type).toBe("tvshow");
+        expect(item.image).toMatch(/^https:\/\//);
+        expect(item.seasons_number).toBeGreaterThan(0);
+        expect(config.allowedTvshowStatuses).toContain(item.status);
+        if (item.networks !== null) {
+          expect(Array.isArray(item.networks)).toBe(true);
+        }
         expect(item.season_number).toBe(1);
         expect(item.episode_number).toBe(firstEpisode.episode);
         expect(typeof item.episode).toBe("object");

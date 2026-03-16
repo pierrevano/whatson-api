@@ -1,5 +1,6 @@
 const he = require("he");
 
+const { buildEpisodeSummary } = require("../utils/buildEpisodeSummary");
 const { config } = require("../config");
 const {
   convertImdbDateToISOString,
@@ -58,17 +59,19 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
         ? parseInt(episode.voteCount, 10) || null
         : null;
 
-      episodesDetails.push({
-        season,
-        episode: isNaN(rawEpisode) ? null : rawEpisode,
-        title: episode.titleText ? he.decode(episode.titleText) : null,
-        description: episode.plot ? he.decode(episode.plot) : null,
-        id: episode.id || null,
-        url: episode.id ? `${config.baseURLIMDB}${episode.id}/` : null,
-        release_date: releaseDate,
-        users_rating: usersRating,
-        users_rating_count: usersRatingCount,
-      });
+      episodesDetails.push(
+        buildEpisodeSummary({
+          season,
+          episode: isNaN(rawEpisode) ? null : rawEpisode,
+          title: episode.titleText ? he.decode(episode.titleText) : null,
+          description: episode.plot ? he.decode(episode.plot) : null,
+          id: episode.id || null,
+          url: episode.id ? `${config.baseURLIMDB}${episode.id}/` : null,
+          release_date: releaseDate,
+          users_rating: usersRating,
+          users_rating_count: usersRatingCount,
+        }),
+      );
     }
   } catch (error) {
     logErrors(error, url, "parseImdbEpisodes");

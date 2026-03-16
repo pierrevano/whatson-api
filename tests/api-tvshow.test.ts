@@ -154,9 +154,7 @@ function checkItemProperties(items) {
       expect(
         items.filter((item) => item.lowest_episode).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-      expect(["Canceled", "Ended", "Ongoing", "Pilot", "Unknown"]).toContain(
-        item.status,
-      );
+      expect(config.allowedTvshowStatuses).toContain(item.status);
       if (item.platforms_links) {
         expect(
           item.platforms_links.filter((link) =>
