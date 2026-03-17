@@ -27,6 +27,23 @@ async function fetchPathData(queryPath) {
 const getEpisodeKey = (episode) =>
   `${episode.tvshow.id}-${episode.season}-${episode.episode}`;
 
+const normalizeSearchValue = (value) => value.toLowerCase();
+
+const matchesSearch = (episode, value) => {
+  const searchValue = normalizeSearchValue(value);
+  const networkMatches =
+    Array.isArray(episode.tvshow.networks) &&
+    episode.tvshow.networks.some((network) =>
+      normalizeSearchValue(network).includes(searchValue),
+    );
+
+  return (
+    normalizeSearchValue(episode.tvshow.title).includes(searchValue) ||
+    normalizeSearchValue(episode.title).includes(searchValue) ||
+    networkMatches
+  );
+};
+
 describe("What's on? API rated episodes tests", () => {
   beforeAll(() => {
     if (!removeLogs) {
@@ -291,6 +308,88 @@ describe("What's on? API rated episodes tests", () => {
       expect(data.results.length).toBeGreaterThan(0);
       data.results.forEach((episode) => {
         expect(episode.tvshow.status).toBe("Ended");
+      });
+    },
+    config.timeout,
+  );
+
+  test(
+    "return_rated_episodes_filtered_by_tvshow_title_search",
+    async () => {
+      const sourceData = await fetchPathData(
+        `/episodes/rated?minimum_users_rating_count=${explicitMinimumUsersRatingCount}&limit=20`,
+      );
+      const targetEpisode = sourceData.results[0];
+      const data = await fetchPathData(
+        `/episodes/rated?title=${encodeURIComponent(targetEpisode.tvshow.title)}&minimum_users_rating_count=${explicitMinimumUsersRatingCount}&limit=20`,
+      );
+
+      expect(data.results.length).toBeGreaterThan(0);
+      expect(
+        data.results.some(
+          (episode) => getEpisodeKey(episode) === getEpisodeKey(targetEpisode),
+        ),
+      ).toBe(true);
+      data.results.forEach((episode) => {
+        expect(matchesSearch(episode, targetEpisode.tvshow.title)).toBe(true);
+      });
+    },
+    config.timeout,
+  );
+
+  test(
+    "return_rated_episodes_filtered_by_episode_title_search",
+    async () => {
+      const sourceData = await fetchPathData(
+        `/episodes/rated?minimum_users_rating_count=${explicitMinimumUsersRatingCount}&limit=20`,
+      );
+      const targetEpisode = sourceData.results[0];
+      const data = await fetchPathData(
+        `/episodes/rated?title=${encodeURIComponent(targetEpisode.title)}&minimum_users_rating_count=${explicitMinimumUsersRatingCount}&limit=20`,
+      );
+
+      expect(data.results.length).toBeGreaterThan(0);
+      expect(
+        data.results.some(
+          (episode) => getEpisodeKey(episode) === getEpisodeKey(targetEpisode),
+        ),
+      ).toBe(true);
+      data.results.forEach((episode) => {
+        expect(matchesSearch(episode, targetEpisode.title)).toBe(true);
+      });
+    },
+    config.timeout,
+  );
+
+  test(
+    "return_rated_episodes_filtered_by_network_search",
+    async () => {
+      const sourceData = await fetchPathData(
+        `/episodes/rated?minimum_users_rating_count=${explicitMinimumUsersRatingCount}&limit=50`,
+      );
+      const targetEpisode = sourceData.results.find(
+        (episode) =>
+          Array.isArray(episode.tvshow.networks) &&
+          episode.tvshow.networks.length > 0,
+      );
+
+      if (!targetEpisode) {
+        throw new Error("Expected at least one rated episode with a network.");
+      }
+
+      const network = targetEpisode.tvshow.networks[0];
+      const data = await fetchPathData(
+        `/episodes/rated?title=${encodeURIComponent(network)}&minimum_users_rating_count=${explicitMinimumUsersRatingCount}&limit=20`,
+      );
+
+      expect(data.results.length).toBeGreaterThan(0);
+      expect(
+        data.results.some(
+          (episode) => getEpisodeKey(episode) === getEpisodeKey(targetEpisode),
+        ),
+      ).toBe(true);
+      data.results.forEach((episode) => {
+        expect(matchesSearch(episode, network)).toBe(true);
       });
     },
     config.timeout,

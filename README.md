@@ -127,7 +127,7 @@ The query parameters provided below are solely for item search purposes and must
 Returns the highest or lowest rated episodes across all tvshows combined.
 
 > ```
-> https://whatson-api.onrender.com/episodes/rated?order=asc,desc&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<number>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/episodes/rated?order=asc,desc&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<number>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&title=<string>&page=<integer>&limit=<integer>
 > ```
 
 | Parameter                  | Value                                | Description                                                                                    |
@@ -148,6 +148,7 @@ Returns the highest or lowest rated episodes across all tvshows combined.
 | networks                   | _string_                             | Filter tvshows by networks                                                                     |
 | production_companies       | _string_                             | Filter tvshows by production companies                                                         |
 | status                     | canceled,ended,ongoing,pilot,unknown | Filter tvshows by status                                                                       |
+| title                      | _string_                             | Search across the tvshow title, episode title, or tvshow networks                              |
 | page                       | _integer_                            | Requested page number                                                                          |
 | limit                      | _integer_                            | Number of rated episodes to return                                                             |
 

@@ -48,7 +48,7 @@ const getBooleanMatch = (value, fallbackValue, key) => {
 };
 
 /**
- * Returns paginated rated episodes that match the requested show, rating, season, and release-date filters.
+ * Returns paginated rated episodes that match the requested show, title search, rating, season, and release-date filters.
  *
  * @param {import("express").Request} req - Express request with filters and pagination.
  * @param {import("express").Response} res - Express response.
@@ -97,6 +97,7 @@ const getRatedEpisodes = async (req, res) => {
       .split(",")
       .map((season) => Number.parseInt(season.trim(), 10))
       .filter((season) => !Number.isNaN(season));
+    const titleQuery = String(req.query.title || "").trim();
 
     const is_active_item = getBooleanMatch(
       req.query.is_active,
@@ -267,6 +268,23 @@ const getRatedEpisodes = async (req, res) => {
         $and: episodeMatchConditions,
       },
     });
+
+    if (titleQuery) {
+      const titleRegex = new RegExp(
+        titleQuery.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "i",
+      );
+
+      pipeline.push({
+        $match: {
+          $or: [
+            { title: titleRegex },
+            { "episodes_details.title": titleRegex },
+            { networks: titleRegex },
+          ],
+        },
+      });
+    }
 
     pipeline.push({
       $facet: {
