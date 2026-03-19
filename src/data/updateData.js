@@ -9,10 +9,11 @@ const client = new MongoClient(uri, {
 });
 
 const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
-const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { getMojoBoxOfficeArray } = require("../utils/getMojoBoxOfficeArray");
+const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { jsonArrayFiltered } = require("../utils/jsonArrayFiltered");
 const { updateIds } = require("./updateIds");
+const checkCountryCode = require("../utils/checkCountryCode");
 const checkDbIds = require("./checkDbIds");
 const checkMissingImdbIds = require("./checkMissingImdbIds");
 const deleteIds = require("./deleteIds");
@@ -20,30 +21,6 @@ const filterByCheckId = require("./filterByCheckId");
 const isThirdPartyServiceOK = require("../utils/thirdPartyStatus");
 const loopItems = require("./loopItems");
 const resetInactiveItems = require("./resetInactiveItems");
-
-async function checkCountryCode() {
-  try {
-    const { success, data } = await isThirdPartyServiceOK(config.IPinfo);
-
-    if (success) {
-      if (data.trim() !== "FR") {
-        console.log("Please disable any VPN first.");
-        process.exit(1);
-      } else {
-        console.log(`Country code is ${data.trim()}, continuing...`);
-        console.log(
-          "----------------------------------------------------------------------------------------------------",
-        );
-      }
-    } else {
-      console.error("Failed to fetch country code. Aborting.");
-      process.exit(1);
-    }
-  } catch (error) {
-    console.error("Error fetching country code:", error);
-    process.exit(1);
-  }
-}
 
 async function checkStatus(service) {
   const { success } = await isThirdPartyServiceOK(service.url);

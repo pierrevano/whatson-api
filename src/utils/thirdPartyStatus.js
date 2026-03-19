@@ -5,7 +5,7 @@ const { config } = require("../config");
 const { logErrors } = require("./logErrors");
 
 /**
- * Checks the availability of a third-party service with automatic retries and user-agent spoofing.
+ * Checks the availability of a third-party service with automatic retries.
  *
  * @param {string} service - Absolute URL of the status endpoint to probe.
  * @returns {Promise<{success: boolean, data: any}>} Resolves with the HTTP payload when reachable, otherwise flags failure.
@@ -18,10 +18,18 @@ const isThirdPartyServiceOK = async (service) => {
     });
 
     const isImdb = service.includes("imdb.com");
+    const isTraktApi = service.includes("api.trakt.tv");
     const options = {
       timeout: config.thirdPartyStatusTimeoutMs,
       validateStatus: (status) => status === 200 || (isImdb && status === 202),
     };
+
+    if (isTraktApi) {
+      options.headers = {
+        "trakt-api-key": config.traktApiKey,
+        "trakt-api-version": 2,
+      };
+    }
 
     console.log(`Calling service: ${service}`);
     const response = await axios.get(service, options);
@@ -31,7 +39,7 @@ const isThirdPartyServiceOK = async (service) => {
       data: response.data,
     };
   } catch (error) {
-    logErrors(error, service, null);
+    logErrors(error, service, "thirdPartyStatus");
 
     return {
       success: false,
