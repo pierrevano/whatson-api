@@ -2,6 +2,7 @@ const { appendFile } = require("fs");
 
 const { config } = require("../config");
 const { getNodeVarsValues } = require("./getNodeVarsValues");
+const { homepageStatusErrorCode } = require("./getHomepageResponse");
 const { reportError } = require("./sendToNewRelic");
 
 const isBetaseriesResource = (value = "") =>
@@ -28,6 +29,13 @@ function isErrorPresent(errorMsg, error, item) {
 }
 
 const logErrors = (error, item, origin) => {
+  if (
+    error?.code === homepageStatusErrorCode &&
+    process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR === "true"
+  ) {
+    throw error;
+  }
+
   let errorMsg = `${item} - ${origin} - ${error}`;
 
   if (getNodeVarsValues.environment === "local") {

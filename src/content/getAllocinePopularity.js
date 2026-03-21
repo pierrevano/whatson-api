@@ -1,6 +1,5 @@
-const axios = require("axios");
-
 const { config } = require("../config");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -17,7 +16,10 @@ const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
         : config.seriesPopularityPath;
     const url = `${config.baseURLAssets}/${popularityPath}`;
 
-    const response = await axios.get(url);
+    const response = await getHomepageResponse(url, {
+      serviceName: "AlloCiné popularity",
+      id: item_type,
+    });
     const lines = response.data.split("\n");
 
     const firstLineWithAllocineURL = lines.find((line) =>

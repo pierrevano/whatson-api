@@ -1,6 +1,5 @@
-const axios = require("axios");
-
 const { config } = require("../config");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 const { writeItemsNumber } = require("../utils/writeItems");
@@ -54,8 +53,12 @@ const getPlatformsLinks = async (betaseriesId, allocineHomepage, imdbId) => {
         : config.baseURLBetaseriesAPIFilms;
       const url = `${baseURLBetaseriesAPI}?key=${config.betaseriesApiKey}&imdb_id=${imdbId}`;
 
-      const options = { validateStatus: (status) => status < 500 };
-      const { data, status } = await axios.get(url, options);
+      const { data, status } = await getHomepageResponse(url, {
+        serviceName: "BetaSeries platforms links",
+        id: imdbId,
+        allowedStatuses: [200, 400],
+      });
+
       if (status !== 200) return null;
 
       if (data.show && data.show.platforms && data.show.platforms.svods) {

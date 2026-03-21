@@ -24,7 +24,7 @@ const getTraktRating = async (allocineHomepage, traktHomepage, traktId) => {
 
       const apiUrl = `${config.baseURLTraktAPI}/${type}/${traktId}?extended=full`;
       const response = await getHomepageResponse(apiUrl, {
-        serviceName: "Trakt API",
+        serviceName: "Trakt",
         id: traktId,
         requestConfig: {
           headers: {

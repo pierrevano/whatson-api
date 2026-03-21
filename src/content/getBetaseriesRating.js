@@ -1,5 +1,3 @@
-const axios = require("axios");
-
 const { config } = require("../config");
 const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
@@ -30,23 +28,19 @@ const getBetaseriesRating = async (
         id: betaseriesId,
       });
 
-      const options = {
-        validateStatus: (status) => status < 500,
-      };
-
       const pattern = /window\.BSAppURI\s*=\s*['"]([^'"]+)['"]/;
 
       const rangeStartTime = Date.now();
-      const rangeResponse = await axios.get(betaseriesHomepage, {
-        ...options,
-        headers: {
-          Range: "bytes=0-16383",
+      const rangeResponse = await getHomepageResponse(betaseriesHomepage, {
+        serviceName: "BetaSeries",
+        id: betaseriesId,
+        allowedStatuses: [200, 206],
+        requestConfig: {
+          headers: {
+            Range: "bytes=0-16383",
+          },
         },
       });
-
-      if (rangeResponse.status !== 200 && rangeResponse.status !== 206) {
-        throw new Error("Failed to retrieve data.");
-      }
 
       const rangeHtml =
         typeof rangeResponse.data === "string"
@@ -64,14 +58,13 @@ const getBetaseriesRating = async (
 
       if (!id) {
         const startTime = Date.now();
-        const response = await axios.get(betaseriesHomepage, {
-          ...options,
-          responseType: "stream",
+        const response = await getHomepageResponse(betaseriesHomepage, {
+          serviceName: "BetaSeries",
+          id: betaseriesId,
+          requestConfig: {
+            responseType: "stream",
+          },
         });
-
-        if (response.status !== 200) {
-          throw new Error("Failed to retrieve data.");
-        }
 
         id = await new Promise((resolve, reject) => {
           let buffer = "";
@@ -124,9 +117,10 @@ const getBetaseriesRating = async (
         : config.baseURLBetaseriesAPIFilms;
 
       const url = `${baseURLBetaseriesAPI}?id=${id}&key=${config.betaseriesApiKey}`;
-      const { data, status } = await axios.get(url, options);
-
-      if (status !== 200) return { usersRating, usersRatingCount };
+      const { data } = await getHomepageResponse(url, {
+        serviceName: "BetaSeries",
+        id,
+      });
 
       const item = isSeries ? data.show : data.movie;
 

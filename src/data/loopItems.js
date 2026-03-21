@@ -4,6 +4,7 @@ const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
 const { checkRatings403 } = require("../utils/checkRatings403");
 const { getImdbData } = require("../utils/getImdbData");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
+const { homepageStatusErrorCode } = require("../utils/getHomepageResponse");
 const {
   shouldCreateFromImdbReleaseDate,
 } = require("../utils/shouldCreateFromImdbReleaseDate");
@@ -207,6 +208,16 @@ const loopItems = async (
         process.exit(0);
       }
     } catch (error) {
+      if (
+        error?.code === homepageStatusErrorCode &&
+        process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR === "true"
+      ) {
+        console.log(
+          `Skipping item at index ${index} because of homepage status error: ${error.message}`,
+        );
+        continue;
+      }
+
       throw new Error(
         `Error processing item at index ${index}: ${error.message}`,
       );

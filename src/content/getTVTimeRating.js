@@ -27,10 +27,6 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
     retryDelay: () => config.retryDelay,
   });
 
-  const options = {
-    validateStatus: (status) => status < 500,
-  };
-
   if (isNotNull(tvtimeId)) {
     await getHomepageResponse(tvtimeHomepage, {
       serviceName: "TV Time",
@@ -41,7 +37,10 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
 
     for (let attempt = 1; attempt <= config.retries; attempt += 1) {
       try {
-        const response = await axios.get(apiUrl, options);
+        const response = await getHomepageResponse(apiUrl, {
+          serviceName: "TV Time",
+          id: tvtimeId,
+        });
 
         if (response.data?.rating) {
           usersRating = parseFloat(response.data.rating);

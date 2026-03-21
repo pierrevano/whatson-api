@@ -1,5 +1,7 @@
 const axios = require("axios");
 
+const homepageStatusErrorCode = "homepageStatusError";
+
 /**
  * Fetches a homepage URL and exits the process when the response status is not allowed.
  *
@@ -31,13 +33,21 @@ const getHomepageResponse = async (homepageUrl, options = {}) => {
 
   if (!acceptedStatuses.includes(response.status)) {
     const idSuffix = id ? ` - ${id}` : "";
-    console.log(
+    const error = new Error(
       `${serviceName} homepage returned status ${response.status} - ${homepageUrl}${idSuffix}`,
     );
+    error.code = homepageStatusErrorCode;
+    error.response = response;
+
+    if (process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR === "true") {
+      throw error;
+    }
+
+    console.log(error.message);
     process.exit(1);
   }
 
   return response;
 };
 
-module.exports = { getHomepageResponse };
+module.exports = { getHomepageResponse, homepageStatusErrorCode };

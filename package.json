@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.26.2",
+  "version": "3.26.3",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -76,7 +76,7 @@
     "rate-limiter-flexible": "^10.0.1",
     "shelljs": "^0.10.0",
     "tough-cookie": "^6.0.1",
-    "vercel": "^50.34.0"
+    "vercel": "^50.34.3"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

@@ -1,5 +1,3 @@
-const axios = require("axios");
-
 const { config } = require("../config");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getHomepageResponse } = require("../utils/getHomepageResponse");
@@ -60,11 +58,19 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
       const type = metacriticHomepage.includes("/tv/") ? "shows" : "movies";
 
       const [userStats, criticStats] = await Promise.all([
-        axios.get(
+        getHomepageResponse(
           `${config.baseURLMetacriticBackend}/user/${type}/${metacriticId}/stats/web`,
+          {
+            serviceName: "Metacritic",
+            id: metacriticId,
+          },
         ),
-        axios.get(
+        getHomepageResponse(
           `${config.baseURLMetacriticBackend}/critic/${type}/${metacriticId}/stats/web`,
+          {
+            serviceName: "Metacritic",
+            id: metacriticId,
+          },
         ),
       ]);
 

@@ -2,6 +2,7 @@ const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
+const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -55,9 +56,12 @@ const getTheTvdbSlug = async (allocineHomepage, theTvdbId) => {
       const accessToken = loginResponse.data.data.token;
 
       // Step 2: Fetch movie or tvshow details using TheTVDB API
-      const { data } = await axios.get(slugUrl, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        validateStatus: (status) => status === 200,
+      const { data } = await getHomepageResponse(slugUrl, {
+        serviceName: "TheTVDB slug",
+        id: theTvdbId,
+        requestConfig: {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
       });
 
       theTvdbSlug = data?.data?.slug;
