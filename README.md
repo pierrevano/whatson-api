@@ -8,6 +8,14 @@ Companion to [What's on?](https://github.com/pierrevano/whatson)
 
 ---
 
+## Usage Notice
+
+This repository is provided under a custom non-commercial license. Non-commercial forking and modification are allowed. Commercial use is prohibited.
+
+Use of the API and any returned data is subject to [API_TERMS.md](./API_TERMS.md). Any use of the API data remains the sole responsibility of the end user.
+
+---
+
 ⚠️ This API is currently running on Render's free tier. If you'd like to help keep it active at all times, please consider supporting the project via GitHub Sponsors, Patreon, or Buy Me a Coffee. For any additional feedback, you can also join the Discord server: https://discord.gg/SpKw8Zg5vT.
 
 Note: A rate limit of `1000` requests per hour is in place to prevent abuse of the API. When the limit is exceeded, the API returns a `429` response with a `Retry-After` header. An API key can be requested on demand to remove this limit by contacting me at https://pierrevano.github.io.

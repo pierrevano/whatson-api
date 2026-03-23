@@ -268,8 +268,8 @@ if [[ $1 == "check" ]]; then
   fi
 
   if [[ $3 == "all_ids" ]]; then
-    SOURCE_ARRAY_FILE=${4:-./temp_mojo_box_office.json}
-    TEMP_IMDB_IDS_FILE=./temp_imdb_ids.txt
+    SOURCE_ARRAY_FILE=${4:-./temp_mojo_box_office_${2}.json}
+    TEMP_IMDB_IDS_FILE=./temp_imdb_ids_${2}.txt
 
     if [[ ! -f $SOURCE_ARRAY_FILE ]]; then
       echo "Source array file $SOURCE_ARRAY_FILE not found. Aborting."
@@ -301,7 +301,7 @@ if [[ $1 == "check" ]]; then
 
   while IFS= read -r LINE <&3; do
     PERCENT=$(echo "scale=2; ($COUNTER / $TOTAL_LINES) * 100" | bc)
-    URL=$(cat $FILE_PATH | grep $LINE | cut -d',' -f1)
+    URL=$(echo "$LINE" | cut -d',' -f1)
 
     if [[ $URL != "URL" ]]; then
       echo "$PERCENT: $URL"
@@ -565,8 +565,8 @@ elif [[ $1 == "check_imdb" ]]; then
   fi
 
   if [[ $3 == "all_ids" ]]; then
-    SOURCE_ARRAY_FILE=${4:-./temp_mojo_box_office.json}
-    TEMP_IMDB_IDS_FILE=./temp_imdb_ids.txt
+    SOURCE_ARRAY_FILE=${4:-./temp_mojo_box_office_${2}.json}
+    TEMP_IMDB_IDS_FILE=./temp_imdb_ids_${2}.txt
 
     if [[ ! -f $SOURCE_ARRAY_FILE ]]; then
       echo "Source array file $SOURCE_ARRAY_FILE not found. Aborting."
@@ -598,7 +598,7 @@ elif [[ $1 == "check_imdb" ]]; then
 
   while IFS= read -r LINE <&3; do
     PERCENT=$(echo "scale=2; ($COUNTER / $TOTAL_LINES) * 100" | bc)
-    URL=$(cat $FILE_PATH | grep $LINE | cut -d',' -f1)
+    URL=$(echo "$LINE" | cut -d',' -f1)
 
     if [[ $URL != "URL" ]]; then
       echo "$PERCENT: $URL"

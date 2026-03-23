@@ -5,7 +5,7 @@ const { config } = require("../config");
 
 /**
  * Filters the dataset when `check_id` is provided, optionally limiting results to outdated items.
- * Writes the filtered list to `./temp_mojo_box_office.json` and aborts when nothing matches.
+ * Writes the filtered list to an item-type-specific temp file and aborts when nothing matches.
  *
  * @param {Object} params
  * @param {import("mongodb").Collection} params.collectionData - Mongo collection containing remote items.
@@ -106,7 +106,7 @@ const filterByCheckId = async ({
   }
 
   writeFileSync(
-    "./temp_mojo_box_office.json",
+    `./temp_mojo_box_office_${getNodeVarsValues.item_type}.json`,
     JSON.stringify(filteredByImdbId),
     "utf-8",
   );
