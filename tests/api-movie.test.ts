@@ -1533,6 +1533,17 @@ const params = {
     },
   },
 
+  should_have_limited_french_fallback_images_movie: {
+    query: `?item_type=movie&is_active=true,false&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) => {
+      const frenchFallbackImages = items.filter((item) =>
+        item.image?.startsWith("https://fr.web.img"),
+      );
+
+      expect(frenchFallbackImages.length).toBeLessThanOrEqual(3);
+    },
+  },
+
   only_platforms_netflix_or_canal: {
     query: `?item_type=movie&platforms=${encodeURIComponent("Netflix,Canal+")}&append_to_response=platforms_links`,
     expectedResult: (items) => {

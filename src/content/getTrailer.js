@@ -103,7 +103,7 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage) => {
     logErrors(error, allocineHomepage, "getTrailer");
   }
 
-  return trailer;
+  return trailer ? trailer.split("?")[0] : trailer;
 };
 
 module.exports = { getTrailer };

@@ -1,7 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 const { config } = require("../config");
-const { getEpisodeSortFields } = require("../utils/episodeRanking");
+const { getEpisodeSortFields } = require("../utils/getEpisodeSortFields");
 const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { parseMinimumRatings } = require("../utils/parseMinimumRatings");

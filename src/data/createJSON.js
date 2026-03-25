@@ -139,11 +139,12 @@ const createJSON = async (
     allocineFirstInfo,
   );
   const originalTitle = await getOriginalTitle(allocineHomepage, tmdbData);
-  const image = await getImage(allocineHomepage, tmdbData);
   const imageVariants = await getImageVariants(
     allocineHomepage,
     allocineFirstInfo,
   );
+  const image =
+    (await getImage(allocineHomepage, tmdbData)) || imageVariants?.fr || null;
   const { certification, certificationVariants } =
     await getCertification(imdbHomepage);
   const parentsGuide = await getParentsGuide(imdbHomepage);

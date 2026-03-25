@@ -1503,6 +1503,17 @@ const params = {
     },
   },
 
+  should_have_limited_french_fallback_images_tvshow: {
+    query: `?item_type=tvshow&is_active=true,false&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) => {
+      const frenchFallbackImages = items.filter((item) =>
+        item.image?.startsWith("https://fr.web.img"),
+      );
+
+      expect(frenchFallbackImages.length).toBeLessThanOrEqual(3);
+    },
+  },
+
   only_genres_drama: {
     query: `?item_type=tvshow&genres=${encodeURIComponent("allgenresWrong,Drama")}&append_to_response=genres&limit=250`,
     expectedResult: (items) => {
