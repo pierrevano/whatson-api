@@ -1,6 +1,7 @@
 const { config } = require("../config");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getContentUrl } = require("../utils/getContentUrl");
+const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 const { removeExtraChar } = require("../utils/removeExtraChar");
 
@@ -8,9 +9,14 @@ const { removeExtraChar } = require("../utils/removeExtraChar");
  * Retrieves the trailer link for a movie or tvshow using BetaSeries and AlloCiné fallbacks.
  * @param {string} allocineHomepage - The URL of the movie or tvshow on AlloCiné.
  * @param {string|null} betaseriesHomepage - The corresponding BetaSeries URL when available.
+ * @param {string|null} betaseriesId - The corresponding BetaSeries ID when available.
  * @returns {Promise<string|null>} The trailer URL, or null if it cannot be determined.
  */
-const getTrailer = async (allocineHomepage, betaseriesHomepage) => {
+const getTrailer = async (
+  allocineHomepage,
+  betaseriesHomepage,
+  betaseriesId,
+) => {
   let trailer = null;
   let $;
 
@@ -19,7 +25,7 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage) => {
   };
 
   try {
-    if (betaseriesHomepage) {
+    if (isNotNull(betaseriesId)) {
       $ = await getCheerioContent(betaseriesHomepage, options, "getTrailer");
 
       const dailymotionId = $(".video-embed-container div").first().attr("id");
@@ -33,11 +39,17 @@ const getTrailer = async (allocineHomepage, betaseriesHomepage) => {
      */
     if (!trailer) {
       if (allocineHomepage.includes(config.baseURLTypeSeries)) {
-        $ = await getCheerioContent(betaseriesHomepage, options, "getTrailer");
+        if (isNotNull(betaseriesId)) {
+          $ = await getCheerioContent(
+            betaseriesHomepage,
+            options,
+            "getTrailer",
+          );
 
-        const content = getContentUrl($, false, allocineHomepage);
-        if (content && content.video && content.video.embedUrl)
-          trailer = content.video.embedUrl;
+          const content = getContentUrl($, false, allocineHomepage);
+          if (content && content.video && content.video.embedUrl)
+            trailer = content.video.embedUrl;
+        }
 
         /*
          * Checking to see if the trailer variable is `null`.

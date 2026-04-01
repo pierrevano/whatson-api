@@ -3,6 +3,7 @@ const fs = require("fs");
 const { b64Encode } = require("../utils/b64EncodeAndDecode");
 const { config } = require("../config");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * Compares locally generated dataset identifiers with those stored in MongoDB and writes a helper
@@ -84,10 +85,7 @@ const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
       );
     }
   } catch (error) {
-    console.error(
-      "Something went wrong when fetching data from the database.",
-      error,
-    );
+    logErrors(error, getNodeVarsValues.item_type, "checkDbIds");
   }
 };
 

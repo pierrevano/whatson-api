@@ -1,4 +1,5 @@
 const { b64Encode } = require("../utils/b64EncodeAndDecode");
+const { logErrors } = require("../utils/logErrors");
 
 /**
  * Upserts the given data to the database collection.
@@ -27,7 +28,7 @@ const upsertToDatabase = async (
 
     await collectionData.updateOne(filter, updateDoc, options);
   } catch (error) {
-    throw new Error(`upsertToDatabase: ${error}`);
+    logErrors(error, allocineHomepage, "upsertToDatabase");
   }
 };
 

@@ -113,9 +113,9 @@ else
   sed -i '' -E "s/(,TRUE|,FALSE){1,}/,FALSE/g" $FILMS_IDS_FILE_PATH
 fi
 
-WRONG_LINES_NB=$(grep -E -v "$REGEX_IDS" $FILMS_IDS_FILE_PATH | wc -l)
-WRONG_LINES_NB_COMMAS=$(grep -E -v "$REGEX_IDS_COMMAS" $FILMS_IDS_FILE_PATH | wc -l)
-WRONG_LINES_NB_SLASHS=$(awk 'NR==1 && /^URL/ {next} {print}' $FILMS_IDS_FILE_PATH | grep -E -v "$REGEX_IDS_SLASHS" | wc -l)
+WRONG_LINES_NB=$(grep -E -c -v "$REGEX_IDS" "$FILMS_IDS_FILE_PATH")
+WRONG_LINES_NB_COMMAS=$(grep -E -c -v "$REGEX_IDS_COMMAS" "$FILMS_IDS_FILE_PATH")
+WRONG_LINES_NB_SLASHS=$(awk 'NR==1 && /^URL/ {next} {print}' "$FILMS_IDS_FILE_PATH" | grep -E -c -v "$REGEX_IDS_SLASHS")
 WRONG_LINES_NB_INVISIBLE=$(perl -lne 'print if m/[^\x20-\x7E]/ || /[^[:ascii:]]/ || /[[:^print:]]/' $FILMS_IDS_FILE_PATH | wc -l)
 DUPLICATE_ALLOCINE_URLS=$(cut -d',' -f1 "$FILMS_IDS_FILE_PATH" | sort | uniq -d)
 ERRORS_FOUND=0
@@ -148,7 +148,7 @@ if [[ $ERRORS_FOUND -eq 1 ]]; then
   exit 1
 fi
 
-DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | sort | uniq -cd | awk '$1 > 3')
+DUPLICATES_LINES_NB=$(cut -d',' -f1 "$FILMS_IDS_FILE_PATH" | uniq -cd && cut -d',' -f2 "$FILMS_IDS_FILE_PATH" | sort | uniq -cd | awk '$1 > 3')
 if [[ $DUPLICATES_LINES_NB ]]; then
   echo "DUPLICATES_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
@@ -158,7 +158,7 @@ fi
 
 # Sorting the ids in the file and removing duplicates.
 sort_ids () {
-  cat $FILMS_IDS_FILE_PATH | sort -V | uniq > ./temp_ids.txt
+  sort -V "$FILMS_IDS_FILE_PATH" | uniq > ./temp_ids.txt
   cat ./temp_ids.txt > $FILMS_IDS_FILE_PATH
 }
 
@@ -166,7 +166,10 @@ sort_ids () {
 remove_files () {
   sort_ids
 
-  rm -f ./temp_*
+  for TEMP_FILE in ./temp_*; do
+    [[ $TEMP_FILE == "./temp_error.log" ]] && continue
+    rm -f "$TEMP_FILE"
+  done
   rm -f src/assets/.!*!films_ids.txt
   rm -f src/assets/.!*!series_ids.txt
 
@@ -183,7 +186,7 @@ update_imdb_popularity_flags () {
   json=$(curl -s -H "User-Agent: $USER_AGENT" "$IMDB_CHART_URL" | grep -o '<script id="__NEXT_DATA__" type="application/json">.*</script>' | sed 's/<script id="__NEXT_DATA__" type="application\/json">//; s/<\/script>//')
 
   if [[ -z $json ]]; then
-    if ! json=$(node -e 'const { getCheerioContentWithBrowser } = require("./src/utils/getCheerioContentWithBrowser"); const url = process.argv[1]; (async () => { console.log = console.error; const $ = await getCheerioContentWithBrowser(url, "imdb chart"); const payload = $("script#__NEXT_DATA__").text(); if (!payload) { process.exit(2); } process.stdout.write(payload); })().catch((err) => { console.error("Failed to fetch IMDb __NEXT_DATA__.", err); process.exit(1); });' "$IMDB_CHART_URL"); then
+    if ! json=$(node -e 'const { getCheerioContentWithBrowser } = require("./src/utils/getCheerioContentWithBrowser"); const url = process.argv[1]; (async () => { console.log = console.error; const $ = await getCheerioContentWithBrowser(url, "imdb chart", { reuseSharedPage: false }); const payload = $("script#__NEXT_DATA__").text(); if (!payload) { process.exit(2); } process.stdout.write(payload); })().catch((err) => { console.error("Failed to fetch IMDb __NEXT_DATA__.", err); process.exit(1); });' "$IMDB_CHART_URL"); then
       json=""
     fi
   fi
@@ -356,7 +359,7 @@ rm -f $POPULARITY_ASSETS_PATH
 curl -s -H "User-Agent: $USER_AGENT" $BASE_URL > temp_baseurl
 
 # Get AlloCiné baseUrl number
-FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
+FILMS_NUMBER=$(grep -F -c "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" temp_baseurl)
 if [[ $FILMS_NUMBER -gt $FILMS_MAX_NUMBER ]]; then
   FILMS_NUMBER=$FILMS_MAX_NUMBER
 fi
@@ -366,7 +369,7 @@ if [[ $FILMS_NUMBER -lt $FILMS_MAX_NUMBER ]]; then
   PAGES_NUMBER=1
 else
   # Define AlloCiné baseUrl pages number
-  PAGES_NUMBER=$(cat temp_baseurl | grep -Eo "\">[0-9]+</a></div></nav>" | cut -d'>' -f2 | cut -d'<' -f1)
+  PAGES_NUMBER=$(grep -Eo "\">[0-9]+</a></div></nav>" temp_baseurl | cut -d'>' -f2 | cut -d'<' -f1)
   if [[ $PAGES_NUMBER -gt $PAGES_MAX_NUMBER ]]; then
     PAGES_NUMBER=$PAGES_MAX_NUMBER
   fi
@@ -398,7 +401,7 @@ do
     echo "Downloading from: $BASE_URL?page=$PAGES_INDEX_NUMBER"
     echo $SEPARATOR
 
-    FILMS_NUMBER=$(cat temp_baseurl | grep "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | wc -l | awk '{print $1}')
+    FILMS_NUMBER=$(grep -F -c "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" temp_baseurl)
     if [[ $FILMS_NUMBER -gt 15 ]]; then
       FILMS_NUMBER=$FILMS_MAX_NUMBER
     fi
@@ -413,14 +416,15 @@ do
       read URL
       URL=$(echo $URL | sed 's/https:\/\/www.allocine.fr//')
 
-      URL_FOUND=$(grep $URL $FILMS_IDS_FILE_PATH | wc -l | awk '{print $1}')
+      URL_FOUND=$(grep -F -c -- "$URL" "$FILMS_IDS_FILE_PATH")
       if [[ $URL_FOUND -eq 1 ]]; then
         echo "URL is already existing in $FILMS_IDS_FILE_PATH"
-        grep $URL $FILMS_IDS_FILE_PATH
+        grep -F -- "$URL" "$FILMS_IDS_FILE_PATH"
         exit 1
       fi
     else
-      URL=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4)
+      CURRENT_FILM_LINE=$(grep -F -m "$FILMS_INDEX_NUMBER" "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" temp_baseurl | tail -1)
+      URL=$(printf '%s\n' "$CURRENT_FILM_LINE" | cut -d'"' -f4)
     fi
 
     # Sometimes AlloCiné is displaying a default top series list starting by this ID. If `true`, aborting.
@@ -437,11 +441,12 @@ do
     if [[ $PROMPT == "allocine" ]]; then
       FILM_ID=$(echo $URL | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
     else
-      FILM_ID=$(cat temp_baseurl | grep -m$FILMS_INDEX_NUMBER "<a class=\"meta-title-link\" href=\"$FILMS_NUMBER_HREF" | tail -1 | head -1 | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
+      FILM_ID=$(printf '%s\n' "$CURRENT_FILM_LINE" | cut -d'"' -f4 | cut -d'=' -f2 | cut -d'.' -f1)
     fi
 
     # Check if missing shows
-    ALLOCINE_URL=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f1)
+    MATCHING_IDS_LINE=$(grep -F -m1 -- "$URL," "$FILMS_IDS_FILE_PATH")
+    ALLOCINE_URL=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f1)
 
     if [[ $URL == $ALLOCINE_URL ]]; then
       if [[ $SOURCE == "circleci" ]]; then
@@ -449,9 +454,9 @@ do
       else
         sed -i '' "/.*=$FILM_ID\.html.*$/ s/,FALSE$/,TRUE/" $FILMS_IDS_FILE_PATH
       fi
-      cat $FILMS_IDS_FILE_PATH | grep ".*=$FILM_ID\.html"
+      grep ".*=$FILM_ID\.html" "$FILMS_IDS_FILE_PATH"
 
-      MATCH_NUMBER=$(cat $FILMS_IDS_FILE_PATH | grep ".*=$FILM_ID\.html" | wc -l | awk '{print $1}')
+      MATCH_NUMBER=$(grep -c ".*=$FILM_ID\.html" "$FILMS_IDS_FILE_PATH")
       if [[ $MATCH_NUMBER != 1 ]]; then
         exit 1
       fi
@@ -470,15 +475,15 @@ do
     # Add first line to URLs check file
     echo "first line" >> $TEMP_URLS_FILE_PATH
 
-    IMDB_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f2)
-    BETASERIES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f3)
-    THEMOVIEDB_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f4)
-    METACRITIC_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f5)
-    ROTTEN_TOMATOES_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f6)
-    LETTERBOXD_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f7)
-    SENSCRITIQUE_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f8)
-    TRAKT_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f9)
-    THETVDB_CHECK=$(cat $FILMS_IDS_FILE_PATH | grep $URL | cut -d',' -f10)
+    IMDB_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f2)
+    BETASERIES_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f3)
+    THEMOVIEDB_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f4)
+    METACRITIC_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f5)
+    ROTTEN_TOMATOES_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f6)
+    LETTERBOXD_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f7)
+    SENSCRITIQUE_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f8)
+    TRAKT_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f9)
+    THETVDB_CHECK=$(printf '%s\n' "$MATCHING_IDS_LINE" | cut -d',' -f10)
 
     if [[ $FOUND -eq 0 ]] || [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; then
       URL_FILE=$TEMP_URLS_FILE_PATH

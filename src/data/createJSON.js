@@ -164,7 +164,11 @@ const createJSON = async (
     allocineHomepage,
     tmdbData,
   );
-  const trailer = await getTrailer(allocineHomepage, betaseriesHomepage);
+  const trailer = await getTrailer(
+    allocineHomepage,
+    betaseriesHomepage,
+    betaseriesId,
+  );
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
     allocineURL,

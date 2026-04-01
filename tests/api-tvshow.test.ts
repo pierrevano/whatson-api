@@ -12,6 +12,7 @@ const {
   expectIdRatingConsistency,
 } = require("./utils/idExpectations");
 const { formatDate } = require("../src/utils/formatDate");
+const { withErrorContext } = require("./utils/withErrorContext");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -1702,34 +1703,36 @@ const params = {
             return;
           }
 
-          const lastSeason = item.last_episode.season;
-          const lastEpisode = item.last_episode.episode;
-          const nextSeason = item.next_episode.season;
-          const nextEpisode = item.next_episode.episode;
+          withErrorContext(`IMDb id: ${item.imdb?.id ?? "unknown"}`, () => {
+            const lastSeason = item.last_episode.season;
+            const lastEpisode = item.last_episode.episode;
+            const nextSeason = item.next_episode.season;
+            const nextEpisode = item.next_episode.episode;
 
-          const isSequential =
-            (nextSeason === lastSeason && nextEpisode === lastEpisode + 1) ||
-            (nextSeason === lastSeason + 1 &&
-              (nextEpisode === 0 || nextEpisode === 1));
+            const isSequential =
+              (nextSeason === lastSeason && nextEpisode === lastEpisode + 1) ||
+              (nextSeason === lastSeason + 1 &&
+                (nextEpisode === 0 || nextEpisode === 1));
 
-          expect(isSequential).toBe(true);
+            expect(isSequential).toBe(true);
 
-          const lastEpisodeIndex = item.episodes_details.findIndex(
-            (episode) => episode.id === item.last_episode.id,
-          );
-          expect(lastEpisodeIndex).toBeGreaterThanOrEqual(0);
+            const lastEpisodeIndex = item.episodes_details.findIndex(
+              (episode) => episode.id === item.last_episode.id,
+            );
+            expect(lastEpisodeIndex).toBeGreaterThanOrEqual(0);
 
-          const expectedNextEpisode =
-            item.episodes_details[lastEpisodeIndex + 1] ?? null;
+            const expectedNextEpisode =
+              item.episodes_details[lastEpisodeIndex + 1] ?? null;
 
-          expect(expectedNextEpisode).not.toBeNull();
-          expect(expectedNextEpisode?.id).toBe(item.next_episode.id);
+            expect(expectedNextEpisode).not.toBeNull();
+            expect(expectedNextEpisode?.id).toBe(item.next_episode.id);
 
-          const lastReleaseDate = formatDate(item.last_episode.release_date);
-          const nextReleaseDate = formatDate(item.next_episode.release_date);
+            const lastReleaseDate = formatDate(item.last_episode.release_date);
+            const nextReleaseDate = formatDate(item.next_episode.release_date);
 
-          expect(lastReleaseDate < today).toBe(true);
-          expect(nextReleaseDate >= today).toBe(true);
+            expect(lastReleaseDate < today).toBe(true);
+            expect(nextReleaseDate >= today).toBe(true);
+          });
         }
       });
     },

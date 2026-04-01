@@ -1,6 +1,7 @@
 const { existsSync, readFileSync, writeFileSync } = require("fs");
 
 const { getMojoBoxOffice } = require("../content/getMojoBoxOffice");
+const { logErrors } = require("./logErrors");
 
 /**
  * Get a Mojo box office array for the given item type, optionally reusing a cache file.
@@ -26,10 +27,7 @@ const getMojoBoxOfficeArray = async (item_type, skip_mojo) => {
           readFileSync(mojoBoxOfficeCachePath, "utf-8"),
         );
       } catch (error) {
-        console.error(
-          `Failed to read Mojo cache file at ${mojoBoxOfficeCachePath}: ${error.message}`,
-        );
-        process.exit(1);
+        logErrors(error, mojoBoxOfficeCachePath, "getMojoBoxOfficeArray");
       }
     } else {
       mojoBoxOfficeArray = await getMojoBoxOffice(item_type);

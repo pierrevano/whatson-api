@@ -8,10 +8,14 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+const {
+  closeSharedBrowserSession,
+} = require("../utils/getCheerioContentWithBrowser");
 const { fetchAndCheckItemCount } = require("./getAllocineItemsNumber");
 const { getMojoBoxOfficeArray } = require("../utils/getMojoBoxOfficeArray");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { jsonArrayFiltered } = require("../utils/jsonArrayFiltered");
+const { logErrors } = require("../utils/logErrors");
 const { updateIds } = require("./updateIds");
 const checkCountryCode = require("../utils/checkCountryCode");
 const checkDbIds = require("./checkDbIds");
@@ -166,8 +170,11 @@ async function checkStatus(service) {
     });
     console.log(`Number of tvshow documents in the collection: ${tvShowCount}`);
   } catch (error) {
-    throw new Error(`Global: ${error}`);
+    logErrors(error, getNodeVarsValues.item_type, "updateData");
   } finally {
+    // Close the shared Playwright browser if browser fallback was used.
+    await closeSharedBrowserSession();
+    // Close the MongoDB client opened for this update run.
     await client.close();
   }
 

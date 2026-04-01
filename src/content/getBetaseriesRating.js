@@ -26,6 +26,9 @@ const getBetaseriesRating = async (
       await getHomepageResponse(betaseriesHomepage, {
         serviceName: "BetaSeries",
         id: betaseriesId,
+        requestConfig: {
+          maxRedirects: 0,
+        },
       });
 
       const pattern = /window\.BSAppURI\s*=\s*['"]([^'"]+)['"]/;

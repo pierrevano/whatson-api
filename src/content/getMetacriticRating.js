@@ -30,10 +30,10 @@ const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
       const homepageResponse = await getHomepageResponse(metacriticHomepage, {
         serviceName: "Metacritic",
         id: metacriticId,
-        allowedStatuses: [200, 404],
+        allowedStatuses: [200, 404, 504],
       });
 
-      if (homepageResponse.status === 404) {
+      if ([404, 504].includes(homepageResponse.status)) {
         const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         await delay(config.retryDelay);
 

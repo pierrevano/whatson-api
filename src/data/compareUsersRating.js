@@ -50,7 +50,8 @@ const compareUsersRating = async (
       item_type_api === "movie"
         ? `${config.baseURLTMDBFilm}${tmdbId}`
         : `${config.baseURLTMDBSerie}${tmdbId}`;
-    const [tmdbResponse, response] = await Promise.all([
+    const [imdbRatingData, tmdbResponse, whatsonResponse] = await Promise.all([
+      getImdbRating(imdbHomepage, imdbData),
       tmdbId
         ? getTMDBResponse(allocineHomepage, tmdbId)
         : Promise.resolve(null),
@@ -58,7 +59,8 @@ const compareUsersRating = async (
     ]);
     const tmdbData = tmdbResponse?.data;
 
-    const { status: responseStatus, data: responseData } = response ?? {};
+    const { status: responseStatus, data: responseData } =
+      whatsonResponse ?? {};
 
     if (responseStatus >= 500) {
       throw new Error(
@@ -73,6 +75,8 @@ const compareUsersRating = async (
     if (!responseData) {
       return isEqualObj;
     }
+
+    const imdb_users_rating = imdbRatingData.usersRating;
 
     const tmdb_users_rating =
       tmdbData?.vote_count && tmdbData?.vote_average
@@ -89,7 +93,7 @@ const compareUsersRating = async (
       lowestEpisode;
     if (hasTvShowTmdbData) {
       const imdb_seasons_number = config.specialItems.includes(imdbId)
-        ? (await getImdbRating(imdbHomepage, imdbData)).seasonsNumber
+        ? imdbRatingData.seasonsNumber
         : null;
       seasonsNumber =
         imdb_seasons_number != null
@@ -198,7 +202,10 @@ const compareUsersRating = async (
       return isEqualObj;
     }
 
-    if (dataWithoutId.tmdb?.users_rating === tmdb_users_rating) {
+    if (
+      dataWithoutId.tmdb?.users_rating === tmdb_users_rating &&
+      dataWithoutId.imdb?.users_rating === imdb_users_rating
+    ) {
       return {
         isEqual: true,
         data: dataWithoutId,

@@ -1,10 +1,11 @@
 const { appendFile } = require("fs");
 
 const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
-const { checkRatings403 } = require("../utils/checkRatings403");
+const { checkRatingsStatus } = require("../utils/checkRatingsStatus");
 const { getImdbData } = require("../utils/getImdbData");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { homepageStatusErrorCode } = require("../utils/getHomepageResponse");
+const { logErrors } = require("../utils/logErrors");
 const {
   shouldCreateFromImdbReleaseDate,
 } = require("../utils/shouldCreateFromImdbReleaseDate");
@@ -90,6 +91,24 @@ const loopItems = async (
         trakt: { id: traktId, homepage: traktHomepage },
         tv_time: { id: tvtimeId, homepage: tvtimeHomepage },
       } = urls;
+      const { errorImdb, errorLetterboxd, errorMetacritic } =
+        await checkRatingsStatus({
+          imdbHomepage,
+          imdbId,
+          letterboxdHomepage,
+          letterboxdId,
+          metacriticHomepage,
+          metacriticId,
+        });
+
+      if (errorImdb || errorLetterboxd || errorMetacritic) {
+        console.log(
+          `Skipping item at index ${index} because a homepage check failed.`,
+        );
+
+        continue;
+      }
+
       const imdbData = await getImdbData(imdbHomepage);
 
       const getIsEqualValue = !force
@@ -108,15 +127,7 @@ const loopItems = async (
 
       const isEqual = getIsEqualValue.isEqual;
 
-      const { errorMetacritic, errorLetterboxd } = await checkRatings403({
-        metacriticHomepage,
-        metacriticId,
-        letterboxdHomepage,
-        letterboxdId,
-      });
-
-      const isCircleciRatings403 = errorMetacritic || errorLetterboxd;
-      let useExistingData = (!force && isEqual) || isCircleciRatings403;
+      let useExistingData = !force && isEqual;
       let data = useExistingData ? getIsEqualValue.data : null;
 
       if (useExistingData && !data) {
@@ -189,13 +200,7 @@ const loopItems = async (
         continue;
       }
 
-      try {
-        await upsertToDatabase(allocineHomepage, collectionData, data, isEqual);
-      } catch (error) {
-        console.log(
-          `Item at index ${index} was not updated because upsert failed: ${error.message}`,
-        );
-      }
+      await upsertToDatabase(allocineHomepage, collectionData, data, isEqual);
 
       itemCounter++;
 
@@ -218,9 +223,7 @@ const loopItems = async (
         continue;
       }
 
-      throw new Error(
-        `Error processing item at index ${index}: ${error.message}`,
-      );
+      logErrors(error, index, "loopItems");
     }
   }
 

@@ -1,4 +1,5 @@
 const { config } = require("../config");
+const { logErrors } = require("./logErrors");
 const isThirdPartyServiceOK = require("./thirdPartyStatus");
 
 /**
@@ -26,8 +27,7 @@ async function checkCountryCode() {
       "----------------------------------------------------------------------------------------------------",
     );
   } catch (error) {
-    console.error("Error fetching country code:", error);
-    process.exit(1);
+    logErrors(error, config.countryIs, "checkCountryCode");
   }
 }
 

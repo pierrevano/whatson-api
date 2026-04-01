@@ -4,7 +4,7 @@ const axios = require("axios");
 
 const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
-const { tvshowSeasonSchema } = require("../src/tvshowSeasonSchema");
+const { tvshowSeasonSchema } = require("../src/schema");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;

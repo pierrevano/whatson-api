@@ -1,86 +1,85 @@
-const { appendFile } = require("fs");
+const { appendFileSync, readFileSync } = require("fs");
 
 const { config } = require("../config");
 const { getNodeVarsValues } = require("./getNodeVarsValues");
 const { homepageStatusErrorCode } = require("./getHomepageResponse");
 const { reportError } = require("./sendToNewRelic");
 
-const isBetaseriesResource = (value = "") =>
-  value.startsWith(config.baseURLBetaseriesFilm) ||
-  value.startsWith(config.baseURLBetaseriesSerie);
+const TEMP_ERROR_LOG_PATH = "temp_error.log";
 
-function isErrorPresent(errorMsg, error, item) {
-  const errorList = [
-    "AxiosError: Request failed with status code 404",
-    "TypeError: $ is not a function",
-    "Error [ERR_FR_TOO_MANY_REDIRECTS]: Maximum number of redirects exceeded",
-  ];
-
-  if (
-    errorMsg.includes(
-      "Error [ERR_FR_TOO_MANY_REDIRECTS]: Maximum number of redirects exceeded",
-    )
-  ) {
-    console.log(`Error: ${error.message}. Skipping the item update: ${item}`);
+/**
+ * Appends a timestamped error line to the temporary log file when running locally.
+ *
+ * @param {string} errorMsg - Serialized error message to persist.
+ * @returns {number|null} Current number of lines in the log file, or null when logging is skipped.
+ */
+const appendErrorLog = (errorMsg) => {
+  if (getNodeVarsValues.environment !== "local") {
+    return null;
   }
 
-  // Check if errorMsg includes any error from errorList
-  return !errorList.some((error) => errorMsg.includes(error));
-}
+  appendFileSync(
+    TEMP_ERROR_LOG_PATH,
+    `${new Date().toISOString()} - ${errorMsg}\n`,
+  );
 
+  return readFileSync(TEMP_ERROR_LOG_PATH, "utf8").trim().split("\n").length;
+};
+
+/**
+ * Logs a message and exits the current process with a failure status.
+ *
+ * @param {string} message - Message to print before exiting.
+ * @returns {never}
+ */
+const exitWithMessage = (message) => {
+  console.log(message);
+  process.exit(1);
+};
+
+/**
+ * Handles an application error by logging it, optionally reporting it, and then
+ * either rethrowing or terminating the current process depending on the error type
+ * and runtime configuration.
+ *
+ * @param {Error & { code?: string, response?: { status?: number } }} error - Captured error to process.
+ * @param {string|number|null|undefined} item - Identifier or context associated with the failure.
+ * @param {string} origin - Source of the error.
+ * @returns {never}
+ * @throws {Error} Rethrows errors that must be handled by the caller.
+ */
 const logErrors = (error, item, origin) => {
+  const errorMsg = `${item} - ${origin} - ${error}`;
+  const maxErrorLogLines = config.maxErrorLogLines;
+  const statusCode = error?.response?.status;
+  const tempErrorLogLines = appendErrorLog(errorMsg);
+
+  reportError(null, null, statusCode ?? 500, new Error(errorMsg));
+
   if (
     error?.code === homepageStatusErrorCode &&
     process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR === "true"
   ) {
+    if (tempErrorLogLines !== null && tempErrorLogLines > maxErrorLogLines) {
+      exitWithMessage(
+        `Aborting because ${TEMP_ERROR_LOG_PATH} reached ${tempErrorLogLines} lines while SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR is enabled. Limit: ${maxErrorLogLines}. Last item: ${item}. Last homepage status error: ${error.message}`,
+      );
+    }
+
     throw error;
   }
 
-  let errorMsg = `${item} - ${origin} - ${error}`;
-
-  if (getNodeVarsValues.environment === "local") {
-    appendFile(
-      "temp_error.log",
-      `${new Date().toISOString()} - ${errorMsg}\n`,
-      () => {},
-    );
-  }
-
-  if (
-    errorMsg.includes("AxiosError: Request failed with status code 404") ||
-    errorMsg.includes("Error: Failed to retrieve data.")
-  ) {
-    if (getNodeVarsValues.is_not_active === "active") {
-      reportError(null, null, 404, new Error(errorMsg));
-    }
-  }
-
   if (error instanceof RangeError) {
-    console.log(
+    exitWithMessage(
       `Error: ${error.message}. Failed to update first item: ${item}`,
     );
-    process.exit(1);
   }
 
-  if (error.response && error.response.status >= 500) {
-    console.log(`Error - status code ${error.response.status} - ${item}`);
-    if (item && !isBetaseriesResource(item)) {
-      process.exit(1);
-    }
+  if (statusCode) {
+    exitWithMessage(`Error - status code ${statusCode} - ${item}`);
   }
 
-  if (isErrorPresent(errorMsg, error, item)) {
-    console.log(errorMsg);
-    if (
-      errorMsg &&
-      !(
-        isBetaseriesResource(errorMsg) ||
-        (errorMsg.includes("403") && errorMsg.includes("getMetacriticRating"))
-      )
-    ) {
-      process.exit(1);
-    }
-  }
+  exitWithMessage(errorMsg);
 };
 
 module.exports = { logErrors };
