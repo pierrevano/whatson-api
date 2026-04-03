@@ -7,7 +7,7 @@ const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
 const { countNullValues } = require("./utils/countNullValues");
 const { formatDate } = require("../src/utils/formatDate");
-const { schema } = require("../src/schema");
+const { itemSchema } = require("../src/schema");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -158,7 +158,7 @@ const params = {
   all_keys_type_check: {
     query: `?item_type=movie,tvshow&is_active=true&append_to_response=critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) =>
-      items.forEach((item) => checkTypes(item, schema)),
+      items.forEach((item) => checkTypes(item, itemSchema)),
   },
 
   no_french_localization_strings_in_responses: {

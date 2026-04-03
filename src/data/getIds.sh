@@ -814,7 +814,11 @@ do
   done
 done
 
-update_imdb_popularity_flags
+if [[ $SOURCE == "circleci" ]]; then
+  echo "Skipping IMDb popularity flags update on CircleCI."
+else
+  update_imdb_popularity_flags
+fi
 
 LOCAL_LINES=$(wc -l < "$FILMS_IDS_FILE_PATH" | awk '{print $1}')
 REMOTE_LINES=$(curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" | wc -l | awk '{print $1}')

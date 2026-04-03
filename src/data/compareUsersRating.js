@@ -203,8 +203,8 @@ const compareUsersRating = async (
     }
 
     if (
-      dataWithoutId.tmdb?.users_rating === tmdb_users_rating &&
-      dataWithoutId.imdb?.users_rating === imdb_users_rating
+      dataWithoutId.imdb?.users_rating === imdb_users_rating &&
+      dataWithoutId.tmdb?.users_rating === tmdb_users_rating
     ) {
       return {
         isEqual: true,
@@ -215,8 +215,6 @@ const compareUsersRating = async (
     return isEqualObj;
   } catch (error) {
     logErrors(error, tmdbId, "compareUsersRating");
-
-    return isEqualObj;
   }
 };
 

@@ -94,7 +94,7 @@ const config = {
   maxAgeInDays: 14,
   ratingsDelayMs: 500,
   thirdPartyStatusTimeoutMs: 480000,
-  maxErrorLogLines: 40,
+  maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 20),
 
   /* CircleCI settings */
   circleLimitPerDay: 1500,

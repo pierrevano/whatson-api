@@ -1,5 +1,5 @@
-/* Schema */
-const schema = {
+/* Item Schema */
+const itemSchema = {
   _id: "string", // Unique MongoDB identifier for the item
 
   id: "number", // General identifier (The Movie Database ID)
@@ -431,8 +431,8 @@ const tvshowSeasonSchema = {
 };
 
 module.exports = {
+  itemSchema,
   ratedEpisodeSchema,
   ratedEpisodesSchema,
-  schema,
   tvshowSeasonSchema,
 };
