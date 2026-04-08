@@ -1,8 +1,4 @@
-const {
-  areQuerySearchKeysMissing,
-  invalidItemTypeMessage,
-  isValidItemType,
-} = require("./itemTypeValidation");
+const { areQuerySearchKeysMissing } = require("./itemTypeValidation");
 const { isMongoMemoryLimitError } = require("./mongoMemoryLimitError");
 const { reportError } = require("./sendToNewRelic");
 
@@ -37,21 +33,11 @@ const sendResponse = (res, statusCode, data) => {
  * @param {import("express").Request} req - Express request containing the original user query.
  * @param {import("express").Response} res - Express response used to send the outcome.
  * @param {object|null} json - Aggregated payload returned by the Mongo pipeline.
- * @param {string|undefined} item_type_query - Original `item_type` query parameter.
- * @param {number|undefined} limit - Resolved page size used for validation.
  * @param {typeof import("../config").config} config - Shared configuration values.
  * @param {{ is_active: boolean }} [is_active_item] - Activity metadata returned by the aggregation pipeline.
  * @returns {import("express").Response} The Express response after being sent.
  */
-const sendRequest = (
-  req,
-  res,
-  json,
-  item_type_query,
-  limit,
-  config,
-  is_active_item,
-) => {
+const sendRequest = (req, res, json, config, is_active_item) => {
   const allowedParams = [
     ...config.allowedQueryParams,
     ...config.keysToCheckForSearch,
@@ -67,7 +53,7 @@ const sendRequest = (
     });
   }
 
-  const { keysToCheckForSearch, maxLimit } = config;
+  const { keysToCheckForSearch } = config;
   const areNoResults = json && json.results && json.results.length === 0;
   const isQuerySearchKeyMissing = areQuerySearchKeysMissing(
     req.query,
@@ -95,12 +81,6 @@ const sendRequest = (
       : "true,false";
   };
 
-  if (!isValidItemType(item_type_query)) {
-    return sendResponse(res, 400, {
-      message: invalidItemTypeMessage(item_type_query),
-    });
-  }
-
   if (!json || areNoResults) {
     const isActiveUndefinedOrMissing =
       !req.query.is_active || typeof req.query.is_active === "undefined";
@@ -112,12 +92,6 @@ const sendRequest = (
     }`;
 
     return sendResponse(res, 404, { message: errorMessage });
-  }
-
-  if (limit && limit > maxLimit) {
-    return sendResponse(res, 400, {
-      message: `The limit exceeds maximum allowed (${maxLimit}). Please reduce the limit.`,
-    });
   }
 
   return sendResponse(res, 200, json);

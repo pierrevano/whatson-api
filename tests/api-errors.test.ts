@@ -45,7 +45,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `The limit exceeds maximum allowed (${config.maxLimit}). Please reduce the limit.`,
+        `The limit must be an integer between 1 and ${config.maxLimit}. Received '${parseInt(config.maxLimit) + 1}'.`,
       );
       expect(data.code).toBe(400);
     },
@@ -419,7 +419,9 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("The limit must be a positive integer");
+      expect(data.message).toBe(
+        `The limit must be an integer between 1 and ${config.maxLimit}. Received '0'.`,
+      );
       expect(data.code).toBe(400);
     },
   },
@@ -429,7 +431,9 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("The limit must be a positive integer");
+      expect(data.message).toBe(
+        `The limit must be an integer between 1 and ${config.maxLimit}. Received '-5'.`,
+      );
       expect(data.code).toBe(400);
     },
   },
@@ -439,7 +443,9 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("The limit must be a positive integer");
+      expect(data.message).toBe(
+        `The limit must be an integer between 1 and ${config.maxLimit}. Received '10.5'.`,
+      );
       expect(data.code).toBe(400);
     },
   },
@@ -449,7 +455,155 @@ const params = {
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("The limit must be a positive integer");
+      expect(data.message).toBe(
+        `The limit must be an integer between 1 and ${config.maxLimit}. Received 'abc'.`,
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  page_is_not_an_integer: {
+    query: "?item_type=movie,tvshow&page=1.5",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The page must be an integer greater than 0. Received '1.5'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  page_is_zero: {
+    query: "?item_type=movie,tvshow&page=0",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The page must be an integer greater than 0. Received '0'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  page_is_negative: {
+    query: "?item_type=movie,tvshow&page=-5",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The page must be an integer greater than 0. Received '-5'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  page_is_not_a_number: {
+    query: "?item_type=movie,tvshow&page=abc",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The page must be an integer greater than 0. Received 'abc'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  rated_episodes_page_is_not_an_integer: {
+    query: "/episodes/rated?page=two",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The page must be an integer greater than 0. Received 'two'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  runtime_is_not_an_integer_list: {
+    query: "?item_type=movie&runtime=invalid",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The runtime must contain only integers greater than or equal to 0. Received 'invalid'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  seasons_number_is_not_an_integer_list: {
+    query: "?item_type=tvshow&seasons_number=1,wrong_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The seasons_number must contain only integers greater than 0. Received '1,wrong_value'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  filtered_seasons_is_not_an_integer_list: {
+    query:
+      "?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=wrong_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The filtered_seasons must contain only integers greater than 0. Received 'wrong_value'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  filtered_seasons_search_is_not_an_integer_list: {
+    query:
+      "?imdbid=tt0903747&append_to_response=episodes_details&filtered_seasons=wrong_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The filtered_seasons must contain only integers greater than 0. Received 'wrong_value'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  rated_episodes_filtered_seasons_is_not_an_integer_list: {
+    query: "/episodes/rated?filtered_seasons=1,wrong_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The filtered_seasons must contain only integers greater than 0. Received '1,wrong_value'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  rated_episodes_minimum_users_rating_count_is_not_an_integer: {
+    query: "/episodes/rated?minimum_users_rating_count=10.5",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The minimum_users_rating_count must be an integer greater than or equal to 0. Received '10.5'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
+  rated_episodes_minimum_users_rating_count_is_negative: {
+    query: "/episodes/rated?minimum_users_rating_count=-1",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "The minimum_users_rating_count must be an integer greater than or equal to 0. Received '-1'.",
+      );
       expect(data.code).toBe(400);
     },
   },

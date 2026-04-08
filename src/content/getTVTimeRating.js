@@ -1,11 +1,10 @@
-const { appendFile } = require("fs");
 const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
 const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
-const { logErrors } = require("../utils/logErrors");
+const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -40,7 +39,26 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
         const response = await getHomepageResponse(apiUrl, {
           serviceName: "TV Time",
           id: tvtimeId,
+          allowedStatuses: [200, 502],
         });
+
+        if (response.status === 502) {
+          const canRetry = attempt < config.retries;
+
+          if (canRetry) {
+            const attemptLog = `getTVTimeRating - ${
+              tvtimeHomepage || tvtimeId || "unknown"
+            }: Request failed (attempt ${attempt}). Retrying...`;
+            logAndAppendTempErrorLog(attemptLog);
+            await delay(config.retryDelay);
+            continue;
+          }
+
+          await getHomepageResponse(apiUrl, {
+            serviceName: "TV Time",
+            id: tvtimeId,
+          });
+        }
 
         if (response.data?.rating) {
           usersRating = parseFloat(response.data.rating);
@@ -48,7 +66,7 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
 
         if (isNaN(usersRating)) usersRating = null;
 
-        if (usersRating === null) tvtimeObj = null;
+        if (usersRating === null) return null;
 
         tvtimeObj = {
           id: tvtimeId,
@@ -64,12 +82,7 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
           const attemptLog = `getTVTimeRating - ${
             tvtimeHomepage || tvtimeId || "unknown"
           }: Request failed (attempt ${attempt}). Retrying...`;
-          console.log(attemptLog);
-          appendFile(
-            "temp_error.log",
-            `${new Date().toISOString()} - ${attemptLog}\n`,
-            () => {},
-          );
+          logAndAppendTempErrorLog(attemptLog);
           await delay(config.retryDelay);
         } else {
           logErrors(error, tvtimeHomepage, "getTVTimeRating");

@@ -1,11 +1,9 @@
-const { appendFile } = require("fs");
-
 const { areAllNullOrUndefined } = require("../utils/areAllNullOrUndefined");
 const { checkRatingsStatus } = require("../utils/checkRatingsStatus");
 const { getImdbData } = require("../utils/getImdbData");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { homepageStatusErrorCode } = require("../utils/getHomepageResponse");
-const { logErrors } = require("../utils/logErrors");
+const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
 const {
   shouldCreateFromImdbReleaseDate,
 } = require("../utils/shouldCreateFromImdbReleaseDate");
@@ -17,6 +15,13 @@ const generateURLs = require("./generateURLs");
 /**
  * Loop through items in a collection, perform various operations on each item, and return an object containing the number of new or updated items.
  *
+ * An item is skipped without being upserted in the following cases:
+ * 1. A homepage check fails for IMDb, Letterboxd, or Metacritic (CircleCI only).
+ * 2. Existing data was expected to be reused but the payload is missing (defensive).
+ * 3. The IMDb release date is in the future or incomplete.
+ * 4. All ratings on the built payload are null or undefined.
+ * 5. A homepage status error is thrown and SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR is enabled.
+ *
  * @param {Object} collectionData - The collection data object.
  * @param {Object} config - The configuration object.
  * @param {boolean} force - Flag indicating whether to force the operations.
@@ -25,7 +30,7 @@ const generateURLs = require("./generateURLs");
  * @param {Array} jsonArray - The array of JSON objects to loop through.
  * @param {Array} mojoBoxOfficeArray - The array of Mojo Box Office data to be included in the operations.
  * @param {number|null} max_index - Optional index (1-based) at which to stop processing.
- * @returns {Promise<{ newOrUpdatedItems: number }>} Number of newly created or updated items.
+ * @returns {Promise<{ newOrUpdatedItems: number }>} Number of items rebuilt from scratch, excluding reused payloads.
  */
 const loopItems = async (
   collectionData,
@@ -105,7 +110,6 @@ const loopItems = async (
         console.log(
           `Skipping item at index ${index} because a homepage check failed.`,
         );
-
         continue;
       }
 
@@ -189,14 +193,9 @@ const loopItems = async (
       }
 
       if (areAllNullOrUndefined(data, config.ratingsKeys)) {
-        appendFile(
-          "temp_error.log",
-          `${new Date().toISOString()} - All ratings are null for the item at index ${index} - ${JSON.stringify(data)}\n`,
-          () => {},
+        logAndAppendTempErrorLog(
+          `All ratings are null for the item at index ${index} - ${JSON.stringify(data)}`,
         );
-
-        console.log(`All ratings are null for the item at index ${index}.`);
-
         continue;
       }
 

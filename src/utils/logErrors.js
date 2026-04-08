@@ -8,20 +8,31 @@ const { reportError } = require("./sendToNewRelic");
 const TEMP_ERROR_LOG_PATH = "temp_error.log";
 
 /**
- * Appends a timestamped error line to the temporary log file when running locally.
+ * Writes a message to stdout and persists the same message to the temporary log file.
  *
- * @param {string} errorMsg - Serialized error message to persist.
- * @returns {number|null} Current number of lines in the log file, or null when logging is skipped.
+ * @param {string} message - Message to output and store.
+ * @returns {void}
+ */
+const logAndAppendTempErrorLog = (message) => {
+  console.log(message);
+  appendFileSync(
+    TEMP_ERROR_LOG_PATH,
+    `${new Date().toISOString()} - ${message}\n`,
+  );
+};
+
+/**
+ * Logs and persists an error message when running locally, then returns the current log line count.
+ *
+ * @param {string} errorMsg - Serialized error message to record.
+ * @returns {number|null} Current number of lines in the temporary log file, or null when logging is skipped.
  */
 const appendErrorLog = (errorMsg) => {
   if (getNodeVarsValues.environment !== "local") {
     return null;
   }
 
-  appendFileSync(
-    TEMP_ERROR_LOG_PATH,
-    `${new Date().toISOString()} - ${errorMsg}\n`,
-  );
+  logAndAppendTempErrorLog(errorMsg);
 
   return readFileSync(TEMP_ERROR_LOG_PATH, "utf8").trim().split("\n").length;
 };
@@ -82,4 +93,4 @@ const logErrors = (error, item, origin) => {
   exitWithMessage(errorMsg);
 };
 
-module.exports = { logErrors };
+module.exports = { logAndAppendTempErrorLog, logErrors };

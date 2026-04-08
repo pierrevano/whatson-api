@@ -5,22 +5,24 @@ const express = require("express");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 8081;
 
-const { limiter } = require("./src/utils/rateLimiter");
-const {
-  getUserPreferences,
-  saveOrUpdateUserPreferences,
-} = require("./src/routes/getOrSaveUserPreferences");
-const getId = require("./src/routes/getId");
-const getItems = require("./src/routes/getItems");
-const getRatedEpisodes = require("./src/routes/getRatedEpisodes");
+const { config } = require("./src/config");
 const {
   getTvShowSeasonEpisodeDetails,
   getTvShowSeasonEpisodes,
   getTvShowSeasons,
 } = require("./src/routes/getTvShowSeasons");
+const {
+  getUserPreferences,
+  saveOrUpdateUserPreferences,
+} = require("./src/routes/getOrSaveUserPreferences");
 const { handleInvalidEndpoint } = require("./src/routes/handleInvalidEndpoint");
+const { limiter } = require("./src/utils/rateLimiter");
+const getId = require("./src/routes/getId");
+const getItems = require("./src/routes/getItems");
+const getRatedEpisodes = require("./src/routes/getRatedEpisodes");
+
+const PORT = config.localPort;
 
 // Use CORS middleware
 app.use(cors());

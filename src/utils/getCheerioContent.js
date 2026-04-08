@@ -1,4 +1,3 @@
-const { appendFile } = require("fs");
 const cheerio = require("cheerio");
 
 const { config } = require("../config");
@@ -7,7 +6,7 @@ const {
   getCheerioContentWithBrowser,
 } = require("./getCheerioContentWithBrowser");
 const { httpClient } = require("./httpClient");
-const { logErrors } = require("./logErrors");
+const { logAndAppendTempErrorLog, logErrors } = require("./logErrors");
 const { logExecutionTime } = require("./logExecutionTime");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -98,12 +97,7 @@ const getCheerioContent = async (
         const attemptLog = `${
           origin || "No Origin specified"
         } - ${url}: Request failed (attempt ${attempt}). Retrying...`;
-        console.log(attemptLog);
-        appendFile(
-          "temp_error.log",
-          `${new Date().toISOString()} - ${attemptLog}\n`,
-          () => {},
-        );
+        logAndAppendTempErrorLog(attemptLog);
         await delay(config.retryDelay);
       } else {
         logErrors(error, url, origin);

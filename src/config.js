@@ -31,6 +31,8 @@ const baseURL = {
   whatsonAPICircleCI: "https://whatson-api-circleci.onrender.com",
 };
 
+const localPort = getEnvInt(process.env.PORT, 8081);
+
 const config = {
   /* Credentials */
   betaseriesApiKey: process.env.BETASERIES_API_KEY,
@@ -92,6 +94,7 @@ const config = {
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/538.36",
   heapLimit: 1500,
   maxAgeInDays: 14,
+  recentUpdateHours: 18,
   ratingsDelayMs: 500,
   thirdPartyStatusTimeoutMs: 480000,
   maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 20),
@@ -101,10 +104,11 @@ const config = {
   circleLimitPerInstance: 50,
 
   /* Tests settings */
-  baseURLLocal: "http://localhost:8081",
+  localPort,
+  baseURLLocal: `http://localhost:${localPort}`,
   baseURLRemote: process.env.WHATSON_API_URL,
   maxLimit: 900,
-  maxLimitLargeDocuments: 135,
+  maxLimitLargeDocuments: 125,
   checkItemsNumber: true,
   keysToCheck: [
     "_id",

@@ -1,7 +1,5 @@
-const { appendFile } = require("fs");
-
 const { config } = require("../config");
-const { logErrors } = require("../utils/logErrors");
+const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
 
 /**
  * Returns the English equivalent of the given French status string for a specific AlloCiné page.
@@ -26,11 +24,8 @@ const getStatus = async (allocineHomepage, status) => {
       case "":
         return "Unknown";
       default:
-        console.error(`Unrecognized status: ${status}`);
-        appendFile(
-          "temp_error.log",
-          `${new Date().toISOString()} - ${allocineHomepage} - Unrecognized status: ${status}\n`,
-          () => {},
+        logAndAppendTempErrorLog(
+          `${allocineHomepage} - Unrecognized status: ${status}`,
         );
         return null;
     }

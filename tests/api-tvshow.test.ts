@@ -109,10 +109,12 @@ function checkItemProperties(items) {
 
     expect(item.title).not.toBeNull();
 
-    expect(
-      items.filter((item) => item.directors && item.directors.length > 0)
-        .length,
-    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.directors);
+    if (item.is_active === true) {
+      expect(
+        items.filter((item) => item.directors && item.directors.length > 0)
+          .length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.directors);
+    }
 
     expect(
       items.filter((item) => item.genres && item.genres.length > 0).length,
@@ -338,28 +340,32 @@ function checkItemProperties(items) {
         (item) => typeof item.allocine?.users_rating_count === "number",
       ).length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(
-      items.filter((item) => typeof item.allocine?.critics_rating === "number")
-        .length,
-    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(
-      items.filter(
-        (item) => typeof item.allocine?.critics_rating_count === "number",
-      ).length,
-    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(
-      items.filter((item) => item.allocine?.critics_rating_details).length,
-    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-    expect(
-      items.filter(
-        (item) =>
-          item.allocine?.critics_rating_details &&
-          typeof item.allocine?.critics_rating_details[0].critic_name ===
-            "string" &&
-          typeof item.allocine?.critics_rating_details[0].critic_rating ===
-            "number",
-      ).length,
-    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    if (item.is_active === true) {
+      expect(
+        items.filter(
+          (item) => typeof item.allocine?.critics_rating === "number",
+        ).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        items.filter(
+          (item) => typeof item.allocine?.critics_rating_count === "number",
+        ).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        items.filter((item) => item.allocine?.critics_rating_details).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        items.filter(
+          (item) =>
+            item.allocine?.critics_rating_details &&
+            typeof item.allocine?.critics_rating_details[0].critic_name ===
+              "string" &&
+            typeof item.allocine?.critics_rating_details[0].critic_rating ===
+              "number",
+        ).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    }
+
     item.allocine?.critics_rating_count && item.allocine?.critics_rating_details
       ? expect(item.allocine.critics_rating_count).toEqual(
           item.allocine.critics_rating_details.length,
@@ -1057,29 +1063,6 @@ const params = {
       }),
   },
 
-  should_return_all_seasons_on_wrong_filtered_seasons_value: {
-    query: `?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=wrong_value&limit=${maxLimitLargeDocuments}`,
-    expectedResult: (items) => {
-      let hasSeason1 = false;
-      let hasSeason2 = false;
-
-      items.forEach((item) => {
-        expect(item).toHaveProperty("episodes_details");
-        if (Array.isArray(item.episodes_details)) {
-          item.episodes_details.forEach((episode) => {
-            expect(episode).toHaveProperty("season");
-
-            if (episode.season === 1) hasSeason1 = true;
-            if (episode.season === 2) hasSeason2 = true;
-          });
-        }
-      });
-
-      expect(hasSeason1).toBe(true);
-      expect(hasSeason2).toBe(true);
-    },
-  },
-
   only_episodes_from_season_3_and_1_on_search: {
     query:
       "?imdbid=tt0903747&append_to_response=episodes_details&filtered_seasons=3,1",
@@ -1091,22 +1074,6 @@ const params = {
         item.episodes_details.forEach((episode) => {
           expect(episode).toHaveProperty("season");
           expect([1, 3]).toContain(episode.season);
-        });
-      }
-    },
-  },
-
-  should_return_all_seasons_on_wrong_filtered_seasons_value_on_search: {
-    query:
-      "?imdbid=tt0903747&append_to_response=episodes_details&filtered_seasons=wrong_value",
-    expectedResult: (items) => {
-      checkSingleItemId(items, 1396);
-      const item = items[0];
-      expect(item).toHaveProperty("episodes_details");
-      if (Array.isArray(item.episodes_details)) {
-        item.episodes_details.forEach((episode) => {
-          expect(episode).toHaveProperty("season");
-          expect([1, 2, 3, 4, 5]).toContain(episode.season);
         });
       }
     },

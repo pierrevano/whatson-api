@@ -1,10 +1,8 @@
-const { appendFile } = require("fs");
-
 const { config } = require("../config");
 const { getCheerioContent } = require("../utils/getCheerioContent");
 const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
-const { logErrors } = require("../utils/logErrors");
+const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -31,12 +29,7 @@ const fetchMediaScorecardJson = async (url, options) => {
 
     if (attempt < config.retries) {
       const attemptLog = `getRottenTomatoesRating - ${url}: media-scorecard-json not found (attempt ${attempt}). Retrying...`;
-      console.log(attemptLog);
-      appendFile(
-        "temp_error.log",
-        `${new Date().toISOString()} - ${attemptLog}\n`,
-        () => {},
-      );
+      logAndAppendTempErrorLog(attemptLog);
       await delay(config.retryDelay);
     }
   }

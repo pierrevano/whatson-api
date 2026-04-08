@@ -1,10 +1,9 @@
-const { appendFile } = require("fs");
 const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
 const { getNodeVarsValues } = require("./getNodeVarsValues");
-const { logErrors } = require("./logErrors");
+const { logAndAppendTempErrorLog, logErrors } = require("./logErrors");
 const { logExecutionTime } = require("./logExecutionTime");
 
 /**
@@ -43,11 +42,7 @@ const getTMDBResponse = async (allocineHomepage, tmdbId) => {
       getNodeVarsValues.get_ids === "no_update_ids" &&
       getNodeVarsValues.is_not_active === "no_active"
     ) {
-      appendFile(
-        "temp_error.log",
-        `${new Date().toISOString()} - ${url}: ${status}\n`,
-        () => {},
-      );
+      logAndAppendTempErrorLog(`${url}: ${status}`);
     }
 
     return { data, status };

@@ -15,8 +15,8 @@ const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * Compares the users rating of a movie or tvshow from AlloCiné with the rating
- * fetched from the What's on? API.
+ * Refreshes the fields that are always updated on the stored What's on? payload
+ * and checks whether the item can be reused based on the current IMDb rating data.
  *
  * @param {string} allocineHomepage - The AlloCiné homepage URL.
  * @param {string} allocineURL - The AlloCiné URL specific to the item.
@@ -27,8 +27,8 @@ const { logErrors } = require("../utils/logErrors");
  * @param {Array<Object>} mojoBoxOfficeArray - Array of Mojo box office objects.
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
  * @param {object|null} [imdbData] - IMDb data.
- * @returns {Promise<Object>} - An object containing the comparison result and the fetched data.
- * @throws {Error} - If the API request fails.
+ * @returns {Promise<Object>} - An object indicating whether the item can be reused,
+ *     and the refreshed payload when it can.
  */
 const compareUsersRating = async (
   allocineHomepage,
@@ -46,6 +46,9 @@ const compareUsersRating = async (
   const item_type_api = item_type === "movie" ? "movie" : "tvshow";
 
   try {
+    /**
+     * Loads the external data used to compare the stored payload with the latest values.
+     */
     const tmdbHomepage =
       item_type_api === "movie"
         ? `${config.baseURLTMDBFilm}${tmdbId}`
@@ -76,86 +79,48 @@ const compareUsersRating = async (
       return isEqualObj;
     }
 
-    const imdb_users_rating = imdbRatingData.usersRating;
+    /**
+     * Returns true when the stored IMDb rating and vote count match the latest fetched values.
+     *
+     * @param {Object} data - The stored What's on? payload (without _id).
+     * @returns {boolean}
+     */
+    const imdbRatingsMatch = (data) =>
+      data.imdb?.users_rating === imdbRatingData.usersRating &&
+      data.imdb?.users_rating_count === imdbRatingData.usersRatingCount;
 
-    const tmdb_users_rating =
-      tmdbData?.vote_count && tmdbData?.vote_average
-        ? parseFloat(tmdbData.vote_average.toFixed(2))
-        : null;
+    const { _id, ...dataWithoutId } = responseData;
 
-    const isTvShow = item_type_api === "tvshow";
-    const hasTvShowTmdbData = isTvShow && Boolean(tmdbData);
-    let seasonsNumber,
-      episodesDetails,
-      lastEpisode,
-      nextEpisode,
-      highestEpisode,
-      lowestEpisode;
-    if (hasTvShowTmdbData) {
-      const imdb_seasons_number = config.specialItems.includes(imdbId)
-        ? imdbRatingData.seasonsNumber
-        : null;
-      seasonsNumber =
-        imdb_seasons_number != null
-          ? imdb_seasons_number
-          : await getSeasonsNumber(allocineHomepage, tmdbData);
-      episodesDetails = await getEpisodesDetails(
-        allocineHomepage,
-        imdbHomepage,
-        imdbId,
-        tmdbData,
-      );
-      lastEpisode = await getLastEpisode(
-        allocineHomepage,
-        episodesDetails,
-        tmdbData,
-      );
-      nextEpisode = await getNextEpisode(
-        allocineHomepage,
-        episodesDetails,
-        lastEpisode,
-        tmdbData,
-      );
-      highestEpisode = await getHighestRatedEpisode(
-        allocineHomepage,
-        episodesDetails,
-      );
-      lowestEpisode = await getLowestRatedEpisode(
-        allocineHomepage,
-        episodesDetails,
-      );
-    }
+    dataWithoutId.is_active = isActive;
 
-    const allocinePopularityResult = await getAllocinePopularity(
-      allocineURL,
-      item_type,
-    );
+    /**
+     * Refreshes popularity and box office fields, which are updated even when the item is reused.
+     */
+    const [
+      allocinePopularityResult,
+      imdbPopularityResult,
+      tmdbPopularityResult,
+      mojoValues,
+    ] = await Promise.all([
+      getAllocinePopularity(allocineURL, item_type),
+      getImdbPopularity(imdbHomepage, allocineURL, item_type, imdbData),
+      tmdbData
+        ? getTmdbPopularity(tmdbHomepage, tmdbId, tmdbData)
+        : Promise.resolve(null),
+      getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type),
+    ]);
     const allocinePopularity =
       typeof allocinePopularityResult?.popularity === "number"
         ? allocinePopularityResult.popularity
         : undefined;
-    const imdbPopularityResult = await getImdbPopularity(
-      imdbHomepage,
-      allocineURL,
-      item_type,
-      imdbData,
-    );
     const imdbPopularity =
       typeof imdbPopularityResult?.popularity === "number"
         ? imdbPopularityResult.popularity
         : undefined;
-    const tmdbPopularityResult =
-      tmdbData && (await getTmdbPopularity(tmdbHomepage, tmdbId, tmdbData));
     const tmdbPopularity =
       typeof tmdbPopularityResult?.popularity === "number"
         ? tmdbPopularityResult.popularity
         : undefined;
-
-    const mojoValues = await getObjectByImdbId(
-      mojoBoxOfficeArray,
-      imdbId,
-      item_type,
-    );
 
     const mojoObj =
       mojoValues !== null
@@ -165,19 +130,6 @@ const compareUsersRating = async (
             lifetime_gross: mojoValues.lifetimeGross,
           }
         : null;
-
-    const { _id, ...dataWithoutId } = responseData;
-
-    dataWithoutId.is_active = isActive;
-
-    if (hasTvShowTmdbData) {
-      dataWithoutId.seasons_number = seasonsNumber;
-      dataWithoutId.episodes_details = episodesDetails;
-      dataWithoutId.last_episode = lastEpisode;
-      dataWithoutId.next_episode = nextEpisode;
-      dataWithoutId.highest_episode = highestEpisode;
-      dataWithoutId.lowest_episode = lowestEpisode;
-    }
 
     if (dataWithoutId.allocine && typeof allocinePopularity === "number") {
       dataWithoutId.allocine.popularity = allocinePopularity;
@@ -193,19 +145,99 @@ const compareUsersRating = async (
 
     dataWithoutId.mojo = mojoObj;
 
+    const updatedAt = new Date(dataWithoutId.updated_at);
+    const hasValidUpdatedAt = !Number.isNaN(updatedAt.getTime());
+    const recentUpdateCutoffDate = new Date(
+      Date.now() - config.recentUpdateHours * 60 * 60 * 1000,
+    );
     const updatedAtCutoffDate = new Date();
     updatedAtCutoffDate.setDate(
       updatedAtCutoffDate.getDate() - config.maxAgeInDays,
     );
 
-    if (new Date(dataWithoutId.updated_at) <= updatedAtCutoffDate) {
+    /**
+     * Stops when the stored payload has no usable update timestamp.
+     */
+    if (!hasValidUpdatedAt) {
       return isEqualObj;
     }
 
-    if (
-      dataWithoutId.imdb?.users_rating === imdb_users_rating &&
-      dataWithoutId.tmdb?.users_rating === tmdb_users_rating
-    ) {
+    /**
+     * Reuses recently updated items before rebuilding TV show episode fields when
+     * the stored IMDb rating and vote count still match the latest values.
+     */
+    if (updatedAt > recentUpdateCutoffDate && imdbRatingsMatch(dataWithoutId)) {
+      return {
+        isEqual: true,
+        data: dataWithoutId,
+      };
+    }
+
+    /**
+     * Stops when the stored payload is older than the allowed reuse window.
+     */
+    if (updatedAt <= updatedAtCutoffDate) {
+      return isEqualObj;
+    }
+
+    /**
+     * Rebuilds the TV show-specific fields that depend on episode data when TMDB data is available.
+     */
+    const isTvShow = item_type_api === "tvshow";
+    const hasTvShowTmdbData = isTvShow && Boolean(tmdbData);
+    let seasonsNumber,
+      episodesDetails,
+      lastEpisode,
+      nextEpisode,
+      highestEpisode,
+      lowestEpisode;
+    if (hasTvShowTmdbData) {
+      const imdb_seasons_number = config.specialItems.includes(imdbId)
+        ? imdbRatingData.seasonsNumber
+        : null;
+      const seasonsNumberPromise =
+        imdb_seasons_number != null
+          ? Promise.resolve(imdb_seasons_number)
+          : getSeasonsNumber(allocineHomepage, tmdbData);
+      episodesDetails = await getEpisodesDetails(
+        allocineHomepage,
+        imdbHomepage,
+        imdbId,
+        tmdbData,
+      );
+      [seasonsNumber, lastEpisode, highestEpisode, lowestEpisode] =
+        await Promise.all([
+          seasonsNumberPromise,
+          getLastEpisode(allocineHomepage, episodesDetails, tmdbData),
+          getHighestRatedEpisode(allocineHomepage, episodesDetails),
+          getLowestRatedEpisode(allocineHomepage, episodesDetails),
+        ]);
+      nextEpisode = await getNextEpisode(
+        allocineHomepage,
+        episodesDetails,
+        lastEpisode,
+        tmdbData,
+      );
+    }
+
+    /**
+     * Merges the refreshed TV show fields into the stored payload before the final reuse check.
+     */
+    if (hasTvShowTmdbData) {
+      dataWithoutId.seasons_number = seasonsNumber;
+      dataWithoutId.episodes_details = episodesDetails;
+      dataWithoutId.last_episode = lastEpisode;
+      dataWithoutId.next_episode = nextEpisode;
+      dataWithoutId.highest_episode = highestEpisode;
+      dataWithoutId.lowest_episode = lowestEpisode;
+    }
+
+    /**
+     * Reuses the payload if IMDb ratings still match after the full rebuild.
+     * Unlike the fast path, updated_at is refreshed here because episode data was re-fetched.
+     */
+    if (imdbRatingsMatch(dataWithoutId)) {
+      dataWithoutId.updated_at = new Date().toISOString();
       return {
         isEqual: true,
         data: dataWithoutId,

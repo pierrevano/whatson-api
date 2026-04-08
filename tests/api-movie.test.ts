@@ -1086,6 +1086,25 @@ const params = {
     },
   },
 
+  movies_with_runtime_between_0_and_120_minutes: {
+    query: "?item_type=movie&runtime=0,7200",
+    expectedResult: (items) => {
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
+
+      items.forEach((item) => {
+        expect(item).toHaveProperty("item_type");
+        expect(item.item_type).toBe("movie");
+        expect(item).toHaveProperty("runtime");
+        expect(typeof item.runtime).toBe("number");
+        expect(item.runtime).toBeGreaterThanOrEqual(0);
+        expect(item.runtime).toBeLessThanOrEqual(7200);
+      });
+    },
+  },
+
   movies_with_runtime_between_60_and_120_minutes_unsorted_values: {
     query: "?item_type=movie&runtime=7200,3600",
     expectedResult: (items) => {
@@ -1122,32 +1141,6 @@ const params = {
         expect(item.item_type).toBe("movie");
         expect(item).toHaveProperty("runtime");
         expect(item.runtime).toBe(expectedRuntime);
-      });
-    },
-  },
-
-  movies_with_invalid_runtime_value: {
-    query: "?item_type=movie&runtime=invalid",
-    expectedResult: (items) => {
-      expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(
-        config.minimumNumberOfItems.softDefault,
-      );
-
-      const itemsWithRuntime = items.filter(
-        (item) => typeof item.runtime === "number" && item.runtime > 0,
-      );
-      expect(itemsWithRuntime.length).toBeGreaterThan(0);
-
-      items.forEach((item) => {
-        expect(item).toHaveProperty("item_type");
-        expect(item.item_type).toBe("movie");
-        expect(item).toHaveProperty("runtime");
-        if (typeof item.runtime === "number") {
-          expect(item.runtime).toBeGreaterThan(0);
-        } else {
-          expect(item.runtime === null).toBe(true);
-        }
       });
     },
   },

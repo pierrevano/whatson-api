@@ -12,6 +12,8 @@ const {
   sendResponse,
 } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
+const { validateIntegerParam } = require("./utils/queryValidationMessages");
+const { validateSharedQueryParams } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
@@ -61,25 +63,29 @@ const getRatedEpisodes = async (req, res) => {
 
     const limit_raw = req.query.limit;
     const limit_provided = typeof limit_raw !== "undefined";
+
+    const shared_query_params_error = validateSharedQueryParams(
+      req.query,
+      config,
+    );
+    if (shared_query_params_error) {
+      return sendResponse(res, 400, {
+        message: shared_query_params_error,
+      });
+    }
+
+    const minimum_users_rating_count_error = validateIntegerParam(
+      req.query.minimum_users_rating_count,
+      "minimum_users_rating_count",
+      0,
+    );
+    if (minimum_users_rating_count_error) {
+      return sendResponse(res, 400, {
+        message: minimum_users_rating_count_error,
+      });
+    }
+
     const parsed_limit = Number(limit_raw);
-
-    if (
-      limit_provided &&
-      (!Number.isFinite(parsed_limit) ||
-        !Number.isInteger(parsed_limit) ||
-        parsed_limit <= 0)
-    ) {
-      return sendResponse(res, 400, {
-        message: "The limit must be a positive integer",
-      });
-    }
-
-    if (limit_provided && parsed_limit > config.maxLimit) {
-      return sendResponse(res, 400, {
-        message: `The limit exceeds maximum allowed (${config.maxLimit}). Please reduce the limit.`,
-      });
-    }
-
     const order = req.query.order === "asc" ? "asc" : "desc";
     const limit = limit_provided ? parsed_limit : config.limit;
     const page = Number(req.query.page) || config.page;
@@ -338,8 +344,6 @@ const getRatedEpisodes = async (req, res) => {
         total_pages: Math.ceil(total_results / limit),
         total_results,
       },
-      undefined,
-      limit,
       config,
       is_active_item,
     );

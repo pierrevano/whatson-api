@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.26.7",
+  "version": "3.26.8",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -44,8 +44,8 @@
     "check-ids-before-update-all-ids-force": "npm run update-local && npm run update-active-dataset && npm run confirm-dataset && npm run update-all-ids-force",
     "check-ids-and-stop-before-update-all-ids": "npm run update-local-stop && npm run update-active-dataset && npm run confirm-dataset && npm run update-all-ids",
     "check-ids-and-stop-before-update-all-ids-force": "npm run update-local-stop && npm run update-active-dataset && npm run confirm-dataset && npm run update-all-ids-force",
-    "update-all-ids-movie": "node src/data/updateData.js movie update_ids update_db local active no_check_db_ids 0",
-    "update-all-ids-tvshow": "node src/data/updateData.js tvshow update_ids update_db local active no_check_db_ids 0",
+    "update-all-ids-movie": "node src/data/updateData.js movie update_ids update_db local active",
+    "update-all-ids-tvshow": "node src/data/updateData.js tvshow update_ids update_db local active",
     "update-all-ids": "npm run update-all-ids-movie && npm run update-all-ids-tvshow && npm run test",
     "update-all-ids-force-movie": "node src/data/updateData.js movie update_ids update_db local active no_check_db_ids 0 force",
     "update-all-ids-force-tvshow": "node src/data/updateData.js tvshow update_ids update_db local active no_check_db_ids 0 force",
@@ -71,7 +71,7 @@
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "csvtojson": "^2.0.14",
-    "dotenv": "^17.4.0",
+    "dotenv": "^17.4.1",
     "express": "^4.21.2",
     "he": "^1.2.0",
     "jshashes": "^1.0.8",
@@ -79,10 +79,10 @@
     "newrelic": "^13.18.0",
     "playwright": "^1.59.1",
     "prettier": "^3.8.1",
-    "rate-limiter-flexible": "^10.0.1",
+    "rate-limiter-flexible": "^11.0.0",
     "shelljs": "^0.10.0",
     "tough-cookie": "^6.0.1",
-    "vercel": "^50.38.3"
+    "vercel": "^50.41.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

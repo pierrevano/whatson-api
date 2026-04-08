@@ -1,15 +1,16 @@
 const { aggregateData } = require("./aggregateData");
 const { config } = require("../config");
 const {
-  invalidItemTypeMessage,
-  isValidItemType,
-} = require("../utils/itemTypeValidation");
-const {
   sendInternalError,
   sendRequest,
   sendResponse,
 } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
+const { validateIntegerListParam } = require("./utils/queryValidationMessages");
+const {
+  validateItemTypeQuery,
+  validateSharedQueryParams,
+} = require("./utils/queryParamsValidation");
 const findId = require("./findId");
 const getInternalApiKey = require("./getInternalApiKey");
 
@@ -31,8 +32,6 @@ const getItems = async (req, res) => {
     const id_path = Number(req.params.id);
     const limit_raw = req.query.limit;
     const limit_provided = typeof limit_raw !== "undefined";
-    const parsed_limit = Number(limit_raw);
-    const page_query = Number(req.query.page);
 
     const {
       append_to_response,
@@ -59,30 +58,43 @@ const getItems = async (req, res) => {
       users_certified: is_users_certified_query,
     } = req.query;
 
-    if (!isValidItemType(item_type_query)) {
+    const item_type_error = validateItemTypeQuery(item_type_query);
+    if (item_type_error) {
       return sendResponse(res, 400, {
-        message: invalidItemTypeMessage(item_type_query),
+        message: item_type_error,
       });
     }
 
-    if (
-      limit_provided &&
-      (!Number.isFinite(parsed_limit) ||
-        !Number.isInteger(parsed_limit) ||
-        parsed_limit <= 0)
-    ) {
+    const shared_query_params_error = validateSharedQueryParams(
+      req.query,
+      config,
+    );
+    if (shared_query_params_error) {
       return sendResponse(res, 400, {
-        message: "The limit must be a positive integer",
+        message: shared_query_params_error,
       });
     }
 
-    if (limit_provided && parsed_limit > config.maxLimit) {
+    const runtime_error = validateIntegerListParam(runtime_query, "runtime", 0);
+    if (runtime_error) {
       return sendResponse(res, 400, {
-        message: `The limit exceeds maximum allowed (${config.maxLimit}). Please reduce the limit.`,
+        message: runtime_error,
       });
     }
 
+    const seasons_number_error = validateIntegerListParam(
+      seasons_number_query,
+      "seasons_number",
+    );
+    if (seasons_number_error) {
+      return sendResponse(res, 400, {
+        message: seasons_number_error,
+      });
+    }
+
+    const parsed_limit = Number(limit_raw);
     const limit_query = limit_provided ? parsed_limit : undefined;
+    const page_query = Number(req.query.page);
 
     const internal_api_key = await getInternalApiKey();
 
@@ -164,15 +176,7 @@ const getItems = async (req, res) => {
       }
     }
 
-    await sendRequest(
-      req,
-      res,
-      json,
-      item_type_query,
-      limit,
-      config,
-      is_active_item,
-    );
+    await sendRequest(req, res, json, config, is_active_item);
   } catch (error) {
     await sendInternalError(res, error);
   }

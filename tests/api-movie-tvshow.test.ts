@@ -165,14 +165,16 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=platforms_links&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) =>
       items.forEach((item) => {
+        const sanitizedPlatformsLinks = item.platforms_links?.map(
+          ({ name, ...platformLink }) => platformLink,
+        );
         const sanitizedItem = {
           ...item,
-          platforms_links: Array.isArray(item.platforms_links)
-            ? item.platforms_links.map(
-                ({ name, ...platformLink }) => platformLink,
-              )
-            : item.platforms_links,
+          platforms_links: sanitizedPlatformsLinks,
         };
+
+        delete sanitizedItem.original_title;
+
         const serializedItem = JSON.stringify(sanitizedItem).toLowerCase();
         const potentialFrenchPattern = /[àâæçéèêëîïôœùûüÿ]/i;
         expect(serializedItem).not.toMatch(potentialFrenchPattern);

@@ -4,15 +4,12 @@ const { aggregateData } = require("./aggregateData");
 const { buildProjection } = require("./buildProjection");
 const { config } = require("../config");
 const {
-  invalidItemTypeMessage,
-  isValidItemType,
-} = require("../utils/itemTypeValidation");
-const {
   sendInternalError,
   sendRequest,
   sendResponse,
 } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
+const { validateItemTypeQuery } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
@@ -43,9 +40,10 @@ const getId = async (req, res) => {
     const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
     const append_to_response = req.query.append_to_response;
 
-    if (!isValidItemType(item_type_query)) {
+    const item_type_error = validateItemTypeQuery(item_type_query);
+    if (item_type_error) {
       return sendResponse(res, 400, {
-        message: invalidItemTypeMessage(item_type_query),
+        message: item_type_error,
       });
     }
 
@@ -97,14 +95,7 @@ const getId = async (req, res) => {
         const filteredResults = items[0].results.filter((result) => {
           return result.item_type === item_type;
         });
-        await sendRequest(
-          req,
-          res,
-          filteredResults[0],
-          item_type_query,
-          null,
-          config,
-        );
+        await sendRequest(req, res, filteredResults[0], config);
       } catch (error) {
         await sendInternalError(res, error);
       }
@@ -116,7 +107,7 @@ const getId = async (req, res) => {
         const query = { id: id_path, item_type: item_type };
         const items = await collectionData.findOne(query, { projection });
 
-        await sendRequest(req, res, items, item_type_query, null, config);
+        await sendRequest(req, res, items, config);
       } catch (error) {
         await sendInternalError(res, error);
       }
