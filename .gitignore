@@ -1,20 +1,34 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Environment & credentials
 .env
+
+# Tooling & editor config
+.claude
 .githooks
 .jshintrc
 .prettierignore
 .vscode
+
+# CI & test output
 junit.xml
-node_modules
-package-lock.json
 reports/*
+
+# Scripts (not versioned)
 scripts
+src/data/getAllIds.sh
+src/data/getAllIdsFromImdbDataset.sh
+src/data/updateAllIds.sh
+
+# Assets (generated or private)
 src/assets/.!*!films_ids.txt
 src/assets/.!*!series_ids.txt
 src/assets/.vercel
 src/assets/popularity_ids_*.txt
 src/assets/postman
 src/assets/skip_ids_*.txt
-src/data/getAllIds.sh
-src/data/getAllIdsFromImdbDataset.sh
-src/data/updateAllIds.sh
+
+# Temporary files
 temp_*
