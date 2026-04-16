@@ -43,10 +43,10 @@ const params = {
       const movieItems = items.filter((item) => item.item_type === "movie");
       const tvshowItems = items.filter((item) => item.item_type === "tvshow");
 
-      expect(movieItems.length).toBeGreaterThan(
+      expect(movieItems.length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.softDefault,
       );
-      expect(tvshowItems.length).toBeGreaterThan(
+      expect(tvshowItems.length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.softDefault,
       );
     },

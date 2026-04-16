@@ -24,10 +24,10 @@ const getRatedEpisodes = require("./src/routes/getRatedEpisodes");
 
 const PORT = config.localPort;
 
-// Use CORS middleware
+/* Use CORS middleware. */
 app.use(cors());
 
-// Handle pre-flight requests
+/* Handle pre-flight requests. */
 app.options("*", cors());
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -63,16 +63,25 @@ app.get(
   getTvShowSeasonEpisodeDetails,
 );
 
-/* A route to get user preferences */
+/* A route to get user preferences. */
 app.get("/preferences/:email", getUserPreferences);
 
-/* A route to save or update user preferences */
+/* A route to save or update user preferences. */
 app.post("/preferences/:email", saveOrUpdateUserPreferences);
 
-/* Catch-all route for invalid endpoints */
-app.all("*", handleInvalidEndpoint);
+/* Mount MCP over HTTP at /mcp, then start the server. */
+async function start() {
+  /* A route that is used to expose MCP tools over HTTP. */
+  const { setupMCPRoutes } = await import("./src/mcp/http.mjs");
+  setupMCPRoutes(app);
 
-/* Starting the server on the port defined in the PORT variable. */
-app.listen(PORT, () => {
-  console.log(`server started on http://localhost:${PORT}`);
-});
+  /* Catch-all route for invalid endpoints. */
+  app.all("*", handleInvalidEndpoint);
+
+  /* Starting the server on the port defined in the PORT variable. */
+  app.listen(PORT, () => {
+    console.log(`server started on http://localhost:${PORT}`);
+  });
+}
+
+start().catch(console.error);

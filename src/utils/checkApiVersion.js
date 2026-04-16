@@ -1,41 +1,38 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const readline = require("readline");
 
 const packageJsonPath = "./package.json";
+const openapiPath = "./public/openapi.yaml";
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-function updateVersion(newVersion) {
-  fs.readFile(packageJsonPath, "utf8", (err, data) => {
-    if (err) {
-      console.error(`Error reading ${packageJsonPath}:`, err);
-      process.exit(1);
-    }
-
-    // Parse the JSON data from package.json
-    const packageJson = JSON.parse(data);
-
-    // Update the version property
+async function updateVersion(newVersion) {
+  try {
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, "utf8"));
     packageJson.version = newVersion;
-
-    fs.writeFile(
+    await fs.writeFile(
       packageJsonPath,
-      JSON.stringify(packageJson, null, 2),
+      JSON.stringify(packageJson, null, 2) + "\n",
       "utf8",
-      (writeErr) => {
-        if (writeErr) {
-          console.error(`Error writing to ${packageJsonPath}:`, writeErr);
-          process.exit(1);
-        }
-
-        console.log(`Version updated to ${newVersion} in package.json.`);
-        process.exit(0);
-      },
     );
-  });
+    console.log(`Version updated to ${newVersion} in package.json.`);
+
+    const yaml = await fs.readFile(openapiPath, "utf8");
+    await fs.writeFile(
+      openapiPath,
+      yaml.replace(/^  version: [\d.]+$/m, `  version: ${newVersion}`),
+      "utf8",
+    );
+    console.log(`Version updated to ${newVersion} in openapi.yaml.`);
+
+    process.exit(0);
+  } catch (err) {
+    console.error("Error updating version:", err);
+    process.exit(1);
+  }
 }
 
 rl.question("Enter the new version number: ", (answer) => {

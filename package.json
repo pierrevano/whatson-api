@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.26.8",
+  "version": "3.27.0",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "confirm-dataset-movie": "bash src/data/checkIds.sh update movie",
     "confirm-dataset-tvshow": "bash src/data/checkIds.sh update tvshow",
     "confirm-dataset": "npm run confirm-dataset-movie && npm run confirm-dataset-tvshow",
+    "mcp": "node src/mcp/server.mjs",
     "check-api-version": "node src/utils/checkApiVersion.js",
     "commit": "git add . && czg ai",
     "pull-all-platforms": "git pull origin main && git pull bitbucket main && git pull bitbucket_2 main && git pull bitbucket_3 main",
@@ -66,23 +67,24 @@
   "author": "Pierre Vanoverschelde",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "axios": "^1.14.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "axios": "^1.15.0",
     "axios-retry": "^4.5.0",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "csvtojson": "^2.0.14",
-    "dotenv": "^17.4.1",
+    "dotenv": "^17.4.2",
     "express": "^4.21.2",
     "he": "^1.2.0",
     "jshashes": "^1.0.8",
     "mongodb": "^7.1.1",
-    "newrelic": "^13.18.0",
+    "newrelic": "^13.19.1",
     "playwright": "^1.59.1",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.3",
     "rate-limiter-flexible": "^11.0.0",
     "shelljs": "^0.10.0",
     "tough-cookie": "^6.0.1",
-    "vercel": "^50.41.0"
+    "vercel": "^51.4.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

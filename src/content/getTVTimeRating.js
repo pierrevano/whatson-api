@@ -4,7 +4,7 @@ const axiosRetry = require("axios-retry").default;
 const { config } = require("../config");
 const { getHomepageResponse } = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
-const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
+const { logErrors } = require("../utils/logErrors");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -49,7 +49,7 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
             const attemptLog = `getTVTimeRating - ${
               tvtimeHomepage || tvtimeId || "unknown"
             }: Request failed (attempt ${attempt}). Retrying...`;
-            logAndAppendTempErrorLog(attemptLog);
+            console.log(attemptLog);
             await delay(config.retryDelay);
             continue;
           }
@@ -82,7 +82,7 @@ const getTVTimeRating = async (tvtimeHomepage, tvtimeId) => {
           const attemptLog = `getTVTimeRating - ${
             tvtimeHomepage || tvtimeId || "unknown"
           }: Request failed (attempt ${attempt}). Retrying...`;
-          logAndAppendTempErrorLog(attemptLog);
+          console.log(attemptLog);
           await delay(config.retryDelay);
         } else {
           logErrors(error, tvtimeHomepage, "getTVTimeRating");

@@ -1,6 +1,8 @@
 const { convertTitleToNumber } = require("../utils/convertTitleToNumber");
 const { getCheerioContent } = require("../utils/getCheerioContent");
-const { getHomepageResponse } = require("../utils/getHomepageResponse");
+const {
+  getHomepageResponseWithRateLimitRetry,
+} = require("../utils/getHomepageResponseWithRateLimitRetry");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -21,10 +23,16 @@ const getAllocineCriticsRating = async (allocineCriticsDetails) => {
   let allocineCriticInfo = null;
 
   try {
-    const homepageResponse = await getHomepageResponse(allocineCriticsDetails, {
-      serviceName: "AlloCiné",
-      allowedStatuses: [200, 500],
-    });
+    const homepageResponse = await getHomepageResponseWithRateLimitRetry(
+      allocineCriticsDetails,
+      {
+        serviceName: "AlloCiné",
+        allowedStatuses: [200, 429, 500],
+        rateLimitHitMessage: "AlloCiné critics rate limit hit.",
+        rateLimitStillActiveMessage:
+          "AlloCiné critics rate limit still active after retry.",
+      },
+    );
 
     if (homepageResponse.status === 500) return null;
 

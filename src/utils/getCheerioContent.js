@@ -6,7 +6,7 @@ const {
   getCheerioContentWithBrowser,
 } = require("./getCheerioContentWithBrowser");
 const { httpClient } = require("./httpClient");
-const { logAndAppendTempErrorLog, logErrors } = require("./logErrors");
+const { logErrors } = require("./logErrors");
 const { logExecutionTime } = require("./logExecutionTime");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -97,7 +97,7 @@ const getCheerioContent = async (
         const attemptLog = `${
           origin || "No Origin specified"
         } - ${url}: Request failed (attempt ${attempt}). Retrying...`;
-        logAndAppendTempErrorLog(attemptLog);
+        console.log(attemptLog);
         await delay(config.retryDelay);
       } else {
         logErrors(error, url, origin);

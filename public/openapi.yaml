@@ -1,0 +1,1264 @@
+openapi: 3.1.0
+
+info:
+  title: "What's on? API"
+  description: |
+    Aggregate movie and TV show ratings from IMDb, Rotten Tomatoes, AlloCiné,
+    Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, Trakt, and TV Time.
+
+    **Rate limiting** — 1 000 requests per hour. Pass an optional `api_key`
+    query parameter to remove this limit. The `Retry-After` header is set when the
+    limit is reached (HTTP 429).
+
+    **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
+    0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
+    AlloCiné native, etc.).
+  version: 3.27.0
+  contact:
+    name: Pierre Vanoverschelde
+    url: https://github.com/pierrevano/whatson-api
+  license:
+    name: See LICENSE
+    url: https://github.com/pierrevano/whatson-api/blob/main/LICENSE
+
+servers:
+  - url: https://whatson-api.onrender.com
+    description: Production
+
+security:
+  - apiKey: []
+
+# ---------------------------------------------------------------------------
+# Reusable components
+# ---------------------------------------------------------------------------
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: api_key
+      description: Optional API key. Requests without a key are subject to the public rate limit.
+
+  parameters:
+    appendToResponse:
+      name: append_to_response
+      in: query
+      description: |
+        Comma-separated list of optional fields to include in the response.
+        Available values: `critics_rating_details`, `directors`, `episodes_details`,
+        `genres`, `highest_episode`, `last_episode`, `lowest_episode`, `networks`,
+        `next_episode`, `platforms_links`, `production_companies`,
+        `certification_variants`, `image_variants`, `title_variants`, `parents_guide`.
+
+        Episode-related fields (`episodes_details`, `highest_episode`, `lowest_episode`,
+        `last_episode`, `next_episode`) only apply to TV show results and are ignored for movies.
+      schema:
+        type: string
+        example: "genres,platforms_links,last_episode"
+
+    ratingsFilters:
+      name: ratings_filters
+      in: query
+      description: |
+        Comma-separated rating sources used to compute `ratings_average`.
+        Use `all` to include every source. Available values:
+        `allocine_critics`, `allocine_users`, `betaseries_users`, `imdb_users`,
+        `metacritic_critics`, `metacritic_users`, `rottentomatoes_critics`,
+        `rottentomatoes_users`, `letterboxd_users`, `senscritique_users`,
+        `tmdb_users`, `trakt_users`, `tvtime_users`.
+      schema:
+        type: string
+        example: "imdb_users,allocine_users,rottentomatoes_critics"
+
+    popularityFilters:
+      name: popularity_filters
+      in: query
+      description: |
+        Comma-separated popularity sources used to compute `popularity_average`.
+        Use `all` to include every source or `none` to disable popularity sorting.
+        Available values: `allocine_popularity`, `imdb_popularity`, `tmdb_popularity`.
+      schema:
+        type: string
+        example: "imdb_popularity,tmdb_popularity"
+
+    minimumRatings:
+      name: minimum_ratings
+      in: query
+      description: |
+        Minimum `ratings_average` threshold on the normalised 0–5 scale.
+        Titles with an average below this value are excluded.
+      schema:
+        type: number
+        minimum: 0
+        maximum: 5
+        example: 3.5
+
+    releaseDateRange:
+      name: release_date
+      in: query
+      description: |
+        Date range filter. Either bound is optional.
+        Format: `from:YYYY-MM-DD,to:YYYY-MM-DD`
+      schema:
+        type: string
+        example: "from:2020-01-01,to:2024-12-31"
+
+    genres:
+      name: genres
+      in: query
+      description: Comma-separated genres to filter by (case-insensitive partial match). Pass `all` to skip this filter.
+      schema:
+        type: string
+        example: "Action,Drama"
+
+    platforms:
+      name: platforms
+      in: query
+      description: Comma-separated streaming platform names (case-insensitive partial match). Pass `all` to skip this filter.
+      schema:
+        type: string
+        example: "Netflix,Disney+"
+
+    networks:
+      name: networks
+      in: query
+      description: Comma-separated TV network names (case-insensitive partial match). Pass `all` to skip this filter.
+      schema:
+        type: string
+        example: "HBO,AMC"
+
+    limit:
+      name: limit
+      in: query
+      description: Number of results per page (default 20).
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 900
+        default: 20
+
+    page:
+      name: page
+      in: query
+      description: Page number, 1-based (default 1).
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+  schemas:
+    PaginatedItems:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Item"
+        total_pages:
+          type: integer
+          example: 42
+        total_results:
+          type: integer
+          example: 834
+
+    Item:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Internal MongoDB identifier.
+        id:
+          type: integer
+          description: TMDB numeric identifier (canonical).
+          example: 1396
+        item_type:
+          type: string
+          enum: [movie, tvshow]
+        is_active:
+          type: boolean
+          description: Whether the title is currently tracked as active.
+        title:
+          type: string
+          example: "Breaking Bad"
+        original_title:
+          type: string
+          example: "Breaking Bad"
+        image:
+          type: string
+          format: uri
+          description: Poster image URL.
+        is_adult:
+          type: boolean
+          description: IMDb adult-content flag.
+        certification:
+          type: string
+          description: US age classification from IMDb (e.g. G, PG-13, R, TV-MA).
+          example: "TV-MA"
+        release_date:
+          type: string
+          format: date
+          example: "2008-01-20"
+        runtime:
+          type: integer
+          description: Runtime in seconds.
+          example: 2940
+        tagline:
+          type: string
+        trailer:
+          type: string
+          format: uri
+          description: URL to the trailer (Dailymotion).
+        seasons_number:
+          type: integer
+          description: Number of seasons (TV shows only).
+          example: 5
+        status:
+          type: string
+          description: Production status (TV shows only).
+          enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
+        updated_at:
+          type: string
+          format: date-time
+        popularity_average:
+          type: number
+          description: Average popularity rank across AlloCiné, IMDb, and TMDB (lower is more popular).
+        ratings_average:
+          type: number
+          description: Normalised average rating across all included sources (0–5 scale).
+          example: 4.37
+        allocine:
+          $ref: "#/components/schemas/AllocineRatings"
+        betaseries:
+          $ref: "#/components/schemas/SimpleRatings"
+        imdb:
+          $ref: "#/components/schemas/ImdbRatings"
+        letterboxd:
+          $ref: "#/components/schemas/SimpleRatings"
+        metacritic:
+          $ref: "#/components/schemas/MetacriticRatings"
+        rotten_tomatoes:
+          $ref: "#/components/schemas/RottenTomatoesRatings"
+        senscritique:
+          $ref: "#/components/schemas/SimpleRatings"
+        tmdb:
+          $ref: "#/components/schemas/TmdbRatings"
+        trakt:
+          $ref: "#/components/schemas/SimpleRatings"
+        tv_time:
+          $ref: "#/components/schemas/TvTimeRatings"
+        thetvdb:
+          $ref: "#/components/schemas/TheTvdbInfo"
+        mojo:
+          $ref: "#/components/schemas/MojoInfo"
+        # Optional fields (returned when requested via append_to_response)
+        genres:
+          type: object
+          description: Genre names. Included when `genres` is in `append_to_response`.
+        directors:
+          type: object
+          description: Director names. Included when `directors` is in `append_to_response`.
+        networks:
+          type: object
+          description: Network names. Included when `networks` is in `append_to_response`.
+        platforms_links:
+          type: array
+          description: Streaming platform availability. Included when `platforms_links` is in `append_to_response`.
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Netflix"
+              link_url:
+                type: string
+                format: uri
+        production_companies:
+          type: object
+          description: Production company names. Included when `production_companies` is in `append_to_response`.
+        title_variants:
+          type: object
+          description: Localised titles. Included when `title_variants` is in `append_to_response`.
+          properties:
+            fr:
+              type: string
+        image_variants:
+          type: object
+          description: Localised poster images. Included when `image_variants` is in `append_to_response`.
+          properties:
+            fr:
+              type: string
+              format: uri
+        certification_variants:
+          type: object
+          description: Localised age ratings. Included when `certification_variants` is in `append_to_response`.
+          properties:
+            fr:
+              type: string
+        parents_guide:
+          type: object
+          description: IMDb parental guide. Included when `parents_guide` is in `append_to_response`.
+          properties:
+            url:
+              type: string
+              format: uri
+            categories:
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  severity:
+                    type: string
+        last_episode:
+          description: Most recently aired episode. Included when `last_episode` is in `append_to_response`. TV shows only.
+          $ref: "#/components/schemas/AiringEpisode"
+        next_episode:
+          description: Next scheduled episode. Included when `next_episode` is in `append_to_response`. TV shows only.
+          $ref: "#/components/schemas/AiringEpisode"
+        highest_episode:
+          description: Highest IMDb-rated episode across all seasons. Included when `highest_episode` is in `append_to_response`. TV shows only.
+          $ref: "#/components/schemas/RatedEpisode"
+        lowest_episode:
+          description: Lowest IMDb-rated episode across all seasons. Included when `lowest_episode` is in `append_to_response`. TV shows only.
+          $ref: "#/components/schemas/RatedEpisode"
+        episodes_details:
+          type: array
+          description: All episodes with IMDb ratings. Included when `episodes_details` is in `append_to_response`. TV shows only.
+          items:
+            $ref: "#/components/schemas/RatedEpisode"
+
+    AllocineRatings:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+          format: uri
+        users_rating:
+          type: number
+          description: 0–5
+        users_rating_count:
+          type: integer
+        critics_rating:
+          type: number
+          description: 0–5
+        critics_rating_count:
+          type: integer
+        critics_rating_details:
+          type: array
+          description: Included when `critics_rating_details` is in `append_to_response`.
+          items:
+            type: object
+            properties:
+              critic_name:
+                type: string
+              critic_rating:
+                type: number
+        popularity:
+          type: number
+
+    SimpleRatings:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        users_rating:
+          type: number
+        users_rating_count:
+          type: integer
+
+    ImdbRatings:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "tt0903747"
+        url:
+          type: string
+          format: uri
+        users_rating:
+          type: number
+          description: 0–10
+        users_rating_count:
+          type: integer
+        popularity:
+          type: number
+        top_ranking:
+          type: ["integer", "null"]
+          description: Position in the IMDb Top 250. Null when the title is not ranked.
+
+    MetacriticRatings:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        users_rating:
+          type: number
+          description: 0–10
+        users_rating_count:
+          type: integer
+        critics_rating:
+          type: number
+          description: 0–100 (Metascore)
+        critics_rating_count:
+          type: integer
+        must_see:
+          type: boolean
+
+    RottenTomatoesRatings:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        users_rating:
+          type: number
+          description: Audience score 0–100
+        users_rating_count:
+          type: integer
+        users_rating_liked_count:
+          type: integer
+        users_rating_not_liked_count:
+          type: integer
+        users_certified:
+          type: boolean
+          description: Rotten Tomatoes "Verified Audience" badge.
+        critics_rating:
+          type: number
+          description: Tomatometer 0–100
+        critics_rating_count:
+          type: integer
+        critics_rating_liked_count:
+          type: integer
+        critics_rating_not_liked_count:
+          type: integer
+        critics_certified:
+          type: boolean
+          description: Rotten Tomatoes "Certified Fresh" badge.
+
+    TmdbRatings:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+          format: uri
+        users_rating:
+          type: number
+          description: 0–10
+        users_rating_count:
+          type: integer
+        popularity:
+          type: number
+
+    TvTimeRatings:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+          format: uri
+        users_rating:
+          type: number
+          description: 0–10
+
+    TheTvdbInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        url:
+          type: string
+          format: uri
+
+    MojoInfo:
+      type: object
+      properties:
+        rank:
+          type: integer
+        url:
+          type: string
+          format: uri
+        lifetime_gross:
+          type: integer
+          description: Lifetime worldwide gross in USD.
+
+    RatedEpisode:
+      type: object
+      properties:
+        season:
+          type: integer
+        episode:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+          description: IMDb episode ID (e.g. tt1267295).
+        url:
+          type: string
+          format: uri
+        release_date:
+          type: string
+          format: date
+        users_rating:
+          type: number
+          description: IMDb user rating 0–10.
+        users_rating_count:
+          type: integer
+
+    AiringEpisode:
+      allOf:
+        - $ref: "#/components/schemas/RatedEpisode"
+        - type: object
+          properties:
+            episode_type:
+              type: string
+
+    SeasonMetadata:
+      type: object
+      properties:
+        season_number:
+          type: integer
+        episodes_count:
+          type: integer
+        average_users_rating:
+          type: number
+          description: Average IMDb user rating for the season.
+        users_rating_count:
+          type: integer
+        highest_episode:
+          description: Highest IMDb-rated episode within this season.
+          $ref: "#/components/schemas/RatedEpisode"
+        lowest_episode:
+          description: Lowest IMDb-rated episode within this season.
+          $ref: "#/components/schemas/RatedEpisode"
+        rating_distribution:
+          type: object
+          description: Number of episodes grouped by IMDb rating ranges (1–10). Included when `rating_distribution` is in `append_to_response`.
+        rating_distribution_episodes:
+          type: object
+          description: Episodes grouped by IMDb rating ranges (1–10). Included when `rating_distribution_episodes` is in `append_to_response`.
+
+    TvShowSeasons:
+      type: object
+      properties:
+        id:
+          type: integer
+        item_type:
+          type: string
+          enum: [tvshow]
+        title:
+          type: string
+        image:
+          type: string
+          format: uri
+        networks:
+          type: object
+        seasons_number:
+          type: integer
+        status:
+          type: string
+        seasons:
+          type: array
+          items:
+            $ref: "#/components/schemas/SeasonMetadata"
+        # Optional episode highlights (append_to_response) — across all seasons
+        highest_episode:
+          description: Highest IMDb-rated episode across all seasons. Included when `highest_episode` is in `append_to_response`.
+          $ref: "#/components/schemas/RatedEpisode"
+        lowest_episode:
+          description: Lowest IMDb-rated episode across all seasons. Included when `lowest_episode` is in `append_to_response`.
+          $ref: "#/components/schemas/RatedEpisode"
+        last_episode:
+          description: Most recently aired episode. Included when `last_episode` is in `append_to_response`.
+          $ref: "#/components/schemas/AiringEpisode"
+        next_episode:
+          description: Next scheduled episode. Included when `next_episode` is in `append_to_response`.
+          $ref: "#/components/schemas/AiringEpisode"
+
+    TvShowSeasonEpisodes:
+      type: object
+      properties:
+        id:
+          type: integer
+        item_type:
+          type: string
+          enum: [tvshow]
+        title:
+          type: string
+        image:
+          type: string
+          format: uri
+        networks:
+          type: object
+        season_number:
+          type: integer
+        seasons_number:
+          type: integer
+        status:
+          type: string
+        total_episodes:
+          type: integer
+        episodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/RatedEpisode"
+
+    TvShowEpisodeDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        item_type:
+          type: string
+          enum: [tvshow]
+        title:
+          type: string
+        image:
+          type: string
+          format: uri
+        networks:
+          type: object
+        season_number:
+          type: integer
+        episode_number:
+          type: integer
+        seasons_number:
+          type: integer
+        status:
+          type: string
+        episode:
+          $ref: "#/components/schemas/RatedEpisode"
+
+    PaginatedRatedEpisodes:
+      type: object
+      properties:
+        page:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/RatedEpisodeWithShow"
+        total_pages:
+          type: integer
+        total_results:
+          type: integer
+
+    RatedEpisodeWithShow:
+      allOf:
+        - $ref: "#/components/schemas/RatedEpisode"
+        - type: object
+          properties:
+            tvshow:
+              type: object
+              properties:
+                id:
+                  type: integer
+                item_type:
+                  type: string
+                title:
+                  type: string
+                image:
+                  type: string
+                  format: uri
+                networks:
+                  type: object
+                seasons_number:
+                  type: integer
+                status:
+                  type: string
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "No matching items found."
+
+  responses:
+    RateLimitExceeded:
+      description: Rate limit exceeded (1 000 requests per hour). Retry after the indicated delay.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+paths:
+  /:
+    get:
+      operationId: searchTitles
+      summary: Search and filter movies and TV shows
+      description: |
+        The main discovery endpoint. Supports filtering by title, genre, platform,
+        network, release date, ratings, popularity, status, and more.
+        Returns paginated results sorted by `ratings_average` or `popularity_average`
+        depending on the filters applied.
+
+        You can also look up a title by an external platform ID using any of these
+        query parameters (returns a single result):
+        `imdbid`, `tmdbid`, `allocineid`, `betaseriesid`, `letterboxdid`,
+        `metacriticid`, `rottentomatoesid`, `senscritiqueid`, `thetvdbid`,
+        `traktid`, `tvtimeid`.
+      tags: [Titles]
+      parameters:
+        - name: title
+          in: query
+          description: Title search (partial match, case-insensitive). Also matches `original_title` and localized `title_variants`.
+          schema:
+            type: string
+            example: "Breaking Bad"
+        - name: item_type
+          in: query
+          description: |
+            Filter by content type: `movie`, `tvshow`, or `movie,tvshow` to return both
+            (equivalent to omitting this parameter).
+          schema:
+            type: string
+            example: "movie"
+        - $ref: "#/components/parameters/genres"
+        - $ref: "#/components/parameters/platforms"
+        - $ref: "#/components/parameters/networks"
+        - name: status
+          in: query
+          description: TV show production status.
+          schema:
+            type: string
+            enum: [canceled, ended, ongoing, pilot, unknown]
+        - name: release_date
+          in: query
+          description: |
+            Date range filter. Either bound is optional.
+            Format: `from:YYYY-MM-DD,to:YYYY-MM-DD`
+
+            Special shortcut: `new` returns recently released titles
+            (last 6 months for movies, last 18 months for TV shows).
+          schema:
+            type: string
+            example: "from:2020-01-01,to:2024-12-31"
+        - $ref: "#/components/parameters/minimumRatings"
+        - $ref: "#/components/parameters/ratingsFilters"
+        - $ref: "#/components/parameters/popularityFilters"
+        - name: is_active
+          in: query
+          description: |
+            `true` returns only active titles, `false` returns only inactive titles,
+            `true,false` (or omitting this parameter) returns both.
+          schema:
+            type: string
+            example: "true"
+        - name: is_adult
+          in: query
+          description: |
+            `false` (default) returns only non-adult titles, `true` returns only
+            adult-flagged titles, `true,false` returns both.
+          schema:
+            type: string
+            default: "false"
+            example: "true"
+        - name: must_see
+          in: query
+          description: |
+            `true` returns only Metacritic "Must-See" titles, `false` returns only
+            titles without that badge, `true,false` returns both.
+          schema:
+            type: string
+            example: "true"
+        - name: users_certified
+          in: query
+          description: |
+            `true` returns only Rotten Tomatoes "Verified Audience" certified titles,
+            `false` returns only uncertified titles, `true,false` returns both.
+          schema:
+            type: string
+            example: "true"
+        - name: critics_certified
+          in: query
+          description: |
+            `true` returns only Rotten Tomatoes "Certified Fresh" titles, `false`
+            returns only non-certified titles, `true,false` returns both.
+          schema:
+            type: string
+            example: "true"
+        - name: directors
+          in: query
+          description: Comma-separated director names (partial match). Pass `all` to skip this filter.
+          schema:
+            type: string
+        - name: production_companies
+          in: query
+          description: Comma-separated production company names (partial match). Pass `all` to skip this filter.
+          schema:
+            type: string
+        - name: runtime
+          in: query
+          description: |
+            Runtime filter in seconds. One integer = exact match.
+            Two or more comma-separated integers = range between the minimum
+            and maximum of the provided values (e.g. `3600,7200` matches
+            titles with runtime ≥ 3600 s and ≤ 7200 s).
+          schema:
+            type: string
+            example: "3600,7200"
+        - name: seasons_number
+          in: query
+          description: |
+            Filter TV shows by number of seasons. Pass a single value for an
+            exact match (e.g. `3`), or comma-separated values to match any of
+            them (e.g. `1,3` matches shows with 1 or 3 seasons). Any value ≥ 5
+            also matches shows with more than 5 seasons (e.g. `5` matches
+            shows with 5 or more seasons).
+          schema:
+            type: string
+            example: "1,2,5"
+        - name: filtered_seasons
+          in: query
+          description: |
+            Comma-separated season numbers to include when `episodes_details` is
+            in `append_to_response`. Example: `1,2` returns only episodes from
+            seasons 1 and 2.
+          schema:
+            type: string
+            example: "1,2"
+        - name: top_ranking_order
+          in: query
+          description: |
+            Sort by IMDb top ranking. Only titles that appear in the IMDb top
+            charts are returned. `asc` shows #1 first, `desc` shows #1 last.
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: mojo_rank_order
+          in: query
+          description: |
+            Sort by Box Office Mojo rank. Only titles with a Mojo rank are
+            returned. `asc` shows #1 first, `desc` shows #1 last.
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: imdbid
+          in: query
+          description: Look up by IMDb ID (e.g. tt0903747). Returns a single result.
+          schema:
+            type: string
+            example: "tt0903747"
+        - name: tmdbid
+          in: query
+          description: Look up by TMDB numeric ID. Returns a single result.
+          schema:
+            type: integer
+        - name: allocineid
+          in: query
+          description: Look up by AlloCiné ID. Returns a single result.
+          schema:
+            type: integer
+        - name: betaseriesid
+          in: query
+          description: Look up by BetaSeries ID. Returns a single result.
+          schema:
+            type: string
+        - name: letterboxdid
+          in: query
+          description: Look up by Letterboxd ID. Returns a single result. Movie only.
+          schema:
+            type: string
+        - name: metacriticid
+          in: query
+          description: Look up by Metacritic slug. Returns a single result.
+          schema:
+            type: string
+        - name: rottentomatoesid
+          in: query
+          description: Look up by Rotten Tomatoes slug. Returns a single result.
+          schema:
+            type: string
+        - name: senscritiqueid
+          in: query
+          description: Look up by SensCritique ID. Returns a single result.
+          schema:
+            type: integer
+        - name: thetvdbid
+          in: query
+          description: Look up by TheTVDB ID. Returns a single result.
+          schema:
+            type: integer
+        - name: traktid
+          in: query
+          description: Look up by Trakt ID or slug. Returns a single result.
+          schema:
+            type: string
+        - name: tvtimeid
+          in: query
+          description: Look up by TV Time ID. Returns a single result. TV shows only.
+          schema:
+            type: integer
+        - $ref: "#/components/parameters/appendToResponse"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/page"
+      responses:
+        "200":
+          description: Paginated list of matching titles.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedItems"
+        "400":
+          description: Invalid query parameters.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+
+  /movie/{id}:
+    get:
+      operationId: getMovie
+      summary: Get a movie by TMDB ID
+      description: Returns full metadata and ratings for a specific movie.
+      tags: [Titles]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: TMDB numeric ID of the movie.
+          schema:
+            type: integer
+            example: 680
+        - $ref: "#/components/parameters/appendToResponse"
+        - $ref: "#/components/parameters/ratingsFilters"
+      responses:
+        "200":
+          description: Movie detail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+
+  /tvshow/{id}:
+    get:
+      operationId: getTvShow
+      summary: Get a TV show by TMDB ID
+      description: Returns full metadata and ratings for a specific TV show.
+      tags: [Titles]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: TMDB numeric ID of the TV show.
+          schema:
+            type: integer
+            example: 1396
+        - $ref: "#/components/parameters/appendToResponse"
+        - $ref: "#/components/parameters/ratingsFilters"
+      responses:
+        "200":
+          description: TV show detail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+
+  /tvshow/{id}/seasons:
+    get:
+      operationId: getTvShowSeasons
+      summary: Get all seasons for a TV show
+      description: |
+        Returns per-season episode counts and IMDb rating summaries (average rating,
+        highest-rated episode, lowest-rated episode).
+      tags: [TV Shows]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: TMDB numeric ID of the TV show.
+          schema:
+            type: integer
+            example: 1396
+        - name: append_to_response
+          in: query
+          description: |
+            Optional fields to include. Two scopes:
+
+            **Added to each season object:** `rating_distribution` (episode count per rating band),
+            `rating_distribution_episodes` (episode list per rating band).
+
+            **Added to the root response (across all seasons):** `highest_episode`, `lowest_episode`,
+            `last_episode`, `next_episode`.
+          schema:
+            type: string
+            example: "rating_distribution,highest_episode"
+      responses:
+        "200":
+          description: TV show seasons summary.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TvShowSeasons"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+
+  /tvshow/{id}/seasons/{season_number}/episodes:
+    get:
+      operationId: getTvShowSeasonEpisodes
+      summary: Get all episodes for a specific season
+      description: Returns the list of episodes for a specific season, with optional episode-level filters (minimum rating, release date range).
+      tags: [TV Shows]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: TMDB numeric ID of the TV show.
+          schema:
+            type: integer
+            example: 1396
+        - name: season_number
+          in: path
+          required: true
+          description: Season number (1-based).
+          schema:
+            type: integer
+            minimum: 1
+            example: 3
+        - name: minimum_ratings
+          in: query
+          description: Minimum IMDb user rating (0–10 scale).
+          schema:
+            type: number
+            minimum: 0
+            maximum: 10
+        - $ref: "#/components/parameters/releaseDateRange"
+      responses:
+        "200":
+          description: Episodes for the requested season.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TvShowSeasonEpisodes"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+
+  /tvshow/{id}/seasons/{season_number}/episodes/{episode_number}:
+    get:
+      operationId: getTvShowEpisodeDetail
+      summary: Get a specific episode
+      description: Returns detail for a single episode including its IMDb rating.
+      tags: [TV Shows]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: TMDB numeric ID of the TV show.
+          schema:
+            type: integer
+            example: 1396
+        - name: season_number
+          in: path
+          required: true
+          description: Season number (1-based).
+          schema:
+            type: integer
+            minimum: 1
+            example: 3
+        - name: episode_number
+          in: path
+          required: true
+          description: Episode number within the season (1-based).
+          schema:
+            type: integer
+            minimum: 1
+            example: 10
+      responses:
+        "200":
+          description: Episode detail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TvShowEpisodeDetail"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+
+  /episodes/rated:
+    get:
+      operationId: getRatedEpisodes
+      summary: Get highest or lowest rated episodes across all TV shows
+      description: |
+        Returns IMDb-rated episodes ranked across all TV shows. Supports episode-level
+        sorting (by rating, ascending or descending) and TV show–level filters (genre,
+        platform, network, status, and more). Each result includes the parent show's
+        metadata alongside the episode data.
+
+        Only episodes with at least `minimum_users_rating_count` user ratings (default 100)
+        are included to filter out low-confidence ratings.
+      tags: [Episodes]
+      parameters:
+        - name: title
+          in: query
+          description: Search across the TV show title, episode title, or TV show networks (partial match, case-insensitive).
+          schema:
+            type: string
+        - $ref: "#/components/parameters/genres"
+        - $ref: "#/components/parameters/platforms"
+        - $ref: "#/components/parameters/networks"
+        - name: is_active
+          in: query
+          description: |
+            `true` returns only active TV shows, `false` returns only inactive TV shows,
+            `true,false` (or omitting this parameter) returns both.
+          schema:
+            type: string
+            example: "true"
+        - name: is_adult
+          in: query
+          description: |
+            `false` (default) returns only non-adult TV shows, `true` returns only
+            adult-flagged TV shows, `true,false` returns both.
+          schema:
+            type: string
+            default: "false"
+            example: "true"
+        - name: must_see
+          in: query
+          description: |
+            `true` returns only TV shows with Metacritic "Must-See" badge, `false`
+            returns only those without it, `true,false` returns both.
+          schema:
+            type: string
+            example: "true"
+        - name: users_certified
+          in: query
+          description: |
+            `true` returns only TV shows with Rotten Tomatoes "Verified Audience"
+            certification, `false` returns only uncertified shows, `true,false` returns both.
+          schema:
+            type: string
+            example: "true"
+        - name: critics_certified
+          in: query
+          description: |
+            `true` returns only TV shows with Rotten Tomatoes "Certified Fresh" status,
+            `false` returns only non-certified shows, `true,false` returns both.
+          schema:
+            type: string
+            example: "true"
+        - name: directors
+          in: query
+          description: Comma-separated director names (partial match). Pass `all` to skip this filter.
+          schema:
+            type: string
+        - name: production_companies
+          in: query
+          description: Comma-separated production company names (partial match). Pass `all` to skip this filter.
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter the parent TV show by production status.
+          schema:
+            type: string
+            enum: [canceled, ended, ongoing, pilot, unknown]
+        - name: filtered_seasons
+          in: query
+          description: |
+            Comma-separated season numbers to restrict results to.
+            Example: `1,2` returns only episodes from seasons 1 and 2.
+          schema:
+            type: string
+            example: "1,2"
+        - name: minimum_ratings
+          in: query
+          description: Minimum IMDb user rating (0–10 scale).
+          schema:
+            type: number
+            minimum: 0
+            maximum: 10
+            example: 9.0
+        - name: minimum_users_rating_count
+          in: query
+          description: Minimum number of IMDb user ratings required per episode (default 100).
+          schema:
+            type: integer
+            minimum: 0
+            default: 100
+        - $ref: "#/components/parameters/releaseDateRange"
+        - name: order
+          in: query
+          description: "`desc` returns top-rated episodes, `asc` returns lowest-rated episodes (default: `desc`)."
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/page"
+      responses:
+        "200":
+          description: Paginated rated episodes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedRatedEpisodes"
+        "400":
+          description: Invalid query parameters.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"

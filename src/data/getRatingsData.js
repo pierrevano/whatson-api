@@ -18,6 +18,14 @@ const { getTVTimeRating } = require("../content/getTVTimeRating");
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let lastCallAt = 0;
 
+/**
+ * Fetches ratings data from the supported third-party providers.
+ * AlloCiné data is fetched first, while the remaining providers may be handled
+ * either one after another or in parallel depending on the current flow.
+ *
+ * @param {object} params - Provider URLs, ids, and preloaded IMDb/TMDB data for the current item.
+ * @returns {Promise<object>} Ratings data collected for the current item, grouped by provider.
+ */
 const getRatingsData = async ({
   allocineCriticsDetails,
   allocineHomepage,
@@ -48,9 +56,61 @@ const getRatingsData = async ({
   }
   lastCallAt = Date.now();
 
+  const allocineFirstInfo = await getAllocineInfo(allocineHomepage, false);
+  const allocineCriticInfo = await getAllocineCriticsRating(
+    allocineCriticsDetails,
+  );
+
+  if (process.env.SEQUENTIAL_RATINGS_FETCH === "true") {
+    const betaseriesRating = await getBetaseriesRating(
+      allocineHomepage,
+      betaseriesHomepage,
+      betaseriesId,
+    );
+    const letterboxdRating = await getLetterboxdRating(
+      letterboxdHomepage,
+      letterboxdId,
+    );
+    const metacriticRating = await getMetacriticRating(
+      metacriticHomepage,
+      metacriticId,
+    );
+    const rottenTomatoesRating = await getRottenTomatoesRating(
+      rottenTomatoesHomepage,
+      rottenTomatoesId,
+    );
+    const sensCritiqueRating = await getSensCritiqueRating(
+      sensCritiqueHomepage,
+      sensCritiqueId,
+    );
+    const traktRating = await getTraktRating(
+      allocineHomepage,
+      traktHomepage,
+      traktId,
+    );
+    const tvtimeRating = await getTVTimeRating(tvtimeHomepage, tvtimeId);
+
+    const [imdbRatingData, tmdbRating] = await Promise.all([
+      getImdbRating(imdbHomepage, imdbData),
+      getTmdbRating(tmdbHomepage, tmdbId, tmdbData),
+    ]);
+
+    return {
+      allocineCriticInfo,
+      allocineFirstInfo,
+      betaseriesRating,
+      imdbRatingData,
+      letterboxdRating,
+      metacriticRating,
+      rottenTomatoesRating,
+      sensCritiqueRating,
+      tmdbRating,
+      traktRating,
+      tvtimeRating,
+    };
+  }
+
   const [
-    allocineCriticInfo,
-    allocineFirstInfo,
     betaseriesRating,
     imdbRatingData,
     letterboxdRating,
@@ -61,8 +121,6 @@ const getRatingsData = async ({
     traktRating,
     tvtimeRating,
   ] = await Promise.all([
-    getAllocineCriticsRating(allocineCriticsDetails),
-    getAllocineInfo(allocineHomepage, false),
     getBetaseriesRating(allocineHomepage, betaseriesHomepage, betaseriesId),
     getImdbRating(imdbHomepage, imdbData),
     getLetterboxdRating(letterboxdHomepage, letterboxdId),
