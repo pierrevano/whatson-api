@@ -24,9 +24,9 @@ Note: A rate limit of `1000` requests per hour is in place to prevent abuse of t
 
 ## Docs & Tools
 
-- **[API docs](https://whatson-api.onrender.com/docs)** — Browse and test the full API reference.
-- **[Postman collection](https://documenter.getpostman.com/view/18186487/2s9Ykhg4MB)** — Ready-to-use request examples.
-- **MCP server** — For AI agents (Claude Desktop, Cursor, etc.). Run locally (`node src/mcp/server.mjs`) or connect remotely via HTTP at `POST /mcp`.
+- [API docs](https://whatson-api.onrender.com/docs) — Browse and test the full API reference.
+- [Postman collection](https://documenter.getpostman.com/view/18186487/2s9Ykhg4MB) — Ready-to-use request examples.
+- MCP server — For AI agents (Claude Desktop, Cursor, etc.). Run locally (`node src/mcp/server.mjs`) or connect remotely via HTTP at `POST /mcp`.
 
 ---
 
