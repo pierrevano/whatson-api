@@ -6,11 +6,13 @@ const { config } = require("../src/config");
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 
 const params = {
-  movie_items_not_older_than_365_days: {
+  movie_items_not_older_than_max_age: {
     itemType: "movie",
+    maxAgeDays: 365,
   },
-  tvshow_items_not_older_than_365_days: {
+  tvshow_items_not_older_than_max_age: {
     itemType: "tvshow",
+    maxAgeDays: 180,
   },
 };
 
@@ -31,12 +33,12 @@ describe("Items are up to date", () => {
     }
   }, config.timeout);
 
-  Object.entries(params).forEach(([name, { itemType }]) => {
+  Object.entries(params).forEach(([name, { itemType, maxAgeDays }]) => {
     test(
       name,
       async () => {
         const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - 365);
+        cutoffDate.setDate(cutoffDate.getDate() - maxAgeDays);
 
         const outdatedDocs = await collectionData
           .find(
@@ -44,9 +46,21 @@ describe("Items are up to date", () => {
               item_type: itemType,
               updated_at: { $lt: cutoffDate.toISOString() },
             },
-            { projection: { id: 1, updated_at: 1 } },
+            { projection: { updated_at: 1, "allocine.url": 1 } },
           )
           .toArray();
+
+        if (outdatedDocs.length > 0) {
+          console.log(
+            `Outdated ${itemType}s:\n` +
+              outdatedDocs
+                .map(
+                  (doc) =>
+                    `  ${doc.allocine?.url ?? "no allocine url"} (updated_at: ${doc.updated_at})`,
+                )
+                .join("\n"),
+          );
+        }
 
         expect(outdatedDocs.length).toBe(0);
       },

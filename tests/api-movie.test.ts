@@ -417,6 +417,40 @@ function checkItemProperties(items) {
     ) {
       expect(item.imdb.users_rating_count).toBeGreaterThan(0);
     }
+
+    if (item.is_active === true) {
+      expect(items.filter((item) => item.awards).length).toBeGreaterThanOrEqual(
+        config.minimumNumberOfItems.default,
+      );
+
+      expect(
+        items.filter((item) => typeof item.country_of_origin === "string")
+          .length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+    }
+
+    if (item.awards) {
+      try {
+        expect(item.awards.total.wins).toBeGreaterThanOrEqual(0);
+        expect(item.awards.total.nominations).toBeGreaterThan(0);
+
+        if (item.awards.top) {
+          expect(typeof item.awards.top.name).toBe("string");
+          expect(item.awards.top.wins).toBeGreaterThanOrEqual(0);
+          expect(item.awards.top.nominations).toBeGreaterThan(0);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          error.message = `[IMDb id: ${item.imdb?.id ?? "unknown"}] ${error.message}`;
+        }
+        throw error;
+      }
+    }
+
+    if (item.country_of_origin) {
+      expect(typeof item.country_of_origin).toBe("string");
+    }
+
     expect(
       items.filter((item) => typeof item.certification === "string").length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
@@ -1194,6 +1228,20 @@ const params = {
     expectedResult: (item) => {
       expect(item.id).toBe(10003);
       expect(item.item_type).toBe("movie");
+      expect(item).not.toHaveProperty("awards");
+    },
+  },
+
+  awards_present_when_requested_on_movie_path: {
+    query: "/movie/1054867?append_to_response=awards",
+    expectedResult: (item) => {
+      expect(item.id).toBe(1054867);
+
+      expect(item.awards.total.wins).toBeGreaterThan(0);
+      expect(item.awards.total.nominations).toBeGreaterThan(0);
+      expect(typeof item.awards.top.name).toBe("string");
+      expect(item.awards.top.wins).toBeGreaterThan(0);
+      expect(item.awards.top.nominations).toBeGreaterThan(0);
     },
   },
 
@@ -1490,12 +1538,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&append_to_response=critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=false&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 

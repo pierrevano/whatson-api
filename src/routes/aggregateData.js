@@ -78,6 +78,7 @@ const aggregateData = async (
 ) => {
   const appendIncludes = buildAppendIncludes(append_to_response);
 
+  const awards_append = appendIncludes("awards");
   const critics_rating_details = appendIncludes("critics_rating_details");
   const directors_append = appendIncludes("directors");
   const directors =
@@ -417,6 +418,7 @@ const aggregateData = async (
   };
 
   const remove_keys_base = {
+    ...(awards_append ? {} : { awards: 0 }),
     ...(critics_rating_details ? {} : { "allocine.critics_rating_details": 0 }),
     ...(directors_append ? {} : { directors: 0 }),
     ...(episodes_details ? {} : { episodes_details: 0 }),

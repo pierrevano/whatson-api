@@ -9,6 +9,8 @@ const {
 const { handleConsentBanner } = require("./handleConsentBanner");
 const { logExecutionTime } = require("./logExecutionTime");
 
+const US_CONTEXT_OPTIONS = { locale: "en-US", timezoneId: "America/New_York" };
+
 let sharedSessionPromise = null;
 let sharedNavigationTask = Promise.resolve();
 
@@ -37,7 +39,7 @@ const readCheerioFromPage = async (page, options = {}) => {
  */
 const createSharedSession = async (chromium) => {
   const browser = await chromium.launch({ headless: false });
-  const context = await browser.newContext();
+  const context = await browser.newContext(US_CONTEXT_OPTIONS);
   const page = await context.newPage();
   await minimizePageWindow(page);
   return { browser, context, page };
@@ -135,7 +137,7 @@ const loadCheerioWithDedicatedBrowser = async (chromium, request) => {
   try {
     const startTime = Date.now();
     browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext();
+    const context = await browser.newContext(US_CONTEXT_OPTIONS);
     const page = await context.newPage();
 
     await navigateWithRetries(page, request);

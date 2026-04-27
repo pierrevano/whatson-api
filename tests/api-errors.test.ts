@@ -224,7 +224,7 @@ const params = {
       expectedResult: (data) => {
         expect(typeof data).toBe("object");
         expect(Object.keys(data).length).toEqual(
-          config.keysToCheck.length - 14,
+          config.keysToCheck.length - 15,
         );
         expect(data.id).toBe(249042);
         expect(data.ratings_average).toBeGreaterThan(0);

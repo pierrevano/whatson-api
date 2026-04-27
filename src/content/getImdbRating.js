@@ -1,3 +1,5 @@
+const { getAwards } = require("./getAwards");
+const { getCountryOfOrigin } = require("./getCountryOfOrigin");
 const { getImdbData } = require("../utils/getImdbData");
 const { logErrors } = require("../utils/logErrors");
 
@@ -57,8 +59,8 @@ const determineSeasonsInfo = (episodesInfo) => {
 
 /**
  * It takes an imdbHomepage as an argument, and returns the usersRating, usersRatingCount,
- * isAdult flag, runtime (in seconds), and topRanking position of the item. The data is extracted
- * from the embedded JSON structure found in the IMDb page content.
+ * isAdult flag, runtime (in seconds), topRanking position, award summary, and country of origin
+ * of the item. The data is extracted from the embedded JSON structure found in the IMDb page content.
  *
  * @param {string} imdbHomepage - The IMDb homepage URL of the item
  * @param {object|null} [imdbData] - IMDb data.
@@ -69,9 +71,11 @@ const determineSeasonsInfo = (episodesInfo) => {
  *   runtime: number|null,
  *   topRanking: number|null,
  *   seasonsNumber: number|null,
- *   releaseDate: object|null
+ *   releaseDate: object|null,
+ *   awards: object|null,
+ *   countryOfOrigin: string|null
  * }>} Resolves with the IMDb users rating, vote count, adult flag, runtime in seconds,
- *     top ranking position, and the number of seasons.
+ *     top ranking position, number of seasons, award summary, and primary country of origin.
  */
 const getImdbRating = async (imdbHomepage, imdbData) => {
   let usersRating = null;
@@ -81,6 +85,8 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
   let topRanking = null;
   let seasonsNumber = null;
   let releaseDate = null;
+  let awards = null;
+  let countryOfOrigin = null;
 
   try {
     let nextData = imdbData?.nextData;
@@ -121,6 +127,9 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
     if (Number.isInteger(validatedSeasonsCount)) {
       seasonsNumber = validatedSeasonsCount;
     }
+
+    awards = getAwards(mainColumnData);
+    countryOfOrigin = getCountryOfOrigin(mainColumnData);
   } catch (error) {
     logErrors(error, imdbHomepage, "getImdbRating");
   }
@@ -133,6 +142,8 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
     topRanking,
     seasonsNumber,
     releaseDate,
+    awards,
+    countryOfOrigin,
   };
 };
 

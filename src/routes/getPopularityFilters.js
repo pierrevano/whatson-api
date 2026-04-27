@@ -1,3 +1,5 @@
+const { config } = require("../config");
+
 /**
  * Builds popularity aggregation expressions based on the provided query string.
  * @param {string} popularity_filters_query - Comma-separated popularity filters (e.g., "allocine_popularity,imdb_popularity").
@@ -14,6 +16,7 @@ const getPopularityFilters = async (popularity_filters_query) => {
    * Assign a worst-rank fallback to missing/invalid popularity values to avoid biasing aggregate scores.
    */
   const POPULARITY_MISSING_RANK = 1000000;
+  const TMDB_POPULARITY_WEIGHT = config.tmdbPopularityWeight;
 
   const buildTmdbPopularityFilter = () => ({
     $filter: {
@@ -52,15 +55,21 @@ const getPopularityFilters = async (popularity_filters_query) => {
 
   if (popularity_filters_array.includes("all")) {
     // prettier-ignore
-    popularity_filters = [
+    const [allocineFilter, imdbFilter] = [
       { $filter: { input: [{ $ifNull: ["$allocine.popularity", POPULARITY_MISSING_RANK] }], as: "val", cond: { $ne: ["$$val", null] } } },
       { $filter: { input: [{ $ifNull: ["$imdb.popularity", POPULARITY_MISSING_RANK] }], as: "val", cond: { $ne: ["$$val", null] } } },
-      buildTmdbPopularityFilter()
     ];
 
-    popularity_filters = popularity_filters.map((filter) => ({
-      $divide: [{ $arrayElemAt: [filter, 0] }, 1],
-    }));
+    popularity_filters = [
+      { $divide: [{ $arrayElemAt: [allocineFilter, 0] }, 1] },
+      { $divide: [{ $arrayElemAt: [imdbFilter, 0] }, 1] },
+      {
+        $multiply: [
+          { $arrayElemAt: [buildTmdbPopularityFilter(), 0] },
+          TMDB_POPULARITY_WEIGHT,
+        ],
+      },
+    ];
   } else {
     if (popularity_filters_array.includes("allocine_popularity")) {
       const filter = {
@@ -88,7 +97,10 @@ const getPopularityFilters = async (popularity_filters_query) => {
 
     if (popularity_filters_array.includes("tmdb_popularity")) {
       popularity_filters.push({
-        $divide: [{ $arrayElemAt: [buildTmdbPopularityFilter(), 0] }, 1],
+        $multiply: [
+          { $arrayElemAt: [buildTmdbPopularityFilter(), 0] },
+          TMDB_POPULARITY_WEIGHT,
+        ],
       });
     }
   }

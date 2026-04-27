@@ -12,7 +12,6 @@ const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { logErrors } = require("../utils/logErrors");
 const { processEpisodesPagination } = require("./processEpisodesPagination");
 const { sortEpisodes } = require("../utils/sortEpisodes");
-const { writeItems } = require("../utils/writeItems");
 
 /**
  * Parses episode details for a specific season of a tvshow from its IMDb homepage.
@@ -171,12 +170,6 @@ const getEpisodesDetails = async (
     } else {
       episodesDetails = sortEpisodes(episodesDetails);
     }
-
-    writeItems(
-      allocineHomepage,
-      JSON.stringify(episodesDetails, null, 2),
-      "episodes_details",
-    );
   } catch (error) {
     logErrors(error, imdbId, "getEpisodesDetails");
   }

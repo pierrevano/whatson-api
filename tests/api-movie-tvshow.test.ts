@@ -8,6 +8,7 @@ const { config } = require("../src/config");
 const { countNullValues } = require("./utils/countNullValues");
 const { formatDate } = require("../src/utils/formatDate");
 const { itemSchema } = require("../src/schema");
+const { withErrorContext } = require("./utils/withErrorContext");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -156,7 +157,7 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: `?item_type=movie,tvshow&is_active=true&append_to_response=critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true&append_to_response=awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, itemSchema)),
   },
@@ -165,19 +166,11 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=platforms_links&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) =>
       items.forEach((item) => {
-        const sanitizedPlatformsLinks = item.platforms_links?.map(
-          ({ name, ...platformLink }) => platformLink,
-        );
-        const sanitizedItem = {
-          ...item,
-          platforms_links: sanitizedPlatformsLinks,
-        };
-
-        delete sanitizedItem.original_title;
-
-        const serializedItem = JSON.stringify(sanitizedItem).toLowerCase();
-        const potentialFrenchPattern = /[àâæçéèêëîïôœùûüÿ]/i;
-        expect(serializedItem).not.toMatch(potentialFrenchPattern);
+        const serializedItem = JSON.stringify(item).toLowerCase();
+        const potentialFrenchPattern = /[àâæçèêëîïôœùûüÿ]/i;
+        withErrorContext(`IMDb id: ${item.imdb?.id ?? "unknown"}`, () => {
+          expect(serializedItem).not.toMatch(potentialFrenchPattern);
+        });
       }),
   },
 

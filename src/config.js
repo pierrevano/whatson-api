@@ -61,7 +61,7 @@ const config = {
   countryIs: "https://api.country.is/",
   webhooksURL: "https://hook.eu2.make.com/cie2nax47q0fpjri8ivcx5hoal6gtziu",
   appendToResponse:
-    "critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
+    "awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
   noMatchingItemsFoundMessage: "No matching items found.",
 
   imdbEpisodesPaginationHash: process.env.IMDB_EPISODES_PAGINATION_HASH,
@@ -98,6 +98,7 @@ const config = {
   ratingsDelayMs: 500,
   thirdPartyStatusTimeoutMs: 480000,
   maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 20),
+  tmdbPopularityWeight: 0.4,
 
   /* CircleCI settings */
   circleLimitPerDay: 1500,
@@ -113,9 +114,11 @@ const config = {
   keysToCheck: [
     "_id",
     "allocine",
+    "awards",
     "betaseries",
     "certification",
     "certification_variants",
+    "country_of_origin",
     "parents_guide",
     "directors",
     "episodes_details",

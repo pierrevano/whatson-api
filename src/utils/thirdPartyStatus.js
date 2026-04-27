@@ -18,10 +18,14 @@ const isThirdPartyServiceOK = async (service) => {
     });
 
     const isImdb = service.includes("imdb.com");
+    const isLetterboxd = service.includes("letterboxd.com");
     const isTraktApi = service.includes("api.trakt.tv");
     const options = {
       timeout: config.thirdPartyStatusTimeoutMs,
-      validateStatus: (status) => status === 200 || (isImdb && status === 202),
+      validateStatus: (status) =>
+        status === 200 ||
+        (isImdb && status === 202) ||
+        (isLetterboxd && status === 403),
     };
 
     if (isTraktApi) {
@@ -35,7 +39,10 @@ const isThirdPartyServiceOK = async (service) => {
     const response = await axios.get(service, options);
 
     return {
-      success: response.status === 200 || (isImdb && response.status === 202),
+      success:
+        response.status === 200 ||
+        (isImdb && response.status === 202) ||
+        (isLetterboxd && response.status === 403),
       data: response.data,
     };
   } catch (error) {

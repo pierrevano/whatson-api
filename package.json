@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.27.1",
+  "version": "3.28.0",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -59,14 +59,14 @@
     "update-all-non-active-ids": "npm run update-all-non-active-ids-movie && npm run update-all-non-active-ids-tvshow && npm run test",
     "update-all-non-active-and-top-ids": "export MOJO_MAX_ITERATIONS=1 && node src/data/updateData.js movie no_update_ids update_db local no_active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 0 1000000 all_ids && export MOJO_MAX_ITERATIONS=50",
     "update-all-non-active-and-old-ids-movie": "node src/data/updateData.js movie no_update_ids update_db local no_active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 365 1000000 all_ids",
-    "update-all-non-active-and-old-ids-tvshow": "node src/data/updateData.js tvshow no_update_ids update_db local no_active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 365 1000000 all_ids",
+    "update-all-non-active-and-old-ids-tvshow": "node src/data/updateData.js tvshow no_update_ids update_db local no_active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 180 1000000 all_ids",
     "update-all-non-active-and-old-ids": "npm run update-all-non-active-and-old-ids-movie && npm run update-all-non-active-and-old-ids-tvshow"
   },
   "author": "Pierre Vanoverschelde",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "axios": "^1.15.0",
+    "axios": "^1.15.2",
     "axios-retry": "^4.5.0",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
@@ -75,20 +75,20 @@
     "express": "^4.21.2",
     "he": "^1.2.0",
     "jshashes": "^1.0.8",
-    "mongodb": "^7.1.1",
-    "newrelic": "^13.19.1",
+    "mongodb": "^7.2.0",
+    "newrelic": "^13.19.2",
     "playwright": "^1.59.1",
     "prettier": "^3.8.3",
-    "rate-limiter-flexible": "^11.0.0",
+    "rate-limiter-flexible": "^11.0.1",
     "shelljs": "^0.10.0",
     "tough-cookie": "^6.0.1",
-    "vercel": "^51.4.0"
+    "vercel": "^52.0.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "jest": "^30.3.0",
-    "jest-junit": "^16.0.0"
+    "jest-junit": "^17.0.0"
   },
   "config": {
     "commitizen": {

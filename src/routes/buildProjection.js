@@ -9,6 +9,10 @@ function buildProjection(appendToResponse) {
   const projection = {};
   const includes = buildAppendIncludes(appendToResponse);
 
+  if (!includes("awards")) {
+    projection["awards"] = 0;
+  }
+
   if (!includes("critics_rating_details")) {
     projection["allocine.critics_rating_details"] = 0;
   }

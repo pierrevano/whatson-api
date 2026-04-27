@@ -1,6 +1,9 @@
 const { config } = require("../config");
 const { getCheerioContent } = require("../utils/getCheerioContent");
-const { getHomepageResponse } = require("../utils/getHomepageResponse");
+const {
+  getHomepageResponse,
+  homepageStatusErrorCode,
+} = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -35,7 +38,13 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
         );
         const ldJsonTag = $('script[type="application/ld+json"]').html();
 
-        if (!ldJsonTag || !ldJsonTag.includes("CDATA")) {
+        if (!ldJsonTag) {
+          const error = new Error("Failed to fetch the Letterboxd JSON data.");
+          error.code = homepageStatusErrorCode;
+          throw error;
+        }
+
+        if (!ldJsonTag.includes("CDATA")) {
           if (attempt < maxAttempts) {
             console.log(
               `getLetterboxdRating - ${letterboxdHomepage}: JSON-LD missing or invalid (attempt ${attempt}). Retrying...`,

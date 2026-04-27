@@ -132,6 +132,8 @@ const createJSON = async (
     runtime,
     topRanking,
     seasonsNumber: imdbSeasonsNumber,
+    awards,
+    countryOfOrigin,
   } = imdbRatingData;
   const title = await getTitle(allocineHomepage, tmdbData);
   const titleVariants = await getTitleVariants(
@@ -374,6 +376,8 @@ const createJSON = async (
     title_variants: titleVariants,
     original_title: originalTitle,
 
+    awards,
+    country_of_origin: countryOfOrigin,
     directors,
     genres,
     image,

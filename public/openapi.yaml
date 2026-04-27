@@ -13,7 +13,7 @@ info:
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.27.1
+  version: 3.28.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -45,7 +45,7 @@ components:
       in: query
       description: |
         Comma-separated list of optional fields to include in the response.
-        Available values: `critics_rating_details`, `directors`, `episodes_details`,
+        Available values: `awards`, `critics_rating_details`, `directors`, `episodes_details`,
         `genres`, `highest_episode`, `last_episode`, `lowest_episode`, `networks`,
         `next_episode`, `platforms_links`, `production_companies`,
         `certification_variants`, `image_variants`, `title_variants`, `parents_guide`.
@@ -205,6 +205,10 @@ components:
           type: integer
           description: Runtime in seconds.
           example: 2940
+        country_of_origin:
+          type: ["string", "null"]
+          description: Primary country of origin
+          example: "United States"
         tagline:
           type: string
         trailer:
@@ -254,6 +258,29 @@ components:
         mojo:
           $ref: "#/components/schemas/MojoInfo"
         # Optional fields (returned when requested via append_to_response)
+        awards:
+          type: ["object", "null"]
+          description: Top award and aggregate totals across all awards. Included when `awards` is in `append_to_response`.
+          properties:
+            top:
+              type: ["object", "null"]
+              description: Top award (e.g. "Oscar")
+              properties:
+                name:
+                  type: string
+                  example: "Oscar"
+                wins:
+                  type: ["integer", "null"]
+                nominations:
+                  type: ["integer", "null"]
+            total:
+              type: ["object", "null"]
+              description: All-award totals
+              properties:
+                wins:
+                  type: ["integer", "null"]
+                nominations:
+                  type: ["integer", "null"]
         genres:
           type: object
           description: Genre names. Included when `genres` is in `append_to_response`.
@@ -720,9 +747,9 @@ paths:
 
         You can also look up a title by an external platform ID using any of these
         query parameters (returns a single result):
-        `imdbid`, `tmdbid`, `allocineid`, `betaseriesid`, `letterboxdid`,
-        `metacriticid`, `rottentomatoesid`, `senscritiqueid`, `thetvdbid`,
-        `traktid`, `tvtimeid`.
+        `imdbId`, `tmdbId`, `allocineId`, `betaseriesId`, `letterboxdId`,
+        `metacriticId`, `rottentomatoesId`, `senscritiqueId`, `thetvdbId`,
+        `traktId`, `tvtimeId`.
       tags: [Titles]
       parameters:
         - name: title
@@ -859,58 +886,58 @@ paths:
           schema:
             type: string
             enum: [asc, desc]
-        - name: imdbid
+        - name: imdbId
           in: query
           description: Look up by IMDb ID (e.g. tt0903747). Returns a single result.
           schema:
             type: string
             example: "tt0903747"
-        - name: tmdbid
+        - name: tmdbId
           in: query
           description: Look up by TMDB numeric ID. Returns a single result.
           schema:
             type: integer
-        - name: allocineid
+        - name: allocineId
           in: query
           description: Look up by AlloCiné ID. Returns a single result.
           schema:
             type: integer
-        - name: betaseriesid
+        - name: betaseriesId
           in: query
           description: Look up by BetaSeries ID. Returns a single result.
           schema:
             type: string
-        - name: letterboxdid
+        - name: letterboxdId
           in: query
           description: Look up by Letterboxd ID. Returns a single result. Movie only.
           schema:
             type: string
-        - name: metacriticid
+        - name: metacriticId
           in: query
           description: Look up by Metacritic slug. Returns a single result.
           schema:
             type: string
-        - name: rottentomatoesid
+        - name: rottentomatoesId
           in: query
           description: Look up by Rotten Tomatoes slug. Returns a single result.
           schema:
             type: string
-        - name: senscritiqueid
+        - name: senscritiqueId
           in: query
           description: Look up by SensCritique ID. Returns a single result.
           schema:
             type: integer
-        - name: thetvdbid
+        - name: thetvdbId
           in: query
           description: Look up by TheTVDB ID. Returns a single result.
           schema:
             type: integer
-        - name: traktid
+        - name: traktId
           in: query
           description: Look up by Trakt ID or slug. Returns a single result.
           schema:
             type: string
-        - name: tvtimeid
+        - name: tvtimeId
           in: query
           description: Look up by TV Time ID. Returns a single result. TV shows only.
           schema:

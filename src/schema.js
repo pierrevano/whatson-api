@@ -15,6 +15,18 @@ const itemSchema = {
   original_title: "string", // Original title of the item
 
   /*
+   * To include this key in the response, add `awards` to the `append_to_response` query parameter.
+   */
+  awards: {
+    top: {
+      name: "string",
+      wins: "number",
+      nominations: "number",
+    }, // Top award (e.g. "Oscar")
+    total: { wins: "number", nominations: "number" }, // All-award totals
+  },
+  country_of_origin: "string", // Primary country of origin
+  /*
    * To include this key in the response, add `directors` to the `append_to_response` query parameter.
    */
   directors: "object", // Directors' names
@@ -41,11 +53,11 @@ const itemSchema = {
    * To include this key in the response, add `parents_guide` to the `append_to_response` query parameter.
    */
   parents_guide: {
-    url: "string", // URL to the IMDb parents guide page
+    url: "string",
     categories: [
       {
-        title: "string", // Parents guide category title
-        severity: "string", // Dominant severity label
+        title: "string",
+        severity: "string",
       },
     ],
   },

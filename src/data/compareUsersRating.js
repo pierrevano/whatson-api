@@ -181,6 +181,13 @@ const compareUsersRating = async (
     }
 
     /**
+     * Stops early when the stored IMDb ratings no longer match.
+     */
+    if (!imdbRatingsMatch(dataWithoutId)) {
+      return isEqualObj;
+    }
+
+    /**
      * Rebuilds the TV show-specific fields that depend on episode data when TMDB data is available.
      */
     const isTvShow = item_type_api === "tvshow";
