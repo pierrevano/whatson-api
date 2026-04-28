@@ -118,7 +118,7 @@ const config = {
     "betaseries",
     "certification",
     "certification_variants",
-    "country_of_origin",
+    "countries_of_origin",
     "parents_guide",
     "directors",
     "episodes_details",

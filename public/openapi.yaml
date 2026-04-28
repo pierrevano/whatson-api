@@ -13,7 +13,7 @@ info:
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.28.0
+  version: 3.28.1
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -205,10 +205,12 @@ components:
           type: integer
           description: Runtime in seconds.
           example: 2940
-        country_of_origin:
-          type: ["string", "null"]
-          description: Primary country of origin
-          example: "United States"
+        countries_of_origin:
+          type: ["array", "null"]
+          description: Countries of origin
+          items:
+            type: string
+          example: ["United States"]
         tagline:
           type: string
         trailer:

@@ -424,8 +424,7 @@ function checkItemProperties(items) {
       );
 
       expect(
-        items.filter((item) => typeof item.country_of_origin === "string")
-          .length,
+        items.filter((item) => Array.isArray(item.countries_of_origin)).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     }
 
@@ -447,8 +446,9 @@ function checkItemProperties(items) {
       }
     }
 
-    if (item.country_of_origin) {
-      expect(typeof item.country_of_origin).toBe("string");
+    if (item.countries_of_origin) {
+      expect(Array.isArray(item.countries_of_origin)).toBe(true);
+      item.countries_of_origin.forEach((c) => expect(typeof c).toBe("string"));
     }
 
     expect(

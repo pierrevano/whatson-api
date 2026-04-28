@@ -266,7 +266,7 @@ Example of an item returned:
     }, // Top award (e.g. "Oscar")
     "total": { "wins": "number", "nominations": "number" }, // All-award totals
   },
-  "country_of_origin": "string", // Primary country of origin
+  "countries_of_origin": "object", // Countries of origin
   /*
    * To include this key in the response, add `directors` to the `append_to_response` query parameter.
    */

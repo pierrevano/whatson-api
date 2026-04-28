@@ -1,5 +1,5 @@
 const { getAwards } = require("./getAwards");
-const { getCountryOfOrigin } = require("./getCountryOfOrigin");
+const { getCountriesOfOrigin } = require("./getCountriesOfOrigin");
 const { getImdbData } = require("../utils/getImdbData");
 const { logErrors } = require("../utils/logErrors");
 
@@ -59,7 +59,7 @@ const determineSeasonsInfo = (episodesInfo) => {
 
 /**
  * It takes an imdbHomepage as an argument, and returns the usersRating, usersRatingCount,
- * isAdult flag, runtime (in seconds), topRanking position, award summary, and country of origin
+ * isAdult flag, runtime (in seconds), topRanking position, award summary, and countries of origin
  * of the item. The data is extracted from the embedded JSON structure found in the IMDb page content.
  *
  * @param {string} imdbHomepage - The IMDb homepage URL of the item
@@ -73,9 +73,9 @@ const determineSeasonsInfo = (episodesInfo) => {
  *   seasonsNumber: number|null,
  *   releaseDate: object|null,
  *   awards: object|null,
- *   countryOfOrigin: string|null
+ *   countriesOfOrigin: string|null
  * }>} Resolves with the IMDb users rating, vote count, adult flag, runtime in seconds,
- *     top ranking position, number of seasons, award summary, and primary country of origin.
+ *     top ranking position, number of seasons, award summary, and countries of origin.
  */
 const getImdbRating = async (imdbHomepage, imdbData) => {
   let usersRating = null;
@@ -86,7 +86,7 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
   let seasonsNumber = null;
   let releaseDate = null;
   let awards = null;
-  let countryOfOrigin = null;
+  let countriesOfOrigin = null;
 
   try {
     let nextData = imdbData?.nextData;
@@ -129,7 +129,7 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
     }
 
     awards = getAwards(mainColumnData);
-    countryOfOrigin = getCountryOfOrigin(mainColumnData);
+    countriesOfOrigin = getCountriesOfOrigin(mainColumnData);
   } catch (error) {
     logErrors(error, imdbHomepage, "getImdbRating");
   }
@@ -143,7 +143,7 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
     seasonsNumber,
     releaseDate,
     awards,
-    countryOfOrigin,
+    countriesOfOrigin,
   };
 };
 
