@@ -73,7 +73,7 @@ const determineSeasonsInfo = (episodesInfo) => {
  *   seasonsNumber: number|null,
  *   releaseDate: object|null,
  *   awards: object|null,
- *   countriesOfOrigin: string|null
+ *   countriesOfOrigin: string[]|null
  * }>} Resolves with the IMDb users rating, vote count, adult flag, runtime in seconds,
  *     top ranking position, number of seasons, award summary, and countries of origin.
  */
