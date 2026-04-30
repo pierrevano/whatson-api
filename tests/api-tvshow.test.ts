@@ -2078,6 +2078,21 @@ const params = {
       });
     },
   },
+
+  should_have_all_items_updated_within_max_age: {
+    query: `?item_type=tvshow&is_active=true&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) => {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - config.maxAgeInDays);
+      items.forEach((item) => {
+        expect(item).toHaveProperty("updated_at");
+        const updatedAt = new Date(item.updated_at);
+        expect(updatedAt.getTime()).toBeGreaterThanOrEqual(
+          cutoffDate.getTime(),
+        );
+      });
+    },
+  },
 };
 
 /**

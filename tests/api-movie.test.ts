@@ -1716,24 +1716,18 @@ const params = {
     },
   },
 
-  should_return_minimum_5_recently_released_items: {
+  should_have_all_items_updated_within_max_age: {
     query: `?item_type=movie&is_active=true&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
-      const recentItems = items.filter((item) => {
-        if (!item.hasOwnProperty("release_date")) {
-          return false;
-        }
-        const releaseDate = new Date(item.release_date);
-        if (isNaN(releaseDate.getTime())) {
-          return false;
-        }
-        const today = new Date();
-        const twoWeeksAgo = new Date();
-        twoWeeksAgo.setDate(today.getDate() - 14);
-        return releaseDate >= twoWeeksAgo && releaseDate <= today;
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - config.maxAgeInDays);
+      items.forEach((item) => {
+        expect(item).toHaveProperty("updated_at");
+        const updatedAt = new Date(item.updated_at);
+        expect(updatedAt.getTime()).toBeGreaterThanOrEqual(
+          cutoffDate.getTime(),
+        );
       });
-
-      expect(recentItems.length).toBeGreaterThanOrEqual(5);
     },
   },
 };

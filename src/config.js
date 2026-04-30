@@ -95,6 +95,7 @@ const config = {
   heapLimit: 1500,
   maxAgeInDays: 14,
   recentUpdateHours: 18,
+  imdbRatingCountTolerancePct: 1,
   ratingsDelayMs: 500,
   thirdPartyStatusTimeoutMs: 480000,
   maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 20),

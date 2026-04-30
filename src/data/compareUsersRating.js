@@ -80,18 +80,64 @@ const compareUsersRating = async (
     }
 
     /**
-     * Returns true when the stored IMDb rating and vote count match the latest fetched values.
+     * Returns true when the stored IMDb rating matches and the vote count is within the configured tolerance.
      *
      * @param {Object} data - The stored What's on? payload (without _id).
      * @returns {boolean}
      */
-    const imdbRatingsMatch = (data) =>
-      data.imdb?.users_rating === imdbRatingData.usersRating &&
-      data.imdb?.users_rating_count === imdbRatingData.usersRatingCount;
+    const imdbRatingsMatch = (data) => {
+      if (data.imdb?.users_rating !== imdbRatingData.usersRating) return false;
+      const storedCount = data.imdb?.users_rating_count;
+      const latestCount = imdbRatingData.usersRatingCount;
+      const tolerance =
+        latestCount * (config.imdbRatingCountTolerancePct / 100);
+      return (
+        storedCount >= latestCount - tolerance &&
+        storedCount <= latestCount + tolerance
+      );
+    };
 
     const { _id, ...dataWithoutId } = responseData;
 
     dataWithoutId.is_active = isActive;
+
+    const updatedAt = new Date(dataWithoutId.updated_at);
+    const hasValidUpdatedAt = !Number.isNaN(updatedAt.getTime());
+    const recentUpdateCutoffDate = new Date(
+      Date.now() - config.recentUpdateHours * 60 * 60 * 1000,
+    );
+    const updatedAtCutoffDate = new Date();
+    updatedAtCutoffDate.setDate(
+      updatedAtCutoffDate.getDate() - config.maxAgeInDays,
+    );
+
+    /**
+     * Stops when the stored payload has no usable update timestamp.
+     */
+    if (!hasValidUpdatedAt) {
+      console.log("Invalid updated_at, full refresh required");
+      return isEqualObj;
+    }
+
+    /**
+     * Stops when the stored payload is older than the allowed reuse window.
+     */
+    if (updatedAt <= updatedAtCutoffDate) {
+      console.log(
+        `Payload too old (updated_at=${dataWithoutId.updated_at}), full refresh required`,
+      );
+      return isEqualObj;
+    }
+
+    /**
+     * Stops early when the stored IMDb ratings no longer match.
+     */
+    if (!imdbRatingsMatch(dataWithoutId)) {
+      console.log(
+        `IMDb ratings changed (stored=${dataWithoutId.imdb?.users_rating}/${dataWithoutId.imdb?.users_rating_count}, latest=${imdbRatingData.usersRating}/${imdbRatingData.usersRatingCount}), full refresh required`,
+      );
+      return isEqualObj;
+    }
 
     /**
      * Refreshes popularity and box office fields, which are updated even when the item is reused.
@@ -145,46 +191,18 @@ const compareUsersRating = async (
 
     dataWithoutId.mojo = mojoObj;
 
-    const updatedAt = new Date(dataWithoutId.updated_at);
-    const hasValidUpdatedAt = !Number.isNaN(updatedAt.getTime());
-    const recentUpdateCutoffDate = new Date(
-      Date.now() - config.recentUpdateHours * 60 * 60 * 1000,
-    );
-    const updatedAtCutoffDate = new Date();
-    updatedAtCutoffDate.setDate(
-      updatedAtCutoffDate.getDate() - config.maxAgeInDays,
-    );
-
     /**
-     * Stops when the stored payload has no usable update timestamp.
+     * Reuses recently updated items without rebuilding TV show episode fields,
+     * since IMDb ratings already match and the payload is fresh enough.
      */
-    if (!hasValidUpdatedAt) {
-      return isEqualObj;
-    }
-
-    /**
-     * Reuses recently updated items before rebuilding TV show episode fields when
-     * the stored IMDb rating and vote count still match the latest values.
-     */
-    if (updatedAt > recentUpdateCutoffDate && imdbRatingsMatch(dataWithoutId)) {
+    if (updatedAt > recentUpdateCutoffDate) {
+      console.log(
+        `Fast path — recently updated and IMDb ratings match (rating=${imdbRatingData.usersRating}, count=${imdbRatingData.usersRatingCount}), reusing`,
+      );
       return {
         isEqual: true,
         data: dataWithoutId,
       };
-    }
-
-    /**
-     * Stops when the stored payload is older than the allowed reuse window.
-     */
-    if (updatedAt <= updatedAtCutoffDate) {
-      return isEqualObj;
-    }
-
-    /**
-     * Stops early when the stored IMDb ratings no longer match.
-     */
-    if (!imdbRatingsMatch(dataWithoutId)) {
-      return isEqualObj;
     }
 
     /**
@@ -228,7 +246,7 @@ const compareUsersRating = async (
     }
 
     /**
-     * Merges the refreshed TV show fields into the stored payload before the final reuse check.
+     * Merges the refreshed TV show fields into the stored payload.
      */
     if (hasTvShowTmdbData) {
       dataWithoutId.seasons_number = seasonsNumber;
@@ -240,18 +258,13 @@ const compareUsersRating = async (
     }
 
     /**
-     * Reuses the payload if IMDb ratings still match after the full rebuild.
-     * Unlike the fast path, updated_at is refreshed here because episode data was re-fetched.
+     * Reuses the payload after the full rebuild, refreshing updated_at because episode data was re-fetched.
      */
-    if (imdbRatingsMatch(dataWithoutId)) {
-      dataWithoutId.updated_at = new Date().toISOString();
-      return {
-        isEqual: true,
-        data: dataWithoutId,
-      };
-    }
-
-    return isEqualObj;
+    dataWithoutId.updated_at = new Date().toISOString();
+    return {
+      isEqual: true,
+      data: dataWithoutId,
+    };
   } catch (error) {
     logErrors(error, tmdbId, "compareUsersRating");
   }
