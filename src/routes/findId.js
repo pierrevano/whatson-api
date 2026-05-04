@@ -5,12 +5,11 @@ const { config } = require("../config");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, {
-  serverApi: ServerApiVersion.v1,
-});
+const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 
-const database = client.db(config.dbName);
-const collectionData = database.collection(config.collectionName);
+const collectionData = client
+  .db(config.dbName)
+  .collection(config.collectionName);
 
 // Utility to normalize strings for fuzzy title matching
 const normalizeString = (str) =>

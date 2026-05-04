@@ -38,6 +38,7 @@ const config = {
   betaseriesApiKey: process.env.BETASERIES_API_KEY,
   digestSecretValue: process.env.DIGEST_SECRET_VALUE,
   internalApiKey: process.env.INTERNAL_API_KEY,
+  testApiKey: process.env.TEST_API_KEY,
   mongoDbCredentials: process.env.CREDENTIALS,
   traktApiKey: process.env.TRAKT_API_KEY,
   theTvdbApiKey: process.env.THETVDB_API_KEY,
@@ -53,7 +54,6 @@ const config = {
 
   /* Rate limit settings */
   points: 1000,
-  higher_points: 10000,
   duration: 60 * 60, // 1 hour in seconds
   blockDuration: 60 * 60, // 1 hour in seconds
 
@@ -92,13 +92,14 @@ const config = {
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/606.1.15",
   userAgentSafariAlt:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/538.36",
+  cacheTtlMs: 15 * 60 * 1000,
   heapLimit: 1500,
-  maxAgeInDays: 14,
-  recentUpdateHours: 18,
-  imdbRatingCountTolerancePct: 1,
-  ratingsDelayMs: 500,
-  thirdPartyStatusTimeoutMs: 480000,
+  imdbRatingCountTolerancePct: 0.1,
+  maxAgeInDays: 3,
   maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 20),
+  ratingsDelayMs: 500,
+  recentUpdateHours: 18,
+  thirdPartyStatusTimeoutMs: 480000,
   tmdbPopularityWeight: 0.4,
 
   /* CircleCI settings */
@@ -213,6 +214,7 @@ const config = {
     "tt7441658",
   ],
   imdbIdsToExclude: ["tt0203259"],
+  itemCountTolerancePct: 6,
   margin: 10,
   maxResponseTime: 6000,
   maxNullValues: 650,

@@ -9,13 +9,10 @@ const {
 } = require("../utils/sendRequest");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, {
-  serverApi: ServerApiVersion.v1,
-});
-const database = client.db(config.dbName);
-const collectionNamePreferences = database.collection(
-  config.collectionNamePreferences,
-);
+const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
+const collectionNamePreferences = client
+  .db(config.dbName)
+  .collection(config.collectionNamePreferences);
 
 /**
  * Hashes an email combined with a secret using SHA-256.

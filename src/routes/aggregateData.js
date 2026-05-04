@@ -10,12 +10,11 @@ const { getRatingsFilters } = require("./getRatingsFilters");
 const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, {
-  serverApi: ServerApiVersion.v1,
-});
+const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 
-const database = client.db(config.dbName);
-const collectionData = database.collection(config.collectionName);
+const collectionData = client
+  .db(config.dbName)
+  .collection(config.collectionName);
 
 /**
  * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.

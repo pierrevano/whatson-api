@@ -1,6 +1,7 @@
 const { RateLimiterMemory } = require("rate-limiter-flexible");
 
 const { config } = require("../config");
+const { getApiKey } = require("./getApiKey");
 const { sendResponse } = require("./sendRequest");
 const { sendToNewRelic } = require("./sendToNewRelic");
 
@@ -12,13 +13,15 @@ const { sendToNewRelic } = require("./sendToNewRelic");
  */
 const createRateLimiter = (points) =>
   new RateLimiterMemory({
-    points: points, // maximum number of requests
+    points, // maximum number of requests
     duration: config.duration, // window duration in seconds
     blockDuration: config.blockDuration, // block duration in seconds if rate limit is exceeded
   });
 
 const defaultLimiter = createRateLimiter(config.points);
-const higherLimiter = createRateLimiter(config.higher_points);
+
+// One persistent limiter instance per API key to preserve counters across requests.
+const keyedLimiters = new Map();
 
 /**
  * Normalises the requester identity used as the rate limit key.
@@ -28,72 +31,69 @@ const higherLimiter = createRateLimiter(config.higher_points);
  */
 const getRateLimiterKey = (req) => {
   const forwardedFor = req.headers["x-forwarded-for"];
-  const ip = req.ip;
-
-  const ipOrForwardedFor = forwardedFor
-    ? forwardedFor.split(",")[0].trim()
-    : ip;
-
-  return ipOrForwardedFor;
+  return forwardedFor ? forwardedFor.split(",")[0].trim() : req.ip;
 };
 
 /**
- * Express middleware enforcing per-IP rate limits while bypassing trusted internal keys.
+ * Express middleware enforcing rate limits based on the provided API key or client IP.
  *
  * @param {import("express").Request} req - Express request.
  * @param {import("express").Response} res - Express response.
  * @param {import("express").NextFunction} next - Next middleware callback.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-const limiter = (req, res, next) => {
-  const isInternalApiKeyValid =
-    req.query.api_key !== undefined &&
-    config.internalApiKey !== undefined &&
-    req.query.api_key === config.internalApiKey;
-  console.log("API key validity:", isInternalApiKeyValid);
+const limiter = async (req, res, next) => {
+  const apiKeyValue = req.query.api_key;
 
-  const rateLimiter = isInternalApiKeyValid ? higherLimiter : defaultLimiter;
+  let rateLimiter = defaultLimiter;
+  let key = getRateLimiterKey(req);
 
-  if (isInternalApiKeyValid) {
-    return next(); // Ignore rate limiting for internal API key
+  if (apiKeyValue) {
+    const apiKeyDoc = await getApiKey(apiKeyValue);
+
+    if (apiKeyDoc) {
+      if (apiKeyDoc.is_internal) return next();
+
+      if (!keyedLimiters.has(apiKeyValue)) {
+        keyedLimiters.set(
+          apiKeyValue,
+          createRateLimiter(apiKeyDoc.rate_limit_points),
+        );
+      }
+      rateLimiter = keyedLimiters.get(apiKeyValue);
+      key = apiKeyValue;
+    }
   }
 
-  rateLimiter
-    .consume(getRateLimiterKey(req))
-    .then((rateLimiterRes) => {
-      const rateLimitHeaders = {
-        "X-RateLimit-Limit":
-          rateLimiterRes.remainingPoints + rateLimiterRes.consumedPoints,
-        "X-RateLimit-Remaining": rateLimiterRes.remainingPoints,
-        "X-RateLimit-Reset": new Date(
-          Date.now() + rateLimiterRes.msBeforeNext,
-        ).toISOString(),
-      };
+  try {
+    const result = await rateLimiter.consume(key);
+    const rateLimitHeaders = {
+      "X-RateLimit-Limit": result.remainingPoints + result.consumedPoints,
+      "X-RateLimit-Remaining": result.remainingPoints,
+      "X-RateLimit-Reset": new Date(
+        Date.now() + result.msBeforeNext,
+      ).toISOString(),
+    };
 
-      console.log("Rate Limit Headers:", rateLimitHeaders);
+    console.log("Rate Limit Headers:", rateLimitHeaders);
 
-      res.set(rateLimitHeaders);
+    res.set(rateLimitHeaders);
+    sendToNewRelic(req, null, null, rateLimitHeaders);
+    next();
+  } catch (result) {
+    const rateLimitHeaders = {
+      "Retry-After": Math.ceil(result.msBeforeNext / 1000),
+    };
 
-      sendToNewRelic(req, null, null, rateLimitHeaders);
+    console.log("Rate Limit Headers on error:", rateLimitHeaders);
 
-      next(); // Allow the request if within the limit
-    })
-    .catch((rateLimiterRes) => {
-      const rateLimitHeaders = {
-        "Retry-After": Math.ceil(rateLimiterRes.msBeforeNext / 1000),
-      };
-
-      console.log("Rate Limit Headers on error:", rateLimitHeaders);
-
-      res.set(rateLimitHeaders);
-
-      sendToNewRelic(req, null, null, rateLimitHeaders);
-
-      sendResponse(res, 429, {
-        message:
-          "Too many requests. Please try again later. If you need an API key for higher limits, contact me on: https://pierrevano.github.io",
-      });
+    res.set(rateLimitHeaders);
+    sendToNewRelic(req, null, null, rateLimitHeaders);
+    sendResponse(res, 429, {
+      message:
+        "Too many requests. Please try again later. If you need an API key for higher limits, contact me on: https://pierrevano.github.io",
     });
+  }
 };
 
 module.exports = { limiter };

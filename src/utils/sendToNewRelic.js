@@ -10,8 +10,8 @@ if (isNewRelicEnabled) {
  * Adds request-specific metadata to New Relic unless the internal API key is used.
  *
  * @param {import("express").Request} req - The processed request.
- * @param {string|undefined} api_key_query - API key provided by the consumer.
- * @param {{value: string}|null} internal_api_key - Cached internal API key document.
+ * @param {string|null} api_key_query - API key provided by the consumer.
+ * @param {object|null} internal_api_key - Cached internal API key document.
  * @param {Record<string, string|number>|undefined} customAttributes - Optional attributes to send.
  * @returns {void}
  */
@@ -23,7 +23,7 @@ function sendToNewRelic(
 ) {
   const isInternalApiKeyValid =
     internal_api_key && api_key_query === internal_api_key.value;
-  const attributes = customAttributes ? customAttributes : req.query;
+  const attributes = customAttributes ?? req.query;
   console.log("New Relic custom attributes:", attributes);
 
   if (!newrelic) {

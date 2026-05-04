@@ -13,12 +13,11 @@ const { validateItemTypeQuery } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
 
 const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, {
-  serverApi: ServerApiVersion.v1,
-});
+const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 
-const database = client.db(config.dbName);
-const collectionData = database.collection(config.collectionName);
+const collectionData = client
+  .db(config.dbName)
+  .collection(config.collectionName);
 
 /**
  * Resolves a single item by its numeric identifier, optionally applying ratings filters or

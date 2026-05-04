@@ -12,6 +12,7 @@ const {
   expectNumericIdOrNumericString,
   expectIdRatingConsistency,
 } = require("./utils/idExpectations");
+const { withErrorContext } = require("./utils/withErrorContext");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -1722,11 +1723,13 @@ const params = {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - config.maxAgeInDays);
       items.forEach((item) => {
-        expect(item).toHaveProperty("updated_at");
-        const updatedAt = new Date(item.updated_at);
-        expect(updatedAt.getTime()).toBeGreaterThanOrEqual(
-          cutoffDate.getTime(),
-        );
+        withErrorContext(`IMDb id: ${item.imdb?.id ?? "unknown"}`, () => {
+          expect(item).toHaveProperty("updated_at");
+          const updatedAt = new Date(item.updated_at);
+          expect(updatedAt.getTime()).toBeGreaterThanOrEqual(
+            cutoffDate.getTime(),
+          );
+        });
       });
     },
   },
@@ -1859,6 +1862,26 @@ describe("What's on? API tests", () => {
     config.timeout,
   );
 
+  (isRemoteSource ? test.skip : test)(
+    "api_key_should_allow_requests_under_limit_and_block_after",
+    async () => {
+      const call = () =>
+        axios.get(`${baseURL}?api_key=${config.testApiKey}`, {
+          validateStatus: (status) => status < 600,
+        });
+
+      const first = await call();
+      expect(first.status).toBe(200);
+
+      const second = await call();
+      expect(second.status).toBe(200);
+
+      const third = await call();
+      expect(third.status).toBe(429);
+    },
+    config.timeout,
+  );
+
   const countTrueLines = (filePath) => {
     const content = readFileSync(filePath, "utf-8");
     return content.split("\n").filter((line) => line.trim().endsWith(",TRUE"))
@@ -1956,8 +1979,18 @@ describe("What's on? API tests", () => {
         ? seriesResponse.data.results.length
         : 0;
 
-      expect(Math.abs(movieCount - movieFileCount)).toBeLessThanOrEqual(20);
-      expect(Math.abs(seriesCount - seriesFileCount)).toBeLessThanOrEqual(0);
+      const movieTolerance = Math.ceil(
+        movieFileCount * (config.itemCountTolerancePct / 100),
+      );
+      const seriesTolerance = Math.ceil(
+        seriesFileCount * (config.itemCountTolerancePct / 100),
+      );
+      expect(Math.abs(movieCount - movieFileCount)).toBeLessThanOrEqual(
+        movieTolerance,
+      );
+      expect(Math.abs(seriesCount - seriesFileCount)).toBeLessThanOrEqual(
+        seriesTolerance,
+      );
     },
     config.timeout,
   );

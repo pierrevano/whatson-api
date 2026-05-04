@@ -13,7 +13,7 @@ info:
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.28.2
+  version: 3.29.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -207,7 +207,7 @@ components:
           example: 2940
         countries_of_origin:
           type: ["array", "null"]
-          description: Countries of origin
+          description: Countries of origin.
           items:
             type: string
           example: ["United States"]
@@ -266,7 +266,7 @@ components:
           properties:
             top:
               type: ["object", "null"]
-              description: Top award (e.g. "Oscar")
+              description: Top award (e.g. "Oscar").
               properties:
                 name:
                   type: string
@@ -277,7 +277,7 @@ components:
                   type: ["integer", "null"]
             total:
               type: ["object", "null"]
-              description: All-award totals
+              description: All-award totals.
               properties:
                 wins:
                   type: ["integer", "null"]
@@ -380,7 +380,7 @@ components:
           type: integer
         critics_rating_details:
           type: array
-          description: Included when `critics_rating_details` is in `append_to_response`.
+          description: Per-critic AlloCiné ratings. Included when `critics_rating_details` is in `append_to_response`.
           items:
             type: object
             properties:
@@ -395,7 +395,10 @@ components:
       type: object
       properties:
         id:
-          type: string
+          oneOf:
+            - type: string
+            - type: integer
+          description: Platform-specific identifier (may be string or integer).
         url:
           type: string
           format: uri
@@ -444,6 +447,7 @@ components:
           type: integer
         must_see:
           type: boolean
+          description: Metacritic "Must See" badge.
 
     RottenTomatoesRatings:
       type: object
@@ -607,6 +611,7 @@ components:
           type: integer
         status:
           type: string
+          enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
         seasons:
           type: array
           items:
@@ -646,6 +651,7 @@ components:
           type: integer
         status:
           type: string
+          enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
         total_episodes:
           type: integer
         episodes:
@@ -676,6 +682,7 @@ components:
           type: integer
         status:
           type: string
+          enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
         episode:
           $ref: "#/components/schemas/RatedEpisode"
 
@@ -716,6 +723,7 @@ components:
                   type: integer
                 status:
                   type: string
+                  enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
 
     Error:
       type: object
@@ -781,7 +789,7 @@ paths:
           in: query
           description: |
             Date range filter. Either bound is optional.
-            Format: `from:YYYY-MM-DD,to:YYYY-MM-DD`
+            Format: `new,from:YYYY-MM-DD,to:YYYY-MM-DD`
 
             Special shortcut: `new` returns recently released titles
             (last 6 months for movies, last 18 months for TV shows).
@@ -938,7 +946,9 @@ paths:
           in: query
           description: Look up by Trakt ID or slug. Returns a single result.
           schema:
-            type: string
+            oneOf:
+              - type: string
+              - type: integer
         - name: tvtimeId
           in: query
           description: Look up by TV Time ID. Returns a single result. TV shows only.
@@ -960,6 +970,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "404":
+          description: No matching items found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "405":
+          description: Method not allowed.
+        "500":
+          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
 
@@ -986,12 +1006,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
+        "400":
+          description: Invalid query parameters.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "404":
           description: Not found.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "405":
+          description: Method not allowed.
+        "500":
+          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
 
@@ -1018,12 +1048,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
+        "400":
+          description: Invalid query parameters.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "404":
           description: Not found.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "405":
+          description: Method not allowed.
+        "500":
+          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
 
@@ -1069,6 +1109,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "405":
+          description: Method not allowed.
+        "500":
+          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
 
@@ -1115,6 +1159,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "405":
+          description: Method not allowed.
+        "500":
+          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
 
@@ -1161,6 +1209,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "405":
+          description: Method not allowed.
+        "500":
+          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
 
@@ -1289,5 +1341,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "404":
+          description: No matching items found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "405":
+          description: Method not allowed.
+        "500":
+          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
