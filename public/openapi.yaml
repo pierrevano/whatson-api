@@ -13,7 +13,7 @@ info:
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.29.0
+  version: 3.29.1
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -978,10 +978,10 @@ paths:
                 $ref: "#/components/schemas/Error"
         "405":
           description: Method not allowed.
-        "500":
-          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
+        "500":
+          description: Internal server error.
 
   /movie/{id}:
     get:
@@ -1020,10 +1020,10 @@ paths:
                 $ref: "#/components/schemas/Error"
         "405":
           description: Method not allowed.
-        "500":
-          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
+        "500":
+          description: Internal server error.
 
   /tvshow/{id}:
     get:
@@ -1062,10 +1062,10 @@ paths:
                 $ref: "#/components/schemas/Error"
         "405":
           description: Method not allowed.
-        "500":
-          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
+        "500":
+          description: Internal server error.
 
   /tvshow/{id}/seasons:
     get:
@@ -1111,10 +1111,10 @@ paths:
                 $ref: "#/components/schemas/Error"
         "405":
           description: Method not allowed.
-        "500":
-          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
+        "500":
+          description: Internal server error.
 
   /tvshow/{id}/seasons/{season_number}/episodes:
     get:
@@ -1161,10 +1161,10 @@ paths:
                 $ref: "#/components/schemas/Error"
         "405":
           description: Method not allowed.
-        "500":
-          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
+        "500":
+          description: Internal server error.
 
   /tvshow/{id}/seasons/{season_number}/episodes/{episode_number}:
     get:
@@ -1211,10 +1211,10 @@ paths:
                 $ref: "#/components/schemas/Error"
         "405":
           description: Method not allowed.
-        "500":
-          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
+        "500":
+          description: Internal server error.
 
   /episodes/rated:
     get:
@@ -1349,7 +1349,7 @@ paths:
                 $ref: "#/components/schemas/Error"
         "405":
           description: Method not allowed.
-        "500":
-          description: Internal server error.
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
+        "500":
+          description: Internal server error.
