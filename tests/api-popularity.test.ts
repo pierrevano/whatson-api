@@ -58,7 +58,8 @@ describe("Top 100 popular items updated recently", () => {
             `${baseURL}/${name}/${tmdbId}?api_key=${config.internalApiKey}`,
             { validateStatus: (status) => status < 500 },
           );
-          withErrorContext(`rank ${rank}, TMDB ID ${tmdbId}`, () => {
+          const imdbId = response.data?.imdb?.id ?? "unknown";
+          withErrorContext(`rank ${rank}, IMDb ID ${imdbId}`, () => {
             expect(response.status).toBe(200);
             expect(response.data).toHaveProperty("updated_at");
             expect(

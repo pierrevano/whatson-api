@@ -1,6 +1,5 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
 const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
+const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
 const { getPipelineByNames } = require("./getPipelineByNames");
@@ -8,13 +7,6 @@ const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
 const { getRatingsFilters } = require("./getRatingsFilters");
 const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-
-const collectionData = client
-  .db(config.dbName)
-  .collection(config.collectionName);
 
 /**
  * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.

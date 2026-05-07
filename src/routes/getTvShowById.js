@@ -1,14 +1,5 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
 const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
-const { config } = require("../config");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-
-const collectionData = client
-  .db(config.dbName)
-  .collection(config.collectionName);
+const { collectionData } = require("../utils/mongoClient");
 
 const buildTvShowProjection = (appendToResponse = "") => {
   const includes = buildAppendIncludes(appendToResponse);

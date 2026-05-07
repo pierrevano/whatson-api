@@ -1,12 +1,5 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
+const { collectionApiKey: collection } = require("../utils/mongoClient");
 const { config } = require("../config");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-const collection = client
-  .db(config.dbName)
-  .collection(config.collectionNameApiKey);
 
 let cache = null;
 

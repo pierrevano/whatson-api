@@ -1,3 +1,5 @@
+const { config } = require("../config");
+
 const shouldCreateFromImdbReleaseDate = async (imdbData) => {
   if (process.env.CHECK_MISSING_ALLOCINE_IDS !== "true") {
     return { shouldCreate: true, reason: null };
@@ -20,8 +22,10 @@ const shouldCreateFromImdbReleaseDate = async (imdbData) => {
   if (hasFullDate) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const cutoff = new Date(today);
+    cutoff.setDate(today.getDate() + config.maxDaysInFuture);
     const releaseDateObj = new Date(releaseYear, releaseMonth - 1, releaseDay);
-    shouldCreate = releaseDateObj <= today;
+    shouldCreate = releaseDateObj <= cutoff;
   } else {
     shouldCreate = !isYearInFuture && Number.isInteger(releaseYear);
   }

@@ -1,7 +1,6 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
 const { aggregateData } = require("./aggregateData");
 const { buildProjection } = require("./buildProjection");
+const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const {
   sendInternalError,
@@ -11,13 +10,6 @@ const {
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
 const { validateItemTypeQuery } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-
-const collectionData = client
-  .db(config.dbName)
-  .collection(config.collectionName);
 
 /**
  * Resolves a single item by its numeric identifier, optionally applying ratings filters or

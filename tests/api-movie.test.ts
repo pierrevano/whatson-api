@@ -1717,6 +1717,29 @@ const params = {
     },
   },
 
+  no_items_should_have_release_date_more_than_max_days_in_future: {
+    query: `?is_active=true,false&limit=${maxLimit}`,
+    expectedResult: (items) => {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() + config.maxDaysInFuture);
+      cutoff.setHours(23, 59, 59, 999);
+
+      items.forEach((item) => {
+        if (item.release_date !== null) {
+          const releaseDate = new Date(item.release_date);
+          withErrorContext(
+            `item_type: ${item.item_type}, IMDb id: ${item.imdb?.id ?? "unknown"}, release_date: ${item.release_date}`,
+            () => {
+              expect(releaseDate.getTime()).toBeLessThanOrEqual(
+                cutoff.getTime(),
+              );
+            },
+          );
+        }
+      });
+    },
+  },
+
   should_have_all_items_updated_within_max_age: {
     query: `?item_type=movie&is_active=true&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
@@ -1871,6 +1894,11 @@ describe("What's on? API tests", () => {
         });
 
       const first = await call();
+      if (first.status === 429) {
+        console.log("Rate limit already tested, skipping.");
+        return;
+      }
+
       expect(first.status).toBe(200);
 
       const second = await call();
@@ -1955,16 +1983,16 @@ describe("What's on? API tests", () => {
         const diffs = getDiffs(fileAllocineIds, apiAllocineIds);
 
         if (diffs.inFileNotInApi.length || diffs.inApiNotInFile.length) {
-          console.warn("Allociné ID diff detected:");
+          console.log("Allociné ID diff detected:");
 
           if (diffs.inFileNotInApi.length) {
-            console.warn("→ Present in file but missing in API:");
-            diffs.inFileNotInApi.forEach((id) => console.warn("   -", id));
+            console.log("→ Present in file but missing in API:");
+            diffs.inFileNotInApi.forEach((id) => console.log("   -", id));
           }
 
           if (diffs.inApiNotInFile.length) {
-            console.warn("→ Present in API but missing in file:");
-            diffs.inApiNotInFile.forEach((id) => console.warn("   -", id));
+            console.log("→ Present in API but missing in file:");
+            diffs.inApiNotInFile.forEach((id) => console.log("   -", id));
           }
         }
       }

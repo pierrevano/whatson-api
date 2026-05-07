@@ -1,18 +1,14 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const axios = require("axios");
 const Hashes = require("jshashes");
 
+const {
+  collectionPreferences: collectionNamePreferences,
+} = require("../utils/mongoClient");
 const { config } = require("../config");
 const {
   sendInternalError,
   sendPreferencesRequest,
 } = require("../utils/sendRequest");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-const collectionNamePreferences = client
-  .db(config.dbName)
-  .collection(config.collectionNamePreferences);
 
 /**
  * Hashes an email combined with a secret using SHA-256.

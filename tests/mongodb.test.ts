@@ -1,9 +1,7 @@
 require("dotenv").config();
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { client, collectionData } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
 
 const params = {
   movie_items_not_older_than_max_age: {
@@ -17,16 +15,6 @@ const params = {
 };
 
 describe("Items are up to date", () => {
-  let client;
-  let collectionData;
-
-  beforeAll(async () => {
-    client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-    await client.connect();
-    const database = client.db(config.dbName);
-    collectionData = database.collection(config.collectionName);
-  }, config.timeout);
-
   afterAll(async () => {
     if (client) {
       await client.close();

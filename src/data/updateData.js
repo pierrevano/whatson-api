@@ -2,10 +2,7 @@ const csv = require("csvtojson");
 
 const { config } = require("../config");
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-
+const { client, collectionData } = require("../utils/mongoClient");
 const {
   closeSharedBrowserSession,
 } = require("../utils/getCheerioContentWithBrowser");
@@ -62,9 +59,6 @@ async function checkStatus(service) {
   if (isUpdateIds) updateIds();
 
   if (getNodeVarsValues.get_db !== "update_db") process.exit(0);
-
-  const database = client.db(config.dbName);
-  const collectionData = database.collection(config.collectionName);
 
   const idsFilePath =
     getNodeVarsValues.item_type === "movie"

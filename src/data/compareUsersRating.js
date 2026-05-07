@@ -192,6 +192,20 @@ const compareUsersRating = async (
     dataWithoutId.mojo = mojoObj;
 
     /**
+     * Forces a full refresh when the next episode has already aired.
+     */
+    const nextEpisodeReleaseDate = dataWithoutId.next_episode?.release_date;
+    if (
+      nextEpisodeReleaseDate &&
+      new Date(nextEpisodeReleaseDate) < new Date()
+    ) {
+      console.log(
+        `next_episode already aired (release_date=${nextEpisodeReleaseDate}), full refresh required`,
+      );
+      return isEqualObj;
+    }
+
+    /**
      * Reuses recently updated items without rebuilding TV show episode fields,
      * since IMDb ratings already match and the payload is fresh enough.
      */

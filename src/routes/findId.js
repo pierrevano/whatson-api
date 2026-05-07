@@ -1,15 +1,6 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
 const { buildProjection } = require("./buildProjection");
-const { config } = require("../config");
+const { collectionData } = require("../utils/mongoClient");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-
-const collectionData = client
-  .db(config.dbName)
-  .collection(config.collectionName);
 
 // Utility to normalize strings for fuzzy title matching
 const normalizeString = (str) =>

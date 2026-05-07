@@ -1,5 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
+const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const { getEpisodeSortFields } = require("../utils/getEpisodeSortFields");
 const { getPipelineByNames } = require("./getPipelineByNames");
@@ -15,13 +14,6 @@ const { sendToNewRelic } = require("../utils/sendToNewRelic");
 const { validateIntegerParam } = require("./utils/queryValidationMessages");
 const { validateSharedQueryParams } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
-
-const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentialsLastPart}`;
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-
-const collectionData = client
-  .db(config.dbName)
-  .collection(config.collectionName);
 
 /**
  * Builds a Mongo boolean match condition from a query value.
