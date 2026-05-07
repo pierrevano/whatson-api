@@ -39,7 +39,7 @@ Note: A rate limit of `1000` requests per hour is in place to prevent abuse of t
 
 ## Supported ratings sources
 
-Ratings are aggregated from AlloCiné, BetaSeries, IMDb, Letterboxd, Metacritic, Rotten Tomatoes, SensCritique, The Movie Database, Trakt, and TV Time. Additional sources can be requested by contacting me at https://pierrevano.github.io.
+The API exposes ratings from AlloCiné, BetaSeries, IMDb, Letterboxd, Metacritic, Rotten Tomatoes, SensCritique, The Movie Database, Trakt, and TV Time. Additional sources can be requested by contacting me at https://pierrevano.github.io.
 
 ---
 

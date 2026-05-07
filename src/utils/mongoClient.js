@@ -12,13 +12,13 @@ const uri = `mongodb+srv://${config.mongoDbCredentials}${config.mongoDbCredentia
 const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 const db = client.db(config.dbName);
 
-const collectionData = db.collection(config.collectionName);
 const collectionApiKey = db.collection(config.collectionNameApiKey);
+const collectionData = db.collection(config.collectionName);
 const collectionPreferences = db.collection(config.collectionNamePreferences);
 
 module.exports = {
   client,
-  collectionData,
   collectionApiKey,
+  collectionData,
   collectionPreferences,
 };
