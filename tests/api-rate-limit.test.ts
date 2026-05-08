@@ -25,12 +25,12 @@ describe("What's on? API rate limiting tests", () => {
 
       for (
         let requestCount = 0;
-        requestCount < config.points + 1 && !rateLimitedResponse;
+        requestCount < config.pointsAnonymous + 1 && !rateLimitedResponse;
         requestCount += batchSize
       ) {
         const currentBatchSize = Math.min(
           batchSize,
-          config.points + 1 - requestCount,
+          config.pointsAnonymous + 1 - requestCount,
         );
         const responses = await Promise.all(
           Array.from({ length: currentBatchSize }).map(() =>
@@ -51,8 +51,50 @@ describe("What's on? API rate limiting tests", () => {
       expect(rateLimitedResponse.status).toBe(429);
       expect(rateLimitedResponse.data).toEqual({
         code: 429,
-        message:
-          "Too many requests. Please try again later. If you need an API key for higher limits, contact me on: https://pierrevano.github.io",
+        message: `Too many requests (${config.pointsAnonymous} req/h limit). Request a free API key for a higher limit: ${config.contactURL}`,
+      });
+      expect(rateLimitedResponse.headers).toHaveProperty("retry-after");
+      expect(
+        Number(rateLimitedResponse.headers["retry-after"]),
+      ).toBeGreaterThan(0);
+    },
+    120000,
+  );
+
+  rateLimitTest(
+    "Rate Limiting should return 429 with the sponsor upgrade message for a free API key",
+    async () => {
+      const apiCall = `${baseURL}/movie/121`;
+      const batchSize = 100;
+      let rateLimitedResponse = null;
+
+      for (
+        let requestCount = 0;
+        requestCount < config.pointsFree + 1 && !rateLimitedResponse;
+        requestCount += batchSize
+      ) {
+        const currentBatchSize = Math.min(
+          batchSize,
+          config.pointsFree + 1 - requestCount,
+        );
+        const responses = await Promise.all(
+          Array.from({ length: currentBatchSize }).map(() =>
+            axios.get(apiCall, {
+              params: { api_key: config.testApiKey },
+              validateStatus: (status) => status <= 500,
+            }),
+          ),
+        );
+
+        rateLimitedResponse =
+          responses.find((response) => response.status === 429) || null;
+      }
+
+      expect(rateLimitedResponse).toBeDefined();
+      expect(rateLimitedResponse.status).toBe(429);
+      expect(rateLimitedResponse.data).toEqual({
+        code: 429,
+        message: `Too many requests (${config.pointsFree} req/h limit). Become a sponsor for a higher limit: ${config.contactURL}`,
       });
       expect(rateLimitedResponse.headers).toHaveProperty("retry-after");
       expect(

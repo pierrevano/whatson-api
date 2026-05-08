@@ -53,7 +53,10 @@ const config = {
   collectionNamePreferences: "preferences",
 
   /* Rate limit settings */
-  points: 1000,
+  pointsAnonymous: 100,
+  pointsFree: 500,
+  pointsSponsor: 5000,
+  contactURL: "https://pierrevano.github.io",
   duration: 60 * 60, // 1 hour in seconds
   blockDuration: 60 * 60, // 1 hour in seconds
 

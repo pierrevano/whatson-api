@@ -2,6 +2,7 @@ const { RateLimiterMemory } = require("rate-limiter-flexible");
 
 const { config } = require("../config");
 const { getApiKey } = require("./getApiKey");
+const { getTierMessage } = require("./getTierMessage");
 const { sendResponse } = require("./sendRequest");
 const { sendToNewRelic } = require("./sendToNewRelic");
 
@@ -18,7 +19,7 @@ const createRateLimiter = (points) =>
     blockDuration: config.blockDuration, // block duration in seconds if rate limit is exceeded
   });
 
-const defaultLimiter = createRateLimiter(config.points);
+const defaultLimiter = createRateLimiter(config.pointsAnonymous);
 
 // One persistent limiter instance per API key to preserve counters across requests.
 const keyedLimiters = new Map();
@@ -45,11 +46,12 @@ const getRateLimiterKey = (req) => {
 const limiter = async (req, res, next) => {
   const apiKeyValue = req.query.api_key;
 
-  let rateLimiter = defaultLimiter;
+  let apiKeyDoc = null;
   let key = getRateLimiterKey(req);
+  let rateLimiter = defaultLimiter;
 
   if (apiKeyValue) {
-    const apiKeyDoc = await getApiKey(apiKeyValue);
+    apiKeyDoc = await getApiKey(apiKeyValue);
 
     if (apiKeyDoc) {
       if (apiKeyDoc.is_internal) return next();
@@ -89,10 +91,7 @@ const limiter = async (req, res, next) => {
 
     res.set(rateLimitHeaders);
     sendToNewRelic(req, null, null, rateLimitHeaders);
-    sendResponse(res, 429, {
-      message:
-        "Too many requests. Please try again later. If you need an API key for higher limits, contact me on: https://pierrevano.github.io",
-    });
+    sendResponse(res, 429, { message: getTierMessage(apiKeyDoc) });
   }
 };
 
