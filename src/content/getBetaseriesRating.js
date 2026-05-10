@@ -1,5 +1,8 @@
 const { config } = require("../config");
-const { getHomepageResponse } = require("../utils/getHomepageResponse");
+const {
+  getHomepageResponse,
+  homepageStatusErrorCode,
+} = require("../utils/getHomepageResponse");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 const { logExecutionTime } = require("../utils/logExecutionTime");
@@ -111,7 +114,9 @@ const getBetaseriesRating = async (
       }
 
       if (!id) {
-        throw new Error("Failed to fetch the BetaSeries ID.");
+        const error = new Error("Failed to fetch the BetaSeries ID.");
+        error.code = homepageStatusErrorCode;
+        throw error;
       }
 
       const isSeries = allocineHomepage.includes(config.baseURLTypeSeries);

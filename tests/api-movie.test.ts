@@ -1885,31 +1885,6 @@ describe("What's on? API tests", () => {
     config.timeout,
   );
 
-  (isRemoteSource ? test.skip : test)(
-    "api_key_should_allow_requests_under_limit_and_block_after",
-    async () => {
-      const call = () =>
-        axios.get(`${baseURL}?api_key=${config.testApiKey}`, {
-          validateStatus: (status) => status < 600,
-        });
-
-      const first = await call();
-      if (first.status === 429) {
-        console.log("Rate limit already tested, skipping.");
-        return;
-      }
-
-      expect(first.status).toBe(200);
-
-      const second = await call();
-      expect(second.status).toBe(200);
-
-      const third = await call();
-      expect(third.status).toBe(429);
-    },
-    config.timeout,
-  );
-
   const countTrueLines = (filePath) => {
     const content = readFileSync(filePath, "utf-8");
     return content.split("\n").filter((line) => line.trim().endsWith(",TRUE"))

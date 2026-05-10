@@ -8,7 +8,7 @@ const { withErrorContext } = require("./utils/withErrorContext");
 
 const baseURL =
   process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
-const TOP_N = 100;
+const TOP_COUNT = 150;
 const assetsDir = "./src/assets";
 
 function readTopNItems(popularityFilePath, idsFilePath) {
@@ -16,36 +16,38 @@ function readTopNItems(popularityFilePath, idsFilePath) {
   return readFileSync(popularityFilePath, "utf8")
     .split("\n")
     .filter(Boolean)
-    .slice(0, TOP_N)
+    .slice(0, TOP_COUNT)
     .map((line) => {
       const commaIndex = line.indexOf(",");
-      const url = line.slice(commaIndex + 1);
-      if (!url) return null;
-      const match = idsContent.split("\n").find((l) => l.startsWith(url + ","));
-      if (!match) return null;
-      const tmdbId = match.split(",")[3];
+      const slug = line.slice(commaIndex + 1);
+      if (!slug) return null;
+      const idRow = idsContent
+        .split("\n")
+        .find((idLine) => idLine.startsWith(slug + ","));
+      if (!idRow) return null;
+      const tmdbId = idRow.split(",")[3];
       return tmdbId ? { rank: parseInt(line), tmdbId } : null;
     })
     .filter(Boolean);
 }
 
-const itemTypes = [
+const mediaTypes = [
   {
-    name: "movie",
+    type: "movie",
     popularityFilePath: `${assetsDir}/${config.filmsPopularityPath}`,
     idsFilePath: config.filmsIdsFilePath,
   },
   {
-    name: "tvshow",
+    type: "tvshow",
     popularityFilePath: `${assetsDir}/${config.seriesPopularityPath}`,
     idsFilePath: config.seriesIdsFilePath,
   },
 ];
 
 describe("Top 100 popular items updated recently", () => {
-  itemTypes.forEach(({ name, popularityFilePath, idsFilePath }) => {
+  mediaTypes.forEach(({ type, popularityFilePath, idsFilePath }) => {
     test(
-      `top_${TOP_N}_${name}s_updated_within_max_age`,
+      `top_${TOP_COUNT}_${type}s_updated_within_max_age`,
       async () => {
         const topItems = readTopNItems(popularityFilePath, idsFilePath);
         expect(topItems.length).toBeGreaterThan(0);
@@ -55,7 +57,7 @@ describe("Top 100 popular items updated recently", () => {
 
         for (const { rank, tmdbId } of topItems) {
           const response = await axios.get(
-            `${baseURL}/${name}/${tmdbId}?api_key=${config.internalApiKey}`,
+            `${baseURL}/${type}/${tmdbId}?api_key=${config.internalApiKey}`,
             { validateStatus: (status) => status < 500 },
           );
           const imdbId = response.data?.imdb?.id ?? "unknown";

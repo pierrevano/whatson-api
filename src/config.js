@@ -228,7 +228,7 @@ const config = {
     softDefault: 5,
     mojo: 15,
     mustSee: 3,
-    directors: 20,
+    directors: 15,
     nextEpisodes: 20,
     platformsLinksMovies: 5,
     popularity: 10,

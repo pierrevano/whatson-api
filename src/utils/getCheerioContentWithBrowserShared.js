@@ -68,7 +68,7 @@ const navigateWithRetries = async (page, request) => {
     try {
       await page.goto(request.url, {
         waitUntil: request.waitUntil,
-        timeout: 30000,
+        timeout: 60000,
       });
       return;
     } catch (error) {
