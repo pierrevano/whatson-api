@@ -25,12 +25,12 @@ const filterByCheckId = async ({
   const isCheckAllIds = getNodeVarsValues.check_id === "all_ids";
   const isCheckAllIdsRecent = getNodeVarsValues.check_id === "all_ids_recent";
 
-  const imdbIdsToUpdate = isCheckAllIds
-    ? mojoBoxOfficeArray.map((item) => item.imdbId).filter(Boolean)
-    : [getNodeVarsValues.check_id];
-  let filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) => {
-    return imdbIdsToUpdate.includes(item.IMDB_ID);
-  });
+  const itemIds = mojoBoxOfficeArray.map((item) => item.imdbId).filter(Boolean);
+  let filteredItems = jsonArraySortedHighestToLowest.filter((item) =>
+    isCheckAllIds
+      ? itemIds.includes(item.IMDB_ID)
+      : item.URL === getNodeVarsValues.check_id,
+  );
 
   const checkDate = parseInt(getNodeVarsValues.check_date, 10);
   const isCheckDateFilterActive =
@@ -65,7 +65,7 @@ const filterByCheckId = async ({
     const existingAllocineIds = new Set(
       existingDocs.map((doc) => doc._id).filter(Boolean),
     );
-    filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) => {
+    filteredItems = jsonArraySortedHighestToLowest.filter((item) => {
       const allocineDbId = b64Encode(`${config.baseURLAllocine}${item.URL}`);
 
       return (
@@ -100,18 +100,18 @@ const filterByCheckId = async ({
       .toArray();
 
     const recentIds = new Set(recentDocs.map((doc) => doc.id));
-    filteredByImdbId = jsonArraySortedHighestToLowest.filter((item) =>
+    filteredItems = jsonArraySortedHighestToLowest.filter((item) =>
       recentIds.has(parseInt(item.THEMOVIEDB_ID, 10)),
     );
   }
 
   writeFileSync(
     `./temp_mojo_box_office_${getNodeVarsValues.item_type}.json`,
-    JSON.stringify(filteredByImdbId),
+    JSON.stringify(filteredItems),
     "utf-8",
   );
 
-  if (filteredByImdbId.length === 0) {
+  if (filteredItems.length === 0) {
     if (isCheckAllIdsRecent) {
       console.log("No recently updated items found. Aborting.");
       process.exit(0);
@@ -127,14 +127,12 @@ const filterByCheckId = async ({
     }
 
     console.log(
-      `IMDb ID${
-        imdbIdsToUpdate.length > 1 ? "s" : ""
-      } ${imdbIdsToUpdate.join(", ")} not found in the dataset. Aborting.`,
+      `AlloCiné URL ${getNodeVarsValues.check_id} not found in the dataset. Aborting.`,
     );
     process.exit(0);
   }
 
-  return filteredByImdbId;
+  return filteredItems;
 };
 
 module.exports = filterByCheckId;

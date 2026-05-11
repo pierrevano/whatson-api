@@ -130,7 +130,7 @@ const getNodeVarsValues = {
   /*
    * Do we want to update a specific item
    * in the dataset? The ID to specify should
-   * be an IMDb ID. If not set, it is ignored.
+   * be an AlloCiné URL. If not set, it is ignored.
    */
   check_id: node_vars[13],
 };

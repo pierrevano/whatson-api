@@ -8,15 +8,14 @@ const { withErrorContext } = require("./utils/withErrorContext");
 
 const baseURL =
   process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
-const TOP_COUNT = 150;
 const assetsDir = "./src/assets";
 
-function readTopNItems(popularityFilePath, idsFilePath) {
+function readTopNItems(popularityFilePath, idsFilePath, topCount) {
   const idsContent = readFileSync(idsFilePath, "utf8");
   return readFileSync(popularityFilePath, "utf8")
     .split("\n")
     .filter(Boolean)
-    .slice(0, TOP_COUNT)
+    .slice(0, topCount)
     .map((line) => {
       const commaIndex = line.indexOf(",");
       const slug = line.slice(commaIndex + 1);
@@ -34,22 +33,28 @@ function readTopNItems(popularityFilePath, idsFilePath) {
 const mediaTypes = [
   {
     type: "movie",
+    topCount: 150,
     popularityFilePath: `${assetsDir}/${config.filmsPopularityPath}`,
     idsFilePath: config.filmsIdsFilePath,
   },
   {
     type: "tvshow",
+    topCount: 200,
     popularityFilePath: `${assetsDir}/${config.seriesPopularityPath}`,
     idsFilePath: config.seriesIdsFilePath,
   },
 ];
 
-describe("Top 100 popular items updated recently", () => {
-  mediaTypes.forEach(({ type, popularityFilePath, idsFilePath }) => {
+describe("Top popular items updated recently", () => {
+  mediaTypes.forEach(({ type, topCount, popularityFilePath, idsFilePath }) => {
     test(
-      `top_${TOP_COUNT}_${type}s_updated_within_max_age`,
+      `top_${topCount}_${type}s_updated_within_max_age`,
       async () => {
-        const topItems = readTopNItems(popularityFilePath, idsFilePath);
+        const topItems = readTopNItems(
+          popularityFilePath,
+          idsFilePath,
+          topCount,
+        );
         expect(topItems.length).toBeGreaterThan(0);
 
         const cutoffDate = new Date();

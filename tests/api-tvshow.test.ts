@@ -2059,7 +2059,7 @@ const params = {
   no_french_localization_strings_in_episode_descriptions: {
     query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
-      const potentialFrenchPattern = /(?<!déj)à|[âæçêîïœùÿ]/i;
+      const potentialFrenchPattern = /(?<!déj|vis-)à|[âæçêîïœùÿ]/i;
       items.forEach((item) => {
         if (Array.isArray(item.episodes_details)) {
           item.episodes_details.forEach((episode) => {
