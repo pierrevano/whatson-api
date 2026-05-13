@@ -61,12 +61,12 @@ describe("Top popular items updated recently", () => {
         cutoffDate.setDate(cutoffDate.getDate() - config.maxAgeInDays);
 
         for (const { rank, tmdbId } of topItems) {
+          const url = `${baseURL}/${type}/${tmdbId}`;
           const response = await axios.get(
-            `${baseURL}/${type}/${tmdbId}?api_key=${config.internalApiKey}`,
+            `${url}?api_key=${config.internalApiKey}`,
             { validateStatus: (status) => status < 500 },
           );
-          const imdbId = response.data?.imdb?.id ?? "unknown";
-          withErrorContext(`rank ${rank}, IMDb ID ${imdbId}`, () => {
+          withErrorContext(`rank ${rank}, URL ${url}`, () => {
             expect(response.status).toBe(200);
             expect(response.data).toHaveProperty("updated_at");
             expect(

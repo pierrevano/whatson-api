@@ -1,6 +1,7 @@
 const { getAwards } = require("./getAwards");
 const { getCountriesOfOrigin } = require("./getCountriesOfOrigin");
 const { getImdbData } = require("../utils/getImdbData");
+const { homepageStatusErrorCode } = require("../utils/getHomepageResponse");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -99,7 +100,11 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
     const aboveTheFoldData = nextData?.props?.pageProps?.aboveTheFoldData;
 
     if (!mainColumnData || !aboveTheFoldData) {
-      throw new Error("IMDb NEXT_DATA payload is missing required fields.");
+      const error = new Error(
+        "IMDb NEXT_DATA payload is missing required fields.",
+      );
+      error.code = homepageStatusErrorCode;
+      throw error;
     }
 
     const ratingsSummary = mainColumnData?.ratingsSummary;

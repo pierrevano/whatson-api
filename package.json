@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.30.2",
+  "version": "3.30.3",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -36,6 +36,7 @@
     "push-without-tests": "npm run check-api-version && npm run prettier && npm run commit && npm run push-all-platforms",
     "push-without-version": "npm run prettier && npm run test && npm run commit && npm run push-all-platforms",
     "push-without-tests-and-version": "npm run prettier && npm run commit && npm run push-all-platforms",
+    "remove-temp-files": "rm temp_*",
     "update-all-movie-data": "node ./src/data/updateData.js movie no_update_ids update_db circleci no_active no_check_db_ids 0 force no_skip_mojo no_skip_services no_delete 7 1000000000 all_ids",
     "update-all-tvshow-data": "node ./src/data/updateData.js tvshow no_update_ids update_db circleci no_active no_check_db_ids 0 force no_skip_mojo no_skip_services no_delete 7 1000000000 all_ids",
     "update-all-movie-data-local": "node ./src/data/updateData.js movie no_update_ids update_db local no_active no_check_db_ids 0 force no_skip_mojo no_skip_services no_delete 7 1000000000 all_ids",
@@ -67,7 +68,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "axios": "^1.16.0",
+    "axios": "^1.16.1",
     "axios-retry": "^4.5.0",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
@@ -77,8 +78,8 @@
     "he": "^1.2.0",
     "jshashes": "^1.0.8",
     "mongodb": "^7.2.0",
-    "newrelic": "^13.19.2",
-    "playwright": "^1.59.1",
+    "newrelic": "^13.20.0",
+    "playwright": "^1.60.0",
     "prettier": "^3.8.3",
     "rate-limiter-flexible": "^11.1.0",
     "shelljs": "^0.10.0",
