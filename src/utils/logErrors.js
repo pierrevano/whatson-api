@@ -69,7 +69,7 @@ const logErrors = (error, item, origin) => {
 
   if (
     error?.code === homepageStatusErrorCode &&
-    process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR === "true"
+    process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR !== "false"
   ) {
     if (tempErrorLogLines !== null && tempErrorLogLines > maxErrorLogLines) {
       exitWithMessage(

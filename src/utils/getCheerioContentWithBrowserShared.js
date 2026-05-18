@@ -1,3 +1,4 @@
+const { homepageStatusErrorCode } = require("./getHomepageResponse");
 const { logErrors } = require("./logErrors");
 
 const NAVIGATION_RETRY_COUNT = 3;
@@ -72,15 +73,13 @@ const navigateWithRetries = async (page, request) => {
       });
       return;
     } catch (error) {
-      if (
-        error?.name !== "TimeoutError" ||
-        attempt === NAVIGATION_RETRY_COUNT - 1
-      ) {
+      if (attempt === NAVIGATION_RETRY_COUNT - 1) {
+        error.code = homepageStatusErrorCode;
         throw error;
       }
 
       console.log(
-        `${request.origin || "No Origin specified"} - ${request.url}: Navigation timed out. Retrying...`,
+        `${request.origin || "No Origin specified"} - ${request.url}: Navigation failed (${error?.name ?? "Error"}). Retrying...`,
       );
     }
   }

@@ -39,7 +39,7 @@ const getHomepageResponse = async (homepageUrl, options = {}) => {
     error.code = homepageStatusErrorCode;
     error.response = response;
 
-    if (process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR === "true") {
+    if (process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR !== "false") {
       throw error;
     }
 

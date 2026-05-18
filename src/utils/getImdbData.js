@@ -1,5 +1,8 @@
 const { getCheerioContent } = require("./getCheerioContent");
-const { getHomepageResponse } = require("./getHomepageResponse");
+const {
+  getHomepageResponse,
+  homepageStatusErrorCode,
+} = require("./getHomepageResponse");
 const { logErrors } = require("./logErrors");
 
 const imdbLocaleRequestOptions = {
@@ -46,6 +49,7 @@ const getImdbData = async (imdbHomepage) => {
 
     return { $, nextData };
   } catch (error) {
+    error.code = homepageStatusErrorCode;
     logErrors(error, imdbHomepage, "getImdbData");
     throw error;
   }

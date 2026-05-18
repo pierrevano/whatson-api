@@ -100,7 +100,7 @@ const config = {
   imdbRatingCountTolerancePct: 0.5,
   maxAgeInDays: 3,
   maxDaysInFuture: 7,
-  maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 20),
+  maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 100),
   ratingsDelayMs: 500,
   recentUpdateHours: 18,
   thirdPartyStatusTimeoutMs: 480000,

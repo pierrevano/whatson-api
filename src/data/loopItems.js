@@ -214,7 +214,7 @@ const loopItems = async (
     } catch (error) {
       if (
         error?.code === homepageStatusErrorCode &&
-        process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR === "true"
+        process.env.SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR !== "false"
       ) {
         console.log(
           `Skipping item at index ${index} because of homepage status error: ${error.message}`,
