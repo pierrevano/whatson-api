@@ -1,7 +1,7 @@
 const { homepageStatusErrorCode } = require("./getHomepageResponse");
 const { logErrors } = require("./logErrors");
 
-const NAVIGATION_RETRY_COUNT = 3;
+const NAVIGATION_RETRY_COUNT = 5;
 
 /**
  * Normalizes the browser request settings used by both loading strategies.
@@ -69,7 +69,7 @@ const navigateWithRetries = async (page, request) => {
     try {
       await page.goto(request.url, {
         waitUntil: request.waitUntil,
-        timeout: 60000,
+        timeout: 30000,
       });
       return;
     } catch (error) {

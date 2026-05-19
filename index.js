@@ -21,6 +21,7 @@ const { limiter } = require("./src/utils/rateLimiter");
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
 const getRatedEpisodes = require("./src/routes/getRatedEpisodes");
+const getUpdates = require("./src/routes/getUpdates");
 
 const PORT = config.localPort;
 
@@ -39,6 +40,9 @@ app.get("/", limiter, getItems);
 
 /* A route that is used to get the rated episodes across all tvshows. */
 app.get("/episodes/rated", limiter, getRatedEpisodes);
+
+/* A route that is used to get items added or updated since a given timestamp. */
+app.get("/updates", limiter, getUpdates);
 
 /* A route that is used to get the data for a specific movie. */
 app.get("/movie/:id", limiter, getId);

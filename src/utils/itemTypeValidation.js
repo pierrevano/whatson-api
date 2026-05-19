@@ -1,10 +1,8 @@
+const { config } = require("../config");
+
 const isValidItemType = (itemTypeQuery) => {
-  return (
-    typeof itemTypeQuery === "undefined" ||
-    itemTypeQuery === null ||
-    itemTypeQuery === "" ||
-    ["movie", "tvshow", "movie,tvshow", "tvshow,movie"].includes(itemTypeQuery)
-  );
+  if (!itemTypeQuery) return true;
+  return itemTypeQuery.split(",").every((t) => config.itemTypes.includes(t));
 };
 
 const areQuerySearchKeysMissing = (query, keysToCheckForSearch) => {

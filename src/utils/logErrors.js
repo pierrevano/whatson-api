@@ -7,6 +7,11 @@ const { reportError } = require("./sendToNewRelic");
 
 const TEMP_ERROR_LOG_PATH = "temp_error.log";
 
+let currentItemUrl = null;
+const setCurrentItemUrl = (url) => {
+  currentItemUrl = url;
+};
+
 /**
  * Writes a message to stdout and persists the same message to the temporary log file.
  *
@@ -60,7 +65,8 @@ const exitWithMessage = (message) => {
  * @throws {Error} Rethrows errors that must be handled by the caller.
  */
 const logErrors = (error, item, origin) => {
-  const errorMsg = `${item} - ${origin} - ${error}`;
+  const prefix = currentItemUrl ? `${currentItemUrl} - ` : "";
+  const errorMsg = `${prefix}${item} - ${origin} - ${error}`;
   const maxErrorLogLines = config.maxErrorLogLines;
   const statusCode = error?.response?.status;
   const tempErrorLogLines = appendErrorLog(errorMsg);
@@ -93,4 +99,4 @@ const logErrors = (error, item, origin) => {
   exitWithMessage(errorMsg);
 };
 
-module.exports = { logAndAppendTempErrorLog, logErrors };
+module.exports = { logAndAppendTempErrorLog, logErrors, setCurrentItemUrl };

@@ -3,7 +3,11 @@ const { checkRatingsStatus } = require("../utils/checkRatingsStatus");
 const { getImdbData } = require("../utils/getImdbData");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { homepageStatusErrorCode } = require("../utils/getHomepageResponse");
-const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
+const {
+  logAndAppendTempErrorLog,
+  logErrors,
+  setCurrentItemUrl,
+} = require("../utils/logErrors");
 const {
   shouldCreateFromImdbReleaseDate,
 } = require("../utils/shouldCreateFromImdbReleaseDate");
@@ -64,6 +68,7 @@ const loopItems = async (
       }
 
       const json = jsonArray[index];
+      setCurrentItemUrl(json.URL);
 
       // Log the progress in terms of percentage
       console.timeLog(

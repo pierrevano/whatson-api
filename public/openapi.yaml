@@ -13,7 +13,7 @@ info:
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.30.4
+  version: 3.31.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
