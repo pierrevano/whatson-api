@@ -221,18 +221,18 @@ Example of a rated episodes response returned:
 
 ### **GET /updates**
 
-Returns the TMDB IDs of items that have changed since a given timestamp, grouped by item type. Requires a sponsor API key.
+Returns the TMDB IDs of items added or updated since a given timestamp, grouped by item type. Requires a sponsor API key.
 
 > ```
 > https://whatson-api.onrender.com/updates?since=<ISO 8601 date>&item_type=movie,tvshow&page=<integer>&limit=<integer>
 > ```
 
-| Parameter | Value           | Description                                                                 |
-| --------- | --------------- | --------------------------------------------------------------------------- |
-| since     | _ISO 8601 date_ | Return items changed after this timestamp (e.g. `2026-01-01T00:00:00.000Z`) |
-| item_type | movie,tvshow    | The type of the item (_movie_, _tvshow_ or both)                            |
-| page      | _integer_       | Page number                                                                 |
-| limit     | _integer_       | Page items limit                                                            |
+| Parameter | Value           | Description                                                                          |
+| --------- | --------------- | ------------------------------------------------------------------------------------ |
+| since     | _ISO 8601 date_ | Return items added or updated after this timestamp (e.g. `2026-01-01T00:00:00.000Z`) |
+| item_type | movie,tvshow    | The type of the item (_movie_, _tvshow_ or both)                                     |
+| page      | _integer_       | Page number                                                                          |
+| limit     | _integer_       | Page items limit                                                                     |
 
 #### Responses:
 
@@ -248,8 +248,8 @@ Example of an updates response returned:
 {
   "page": "number",
   "updated": {
-    "movie": ["number"], // The Movie Database IDs of updated movies
-    "tvshow": ["number"], // The Movie Database IDs of updated tvshows
+    "movie": ["number"], // The Movie Database IDs of added or updated movies
+    "tvshow": ["number"], // The Movie Database IDs of added or updated tvshows
   },
   "total_pages": "number",
   "total_results": "number",

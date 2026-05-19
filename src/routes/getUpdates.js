@@ -8,7 +8,7 @@ const { sendToNewRelic } = require("../utils/sendToNewRelic");
 const getInternalApiKey = require("./getInternalApiKey");
 
 /**
- * Returns paginated TMDB IDs grouped by item type for items updated since a given timestamp.
+ * Returns paginated TMDB IDs grouped by item type for items added or updated since a given timestamp.
  * Requires a sponsor API key.
  *
  * @param {import("express").Request} req - Express request with since, item_type, page, and limit query params.

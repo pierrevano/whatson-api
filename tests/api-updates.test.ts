@@ -177,7 +177,7 @@ describe("What's on? API updates endpoint tests", () => {
     expect(response.data.updated).toEqual({ movie: [], tvshow: [] });
   });
 
-  test("should have at least minimumNumberOfItems.default updated items per type in the last 7 days", async () => {
+  test("should have at least minimumNumberOfItems.default added or updated items per type in the last 7 days", async () => {
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
     const [movies, tvshows] = await Promise.all([
