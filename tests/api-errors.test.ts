@@ -12,7 +12,7 @@ const maxLimitLargeDocuments = config.maxLimitLargeDocuments;
 
 /**
  * An object containing various query parameters and their expected results.
- * @type {Record<string, { query: string, expectedResult: (data: any) => void }>}
+ * @type {Record<string, { query: string, skipRemote?: boolean, expectedResult: (data: any) => void }>}
  */
 const params = {
   wrong_item_type_present: {
@@ -150,6 +150,7 @@ const params = {
 
   same_files_line_number_as_remote: {
     query: "?item_type=movie,tvshow&is_active=true,false",
+    skipRemote: true,
     expectedResult: (items) => {
       if (config.checkItemsNumber) {
         const filmsLines = countLines(config.filmsIdsFilePath);
@@ -696,32 +697,34 @@ const params = {
 describe("What's on? API tests", () => {
   console.log(`Testing on ${baseURL}`);
 
-  Object.entries(params).forEach(([name, { query, expectedResult }]) => {
-    async function fetchItemsData() {
-      const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
+  Object.entries(params).forEach(
+    ([name, { query, expectedResult, skipRemote }]) => {
+      async function fetchItemsData() {
+        const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
 
-      console.log("Test name:", name);
-      console.log(`Calling ${apiCall}`);
+        console.log("Test name:", name);
+        console.log(`Calling ${apiCall}`);
 
-      console.time("axiosCallInDataTest");
-      const response = await axios.get(apiCall, {
-        validateStatus: (status) => status <= 500,
-      });
-      console.timeEnd("axiosCallInDataTest");
+        console.time("axiosCallInDataTest");
+        const response = await axios.get(apiCall, {
+          validateStatus: (status) => status <= 500,
+        });
+        console.timeEnd("axiosCallInDataTest");
 
-      const data = response.data;
+        const data = response.data;
 
-      expectedResult(data, response);
-    }
+        expectedResult(data, response);
+      }
 
-    test(
-      name,
-      async () => {
-        await fetchItemsData();
-      },
-      config.timeout,
-    );
-  });
+      (isRemoteSource && skipRemote ? test.skip : test)(
+        name,
+        async () => {
+          await fetchItemsData();
+        },
+        config.timeout,
+      );
+    },
+  );
 
   test("Method Not Allowed should return 405 on known route", async () => {
     const apiCall = `${baseURL}/movie/121?api_key=${config.internalApiKey}`;

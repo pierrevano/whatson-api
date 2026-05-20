@@ -6,8 +6,8 @@ const { readFileSync } = require("fs");
 const { config } = require("../src/config");
 const { withErrorContext } = require("./utils/withErrorContext");
 
-const baseURL =
-  process.env.SOURCE === "remote" ? config.baseURLRemote : config.baseURLLocal;
+const isRemoteSource = process.env.SOURCE === "remote";
+const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
 const assetsDir = "./src/assets";
 
 function readTopNItems(popularityFilePath, idsFilePath, topCount) {
@@ -45,37 +45,42 @@ const mediaTypes = [
   },
 ];
 
-describe("Top popular items updated recently", () => {
-  mediaTypes.forEach(({ type, topCount, popularityFilePath, idsFilePath }) => {
-    test(
-      `top_${topCount}_${type}s_updated_within_max_age`,
-      async () => {
-        const topItems = readTopNItems(
-          popularityFilePath,
-          idsFilePath,
-          topCount,
+(isRemoteSource ? describe.skip : describe)(
+  "Top popular items updated recently",
+  () => {
+    mediaTypes.forEach(
+      ({ type, topCount, popularityFilePath, idsFilePath }) => {
+        test(
+          `top_${topCount}_${type}s_updated_within_max_age`,
+          async () => {
+            const topItems = readTopNItems(
+              popularityFilePath,
+              idsFilePath,
+              topCount,
+            );
+            expect(topItems.length).toBeGreaterThan(0);
+
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - config.maxAgeInDays);
+
+            for (const { rank, tmdbId } of topItems) {
+              const url = `${baseURL}/${type}/${tmdbId}`;
+              const response = await axios.get(
+                `${url}?api_key=${config.internalApiKey}`,
+                { validateStatus: (status) => status < 500 },
+              );
+              withErrorContext(`rank ${rank}, URL ${url}`, () => {
+                expect(response.status).toBe(200);
+                expect(response.data).toHaveProperty("updated_at");
+                expect(
+                  new Date(response.data.updated_at).getTime(),
+                ).toBeGreaterThanOrEqual(cutoffDate.getTime());
+              });
+            }
+          },
+          config.timeout,
         );
-        expect(topItems.length).toBeGreaterThan(0);
-
-        const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - config.maxAgeInDays);
-
-        for (const { rank, tmdbId } of topItems) {
-          const url = `${baseURL}/${type}/${tmdbId}`;
-          const response = await axios.get(
-            `${url}?api_key=${config.internalApiKey}`,
-            { validateStatus: (status) => status < 500 },
-          );
-          withErrorContext(`rank ${rank}, URL ${url}`, () => {
-            expect(response.status).toBe(200);
-            expect(response.data).toHaveProperty("updated_at");
-            expect(
-              new Date(response.data.updated_at).getTime(),
-            ).toBeGreaterThanOrEqual(cutoffDate.getTime());
-          });
-        }
       },
-      config.timeout,
     );
-  });
-});
+  },
+);
