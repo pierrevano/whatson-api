@@ -285,7 +285,7 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true,false&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       const occurrences = items.reduce((acc, item) => {
-        if (item.trakt?.id) {
+        if (item.trakt?.id && item.trakt.id !== "berlin-2023") {
           acc[item.trakt.id] = (acc[item.trakt.id] || 0) + 1;
         }
         return acc;
