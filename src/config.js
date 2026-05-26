@@ -230,7 +230,7 @@ const config = {
     mojo: 15,
     mustSee: 3,
     directors: 15,
-    nextEpisodes: 20,
+    nextEpisodes: 15,
     platformsLinksMovies: 5,
     popularity: 10,
     senscritiqueItems: 3,
