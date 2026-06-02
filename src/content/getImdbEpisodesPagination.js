@@ -91,6 +91,7 @@ const fetchEpisodesPage = async (imdbId, cursor) => {
 
   const headers = {
     "Content-Type": "application/json",
+    "x-imdb-client-name": "imdb-web-next-localized",
   };
 
   const response = await httpClient.get(GRAPHQL_URL, {
