@@ -3,16 +3,31 @@ const cheerio = require("cheerio");
 const {
   createBrowserRequest,
   getPlaywrightChromium,
-  minimizePageWindow,
   navigateWithRetries,
 } = require("./getCheerioContentWithBrowserShared");
 const { handleConsentBanner } = require("./handleConsentBanner");
+const {
+  buildBrowserUserAgent,
+  HEADLESS_LAUNCH_OPTIONS,
+  US_CONTEXT_OPTIONS,
+} = require("./browserConfig");
 const { logExecutionTime } = require("./logExecutionTime");
 
-const US_CONTEXT_OPTIONS = { locale: "en-US", timezoneId: "America/New_York" };
+/**
+ * Creates a browser context with a desktop user agent matching the browser.
+ *
+ * @param {import("playwright").Browser} browser
+ * @returns {Promise<import("playwright").BrowserContext>}
+ */
+const createBrowserContext = (browser) =>
+  browser.newContext({
+    ...US_CONTEXT_OPTIONS,
+    userAgent: buildBrowserUserAgent(browser),
+  });
 
-let sharedSessionPromise = null;
+let sharedConsentHandled = false;
 let sharedNavigationTask = Promise.resolve();
+let sharedSessionPromise = null;
 
 /**
  * Reads the final page content into Cheerio, with optional consent handling.
@@ -38,10 +53,10 @@ const readCheerioFromPage = async (page, options = {}) => {
  * @returns {Promise<{ browser: import("playwright").Browser, context: import("playwright").BrowserContext, page: import("playwright").Page }>}
  */
 const createSharedSession = async (chromium) => {
-  const browser = await chromium.launch({ headless: false });
-  const context = await browser.newContext(US_CONTEXT_OPTIONS);
+  const browser = await chromium.launch(HEADLESS_LAUNCH_OPTIONS);
+  const context = await createBrowserContext(browser);
   const page = await context.newPage();
-  await minimizePageWindow(page);
+  sharedConsentHandled = false;
   return { browser, context, page };
 };
 
@@ -136,8 +151,8 @@ const loadCheerioWithDedicatedBrowser = async (chromium, request) => {
 
   try {
     const startTime = Date.now();
-    browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext(US_CONTEXT_OPTIONS);
+    browser = await chromium.launch(HEADLESS_LAUNCH_OPTIONS);
+    const context = await createBrowserContext(browser);
     const page = await context.newPage();
 
     await navigateWithRetries(page, request);
@@ -163,6 +178,7 @@ const loadCheerioWithDedicatedBrowser = async (chromium, request) => {
  * @param {{
  *   url: string,
  *   origin: string,
+ *   handleConsent: boolean,
  *   waitUntil: "domcontentloaded"|"networkidle",
  * }} request
  * @returns {Promise<import("cheerio").CheerioAPI>}
@@ -173,9 +189,12 @@ const loadCheerioWithSharedPage = async (chromium, request) =>
     const { page } = await getSharedSession(chromium);
 
     await navigateWithRetries(page, request);
-    await minimizePageWindow(page);
 
-    const $ = await readCheerioFromPage(page);
+    // Handle consent only once per shared session.
+    const handleConsent = request.handleConsent && !sharedConsentHandled;
+    if (handleConsent) sharedConsentHandled = true;
+
+    const $ = await readCheerioFromPage(page, { handleConsent });
     logExecutionTime(request.origin, request.url, 200, startTime);
     return $;
   });

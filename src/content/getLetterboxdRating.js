@@ -34,7 +34,7 @@ const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
           letterboxdHomepage,
           undefined,
           "getLetterboxdRating",
-          { handleConsent: true, reuseSharedPage: false },
+          { handleConsent: true },
         );
         const ldJsonTag = $('script[type="application/ld+json"]').html();
 
