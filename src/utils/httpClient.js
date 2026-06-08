@@ -3,6 +3,7 @@ const axiosRetry = require("axios-retry").default;
 const { CookieJar } = require("tough-cookie");
 
 const { config } = require("../config");
+const { getRateLimitWaitMs } = require("./getRateLimitWaitMs");
 
 const jar = new CookieJar();
 const httpClient = axios.create({ withCredentials: true });
@@ -61,9 +62,11 @@ httpClient.interceptors.response.use((response) => {
 
 axiosRetry(httpClient, {
   retries: config.retries,
-  retryDelay: () => config.retryDelay,
+  retryDelay: (_retryCount, error) =>
+    getRateLimitWaitMs(error?.response?.headers) || config.retryDelay,
   retryCondition: (error) =>
     !error.response ||
+    error.response.status === 429 ||
     (error.response.status !== 404 && error.response.status >= 500),
   onRetry: (retryCount, error, requestConfig) => {
     const retryInfo = {
