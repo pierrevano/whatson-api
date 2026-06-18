@@ -2069,9 +2069,10 @@ const params = {
               withErrorContext(
                 `IMDb id: ${item.imdb?.id ?? "unknown"}, episode: S${episode.season}E${episode.episode}`,
                 () => {
-                  expect(episode.description).not.toMatch(
-                    potentialFrenchPattern,
-                  );
+                  // Strip capitalized words (e.g. first names like "José") to avoid false positives.
+                  expect(
+                    episode.description.replace(/\p{Lu}\p{L}*/gu, ""),
+                  ).not.toMatch(potentialFrenchPattern);
                 },
               );
             }
