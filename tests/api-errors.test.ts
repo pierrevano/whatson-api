@@ -275,6 +275,17 @@ const params = {
     },
   },
 
+  unknown_id_with_ratings_filters_should_return_404: {
+    query: "/tvshow/999999999?ratings_filters=all",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+      expect(response.status).toBe(404);
+    },
+  },
+
   results_count_on_search: {
     query: "?title=wolf",
     expectedResult: (data) => {

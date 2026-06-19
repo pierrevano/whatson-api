@@ -58,7 +58,11 @@ const findId = async (json, append_to_response, filtered_seasons) => {
     ].includes(key);
 
     if (isTitleKey) {
-      const normalizedInput = normalizeString(value);
+      // Match the provided title as a literal string by escaping special characters.
+      const normalizedInput = normalizeString(value).replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&",
+      );
 
       // Match title, original_title, and every stored localized title variant.
       query = {

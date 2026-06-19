@@ -101,8 +101,16 @@ while true; do
 done
 
 if [[ $SOURCE == "circleci" ]]; then
-  curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" > $FILMS_IDS_FILE_PATH
+  # Make sure the target directory exists before writing into it
+  mkdir -p "$FILMS_ASSETS_PATH"
+
   echo "Downloading $BASE_URL_ASSETS/$FILMS_FILE_NAME to $FILMS_IDS_FILE_PATH"
+
+  # Stop if the download fails instead of continuing with an incomplete file
+  if ! curl -fsS "$BASE_URL_ASSETS/$FILMS_FILE_NAME" -o "$FILMS_IDS_FILE_PATH"; then
+    echo "Error: Failed to download $BASE_URL_ASSETS/$FILMS_FILE_NAME"
+    exit 1
+  fi
 
   sed -i "/noTheMovieDBId/d" $FILMS_IDS_FILE_PATH
 
@@ -821,7 +829,17 @@ else
 fi
 
 LOCAL_LINES=$(wc -l < "$FILMS_IDS_FILE_PATH" | awk '{print $1}')
-REMOTE_LINES=$(curl -s "$BASE_URL_ASSETS/$FILMS_FILE_NAME" | wc -l | awk '{print $1}')
+
+# Write to a temp file so a failed request is caught instead of counting as empty
+REMOTE_TMP=$(mktemp)
+if ! curl -fsS "$BASE_URL_ASSETS/$FILMS_FILE_NAME" -o "$REMOTE_TMP"; then
+  echo "Error: Failed to fetch $FILMS_FILE_NAME for comparison"
+  rm -f "$REMOTE_TMP"
+  exit 1
+fi
+REMOTE_LINES=$(wc -l < "$REMOTE_TMP" | awk '{print $1}')
+rm -f "$REMOTE_TMP"
+
 if [ "$LOCAL_LINES" -lt "$REMOTE_LINES" ]; then
   echo "Error: Local file has fewer lines ($LOCAL_LINES) than the remote file ($REMOTE_LINES)"
   exit 1
@@ -829,6 +847,11 @@ fi
 
 if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{print $1}') -ge 6000 ]]; then
   remove_files
+
+  if ! command -v vercel > /dev/null 2>&1; then
+    echo "Error: vercel command not found"
+    exit 1
+  fi
 
   cd $FILMS_ASSETS_PATH
   vercel --prod --token=$VERCEL_TOKEN

@@ -83,7 +83,8 @@ const getId = async (req, res) => {
           undefined,
           undefined,
         );
-        const filteredResults = items[0].results.filter((result) => {
+        // Default to an empty list when no item is returned.
+        const filteredResults = (items[0]?.results || []).filter((result) => {
           return result.item_type === item_type;
         });
         await sendRequest(req, res, filteredResults[0], config);
