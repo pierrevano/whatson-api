@@ -2,6 +2,7 @@
 BASE_URL_ASSETS=https://whatson-assets.vercel.app
 BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
+ASSET_FILES=(films_ids.txt series_ids.txt popularity_ids_films.txt popularity_ids_series.txt skip_ids_films.txt skip_ids_series.txt)
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
 PAGES_MAX_NUMBER=20
@@ -852,6 +853,28 @@ if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{prin
     echo "Error: vercel command not found"
     exit 1
   fi
+
+  # Add any missing files first
+  for ASSET in "${ASSET_FILES[@]}"; do
+    if [[ $SOURCE == "circleci" ]] && [[ ! -f "$FILMS_ASSETS_PATH/$ASSET" ]]; then
+      HTTP_CODE=$(curl -fsS "$BASE_URL_ASSETS/$ASSET" -o "$FILMS_ASSETS_PATH/$ASSET" -w "%{http_code}")
+      if [[ $? -ne 0 ]]; then
+        rm -f "$FILMS_ASSETS_PATH/$ASSET"
+        if [[ $HTTP_CODE != "404" ]]; then
+          echo "Error: Failed to retrieve $ASSET ($HTTP_CODE) - aborting to avoid an incomplete publish"
+          exit 1
+        fi
+      fi
+    fi
+  done
+
+  # Require every file to be present and non-empty
+  for ASSET in "${ASSET_FILES[@]}"; do
+    if [[ ! -s "$FILMS_ASSETS_PATH/$ASSET" ]]; then
+      echo "Error: $ASSET is missing or empty - aborting to avoid publishing a broken set"
+      exit 1
+    fi
+  done
 
   cd $FILMS_ASSETS_PATH
   vercel --prod --token=$VERCEL_TOKEN
