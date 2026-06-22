@@ -116,7 +116,7 @@ const config = {
   baseURLLocal: `http://localhost:${localPort}`,
   baseURLRemote: process.env.WHATSON_API_URL,
   maxLimit: 900,
-  maxLimitLargeDocuments: 105,
+  maxLimitLargeDocuments: 100,
   checkItemsNumber: true,
   keysToCheck: [
     "_id",

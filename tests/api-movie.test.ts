@@ -1635,14 +1635,14 @@ const params = {
   },
 
   should_filter_movies_within_release_date_range: {
-    query: `?item_type=movie&is_active=true&release_date=from:2022-01-01,to:2025-12-31&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie&is_active=true&release_date=from:2022-01-01,to:2026-12-31&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(items.length).toBeGreaterThan(
         config.minimumNumberOfItems.softDefault,
       );
 
       const from = new Date("2022-01-01");
-      const to = new Date("2025-12-31");
+      const to = new Date("2026-12-31");
 
       items.forEach((item) => {
         expect(item).toHaveProperty("release_date");
