@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.31.92",
+  "version": "3.31.93",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -68,7 +68,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "axios": "^1.18.0",
+    "axios": "^1.18.1",
     "axios-retry": "^4.5.0",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
