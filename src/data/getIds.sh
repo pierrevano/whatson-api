@@ -3,6 +3,7 @@ BASE_URL_ASSETS=https://whatson-assets.vercel.app
 BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
 ASSET_FILES=(films_ids.txt series_ids.txt popularity_ids_films.txt popularity_ids_series.txt skip_ids_films.txt skip_ids_series.txt)
+EXCLUDED_IMDB_IDS=(tt13174766)
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
 PAGES_MAX_NUMBER=20
@@ -753,7 +754,7 @@ do
             fi
 
             if [[ -z $THEMOVIEDB_ID ]] || [[ $THEMOVIEDB_ID == "null" ]]; then
-              if { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; } || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; then
+              if { { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; } || { [[ $IMDB_ID != "null" ]] && [[ $PROMPT == "stop" ]] && [[ $SKIP -eq 0 ]]; }; } && [[ ! " ${EXCLUDED_IMDB_IDS[*]} " =~ " $IMDB_ID " ]]; then
                 media_type=$(curl -s https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED | jq '.results[0].media_type' | cut -d'"' -f2)
                 id=$(curl -s https://www.themoviedb.org/search/trending?query=$TITLE_URL_ENCODED | jq '.results[0].id')
                 open -a $BROWSER_PATH "https://www.themoviedb.org/$media_type/$id"
