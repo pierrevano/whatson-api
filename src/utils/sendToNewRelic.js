@@ -3,8 +3,6 @@ const isNewRelicEnabled =
   !process.env.DISABLE_NEW_RELIC || process.env.DISABLE_NEW_RELIC !== "true";
 
 if (isNewRelicEnabled) {
-  // newrelic@14 crashes instrumenting the mongodb@7 driver; disable just that.
-  process.env.NEW_RELIC_INSTRUMENTATION_MONGODB_ENABLED = "false";
   newrelic = require("newrelic");
 }
 
