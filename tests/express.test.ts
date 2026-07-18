@@ -35,7 +35,7 @@ function buildTestApp() {
     staticDir: path.join(__dirname, "..", "public"),
   });
 
-  /* Echoes the parsed query object so we can assert query-parser behavior. */
+  /* Echoes the parsed query object. */
   app.get("/echo/query", (req, res) => {
     res.json({ query: req.query });
   });
@@ -45,15 +45,12 @@ function buildTestApp() {
     res.json({ params: req.params });
   });
 
-  /* Echoes the parsed JSON body so we can assert body parsing. */
+  /* Echoes the parsed JSON body. */
   app.post("/echo/body", (req, res) => {
     res.json({ body: req.body });
   });
 
-  /*
-   * Reproduces the production pattern of defaulting a value onto req.query and reading it
-   * back later; req.query must be a single writable object for the write to persist.
-   */
+  /* Defaults a value onto req.query and reads it back. */
   app.get("/mutate/query", (req, res) => {
     req.query.api_key = req.query.api_key || "api_key_not_provided";
 

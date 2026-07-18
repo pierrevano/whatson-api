@@ -2,7 +2,6 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { createMCPServer } from "./server.mjs";
 
 export function setupMCPRoutes(app) {
-  // req.body is parsed by the app-level express.json() (applyBaseMiddleware), which runs first.
   app.post("/mcp", async (req, res) => {
     try {
       const transport = new StreamableHTTPServerTransport({
