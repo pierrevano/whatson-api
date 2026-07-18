@@ -34,7 +34,6 @@ const findId = async (json, append_to_response, filtered_seasons) => {
     title: null,
     tmdbid: "id",
     traktid: "trakt.id",
-    tvtimeid: "tv_time.id",
     thetvdbid: "thetvdb.id",
   };
 
@@ -54,7 +53,6 @@ const findId = async (json, append_to_response, filtered_seasons) => {
       "senscritiqueid",
       "thetvdbid",
       "tmdbid",
-      "tvtimeid",
     ].includes(key);
 
     if (isTitleKey) {

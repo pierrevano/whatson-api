@@ -1,9 +1,9 @@
-import express from "express";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { createMCPServer } from "./server.mjs";
 
 export function setupMCPRoutes(app) {
-  app.post("/mcp", express.json(), async (req, res) => {
+  // req.body is parsed by the app-level express.json() (applyBaseMiddleware), which runs first.
+  app.post("/mcp", async (req, res) => {
     try {
       const transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: undefined, // stateless — no session state needed

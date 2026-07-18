@@ -20,7 +20,7 @@ const generateURLs = require("./generateURLs");
  * Loop through items in a collection, perform various operations on each item, and return an object containing the number of new or updated items.
  *
  * An item is skipped without being upserted in the following cases:
- * 1. A homepage check fails for IMDb, Letterboxd, or Metacritic (CircleCI only).
+ * 1. A homepage check fails for Metacritic (CircleCI only).
  * 2. Existing data was expected to be reused but the payload is missing (defensive).
  * 3. The IMDb release date is in the future or incomplete.
  * 4. All ratings on the built payload are null or undefined.
@@ -99,19 +99,14 @@ const loopItems = async (
         thetvdb: { id: theTvdbId, homepage: theTvdbHomepage },
         tmdb: { id: tmdbId, homepage: tmdbHomepage },
         trakt: { id: traktId, homepage: traktHomepage },
-        tv_time: { id: tvtimeId, homepage: tvtimeHomepage },
       } = urls;
-      const { errorImdb, errorLetterboxd, errorMetacritic } =
-        await checkRatingsStatus({
-          imdbHomepage,
-          imdbId,
-          letterboxdHomepage,
-          letterboxdId,
-          metacriticHomepage,
-          metacriticId,
-        });
 
-      if (errorImdb || errorLetterboxd || errorMetacritic) {
+      const { errorMetacritic } = await checkRatingsStatus({
+        metacriticHomepage,
+        metacriticId,
+      });
+
+      if (errorMetacritic) {
         console.log(
           `Skipping item at index ${index} because a homepage check failed.`,
         );
@@ -182,8 +177,6 @@ const loopItems = async (
           tmdbId,
           tmdbHomepage,
           imdbData,
-          tvtimeHomepage,
-          tvtimeId,
           theTvdbHomepage,
           theTvdbId,
         );

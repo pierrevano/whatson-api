@@ -41,45 +41,23 @@ const isHomepageBlocked = async (
 };
 
 /**
- * Checks whether ratings sources are returning blocked statuses in CircleCI runs.
+ * Checks whether the Metacritic homepage is returning a blocked status in CircleCI runs.
  *
- * @param {{
- *   imdbHomepage: string|null,
- *   imdbId: string|number|null,
- *   letterboxdHomepage: string|null,
- *   letterboxdId: string|number|null,
- *   metacriticHomepage: string|null,
- *   metacriticId: string|number|null
- * }} params
- * @returns {Promise<{ errorImdb: boolean, errorLetterboxd: boolean, errorMetacritic: boolean }>}
+ * @param {{ metacriticHomepage: string|null, metacriticId: string|number|null }} params
+ * @returns {Promise<{ errorMetacritic: boolean }>}
  */
-const checkRatingsStatus = async ({
-  imdbHomepage,
-  imdbId,
-  letterboxdHomepage,
-  letterboxdId,
-  metacriticHomepage,
-  metacriticId,
-}) => {
+const checkRatingsStatus = async ({ metacriticHomepage, metacriticId }) => {
   if (getNodeVarsValues.environment === "local") {
-    return {
-      errorImdb: false,
-      errorLetterboxd: false,
-      errorMetacritic: false,
-    };
+    return { errorMetacritic: false };
   }
 
-  const [errorImdb, errorLetterboxd, errorMetacritic] = await Promise.all([
-    isHomepageBlocked(imdbHomepage, "IMDb", imdbId, 202),
-    isHomepageBlocked(letterboxdHomepage, "Letterboxd", letterboxdId),
-    isHomepageBlocked(metacriticHomepage, "Metacritic", metacriticId),
-  ]);
+  const errorMetacritic = await isHomepageBlocked(
+    metacriticHomepage,
+    "Metacritic",
+    metacriticId,
+  );
 
-  return {
-    errorImdb,
-    errorLetterboxd,
-    errorMetacritic,
-  };
+  return { errorMetacritic };
 };
 
 module.exports = { checkRatingsStatus };

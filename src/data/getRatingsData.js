@@ -13,7 +13,6 @@ const {
 const { getSensCritiqueRating } = require("../content/getSensCritiqueRating");
 const { getTmdbRating } = require("../content/getTmdbRating");
 const { getTraktRating } = require("../content/getTraktRating");
-const { getTVTimeRating } = require("../content/getTVTimeRating");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let lastCallAt = 0;
@@ -46,8 +45,6 @@ const getRatingsData = async ({
   tmdbId,
   traktHomepage,
   traktId,
-  tvtimeHomepage,
-  tvtimeId,
 }) => {
   const now = Date.now();
   const waitMs = Math.max(0, config.ratingsDelayMs - (now - lastCallAt));
@@ -88,8 +85,6 @@ const getRatingsData = async ({
       traktHomepage,
       traktId,
     );
-    const tvtimeRating = await getTVTimeRating(tvtimeHomepage, tvtimeId);
-
     const [imdbRatingData, tmdbRating] = await Promise.all([
       getImdbRating(imdbHomepage, imdbData),
       getTmdbRating(tmdbHomepage, tmdbId, tmdbData),
@@ -106,7 +101,6 @@ const getRatingsData = async ({
       sensCritiqueRating,
       tmdbRating,
       traktRating,
-      tvtimeRating,
     };
   }
 
@@ -119,7 +113,6 @@ const getRatingsData = async ({
     sensCritiqueRating,
     tmdbRating,
     traktRating,
-    tvtimeRating,
   ] = await Promise.all([
     getBetaseriesRating(allocineHomepage, betaseriesHomepage, betaseriesId),
     getImdbRating(imdbHomepage, imdbData),
@@ -129,7 +122,6 @@ const getRatingsData = async ({
     getSensCritiqueRating(sensCritiqueHomepage, sensCritiqueId),
     getTmdbRating(tmdbHomepage, tmdbId, tmdbData),
     getTraktRating(allocineHomepage, traktHomepage, traktId),
-    getTVTimeRating(tvtimeHomepage, tvtimeId),
   ]);
 
   return {
@@ -143,7 +135,6 @@ const getRatingsData = async ({
     sensCritiqueRating,
     tmdbRating,
     traktRating,
-    tvtimeRating,
   };
 };
 

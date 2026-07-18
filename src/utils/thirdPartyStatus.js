@@ -2,6 +2,7 @@ const axios = require("axios");
 const axiosRetry = require("axios-retry").default;
 
 const { config } = require("../config");
+const { generateUserAgent } = require("./generateUserAgent");
 const { logErrors } = require("./logErrors");
 
 /**
@@ -22,6 +23,7 @@ const isThirdPartyServiceOK = async (service) => {
     const isTraktApi = service.includes("api.trakt.tv");
     const options = {
       timeout: config.thirdPartyStatusTimeoutMs,
+      headers: { "User-Agent": generateUserAgent() },
       validateStatus: (status) =>
         status === 200 ||
         (isImdb && status === 202) ||
@@ -29,10 +31,8 @@ const isThirdPartyServiceOK = async (service) => {
     };
 
     if (isTraktApi) {
-      options.headers = {
-        "trakt-api-key": config.traktApiKey,
-        "trakt-api-version": 2,
-      };
+      options.headers["trakt-api-key"] = config.traktApiKey;
+      options.headers["trakt-api-version"] = 2;
     }
 
     console.log(`Calling service: ${service}`);

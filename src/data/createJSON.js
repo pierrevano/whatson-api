@@ -50,8 +50,6 @@ const { getTrailer } = require("../content/getTrailer");
  * @param {number} tmdbId - TMDB ID
  * @param {string} tmdbHomepage - TMDB homepage URL
  * @param {object|null} imdbData - IMDb data.
- * @param {string} tvtimeHomepage - TV Time homepage URL
- * @param {number} tvtimeId - TV Time ID
  * @param {string} theTvdbHomepage - TheTVDB homepage URL
  * @param {number} theTvdbId - TheTVDB ID
  * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
@@ -81,8 +79,6 @@ const createJSON = async (
   tmdbId,
   tmdbHomepage,
   imdbData,
-  tvtimeHomepage,
-  tvtimeId,
   theTvdbHomepage,
   theTvdbId,
 ) => {
@@ -99,7 +95,6 @@ const createJSON = async (
     sensCritiqueRating,
     tmdbRating,
     traktRating,
-    tvtimeRating,
   } = await getRatingsData({
     allocineCriticsDetails,
     allocineHomepage,
@@ -120,8 +115,6 @@ const createJSON = async (
     tmdbId,
     traktHomepage,
     traktId,
-    tvtimeHomepage,
-    tvtimeId,
   });
 
   const theTvdbSlug = await getTheTvdbSlug(allocineHomepage, theTvdbId);
@@ -351,15 +344,6 @@ const createJSON = async (
       }
     : null;
 
-  /* Creates a TV Time object if the tvtime rating is not null. */
-  const tvtimeObj = tvtimeRating?.usersRating
-    ? {
-        id: tvtimeRating.id,
-        url: tvtimeRating.url,
-        users_rating: tvtimeRating.usersRating,
-      }
-    : null;
-
   const mojoObj = mojoValues
     ? {
         rank: mojoValues.rank,
@@ -412,7 +396,6 @@ const createJSON = async (
     thetvdb: theTvdbObj,
     tmdb: tmdbObj,
     trakt: traktObj,
-    tv_time: tvtimeObj,
 
     mojo: mojoObj,
   };

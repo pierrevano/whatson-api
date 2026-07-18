@@ -4,7 +4,7 @@ info:
   title: "What's on? API"
   description: |
     Aggregate movie and TV show ratings from IMDb, Rotten Tomatoes, AlloCiné,
-    Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, Trakt, and TV Time.
+    Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, and Trakt.
 
     **Rate limiting** — 1 000 requests per hour. Pass an optional `api_key`
     query parameter to remove this limit. The `Retry-After` header is set when the
@@ -13,7 +13,7 @@ info:
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.33.0
+  version: 3.34.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -65,7 +65,7 @@ components:
         `allocine_critics`, `allocine_users`, `betaseries_users`, `imdb_users`,
         `metacritic_critics`, `metacritic_users`, `rottentomatoes_critics`,
         `rottentomatoes_users`, `letterboxd_users`, `senscritique_users`,
-        `tmdb_users`, `trakt_users`, `tvtime_users`.
+        `tmdb_users`, `trakt_users`.
       schema:
         type: string
         example: "imdb_users,allocine_users,rottentomatoes_critics"
@@ -253,8 +253,6 @@ components:
           $ref: "#/components/schemas/TmdbRatings"
         trakt:
           $ref: "#/components/schemas/SimpleRatings"
-        tv_time:
-          $ref: "#/components/schemas/TvTimeRatings"
         thetvdb:
           $ref: "#/components/schemas/TheTvdbInfo"
         mojo:
@@ -497,18 +495,6 @@ components:
           type: integer
         popularity:
           type: number
-
-    TvTimeRatings:
-      type: object
-      properties:
-        id:
-          type: integer
-        url:
-          type: string
-          format: uri
-        users_rating:
-          type: number
-          description: 0–10
 
     TheTvdbInfo:
       type: object
@@ -759,7 +745,7 @@ paths:
         query parameters (returns a single result):
         `imdbId`, `tmdbId`, `allocineId`, `betaseriesId`, `letterboxdId`,
         `metacriticId`, `rottentomatoesId`, `senscritiqueId`, `thetvdbId`,
-        `traktId`, `tvtimeId`.
+        `traktId`.
       tags: [Titles]
       parameters:
         - name: title
@@ -949,11 +935,6 @@ paths:
             oneOf:
               - type: string
               - type: integer
-        - name: tvtimeId
-          in: query
-          description: Look up by TV Time ID. Returns a single result. TV shows only.
-          schema:
-            type: integer
         - $ref: "#/components/parameters/appendToResponse"
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/page"

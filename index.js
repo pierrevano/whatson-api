@@ -1,11 +1,11 @@
 require("dotenv").config();
 
-const cors = require("cors");
 const express = require("express");
 const path = require("path");
 
 const app = express();
 
+const { applyBaseMiddleware } = require("./src/routes/appMiddleware");
 const { config } = require("./src/config");
 const {
   getTvShowSeasonEpisodeDetails,
@@ -25,15 +25,8 @@ const getUpdates = require("./src/routes/getUpdates");
 
 const PORT = config.localPort;
 
-/* Use CORS middleware. */
-app.use(cors());
-
-/* Handle pre-flight requests. */
-app.options("*", cors());
-
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use(express.json());
+/* Configure the shared application-level middleware. */
+applyBaseMiddleware(app, { staticDir: path.join(__dirname, "public") });
 
 /* A route that is used to get the data for all items. */
 app.get("/", limiter, getItems);
@@ -80,7 +73,7 @@ async function start() {
   setupMCPRoutes(app);
 
   /* Catch-all route for invalid endpoints. */
-  app.all("*", handleInvalidEndpoint);
+  app.all("/{*splat}", handleInvalidEndpoint);
 
   /* Starting the server on the port defined in the PORT variable. */
   app.listen(PORT, () => {

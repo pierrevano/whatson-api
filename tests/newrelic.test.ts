@@ -1,20 +1,20 @@
 const { spawnSync } = require("node:child_process");
 
 /*
- * Regression test + upgrade signal for the crash that pins us to newrelic@14.1.2:
- * newrelic >= 14.2.0 reads options.hosts[0].host, which is empty for
- * mongodb+srv:// connections (ours), and crashes the process on startup.
+ * Guards that the New Relic agent can instrument a mongodb+srv:// connection inside a
+ * transaction without crashing the process on startup. The failure mode: the agent reads
+ * options.hosts[0].host, which is empty for mongodb+srv:// connections, and aborts when it
+ * is missing.
  *
- * jest's loader bypasses New Relic instrumentation, so we reproduce it in a real
- * Node process with the agent preloaded. The probe exits 0 only if it did NOT
- * crash — so after bumping newrelic, green = safe to upgrade, red = keep the pin.
+ * Jest's loader bypasses New Relic instrumentation, so the scenario is reproduced in a real
+ * Node process with the agent preloaded. The probe exits 0 only if it did not crash.
  */
 const probe = `
   const newrelic = require("newrelic");
   if (!newrelic.agent) throw new Error("New Relic agent is disabled"); // else: false pass
   const { MongoClient } = require("mongodb");
   newrelic.startBackgroundTransaction("srv-probe", async () => {
-    // SRV client (empty options.hosts) used in a transaction = the crash trigger.
+    // SRV client (empty options.hosts) inside a transaction reproduces the failure mode.
     new MongoClient("mongodb+srv://user:pass@cluster.example.mongodb.net/db")
       .db("probe")
       .collection("probe");

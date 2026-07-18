@@ -25,7 +25,6 @@ const baseURL = {
   tmdbAPI: "https://api.themoviedb.org/3",
   trakt: "https://trakt.tv",
   traktAPI: "https://api.trakt.tv",
-  tvtime: "https://www.tvtime.com",
   vercel: "https://www.vercel-status.com",
   whatsonAPI: "https://whatson-api.onrender.com",
   whatsonAPICircleCI: "https://whatson-api-circleci.onrender.com",
@@ -163,7 +162,6 @@ const config = {
     "tmdb",
     "trailer",
     "trakt",
-    "tv_time",
     "updated_at",
   ],
   ratingsKeys: [
@@ -176,7 +174,6 @@ const config = {
     "senscritique",
     "tmdb",
     "trakt",
-    "tv_time",
   ],
   allowedQueryParams: [
     "api_key",
@@ -246,14 +243,13 @@ const config = {
     senscritique: 3,
     tmdb: 3,
     trakt: 3,
-    tvtime: 3,
     thetvdb: 3,
   },
   minimumNumberOfMojoItems: 50,
   maximumIsActiveItems: 400,
   maxPopularityDiff: 20,
   ratings_filters:
-    "allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users,tvtime_users",
+    "allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users",
   timeout: 500000,
 
   /* Services settings */
@@ -278,7 +274,6 @@ const config = {
     { name: "Letterboxd", url: baseURL.letterboxd },
     { name: "SensCritique", url: baseURL.senscritique },
     { name: "Trakt", url: `${baseURL.traktAPI}/movies/trending?limit=1` },
-    { name: "TV Time", url: baseURL.tvtime },
     { name: "TheTVDB", url: baseURL.theTvdb },
     { name: "Mojo", url: baseURL.mojo },
   ],
@@ -315,7 +310,6 @@ const config = {
   baseURLTraktAPI: baseURL.traktAPI,
   baseURLTraktFilm: `${baseURL.trakt}/movies/`,
   baseURLTraktSerie: `${baseURL.trakt}/shows/`,
-  baseURLTVTimeSerie: `${baseURL.tvtime}/show/`,
   baseURLTypeFilms: "/film/fichefilm_gen_cfilm=",
   baseURLTypeSeries: "/series/ficheserie_gen_cserie=",
   endURLCriticDetails: "/critiques/presse/",
@@ -350,7 +344,6 @@ const config = {
       senscritique: 0,
       tmdb: 0,
       trakt: 0,
-      tvtime: 0,
     },
 
     maximum: {
@@ -364,7 +357,6 @@ const config = {
       senscritique: 10,
       tmdb: 10,
       trakt: 100,
-      tvtime: 10,
     },
   },
 
@@ -381,7 +373,6 @@ const config = {
     "title",
     "tmdbid",
     "traktid",
-    "tvtimeid",
   ],
 };
 

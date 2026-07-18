@@ -135,13 +135,6 @@ const params = {
             max: config.ratingsValues.maximum.trakt,
             isStrict: true,
           },
-          {
-            source: item.tv_time,
-            ratingType: "users_rating",
-            min: config.ratingsValues.minimum.tvtime,
-            max: config.ratingsValues.maximum.tvtime,
-            isStrict: true,
-          },
         ];
 
         for (let ratingItem of ratingItems) {

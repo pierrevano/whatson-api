@@ -50,7 +50,7 @@ const TOOLS = [
   {
     name: "search_titles",
     description:
-      "Search for movies and TV shows. Supports filtering by title, genre, platform, network, director, production company, runtime, season count, release date, rating, status, and content flags (active, adult, must-see, certified). Supports sorting by popularity (allocine, IMDb, TMDB), IMDb top chart position, and Box Office Mojo rank. Returns paginated results with aggregate ratings from IMDb, Rotten Tomatoes, AlloCiné, Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, Trakt, and TV Time. Use append_to_response to include optional fields such as genres, platforms_links, directors, or episode highlights. Can also look up a single title by an external platform ID (imdbid, tmdbid, allocineid, betaseriesid, letterboxdid, metacriticid, rottentomatoesid, senscritiqueid, thetvdbid, traktid, tvtimeid).",
+      "Search for movies and TV shows. Supports filtering by title, genre, platform, network, director, production company, runtime, season count, release date, rating, status, and content flags (active, adult, must-see, certified). Supports sorting by popularity (allocine, IMDb, TMDB), IMDb top chart position, and Box Office Mojo rank. Returns paginated results with aggregate ratings from IMDb, Rotten Tomatoes, AlloCiné, Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, and Trakt. Use append_to_response to include optional fields such as genres, platforms_links, directors, or episode highlights. Can also look up a single title by an external platform ID (imdbid, tmdbid, allocineid, betaseriesid, letterboxdid, metacriticid, rottentomatoesid, senscritiqueid, thetvdbid, traktid).",
     inputSchema: {
       type: "object",
       properties: {
@@ -96,7 +96,7 @@ const TOOLS = [
         ratings_filters: {
           type: "string",
           description:
-            'Which rating sources to include in the average. Use "all" for every source, or a comma-separated subset. Available values: allocine_critics, allocine_users, betaseries_users, imdb_users, metacritic_critics, metacritic_users, rottentomatoes_critics, rottentomatoes_users, letterboxd_users, senscritique_users, tmdb_users, trakt_users, tvtime_users.',
+            'Which rating sources to include in the average. Use "all" for every source, or a comma-separated subset. Available values: allocine_critics, allocine_users, betaseries_users, imdb_users, metacritic_critics, metacritic_users, rottentomatoes_critics, rottentomatoes_users, letterboxd_users, senscritique_users, tmdb_users, trakt_users.',
         },
         popularity_filters: {
           type: "string",
@@ -198,10 +198,6 @@ const TOOLS = [
           type: "string",
           description: "Trakt ID or slug. Returns a single result.",
         },
-        tvtimeid: {
-          type: "integer",
-          description: "TV Time ID. Returns a single result. TV shows only.",
-        },
         limit: {
           type: "integer",
           description: "Results per page (default 20).",
@@ -250,7 +246,7 @@ const TOOLS = [
         ratings_filters: {
           type: "string",
           description:
-            'Comma-separated rating sources used to compute ratings_average. Use "all" for every source. Available values: allocine_critics, allocine_users, betaseries_users, imdb_users, metacritic_critics, metacritic_users, rottentomatoes_critics, rottentomatoes_users, letterboxd_users, senscritique_users, tmdb_users, trakt_users, tvtime_users.',
+            'Comma-separated rating sources used to compute ratings_average. Use "all" for every source. Available values: allocine_critics, allocine_users, betaseries_users, imdb_users, metacritic_critics, metacritic_users, rottentomatoes_critics, rottentomatoes_users, letterboxd_users, senscritique_users, tmdb_users, trakt_users.',
         },
       },
     },

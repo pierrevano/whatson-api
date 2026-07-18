@@ -851,30 +851,6 @@ function checkItemProperties(items) {
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.traktItems);
     }
 
-    /* TV Time */
-    if (item.tv_time) {
-      expect(item.tv_time.id).not.toBeNull();
-      expectPositiveInteger(item.tv_time.id);
-      expect(item.tv_time.url).not.toBeNull();
-      expect(Object.keys(item.tv_time).length).toBeGreaterThanOrEqual(
-        config.minimumNumberOfItems.tvtime,
-      );
-      expectIdRatingConsistency(item.tv_time, ["users_rating"]);
-      if (item.is_active === true) {
-        expect(
-          items.filter((item) => item.tv_time && !item.tv_time?.users_rating)
-            .length,
-        ).toBe(0);
-      }
-    }
-    item.item_type === "tvshow"
-      ? expect(
-          items.filter((item) => typeof item.tv_time?.users_rating === "number")
-            .length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
-      : null;
-    item.item_type === "movie" ? expect(item.tv_time).toBeNull() : null; // No tv_time information for movie item type.
-
     /* TheTVDB */
     if (item.thetvdb) {
       expect(item.thetvdb.id).not.toBeNull();

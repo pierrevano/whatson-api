@@ -436,6 +436,8 @@ const aggregateData = async (
     $project: {
       releaseDateAsDate: 0,
       sortAvgField: 0,
+      // TV Time's rating source is retired; the tv_time field is never returned.
+      tv_time: 0,
       ...remove_keys_base,
     },
   };

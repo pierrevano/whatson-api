@@ -252,12 +252,6 @@ const itemSchema = {
     users_rating: "number", // Average rating given by Trakt users
     users_rating_count: "number", // Total number of ratings submitted by Trakt users
   },
-  tv_time: {
-    /* Information related to TV Time platform */
-    id: "number", // TV Time specific identifier
-    url: "string", // URL to the TV Time page
-    users_rating: "number", // Average rating given by TV Time users
-  },
   thetvdb: {
     /* Information related to TheTVDB platform */
     id: "number", // TheTVDB specific identifier

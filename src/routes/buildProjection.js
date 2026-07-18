@@ -73,6 +73,9 @@ function buildProjection(appendToResponse) {
     projection["next_episode"] = 0;
   }
 
+  // TV Time's rating source is retired; the tv_time field is never returned.
+  projection["tv_time"] = 0;
+
   return projection;
 }
 

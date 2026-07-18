@@ -1,3 +1,4 @@
+const { generateUserAgent } = require("./generateUserAgent");
 const { getCheerioContent } = require("./getCheerioContent");
 const {
   getHomepageResponse,
@@ -8,6 +9,7 @@ const { logErrors } = require("./logErrors");
 const imdbLocaleRequestOptions = {
   headers: {
     "Accept-Language": "en-US,en;q=0.9",
+    "User-Agent": generateUserAgent(),
   },
 };
 
