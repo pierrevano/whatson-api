@@ -19,11 +19,25 @@ const { logExecutionTime } = require("./logExecutionTime");
  * @param {import("playwright").Browser} browser
  * @returns {Promise<import("playwright").BrowserContext>}
  */
-const createBrowserContext = (browser) =>
-  browser.newContext({
+const createBrowserContext = async (browser) => {
+  const context = await browser.newContext({
     ...US_CONTEXT_OPTIONS,
     userAgent: buildBrowserUserAgent(browser),
   });
+
+  // Abort heavy media and third-party ads/analytics so pages reach network idle quickly.
+  await context.route("**/*", (route) => {
+    const request = route.request();
+    const blocked =
+      ["image", "media", "font"].includes(request.resourceType()) ||
+      /doubleclick|googlesyndication|google(?:tagmanager|-analytics)|amazon-adsystem|scorecardresearch|quantserve|facebook\.net|fls-na\.amazon/i.test(
+        request.url(),
+      );
+    return blocked ? route.abort() : route.continue();
+  });
+
+  return context;
+};
 
 let sharedConsentHandled = false;
 let sharedNavigationTask = Promise.resolve();

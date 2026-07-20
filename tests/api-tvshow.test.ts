@@ -851,6 +851,9 @@ function checkItemProperties(items) {
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.traktItems);
     }
 
+    /* TV Time */
+    expect(item.tv_time).toBeUndefined();
+
     /* TheTVDB */
     if (item.thetvdb) {
       expect(item.thetvdb.id).not.toBeNull();
