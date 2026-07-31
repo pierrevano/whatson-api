@@ -251,6 +251,7 @@ const itemSchema = {
     url: "string", // URL to the Trakt page
     users_rating: "number", // Average rating given by Trakt users
     users_rating_count: "number", // Total number of ratings submitted by Trakt users
+    popularity: "number", // Popularity score
   },
   thetvdb: {
     /* Information related to TheTVDB platform */
@@ -268,7 +269,7 @@ const itemSchema = {
 
   updated_at: "string", // Timestamp of the last update
 
-  popularity_average: "number", // Average popularity score across platforms (AlloCiné, IMDb, and TMDB)
+  popularity_average: "number", // Average popularity score across platforms
   ratings_average: "number", // Average rating score across platforms (all)
 };
 

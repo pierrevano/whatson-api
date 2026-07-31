@@ -315,6 +315,12 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.trakt?.popularity).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
+      : null;
+
     /* AlloCiné */
     if (item.allocine) {
       expect(item.allocine).not.toBeNull();
@@ -1365,6 +1371,21 @@ const params = {
     },
   },
 
+  correct_trakt_popularity_order: {
+    query: `?item_type=tvshow&popularity_filters=trakt_popularity&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) => {
+      const itemsWithPopularity = items.filter(
+        (item) => typeof item.trakt?.popularity === "number",
+      );
+
+      for (let i = 1; i < itemsWithPopularity.length; i++) {
+        expect(itemsWithPopularity[i].trakt.popularity).toBeLessThanOrEqual(
+          itemsWithPopularity[i - 1].trakt.popularity,
+        );
+      }
+    },
+  },
+
   correct_all_popularity_order: {
     query: `?item_type=tvshow&popularity_filters=all&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
@@ -1457,7 +1478,13 @@ const params = {
         .filter((item) => item.allocine?.id != null)
         .map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
-      expect(uniqueIds.length).toEqual(ids.length);
+      const duplicatedIds = ids.filter(
+        (id, index) => ids.indexOf(id) !== index,
+      );
+
+      withErrorContext(`duplicated AlloCiné ids: ${duplicatedIds}`, () => {
+        expect(uniqueIds.length).toEqual(ids.length);
+      });
     },
   },
 

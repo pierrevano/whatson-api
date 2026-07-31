@@ -320,6 +320,7 @@ fetch_from_trakt_search () {
   local id_type=$2
 
   response=$(curl -s --location "https://api.trakt.tv/search/imdb/$imdb_id" \
+    --retry 5 --fail \
     --header "trakt-api-key: $TRAKT_API_KEY" \
     --header "trakt-api-version: 2")
 

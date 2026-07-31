@@ -125,6 +125,8 @@ const loopItems = async (
             item_type,
             mojoBoxOfficeArray,
             tmdbId,
+            traktHomepage,
+            traktId,
             imdbData,
           )
         : { isEqual: false };

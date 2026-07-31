@@ -1,5 +1,7 @@
 const { config } = require("../config");
-const { getHomepageResponse } = require("../utils/getHomepageResponse");
+const {
+  getHomepageResponseWithRateLimitRetry,
+} = require("../utils/getHomepageResponseWithRateLimitRetry");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
@@ -23,9 +25,10 @@ const getTraktRating = async (allocineHomepage, traktHomepage, traktId) => {
         : "movies";
 
       const apiUrl = `${config.baseURLTraktAPI}/${type}/${traktId}?extended=full`;
-      const response = await getHomepageResponse(apiUrl, {
+      const response = await getHomepageResponseWithRateLimitRetry(apiUrl, {
         serviceName: "Trakt",
         id: traktId,
+        allowedStatuses: [200, 429],
         requestConfig: {
           headers: {
             "trakt-api-key": config.traktApiKey,

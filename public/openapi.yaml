@@ -13,7 +13,7 @@ info:
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.34.2
+  version: 3.35.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -76,7 +76,7 @@ components:
       description: |
         Comma-separated popularity sources used to compute `popularity_average`.
         Use `all` to include every source or `none` to disable popularity sorting.
-        Available values: `allocine_popularity`, `imdb_popularity`, `tmdb_popularity`.
+        Available values: `allocine_popularity`, `imdb_popularity`, `tmdb_popularity`, `trakt_popularity`.
       schema:
         type: string
         example: "imdb_popularity,tmdb_popularity"
@@ -230,7 +230,7 @@ components:
           format: date-time
         popularity_average:
           type: number
-          description: Average popularity rank across AlloCiné, IMDb, and TMDB (lower is more popular).
+          description: Average popularity rank across all included sources (lower is more popular).
         ratings_average:
           type: number
           description: Normalised average rating across all included sources (0–5 scale).
@@ -252,7 +252,7 @@ components:
         tmdb:
           $ref: "#/components/schemas/TmdbRatings"
         trakt:
-          $ref: "#/components/schemas/SimpleRatings"
+          $ref: "#/components/schemas/TraktRatings"
         thetvdb:
           $ref: "#/components/schemas/TheTvdbInfo"
         mojo:
@@ -495,6 +495,14 @@ components:
           type: integer
         popularity:
           type: number
+
+    TraktRatings:
+      allOf:
+        - $ref: "#/components/schemas/SimpleRatings"
+        - type: object
+          properties:
+            popularity:
+              type: number
 
     TheTvdbInfo:
       type: object

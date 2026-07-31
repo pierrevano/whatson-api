@@ -17,40 +17,18 @@ const getPopularityFilters = async (popularity_filters_query) => {
    */
   const POPULARITY_MISSING_RANK = 1000000;
   const TMDB_POPULARITY_WEIGHT = config.tmdbPopularityWeight;
+  const TRAKT_POPULARITY_WEIGHT = config.traktPopularityWeight;
 
-  const buildTmdbPopularityFilter = () => ({
-    $filter: {
-      input: [
-        {
-          $cond: [
-            {
-              $and: [
-                { $ne: ["$tmdb.popularity", null] },
-                { $gt: ["$tmdb.popularity", 0] },
-              ],
-            },
-            {
-              // Convert TMDB's raw popularity (higher is better) into a rank-like
-              // value so it can be averaged alongside other popularity ranks.
-              $max: [
-                1,
-                {
-                  $divide: [
-                    10000,
-                    {
-                      $add: ["$tmdb.popularity", 1],
-                    },
-                  ],
-                },
-              ],
-            },
-            POPULARITY_MISSING_RANK,
-          ],
-        },
-      ],
-      as: "val",
-      cond: { $ne: ["$$val", null] },
-    },
+  /**
+   * Convert a raw popularity value into a weighted rank. Only the converted
+   * value is weighted.
+   */
+  const popularityRank = (field, weight) => ({
+    $cond: [
+      { $and: [{ $ne: [field, null] }, { $gt: [field, 0] }] },
+      { $multiply: [{ $divide: [10000, { $add: [field, 1] }] }, weight] },
+      POPULARITY_MISSING_RANK,
+    ],
   });
 
   if (popularity_filters_array.includes("all")) {
@@ -63,12 +41,8 @@ const getPopularityFilters = async (popularity_filters_query) => {
     popularity_filters = [
       { $divide: [{ $arrayElemAt: [allocineFilter, 0] }, 1] },
       { $divide: [{ $arrayElemAt: [imdbFilter, 0] }, 1] },
-      {
-        $multiply: [
-          { $arrayElemAt: [buildTmdbPopularityFilter(), 0] },
-          TMDB_POPULARITY_WEIGHT,
-        ],
-      },
+      popularityRank("$tmdb.popularity", TMDB_POPULARITY_WEIGHT),
+      popularityRank("$trakt.popularity", TRAKT_POPULARITY_WEIGHT),
     ];
   } else {
     if (popularity_filters_array.includes("allocine_popularity")) {
@@ -96,12 +70,15 @@ const getPopularityFilters = async (popularity_filters_query) => {
     }
 
     if (popularity_filters_array.includes("tmdb_popularity")) {
-      popularity_filters.push({
-        $multiply: [
-          { $arrayElemAt: [buildTmdbPopularityFilter(), 0] },
-          TMDB_POPULARITY_WEIGHT,
-        ],
-      });
+      popularity_filters.push(
+        popularityRank("$tmdb.popularity", TMDB_POPULARITY_WEIGHT),
+      );
+    }
+
+    if (popularity_filters_array.includes("trakt_popularity")) {
+      popularity_filters.push(
+        popularityRank("$trakt.popularity", TRAKT_POPULARITY_WEIGHT),
+      );
     }
   }
 

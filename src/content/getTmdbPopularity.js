@@ -8,24 +8,20 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} tmdbHomepage - The URL of the item's TMDB page.
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
  * @param {object} data - The TMDB API response data for the item.
- * @returns {Promise<{ popularity: number|null }|undefined>} The TMDB popularity value, or undefined on failure.
+ * @returns {Promise<{ popularity: number|null }>} The TMDB popularity value (null when missing or on failure).
  */
 const getTmdbPopularity = async (tmdbHomepage, tmdbId, data) => {
+  let popularity = null;
+
   try {
-    if (!isNotNull(tmdbId) || !data) {
-      return { popularity: null };
+    if (isNotNull(tmdbId) && Number.isFinite(data?.popularity)) {
+      popularity = parseFloat(data.popularity.toFixed(2));
     }
-
-    const rawPopularity = data?.popularity;
-    const popularity =
-      typeof rawPopularity === "number" && Number.isFinite(rawPopularity)
-        ? parseFloat(rawPopularity.toFixed(2))
-        : null;
-
-    return { popularity };
   } catch (error) {
     logErrors(error, tmdbHomepage, "getTmdbPopularity");
   }
+
+  return { popularity };
 };
 
 module.exports = { getTmdbPopularity };

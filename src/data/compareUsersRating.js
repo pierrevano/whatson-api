@@ -1,3 +1,4 @@
+const { b64Decode } = require("../utils/b64EncodeAndDecode");
 const { config } = require("../config");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
@@ -11,6 +12,7 @@ const { getObjectByImdbId } = require("../content/getMojoBoxOffice");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
 const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
+const { getTraktPopularity } = require("../content/getTraktPopularity");
 const { getWhatsonResponse } = require("../utils/getWhatsonResponse");
 const { logErrors } = require("../utils/logErrors");
 
@@ -26,6 +28,8 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} item_type - The type of item (movie or tvshow).
  * @param {Array<Object>} mojoBoxOfficeArray - Array of Mojo box office objects.
  * @param {number} tmdbId - TMDB ID for the movie or tvshow.
+ * @param {string} traktHomepage - The homepage URL.
+ * @param {number|string} traktId - The ID of the item.
  * @param {object|null} [imdbData] - IMDb data.
  * @returns {Promise<Object>} - An object indicating whether the item can be reused,
  *     and the refreshed payload when it can.
@@ -39,6 +43,8 @@ const compareUsersRating = async (
   item_type,
   mojoBoxOfficeArray,
   tmdbId,
+  traktHomepage,
+  traktId,
   imdbData,
 ) => {
   const isEqualObj = { isEqual: false };
@@ -99,6 +105,16 @@ const compareUsersRating = async (
 
     const { _id, ...dataWithoutId } = responseData;
 
+    /**
+     * Aborts when the payload belongs to another item.
+     */
+    if (b64Decode(_id) !== allocineHomepage) {
+      console.error(
+        `Payload belongs to another item (stored=${b64Decode(_id)}, expected=${allocineHomepage}). Aborting.`,
+      );
+      process.exit(1);
+    }
+
     dataWithoutId.is_active = isActive;
 
     const updatedAt = new Date(dataWithoutId.updated_at);
@@ -146,6 +162,7 @@ const compareUsersRating = async (
       allocinePopularityResult,
       imdbPopularityResult,
       tmdbPopularityResult,
+      traktPopularityResult,
       mojoValues,
     ] = await Promise.all([
       getAllocinePopularity(allocineURL, item_type),
@@ -153,6 +170,7 @@ const compareUsersRating = async (
       tmdbData
         ? getTmdbPopularity(tmdbHomepage, tmdbId, tmdbData)
         : Promise.resolve(null),
+      getTraktPopularity(traktHomepage, traktId, item_type),
       getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type),
     ]);
     const allocinePopularity =
@@ -166,6 +184,10 @@ const compareUsersRating = async (
     const tmdbPopularity =
       typeof tmdbPopularityResult?.popularity === "number"
         ? tmdbPopularityResult.popularity
+        : undefined;
+    const traktPopularity =
+      typeof traktPopularityResult?.popularity === "number"
+        ? traktPopularityResult.popularity
         : undefined;
 
     const mojoObj =
@@ -187,6 +209,10 @@ const compareUsersRating = async (
 
     if (dataWithoutId.tmdb && typeof tmdbPopularity === "number") {
       dataWithoutId.tmdb.popularity = tmdbPopularity;
+    }
+
+    if (dataWithoutId.trakt && typeof traktPopularity === "number") {
+      dataWithoutId.trakt.popularity = traktPopularity;
     }
 
     dataWithoutId.mojo = mojoObj;

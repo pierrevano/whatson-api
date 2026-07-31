@@ -351,7 +351,7 @@ const params = {
   },
 
   should_sort_by_imdb_top_ranking_ascending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=asc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&top_ranking_order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(
@@ -380,7 +380,7 @@ const params = {
   },
 
   should_sort_by_imdb_top_ranking_descending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=desc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&top_ranking_order=desc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(
@@ -409,7 +409,7 @@ const params = {
   },
 
   should_keep_popularity_order_when_top_ranking_ties: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=asc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&top_ranking_order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(
@@ -442,7 +442,7 @@ const params = {
   },
 
   should_fallback_to_popularity_when_top_ranking_order_invalid: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&top_ranking_order=invalid&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&top_ranking_order=invalid&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(

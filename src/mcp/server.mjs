@@ -50,7 +50,7 @@ const TOOLS = [
   {
     name: "search_titles",
     description:
-      "Search for movies and TV shows. Supports filtering by title, genre, platform, network, director, production company, runtime, season count, release date, rating, status, and content flags (active, adult, must-see, certified). Supports sorting by popularity (allocine, IMDb, TMDB), IMDb top chart position, and Box Office Mojo rank. Returns paginated results with aggregate ratings from IMDb, Rotten Tomatoes, AlloCiné, Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, and Trakt. Use append_to_response to include optional fields such as genres, platforms_links, directors, or episode highlights. Can also look up a single title by an external platform ID (imdbid, tmdbid, allocineid, betaseriesid, letterboxdid, metacriticid, rottentomatoesid, senscritiqueid, thetvdbid, traktid).",
+      "Search for movies and TV shows. Supports filtering by title, genre, platform, network, director, production company, runtime, season count, release date, rating, status, and content flags (active, adult, must-see, certified). Supports sorting by popularity, IMDb top chart position, and Box Office Mojo rank. Returns paginated results with aggregate ratings from IMDb, Rotten Tomatoes, AlloCiné, Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, and Trakt. Use append_to_response to include optional fields such as genres, platforms_links, directors, or episode highlights. Can also look up a single title by an external platform ID (imdbid, tmdbid, allocineid, betaseriesid, letterboxdid, metacriticid, rottentomatoesid, senscritiqueid, thetvdbid, traktid).",
     inputSchema: {
       type: "object",
       properties: {
@@ -101,7 +101,7 @@ const TOOLS = [
         popularity_filters: {
           type: "string",
           description:
-            'Which popularity sources to sort by. Use "all", "none", or a comma-separated subset: allocine_popularity, imdb_popularity, tmdb_popularity.',
+            'Which popularity sources to sort by. Use "all", "none", or a comma-separated subset: allocine_popularity, imdb_popularity, tmdb_popularity, trakt_popularity.',
         },
         is_active: {
           type: "string",

@@ -313,6 +313,12 @@ function checkItemProperties(items) {
         ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
       : null;
 
+    item.is_active === true
+      ? expect(
+          items.filter((item) => item.trakt?.popularity).length,
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
+      : null;
+
     /* AlloCiné */
     if (item.allocine) {
       expect(item.allocine).not.toBeNull();
@@ -1520,7 +1526,13 @@ const params = {
         .filter((item) => item.allocine?.id != null)
         .map((item) => item.allocine.id);
       const uniqueIds = [...new Set(ids)];
-      expect(uniqueIds.length).toEqual(ids.length);
+      const duplicatedIds = ids.filter(
+        (id, index) => ids.indexOf(id) !== index,
+      );
+
+      withErrorContext(`duplicated AlloCiné ids: ${duplicatedIds}`, () => {
+        expect(uniqueIds.length).toEqual(ids.length);
+      });
     },
   },
 

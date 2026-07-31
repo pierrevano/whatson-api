@@ -23,6 +23,7 @@ const { getTitle, getTitleVariants } = require("../content/getTitle");
 const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getTrailer } = require("../content/getTrailer");
+const { getTraktPopularity } = require("../content/getTraktPopularity");
 
 /**
  * Asynchronously creates a JSON object with various movie details from different sources.
@@ -45,7 +46,7 @@ const { getTrailer } = require("../content/getTrailer");
  * @param {string} sensCritiqueHomepage - The SensCritique homepage URL
  * @param {number} sensCritiqueId - The SensCritique ID
  * @param {string} traktHomepage - The Trakt homepage URL
- * @param {string} traktId - The Trakt ID
+ * @param {number|string} traktId - The Trakt ID
  * @param {Array<Object>} mojoBoxOfficeArray - Box office entries used to enrich Mojo data.
  * @param {number} tmdbId - TMDB ID
  * @param {string} tmdbHomepage - TMDB homepage URL
@@ -212,6 +213,9 @@ const createJSON = async (
     tmdbId,
     tmdbData,
   );
+  const traktPopularity = traktRating?.usersRating
+    ? await getTraktPopularity(traktHomepage, traktId, item_type)
+    : { popularity: null };
 
   /* Creating an object called allocineObj. */
   let allocineObj = {
@@ -330,7 +334,7 @@ const createJSON = async (
         url: tmdbRating.url,
         users_rating: tmdbRating.usersRating,
         users_rating_count: tmdbRating.usersRatingCount,
-        popularity: tmdbPopularity?.popularity ?? null,
+        popularity: tmdbPopularity.popularity,
       }
     : null;
 
@@ -341,6 +345,7 @@ const createJSON = async (
         url: traktRating.url,
         users_rating: traktRating.usersRating,
         users_rating_count: traktRating.usersRatingCount,
+        popularity: traktPopularity.popularity,
       }
     : null;
 

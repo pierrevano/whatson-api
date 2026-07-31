@@ -1,3 +1,4 @@
+const { config } = require("../config");
 const { getHomepageResponse } = require("./getHomepageResponse");
 const { getRateLimitWaitMs } = require("./getRateLimitWaitMs");
 
@@ -35,7 +36,7 @@ const getHomepageResponseWithRateLimitRetry = async (
     return response;
   }
 
-  const waitMs = getRateLimitWaitMs(response.headers);
+  const waitMs = getRateLimitWaitMs(response.headers) || config.retryDelay;
 
   if (waitMs > 0) {
     console.log(

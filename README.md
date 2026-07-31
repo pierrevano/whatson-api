@@ -74,13 +74,13 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&top_ranking_order=asc,desc&mojo_rank_order=asc,desc&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&top_ranking_order=asc,desc&mojo_rank_order=asc,desc&page=<integer>&limit=<integer>
 > ```
 
 | Parameter            | Value                                                                                                                                                                                                                                     | Description                                                                                               |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | ratings_filters      | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users                                    | Ratings filters source (or _all_ for every values)                                                        |
-| popularity_filters   | allocine_popularity,imdb_popularity,tmdb_popularity                                                                                                                                                                                       | Popularity filters source (use _all_ for all values, _none_ to disable)                                   |
+| popularity_filters   | allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity                                                                                                                                                                      | Popularity filters source (use _all_ for all values, _none_ to disable)                                   |
 | item_type            | movie,tvshow                                                                                                                                                                                                                              | The type of the item (_movie_, _tvshow_ or both)                                                          |
 | is_active            | true,false                                                                                                                                                                                                                                | Is the item currently on screens (_true_, _false_ or both)                                                |
 | is_adult             | true,false                                                                                                                                                                                                                                | Is the item marked as adult content (_true_, _false_ or both)                                             |
@@ -536,6 +536,7 @@ Example of an item returned:
     "url": "string", // URL to the Trakt page
     "users_rating": "number", // Average rating given by Trakt users
     "users_rating_count": "number", // Total number of ratings submitted by Trakt users
+    "popularity": "number", // Popularity score
   },
   "thetvdb": {
     /* Information related to TheTVDB platform */
@@ -553,7 +554,7 @@ Example of an item returned:
 
   "updated_at": "string", // Timestamp of the last update
 
-  "popularity_average": "number", // Average popularity score across platforms (AlloCiné, IMDb, and TMDB)
+  "popularity_average": "number", // Average popularity score across platforms
   "ratings_average": "number", // Average rating score across platforms (all)
 }
 ```
