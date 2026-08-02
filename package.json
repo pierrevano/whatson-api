@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.35.1",
+  "version": "3.35.2",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -33,6 +33,7 @@
     "pull-all-platforms": "git pull origin main && git pull bitbucket main && git pull bitbucket_2 main && git pull bitbucket_3 main",
     "push-all-platforms": "git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main",
     "push": "npm run check-api-version && npm run check-static-usage && npm run prettier && npm run test && npm run commit && npm run push-all-platforms",
+    "push-sync": "npm run check-api-version && npm run check-static-usage && npm run prettier && npm run test-sync && npm run commit && npm run push-all-platforms",
     "push-dataset": "npm run prettier && npm run test && git add . && git commit -m 'build: update dataset' && npm run push-all-platforms",
     "push-without-tests": "npm run check-api-version && npm run prettier && npm run commit && npm run push-all-platforms",
     "push-without-version": "npm run prettier && npm run test && npm run commit && npm run push-all-platforms",

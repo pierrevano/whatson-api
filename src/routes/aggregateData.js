@@ -434,15 +434,16 @@ const aggregateData = async (
     ? { $project: remove_keys_base }
     : null;
 
+  const ratings_projection = getRatingsProjection(ratings_filters_query_value);
+  const is_kept = ([key]) => !(key.split(".")[0] in ratings_projection);
+
   // Dynamically build the remove_keys object based on query parameters
   const remove_keys = {
     $project: {
       releaseDateAsDate: 0,
       sortAvgField: 0,
-      // TV Time's rating source is retired; the tv_time field is never returned.
-      tv_time: 0,
-      ...remove_keys_base,
-      ...getRatingsProjection(ratings_filters_query_value),
+      ...Object.fromEntries(Object.entries(remove_keys_base).filter(is_kept)),
+      ...ratings_projection,
     },
   };
 

@@ -72,10 +72,23 @@ const getRatingsProjection = (ratings_filters_query) => {
 
   if (ratings_filters_array.includes("all")) return ratings_projection;
 
+  const selected_platforms = new Set(
+    Object.entries(ratingsDivisors)
+      .filter(([filter]) => ratings_filters_array.includes(filter))
+      .map(([, { path }]) => path.slice(1).split(".")[0]),
+  );
+
   Object.entries(ratingsDivisors).forEach(([filter, { path }]) => {
     if (ratings_filters_array.includes(filter)) return;
 
     const rating_key = path.slice(1);
+    const platform = rating_key.split(".")[0];
+
+    if (!selected_platforms.has(platform)) {
+      ratings_projection[platform] = 0;
+      return;
+    }
+
     ratings_projection[rating_key] = 0;
     ratings_projection[`${rating_key}_count`] = 0;
   });
