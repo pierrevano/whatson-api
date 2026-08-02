@@ -5,7 +5,10 @@ const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
 const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
-const { getRatingsFilters } = require("./getRatingsFilters");
+const {
+  getRatingsFilters,
+  getRatingsProjection,
+} = require("./getRatingsFilters");
 const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
 
 /**
@@ -140,14 +143,14 @@ const aggregateData = async (
       : "";
   const popularity_filters_query_value =
     typeof popularity_filters_query !== "undefined" && popularity_filters_query
-      ? popularity_filters_query
+      ? String(popularity_filters_query)
       : "all";
   const popularity_filters = await getPopularityFilters(
     popularity_filters_query_value,
   );
   const ratings_filters_query_value =
     typeof ratings_filters_query !== "undefined" && ratings_filters_query
-      ? ratings_filters_query
+      ? String(ratings_filters_query)
       : "all";
   const ratings_filters = await getRatingsFilters(ratings_filters_query_value);
   const release_date =
@@ -439,19 +442,13 @@ const aggregateData = async (
       // TV Time's rating source is retired; the tv_time field is never returned.
       tv_time: 0,
       ...remove_keys_base,
+      ...getRatingsProjection(ratings_filters_query_value),
     },
   };
 
   const facet = {
     $facet: {
-      results: [
-        addFields_popularity_and_ratings,
-        match_min_ratings_and_release_date,
-        sort_stage,
-        remove_keys,
-        skip_results,
-        limit_results,
-      ],
+      results: [sort_stage, remove_keys, skip_results, limit_results],
       total_results: [{ $count: "total_results" }],
     },
   };
@@ -534,6 +531,8 @@ const aggregateData = async (
     pipeline.push(prune_keys_before_sort);
   }
 
+  pipeline.push(addFields_popularity_and_ratings);
+  pipeline.push(match_min_ratings_and_release_date);
   pipeline.push(facet);
 
   const data = await collectionData.aggregate(pipeline);

@@ -53,7 +53,7 @@ const getId = async (req, res) => {
       newRelicQueryAttributes,
     );
 
-    if (id_path && ratings_filters_query) {
+    if (id_path) {
       try {
         const { items } = await aggregateData(
           append_to_response,

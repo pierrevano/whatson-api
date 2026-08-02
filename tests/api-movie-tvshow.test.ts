@@ -6,6 +6,7 @@ const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
 const { countNullValues } = require("./utils/countNullValues");
+const { expectRatingKeys } = require("./utils/expectRatingKeys");
 const { formatDate } = require("../src/utils/formatDate");
 const { itemSchema } = require("../src/schema");
 const { withErrorContext } = require("./utils/withErrorContext");
@@ -153,6 +154,34 @@ const params = {
     query: `?item_type=movie,tvshow&is_active=true&append_to_response=awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, itemSchema)),
+  },
+
+  ratings_filters_should_keep_every_requested_source: {
+    query: `?item_type=movie,tvshow&ratings_filters=imdb_users,trakt_users&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) => {
+      const requestedRatingKeys = {
+        imdb: ["users_rating", "users_rating_count"],
+        trakt: ["users_rating", "users_rating_count"],
+      };
+      const itemsWithTraktRating = items.filter(
+        (item) => item.trakt?.users_rating != null,
+      );
+
+      expect(itemsWithTraktRating.length).toBeGreaterThan(0);
+
+      itemsWithTraktRating.forEach((item) => {
+        expect(typeof item.trakt.users_rating_count).toBe("number");
+        expect(item.trakt).toHaveProperty("popularity");
+      });
+
+      items.forEach((item) => {
+        expect(typeof item.ratings_average).toBe("number");
+        expect(typeof item.imdb.users_rating).toBe("number");
+        expect(typeof item.imdb.users_rating_count).toBe("number");
+
+        expectRatingKeys(item, requestedRatingKeys);
+      });
+    },
   },
 
   no_french_localization_strings_in_responses: {

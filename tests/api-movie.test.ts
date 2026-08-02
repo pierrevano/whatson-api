@@ -12,6 +12,7 @@ const {
   expectNumericIdOrNumericString,
   expectIdRatingConsistency,
 } = require("./utils/idExpectations");
+const { expectRatingKeys } = require("./utils/expectRatingKeys");
 const { withErrorContext } = require("./utils/withErrorContext");
 
 const isRemoteSource = process.env.SOURCE === "remote";
@@ -1509,6 +1510,24 @@ const params = {
     },
   },
 
+  ratings_filters_should_only_return_requested_rating_keys: {
+    query: `?item_type=movie&ratings_filters=allocine_critics&limit=${maxLimit}`,
+    expectedResult: (items) => {
+      const requestedRatingKeys = {
+        allocine: ["critics_rating", "critics_rating_count"],
+      };
+
+      expect(items.length).toBeGreaterThan(0);
+
+      items.forEach((item) => {
+        expect(typeof item.allocine.critics_rating).toBe("number");
+        expect(typeof item.allocine.critics_rating_count).toBe("number");
+
+        expectRatingKeys(item, requestedRatingKeys);
+      });
+    },
+  },
+
   items_with_all_required_keys_active_movie: {
     query: `?item_type=movie&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
@@ -1829,6 +1848,21 @@ describe("What's on? API tests", () => {
 
     expect(response.status).toBe(200);
     validatePaginationKeys(response.data);
+  });
+
+  test("total_results_should_match_release_date_filter", async () => {
+    const simpleApiCallOnReleaseDate = `${baseURL}?item_type=movie&release_date=from:1911-01-01,to:1911-12-31&limit=5&api_key=${config.internalApiKey}`;
+    const response = await axios.get(simpleApiCallOnReleaseDate);
+
+    if (!removeLogs) {
+      console.log("Test name: total_results_should_match_release_date_filter");
+      console.log(`Calling: ${simpleApiCallOnReleaseDate}`);
+    }
+
+    expect(response.status).toBe(200);
+    expect(response.data.results.length).toBeGreaterThan(0);
+    expect(response.data.total_results).toBe(response.data.results.length);
+    expect(response.data.total_pages).toBe(1);
   });
 
   test("should_have_top_level_pagination_keys_equal_to_one_on_search", async () => {

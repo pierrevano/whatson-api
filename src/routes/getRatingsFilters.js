@@ -1,3 +1,24 @@
+const ratingsDivisors = {
+  allocine_critics: { path: "$allocine.critics_rating", divisor: 1 },
+  allocine_users: { path: "$allocine.users_rating", divisor: 1 },
+  betaseries_users: { path: "$betaseries.users_rating", divisor: 1 },
+  imdb_users: { path: "$imdb.users_rating", divisor: 2 },
+  metacritic_critics: { path: "$metacritic.critics_rating", divisor: 20 },
+  metacritic_users: { path: "$metacritic.users_rating", divisor: 2 },
+  rottentomatoes_critics: {
+    path: "$rotten_tomatoes.critics_rating",
+    divisor: 20,
+  },
+  rottentomatoes_users: {
+    path: "$rotten_tomatoes.users_rating",
+    divisor: 20,
+  },
+  letterboxd_users: { path: "$letterboxd.users_rating", divisor: 1 },
+  senscritique_users: { path: "$senscritique.users_rating", divisor: 2 },
+  tmdb_users: { path: "$tmdb.users_rating", divisor: 2 },
+  trakt_users: { path: "$trakt.users_rating", divisor: 20 },
+};
+
 /**
  * Builds ratings aggregation expressions based on the provided query string.
  * @param {string} ratings_filters_query - Comma-separated ratings filters (e.g., "imdb_users,allocine_users").
@@ -25,27 +46,6 @@ const getRatingsFilters = async (ratings_filters_query) => {
       { $divide: ["$trakt.users_rating", 20] }
     ];
   } else {
-    const ratingsDivisors = {
-      allocine_critics: { path: "$allocine.critics_rating", divisor: 1 },
-      allocine_users: { path: "$allocine.users_rating", divisor: 1 },
-      betaseries_users: { path: "$betaseries.users_rating", divisor: 1 },
-      imdb_users: { path: "$imdb.users_rating", divisor: 2 },
-      metacritic_critics: { path: "$metacritic.critics_rating", divisor: 20 },
-      metacritic_users: { path: "$metacritic.users_rating", divisor: 2 },
-      rottentomatoes_critics: {
-        path: "$rotten_tomatoes.critics_rating",
-        divisor: 20,
-      },
-      rottentomatoes_users: {
-        path: "$rotten_tomatoes.users_rating",
-        divisor: 20,
-      },
-      letterboxd_users: { path: "$letterboxd.users_rating", divisor: 1 },
-      senscritique_users: { path: "$senscritique.users_rating", divisor: 2 },
-      tmdb_users: { path: "$tmdb.users_rating", divisor: 2 },
-      trakt_users: { path: "$trakt.users_rating", divisor: 20 },
-    };
-
     ratings_filters_array.forEach((filter) => {
       if (ratingsDivisors[filter]) {
         ratings_filters.push({
@@ -61,4 +61,26 @@ const getRatingsFilters = async (ratings_filters_query) => {
   return ratings_filters;
 };
 
-module.exports = { getRatingsFilters };
+/**
+ * Builds a ratings projection based on the provided query string.
+ * @param {string} ratings_filters_query - Comma-separated ratings filters (e.g., "imdb_users,allocine_users").
+ * @returns {object} MongoDB projection to apply to the pipeline.
+ */
+const getRatingsProjection = (ratings_filters_query) => {
+  const ratings_filters_array = ratings_filters_query.split(",");
+  const ratings_projection = {};
+
+  if (ratings_filters_array.includes("all")) return ratings_projection;
+
+  Object.entries(ratingsDivisors).forEach(([filter, { path }]) => {
+    if (ratings_filters_array.includes(filter)) return;
+
+    const rating_key = path.slice(1);
+    ratings_projection[rating_key] = 0;
+    ratings_projection[`${rating_key}_count`] = 0;
+  });
+
+  return ratings_projection;
+};
+
+module.exports = { getRatingsFilters, getRatingsProjection };
