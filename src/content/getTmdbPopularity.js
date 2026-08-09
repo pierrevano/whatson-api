@@ -1,21 +1,68 @@
+const { config } = require("../config");
+const {
+  getHomepageResponseWithRateLimitRetry,
+} = require("../utils/getHomepageResponseWithRateLimitRetry");
 const { isNotNull } = require("../utils/isNotNull");
-const { logErrors } = require("../utils/logErrors");
+const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
+
+const cache = new Map();
+
+const POPULAR_MAX_ITEMS = 500;
+const POPULAR_MIN_VOTES = 400;
 
 /**
- * Extracts the TMDB popularity score from the TMDB API response.
- * Uses the already-fetched TMDB payload to avoid extra network calls.
+ * Fetches the popular list for the given media type.
  *
- * @param {string} tmdbHomepage - The URL of the item's TMDB page.
- * @param {number} tmdbId - TMDB ID for the movie or tvshow.
- * @param {object} data - The TMDB API response data for the item.
- * @returns {Promise<{ popularity: number|null }>} The TMDB popularity value (null when missing or on failure).
+ * @param {string} type - The media type (e.g., movie, tv)
+ * @returns {Promise<Array<object>>} The popular entries (partial or empty on failure).
  */
-const getTmdbPopularity = async (tmdbHomepage, tmdbId, data) => {
+const fetchTmdbPopular = async (type) => {
+  if (cache.has(type)) return cache.get(type);
+
+  const popular = [];
+
+  try {
+    for (let page = 1; popular.length < POPULAR_MAX_ITEMS; page++) {
+      const response = await getHomepageResponseWithRateLimitRetry(
+        `${config.baseURLTMDBAPI}/${type}/popular?page=${page}&api_key=${config.tmdbApiKey}`,
+        { serviceName: "TMDB", allowedStatuses: [200, 429] },
+      );
+      const results = response.data?.results;
+
+      if (!Array.isArray(results)) break;
+
+      popular.push(
+        ...results.filter((item) => item?.vote_count >= POPULAR_MIN_VOTES),
+      );
+    }
+  } catch (error) {
+    const message = `${error}`.replaceAll(config.tmdbApiKey, "***");
+    logAndAppendTempErrorLog(`${type} - fetchTmdbPopular - ${message}`);
+  }
+
+  if (popular.length) cache.set(type, popular);
+
+  return popular;
+};
+
+/**
+ * Extracts the popularity rank from the popular list.
+ *
+ * @param {string} tmdbHomepage - The homepage URL.
+ * @param {number} tmdbId - The ID of the item.
+ * @param {string} item_type - The type of the item (e.g., movie, tvshow)
+ * @returns {Promise<{ popularity: number|null }>} The popularity rank (null when missing or on failure).
+ */
+const getTmdbPopularity = async (tmdbHomepage, tmdbId, item_type) => {
   let popularity = null;
 
   try {
-    if (isNotNull(tmdbId) && Number.isFinite(data?.popularity)) {
-      popularity = parseFloat(data.popularity.toFixed(2));
+    if (isNotNull(tmdbId)) {
+      const mediaKey = item_type === "movie" ? "movie" : "tv";
+      const popular = await fetchTmdbPopular(mediaKey);
+      const rank = popular.findIndex((item) => item?.id === tmdbId) + 1;
+
+      popularity = rank || null;
     }
   } catch (error) {
     logErrors(error, tmdbHomepage, "getTmdbPopularity");

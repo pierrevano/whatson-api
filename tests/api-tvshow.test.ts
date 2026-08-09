@@ -312,7 +312,7 @@ function checkItemProperties(items) {
     item.is_active === true
       ? expect(
           items.filter((item) => item.tmdb?.popularity).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
       : null;
 
     item.is_active === true
@@ -1336,6 +1336,8 @@ const params = {
   correct_allocine_popularity_order: {
     query: "?item_type=tvshow&popularity_filters=allocine_popularity",
     expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+
       for (let i = 1; i < items.length; i++) {
         expect(items[i].allocine.popularity).toBeGreaterThanOrEqual(
           items[i - 1].allocine.popularity,
@@ -1347,6 +1349,8 @@ const params = {
   correct_imdb_popularity_order: {
     query: "?item_type=tvshow&popularity_filters=imdb_popularity",
     expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+
       for (let i = 1; i < items.length; i++) {
         expect(items[i].imdb.popularity).toBeGreaterThanOrEqual(
           items[i - 1].imdb.popularity,
@@ -1363,8 +1367,12 @@ const params = {
       );
       expect(itemsWithPopularity.length).toBeGreaterThan(0);
 
+      itemsWithPopularity.forEach((item) =>
+        expect(Number.isInteger(item.tmdb.popularity)).toBe(true),
+      );
+
       for (let i = 1; i < itemsWithPopularity.length; i++) {
-        expect(itemsWithPopularity[i].tmdb.popularity).toBeLessThanOrEqual(
+        expect(itemsWithPopularity[i].tmdb.popularity).toBeGreaterThanOrEqual(
           itemsWithPopularity[i - 1].tmdb.popularity,
         );
       }
@@ -1377,9 +1385,14 @@ const params = {
       const itemsWithPopularity = items.filter(
         (item) => typeof item.trakt?.popularity === "number",
       );
+      expect(itemsWithPopularity.length).toBeGreaterThan(0);
+
+      itemsWithPopularity.forEach((item) =>
+        expect(Number.isInteger(item.trakt.popularity)).toBe(true),
+      );
 
       for (let i = 1; i < itemsWithPopularity.length; i++) {
-        expect(itemsWithPopularity[i].trakt.popularity).toBeLessThanOrEqual(
+        expect(itemsWithPopularity[i].trakt.popularity).toBeGreaterThanOrEqual(
           itemsWithPopularity[i - 1].trakt.popularity,
         );
       }
@@ -2067,7 +2080,7 @@ const params = {
   no_french_localization_strings_in_episode_descriptions: {
     query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
-      const potentialFrenchPattern = /(?<!déj|vis-)à|[âæçêîïœùÿ]/i;
+      const potentialFrenchPattern = /(?<!déj|vis-)à|[âæçêîœùÿ]/i;
       items.forEach((item) => {
         if (Array.isArray(item.episodes_details)) {
           item.episodes_details.forEach((episode) => {

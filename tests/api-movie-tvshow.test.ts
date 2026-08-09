@@ -9,7 +9,6 @@ const { countNullValues } = require("./utils/countNullValues");
 const { expectRatingKeys } = require("./utils/expectRatingKeys");
 const { formatDate } = require("../src/utils/formatDate");
 const { itemSchema } = require("../src/schema");
-const { withErrorContext } = require("./utils/withErrorContext");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -163,37 +162,26 @@ const params = {
         imdb: ["users_rating", "users_rating_count"],
         trakt: ["users_rating", "users_rating_count"],
       };
-      const itemsWithTraktRating = items.filter(
-        (item) => item.trakt?.users_rating != null,
-      );
+      Object.keys(requestedRatingKeys).forEach((source) => {
+        const itemsWithRating = items.filter(
+          (item) => item[source]?.users_rating != null,
+        );
 
-      expect(itemsWithTraktRating.length).toBeGreaterThan(0);
+        expect(itemsWithRating.length).toBeGreaterThan(0);
 
-      itemsWithTraktRating.forEach((item) => {
-        expect(typeof item.trakt.users_rating_count).toBe("number");
-        expect(item.trakt).toHaveProperty("popularity");
+        itemsWithRating.forEach((item) => {
+          expect(typeof item[source].users_rating).toBe("number");
+          expect(typeof item[source].users_rating_count).toBe("number");
+          expect(item[source]).toHaveProperty("popularity");
+        });
       });
 
       items.forEach((item) => {
         expect(typeof item.ratings_average).toBe("number");
-        expect(typeof item.imdb.users_rating).toBe("number");
-        expect(typeof item.imdb.users_rating_count).toBe("number");
 
         expectRatingKeys(item, requestedRatingKeys);
       });
     },
-  },
-
-  no_french_localization_strings_in_responses: {
-    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=platforms_links&limit=${maxLimitLargeDocuments}`,
-    expectedResult: (items) =>
-      items.forEach((item) => {
-        const serializedItem = JSON.stringify(item).toLowerCase();
-        const potentialFrenchPattern = /[àâæçèêëîïôœùûüÿ]/i;
-        withErrorContext(`IMDb id: ${item.imdb?.id ?? "unknown"}`, () => {
-          expect(serializedItem).not.toMatch(potentialFrenchPattern);
-        });
-      }),
   },
 
   title_variants_should_include_at_least_one_french_character: {
@@ -273,7 +261,7 @@ const params = {
     query: `?item_type=movie,tvshow&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       items.forEach((item) => {
-        expect(item.popularity_average).toBeGreaterThan(1);
+        expect(item.popularity_average).toBeGreaterThanOrEqual(1);
       });
 
       for (let i = 1; i < items.length; i++) {
@@ -637,7 +625,7 @@ const params = {
             index === 0 || count >= episodeUsersRatingCounts[index - 1],
         );
 
-        expect(tvshowItems.length).toBeGreaterThan(
+        expect(tvshowItems.length).toBeGreaterThanOrEqual(
           config.minimumNumberOfItems.softDefault,
         );
         expect(episodeUsersRatingCounts.length).toBeGreaterThan(

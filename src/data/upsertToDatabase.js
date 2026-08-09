@@ -1,5 +1,6 @@
 const { b64Encode } = require("../utils/b64EncodeAndDecode");
 const { logErrors } = require("../utils/logErrors");
+const { logResetValues } = require("../utils/logResetValues");
 
 /**
  * Upserts the given data to the database collection.
@@ -23,6 +24,12 @@ const upsertToDatabase = async (
     console.log();
 
     const filter = { _id: b64Encode(allocineHomepage) };
+    const storedData = await collectionData.findOne(filter, {
+      projection: { _id: 0 },
+    });
+
+    logResetValues(data, storedData);
+
     const updateDoc = { $set: data };
     const options = { upsert: true };
 

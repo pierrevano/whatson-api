@@ -104,8 +104,6 @@ const config = {
   ratingsDelayMs: 500,
   recentUpdateHours: 18,
   thirdPartyStatusTimeoutMs: 480000,
-  tmdbPopularityWeight: 0.4,
-  traktPopularityWeight: 6,
 
   /* CircleCI settings */
   circleLimitPerDay: 1500,

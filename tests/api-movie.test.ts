@@ -311,7 +311,7 @@ function checkItemProperties(items) {
     item.is_active === true
       ? expect(
           items.filter((item) => item.tmdb?.popularity).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default)
+        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.popularity)
       : null;
 
     item.is_active === true

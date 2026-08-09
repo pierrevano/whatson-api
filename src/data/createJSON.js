@@ -211,7 +211,7 @@ const createJSON = async (
   const tmdbPopularity = await getTmdbPopularity(
     tmdbHomepage,
     tmdbId,
-    tmdbData,
+    item_type,
   );
   const traktPopularity = traktRating?.usersRating
     ? await getTraktPopularity(traktHomepage, traktId, item_type)

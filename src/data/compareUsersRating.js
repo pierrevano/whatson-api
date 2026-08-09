@@ -106,6 +106,12 @@ const compareUsersRating = async (
     const { _id, ...dataWithoutId } = responseData;
 
     /**
+     * Excludes the fields computed per request from the stored payload.
+     */
+    delete dataWithoutId.popularity_average;
+    delete dataWithoutId.ratings_average;
+
+    /**
      * Aborts when the payload belongs to another item.
      */
     if (b64Decode(_id) !== allocineHomepage) {
@@ -167,29 +173,10 @@ const compareUsersRating = async (
     ] = await Promise.all([
       getAllocinePopularity(allocineURL, item_type),
       getImdbPopularity(imdbHomepage, allocineURL, item_type, imdbData),
-      tmdbData
-        ? getTmdbPopularity(tmdbHomepage, tmdbId, tmdbData)
-        : Promise.resolve(null),
+      getTmdbPopularity(tmdbHomepage, tmdbId, item_type),
       getTraktPopularity(traktHomepage, traktId, item_type),
       getObjectByImdbId(mojoBoxOfficeArray, imdbId, item_type),
     ]);
-    const allocinePopularity =
-      typeof allocinePopularityResult?.popularity === "number"
-        ? allocinePopularityResult.popularity
-        : undefined;
-    const imdbPopularity =
-      typeof imdbPopularityResult?.popularity === "number"
-        ? imdbPopularityResult.popularity
-        : undefined;
-    const tmdbPopularity =
-      typeof tmdbPopularityResult?.popularity === "number"
-        ? tmdbPopularityResult.popularity
-        : undefined;
-    const traktPopularity =
-      typeof traktPopularityResult?.popularity === "number"
-        ? traktPopularityResult.popularity
-        : undefined;
-
     const mojoObj =
       mojoValues !== null
         ? {
@@ -199,21 +186,18 @@ const compareUsersRating = async (
           }
         : null;
 
-    if (dataWithoutId.allocine && typeof allocinePopularity === "number") {
-      dataWithoutId.allocine.popularity = allocinePopularity;
-    }
+    const popularities = {
+      allocine: allocinePopularityResult?.popularity,
+      imdb: imdbPopularityResult?.popularity,
+      tmdb: tmdbPopularityResult?.popularity,
+      trakt: traktPopularityResult?.popularity,
+    };
 
-    if (dataWithoutId.imdb && typeof imdbPopularity === "number") {
-      dataWithoutId.imdb.popularity = imdbPopularity;
-    }
+    Object.entries(popularities).forEach(([key, popularity]) => {
+      const value = typeof popularity === "number" ? popularity : null;
 
-    if (dataWithoutId.tmdb && typeof tmdbPopularity === "number") {
-      dataWithoutId.tmdb.popularity = tmdbPopularity;
-    }
-
-    if (dataWithoutId.trakt && typeof traktPopularity === "number") {
-      dataWithoutId.trakt.popularity = traktPopularity;
-    }
+      if (dataWithoutId[key]) dataWithoutId[key].popularity = value;
+    });
 
     dataWithoutId.mojo = mojoObj;
 
