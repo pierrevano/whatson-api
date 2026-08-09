@@ -61,10 +61,10 @@ app.get(
 );
 
 /* A route to get user preferences. */
-app.get("/preferences/:email", getUserPreferences);
+app.get("/preferences/:email", limiter, getUserPreferences);
 
 /* A route to save or update user preferences. */
-app.post("/preferences/:email", saveOrUpdateUserPreferences);
+app.post("/preferences/:email", limiter, saveOrUpdateUserPreferences);
 
 /* Mount MCP over HTTP at /mcp, then start the server. */
 async function start() {
