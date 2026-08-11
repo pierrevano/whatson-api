@@ -27,6 +27,17 @@ commands:
             fi
 
             echo "Service ping successful."
+  check_item_type:
+    steps:
+      - run:
+          name: Check item type
+          command: |
+            if [[ -n "$ITEM_TYPE" && "$ITEM_TYPE" != "movie" && "$ITEM_TYPE" != "tvshow" ]]; then
+              echo "Error: ITEM_TYPE must be movie or tvshow."
+              exit 1
+            fi
+
+            echo "Item type to update: ${ITEM_TYPE:-movie and tvshow}."
   setup_env:
     steps:
       - checkout
@@ -52,6 +63,24 @@ commands:
             JEST_JUNIT_ADD_FILE_ATTRIBUTE: "true"
       - store_test_results:
           path: ./reports/
+  update_data:
+    parameters:
+      name:
+        type: string
+      args:
+        type: string
+    steps:
+      - run:
+          name: << parameters.name >>
+          command: |
+            set -- << parameters.args >>
+
+            if [[ -n "$ITEM_TYPE" && "$ITEM_TYPE" != "$1" ]]; then
+              echo "Skipping $1 because ITEM_TYPE is set to $ITEM_TYPE."
+              exit 0
+            fi
+
+            node src/data/updateData.js "$@"
 
 jobs:
   build:
@@ -60,20 +89,21 @@ jobs:
     environment:
       NODE_OPTIONS: "--max-old-space-size=8192"
     steps:
+      - check_item_type
       - ping_service
       - setup_env
-      - run:
+      - update_data:
           name: Update movie data
-          command: node src/data/updateData.js movie update_ids update_db
-      - run:
+          args: movie update_ids update_db
+      - update_data:
           name: Update tvshow data first batch
-          command: node src/data/updateData.js tvshow update_ids update_db circleci active no_check_db_ids 0 no_force mojo no_skip_services no_delete_ids 0 101
-      - run:
+          args: tvshow update_ids update_db circleci active no_check_db_ids 0 no_force mojo no_skip_services no_delete_ids 0 101
+      - update_data:
           name: Update tvshow data second batch
-          command: node src/data/updateData.js tvshow no_update_ids update_db circleci active no_check_db_ids 100 no_force mojo no_skip_services no_delete_ids 0 201
-      - run:
+          args: tvshow no_update_ids update_db circleci active no_check_db_ids 100 no_force mojo no_skip_services no_delete_ids 0 201
+      - update_data:
           name: Update tvshow data third batch
-          command: node src/data/updateData.js tvshow no_update_ids update_db circleci active no_check_db_ids 200 no_force mojo no_skip_services no_delete_ids 0 301
+          args: tvshow no_update_ids update_db circleci active no_check_db_ids 200 no_force mojo no_skip_services no_delete_ids 0 301
       - run_tests
   force:
     docker:
@@ -81,20 +111,21 @@ jobs:
     environment:
       NODE_OPTIONS: "--max-old-space-size=8192"
     steps:
+      - check_item_type
       - ping_service
       - setup_env
-      - run:
+      - update_data:
           name: Force update movie data
-          command: node src/data/updateData.js movie update_ids update_db circleci active no_check_db_ids 0 force
-      - run:
+          args: movie update_ids update_db circleci active no_check_db_ids 0 force
+      - update_data:
           name: Force update tvshow data first batch
-          command: node src/data/updateData.js tvshow update_ids update_db circleci active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 0 101
-      - run:
+          args: tvshow update_ids update_db circleci active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 0 101
+      - update_data:
           name: Force update tvshow data second batch
-          command: node src/data/updateData.js tvshow no_update_ids update_db circleci active no_check_db_ids 100 force mojo no_skip_services no_delete_ids 0 201
-      - run:
+          args: tvshow no_update_ids update_db circleci active no_check_db_ids 100 force mojo no_skip_services no_delete_ids 0 201
+      - update_data:
           name: Force update tvshow data third batch
-          command: node src/data/updateData.js tvshow no_update_ids update_db circleci active no_check_db_ids 200 force mojo no_skip_services no_delete_ids 0 301
+          args: tvshow no_update_ids update_db circleci active no_check_db_ids 200 force mojo no_skip_services no_delete_ids 0 301
       - run_tests
 
 workflows:

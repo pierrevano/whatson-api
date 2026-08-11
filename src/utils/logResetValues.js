@@ -5,7 +5,9 @@ const keysToReset = [
   "highest_episode",
   "last_episode",
   "lowest_episode",
+  "mojo",
   "next_episode",
+  "platforms_links",
   "popularity",
   "popularity_average",
   "ratings_average",
@@ -17,7 +19,7 @@ const isObject = (value) =>
 /**
  * Logs when the refreshed payload resets a key that currently holds a value.
  * Nested keys are walked the same way, except for the keys allowed to be reset.
- * Nothing is logged when FORCE_RESET is enabled.
+ * The script is aborted after logging when ABORT_ON_VALUE_RESET is enabled.
  *
  * @param {Object} data - The refreshed payload.
  * @param {Object} storedData - The payload currently stored.
@@ -25,7 +27,6 @@ const isObject = (value) =>
  * @returns {void}
  */
 const logResetValues = (data, storedData, path = "") => {
-  if (process.env.FORCE_RESET === "true") return;
   if (!isObject(data) || !isObject(storedData)) return;
 
   Object.entries(storedData).forEach(([key, storedValue]) => {
@@ -37,6 +38,9 @@ const logResetValues = (data, storedData, path = "") => {
       logAndAppendTempErrorLog(
         `${keyPath} is reset (stored=${JSON.stringify(storedValue)}).`,
       );
+
+      if (process.env.ABORT_ON_VALUE_RESET === "true") process.exit(1);
+
       return;
     }
 
