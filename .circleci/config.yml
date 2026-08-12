@@ -7,6 +7,9 @@ parameters:
   force:
     type: boolean
     default: false
+  item_type:
+    type: string
+    default: ""
 
 commands:
   ping_service:
@@ -32,12 +35,14 @@ commands:
       - run:
           name: Check item type
           command: |
-            if [[ -n "$ITEM_TYPE" && "$ITEM_TYPE" != "movie" && "$ITEM_TYPE" != "tvshow" ]]; then
-              echo "Error: ITEM_TYPE must be movie or tvshow."
+            item_type="<< pipeline.parameters.item_type >>"
+
+            if [[ -n "$item_type" && "$item_type" != "movie" && "$item_type" != "tvshow" ]]; then
+              echo "Error: item_type must be movie or tvshow."
               exit 1
             fi
 
-            echo "Item type to update: ${ITEM_TYPE:-movie and tvshow}."
+            echo "Item type to update: ${item_type:-movie and tvshow}."
   setup_env:
     steps:
       - checkout
@@ -74,9 +79,10 @@ commands:
           name: << parameters.step_name >>
           command: |
             set -- << parameters.args >>
+            item_type="<< pipeline.parameters.item_type >>"
 
-            if [[ -n "$ITEM_TYPE" && "$ITEM_TYPE" != "$1" ]]; then
-              echo "Skipping $1 because ITEM_TYPE is set to $ITEM_TYPE."
+            if [[ -n "$item_type" && "$item_type" != "$1" ]]; then
+              echo "Skipping $1 because item_type is set to $item_type."
               exit 0
             fi
 
