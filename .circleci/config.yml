@@ -65,13 +65,13 @@ commands:
           path: ./reports/
   update_data:
     parameters:
-      name:
+      step_name:
         type: string
       args:
         type: string
     steps:
       - run:
-          name: << parameters.name >>
+          name: << parameters.step_name >>
           command: |
             set -- << parameters.args >>
 
@@ -93,16 +93,16 @@ jobs:
       - ping_service
       - setup_env
       - update_data:
-          name: Update movie data
+          step_name: Update movie data
           args: movie update_ids update_db
       - update_data:
-          name: Update tvshow data first batch
+          step_name: Update tvshow data first batch
           args: tvshow update_ids update_db circleci active no_check_db_ids 0 no_force mojo no_skip_services no_delete_ids 0 101
       - update_data:
-          name: Update tvshow data second batch
+          step_name: Update tvshow data second batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 100 no_force mojo no_skip_services no_delete_ids 0 201
       - update_data:
-          name: Update tvshow data third batch
+          step_name: Update tvshow data third batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 200 no_force mojo no_skip_services no_delete_ids 0 301
       - run_tests
   force:
@@ -115,16 +115,16 @@ jobs:
       - ping_service
       - setup_env
       - update_data:
-          name: Force update movie data
+          step_name: Force update movie data
           args: movie update_ids update_db circleci active no_check_db_ids 0 force
       - update_data:
-          name: Force update tvshow data first batch
+          step_name: Force update tvshow data first batch
           args: tvshow update_ids update_db circleci active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 0 101
       - update_data:
-          name: Force update tvshow data second batch
+          step_name: Force update tvshow data second batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 100 force mojo no_skip_services no_delete_ids 0 201
       - update_data:
-          name: Force update tvshow data third batch
+          step_name: Force update tvshow data third batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 200 force mojo no_skip_services no_delete_ids 0 301
       - run_tests
 
