@@ -42,7 +42,7 @@ commands:
           command: sudo npm install -g npm@10.9.8
       - run:
           name: Install dependencies
-          command: npm ci
+          command: npm install
       - run:
           name: Install Playwright browsers + deps
           command: npx playwright install --with-deps chromium
