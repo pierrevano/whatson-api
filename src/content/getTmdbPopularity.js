@@ -35,12 +35,12 @@ const fetchTmdbPopular = async (type) => {
         ...results.filter((item) => item?.vote_count >= POPULAR_MIN_VOTES),
       );
     }
+
+    if (popular.length) cache.set(type, popular);
   } catch (error) {
     const message = `${error}`.replaceAll(config.tmdbApiKey, "***");
     logAndAppendTempErrorLog(`${type} - fetchTmdbPopular - ${message}`);
   }
-
-  if (popular.length) cache.set(type, popular);
 
   return popular;
 };

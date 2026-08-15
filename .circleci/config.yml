@@ -11,9 +11,6 @@ parameters:
     type: enum
     enum: ["", "movie", "tvshow"]
     default: ""
-  batch:
-    type: integer
-    default: 0
 
 commands:
   ping_service:
@@ -65,24 +62,15 @@ commands:
         type: string
       args:
         type: string
-      step_batch:
-        type: integer
-        default: 0
     steps:
       - run:
           name: << parameters.step_name >>
           command: |
             set -- << parameters.args >>
             item_type="<< pipeline.parameters.item_type >>"
-            batch="<< pipeline.parameters.batch >>"
 
             if [[ -n "$item_type" && "$item_type" != "$1" ]]; then
               echo "Skipping $1 because item_type is set to $item_type."
-              exit 0
-            fi
-
-            if [[ "$batch" != "0" && "$batch" != "<< parameters.step_batch >>" ]]; then
-              echo "Skipping $1 because batch is set to $batch."
               exit 0
             fi
 
@@ -103,15 +91,12 @@ jobs:
       - update_data:
           step_name: Update tvshow data first batch
           args: tvshow update_ids update_db circleci active no_check_db_ids 0 no_force mojo no_skip_services no_delete_ids 0 101
-          step_batch: 1
       - update_data:
           step_name: Update tvshow data second batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 100 no_force mojo no_skip_services no_delete_ids 0 201
-          step_batch: 2
       - update_data:
           step_name: Update tvshow data third batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 200 no_force mojo no_skip_services no_delete_ids 0 301
-          step_batch: 3
       - run_tests
   force:
     docker:
@@ -127,15 +112,12 @@ jobs:
       - update_data:
           step_name: Force update tvshow data first batch
           args: tvshow update_ids update_db circleci active no_check_db_ids 0 force mojo no_skip_services no_delete_ids 0 101
-          step_batch: 1
       - update_data:
           step_name: Force update tvshow data second batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 100 force mojo no_skip_services no_delete_ids 0 201
-          step_batch: 2
       - update_data:
           step_name: Force update tvshow data third batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 200 force mojo no_skip_services no_delete_ids 0 301
-          step_batch: 3
       - run_tests
 
 workflows:

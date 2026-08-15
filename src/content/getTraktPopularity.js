@@ -43,11 +43,11 @@ const fetchTraktTrending = async (type) => {
 
       if (response.data.length < TRENDING_PAGE_LIMIT) break;
     }
+
+    if (trending.length) cache.set(type, trending);
   } catch (error) {
     logAndAppendTempErrorLog(`${apiUrl} - fetchTraktTrending - ${error}`);
   }
-
-  if (trending.length) cache.set(type, trending);
 
   return trending;
 };
