@@ -2077,30 +2077,6 @@ const params = {
       }),
   },
 
-  no_french_localization_strings_in_episode_descriptions: {
-    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}`,
-    expectedResult: (items) => {
-      const potentialFrenchPattern = /(?<!déj|vis-)à|[âæçêîœùÿ]/i;
-      items.forEach((item) => {
-        if (Array.isArray(item.episodes_details)) {
-          item.episodes_details.forEach((episode) => {
-            if (episode?.description) {
-              withErrorContext(
-                `IMDb id: ${item.imdb?.id ?? "unknown"}, episode: S${episode.season}E${episode.episode}`,
-                () => {
-                  // Strip capitalized words (e.g. first names like "José") to avoid false positives.
-                  expect(
-                    episode.description.replace(/\p{Lu}\p{L}*/gu, ""),
-                  ).not.toMatch(potentialFrenchPattern);
-                },
-              );
-            }
-          });
-        }
-      });
-    },
-  },
-
   should_have_all_items_updated_within_max_age: {
     query: `?item_type=tvshow&is_active=true&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {

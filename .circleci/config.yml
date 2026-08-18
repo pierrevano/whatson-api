@@ -7,10 +7,20 @@ parameters:
   force:
     type: boolean
     default: false
+  mojo:
+    type: boolean
+    default: false
   item_type:
     type: enum
     enum: ["", "movie", "tvshow"]
     default: ""
+
+executors:
+  node:
+    docker:
+      - image: cimg/node:22.22.3
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=8192"
 
 commands:
   ping_service:
@@ -78,10 +88,7 @@ commands:
 
 jobs:
   build:
-    docker:
-      - image: cimg/node:22.22.3
-    environment:
-      NODE_OPTIONS: "--max-old-space-size=8192"
+    executor: node
     steps:
       - ping_service
       - setup_env
@@ -99,10 +106,7 @@ jobs:
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 200 no_force mojo no_skip_services no_delete_ids 0 301
       - run_tests
   force:
-    docker:
-      - image: cimg/node:22.22.3
-    environment:
-      NODE_OPTIONS: "--max-old-space-size=8192"
+    executor: node
     steps:
       - ping_service
       - setup_env
@@ -119,6 +123,14 @@ jobs:
           step_name: Force update tvshow data third batch
           args: tvshow no_update_ids update_db circleci active no_check_db_ids 200 force mojo no_skip_services no_delete_ids 0 301
       - run_tests
+  mojo:
+    executor: node
+    steps:
+      - ping_service
+      - setup_env
+      - run:
+          name: Update all non active and top ids circleci
+          command: npm run update-all-non-active-and-top-ids-circleci
 
 workflows:
   build:
@@ -129,3 +141,7 @@ workflows:
     when: << pipeline.parameters.force >>
     jobs:
       - force
+  mojo:
+    when: << pipeline.parameters.mojo >>
+    jobs:
+      - mojo

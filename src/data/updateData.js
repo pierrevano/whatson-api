@@ -2,6 +2,7 @@ const csv = require("csvtojson");
 
 const { config } = require("../config");
 
+const { appendRunSummary } = require("../utils/sendRecapEmail");
 const { client, collectionData } = require("../utils/mongoClient");
 const {
   closeSharedBrowserSession,
@@ -123,6 +124,7 @@ async function checkStatus(service) {
   const index_to_start = getNodeVarsValues.index_to_start || 0;
   const max_index = parseInt(getNodeVarsValues.max_index) + 1 || null;
 
+  const startedAt = Date.now();
   console.time("Duration");
 
   try {
@@ -161,6 +163,15 @@ async function checkStatus(service) {
       item_type: "tvshow",
     });
     console.log(`Number of tvshow documents in the collection: ${tvShowCount}`);
+
+    appendRunSummary({
+      documents,
+      durationMs: Date.now() - startedAt,
+      item_type: getNodeVarsValues.item_type,
+      movieCount,
+      newOrUpdatedItems,
+      tvShowCount,
+    });
   } catch (error) {
     logErrors(error, getNodeVarsValues.item_type, "updateData");
   } finally {

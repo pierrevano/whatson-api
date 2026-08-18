@@ -177,7 +177,7 @@ remove_files () {
   sort_ids
 
   for TEMP_FILE in ./temp_*; do
-    [[ $TEMP_FILE == "./temp_error.log" ]] && continue
+    [[ $TEMP_FILE == "./temp_error.log" || $TEMP_FILE == "./temp_run_summary.json" ]] && continue
     rm -f "$TEMP_FILE"
   done
   rm -f src/assets/.!*!films_ids.txt
