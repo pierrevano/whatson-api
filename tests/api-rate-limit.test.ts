@@ -19,7 +19,7 @@ describe("What's on? API rate limiting tests", () => {
     "Rate Limiting should return 429 with Retry-After once the limit is exceeded",
     async () => {
       const apiCall = `${baseURL}/movie/121`;
-      const forwardedFor = "203.0.113.10";
+      const forwardedFor = `203.0.113.${Math.floor(Math.random() * 254) + 1}`;
       const batchSize = 100;
       let rateLimitedResponse = null;
 
@@ -51,7 +51,7 @@ describe("What's on? API rate limiting tests", () => {
       expect(rateLimitedResponse.status).toBe(429);
       expect(rateLimitedResponse.data).toEqual({
         code: 429,
-        message: `Too many requests (${config.pointsAnonymous} req/h limit). Request a free API key for a higher limit: ${config.contactURL}`,
+        message: `Too many requests (${config.pointsAnonymous} req/h, ${config.pointsAnonymous * config.dailyMultiplier} req/day limit). Request a free API key for a higher limit: ${config.contactURL}`,
       });
       expect(rateLimitedResponse.headers).toHaveProperty("retry-after");
       expect(
@@ -94,7 +94,7 @@ describe("What's on? API rate limiting tests", () => {
       expect(rateLimitedResponse.status).toBe(429);
       expect(rateLimitedResponse.data).toEqual({
         code: 429,
-        message: `Too many requests (${config.pointsFree} req/h limit). Become a sponsor for a higher limit: ${config.contactURL}`,
+        message: `Too many requests (${config.pointsFree} req/h, ${config.pointsFree * config.dailyMultiplier} req/day limit). Become a sponsor for a higher limit: ${config.contactURL}`,
       });
       expect(rateLimitedResponse.headers).toHaveProperty("retry-after");
       expect(

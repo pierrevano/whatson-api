@@ -1,3 +1,4 @@
+const compression = require("compression");
 const cors = require("cors");
 const express = require("express");
 
@@ -22,6 +23,9 @@ const applyBaseMiddleware = (app, { staticDir }) => {
     });
     next();
   });
+
+  /* Use compression middleware. */
+  app.use(compression());
 
   /* Use CORS middleware. */
   app.use(cors());

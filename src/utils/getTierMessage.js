@@ -9,10 +9,10 @@ const { config } = require("../config");
  */
 const getTierMessage = (apiKeyDoc) => {
   if (!apiKeyDoc)
-    return `Too many requests (${config.pointsAnonymous} req/h limit). Request a free API key for a higher limit: ${config.contactURL}`;
+    return `Too many requests (${config.pointsAnonymous} req/h, ${config.pointsAnonymous * config.dailyMultiplier} req/day limit). Request a free API key for a higher limit: ${config.contactURL}`;
   const points = apiKeyDoc.rate_limit_points;
   if (points === config.pointsFree)
-    return `Too many requests (${config.pointsFree} req/h limit). Become a sponsor for a higher limit: ${config.contactURL}`;
+    return `Too many requests (${config.pointsFree} req/h, ${config.pointsFree * config.dailyMultiplier} req/day limit). Become a sponsor for a higher limit: ${config.contactURL}`;
   if (points === config.pointsSponsor)
     return `Too many requests (${config.pointsSponsor} req/h limit). Contact me for a custom limit: ${config.contactURL}`;
   return `Too many requests. Contact me to adjust your custom limit: ${config.contactURL}`;

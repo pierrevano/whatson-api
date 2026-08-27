@@ -18,7 +18,7 @@ Use of the API and any returned data is subject to [API_TERMS.md](./API_TERMS.md
 
 ⚠️ This API is currently running on Render's free tier. If you'd like to help keep it active at all times, please consider supporting the project via GitHub Sponsors, Patreon, or Buy Me a Coffee. For any additional feedback, you can also join the Discord server: https://discord.gg/SpKw8Zg5vT.
 
-Note: Rate limits are in place to prevent abuse. Anonymous requests allow up to `100` req/h, free API keys up to `500` req/h, and sponsor API keys up to `5000` req/h. A custom limit is also available for higher-tier supporters. When a limit is exceeded, the API returns a `429` response with a `Retry-After` header. Request a free API key by contacting me at https://pierrevano.github.io.
+Note: Rate limits are in place to prevent abuse. Anonymous requests allow up to `50` req/h and `200` req/day, free API keys up to `500` req/h and `2000` req/day, and sponsor API keys up to `5000` req/h with no daily cap. A custom limit is also available for higher-tier supporters. When a limit is exceeded, the API returns a `429` response with a `Retry-After` header. Request a free API key by contacting me at https://pierrevano.github.io.
 
 ---
 

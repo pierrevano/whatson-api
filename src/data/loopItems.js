@@ -22,7 +22,7 @@ const generateURLs = require("./generateURLs");
  * An item is skipped without being upserted in the following cases:
  * 1. A homepage check fails for Metacritic (CircleCI only).
  * 2. Existing data was expected to be reused but the payload is missing (defensive).
- * 3. The IMDb release date is in the future or incomplete.
+ * 3. The IMDb release date or vote count check fails.
  * 4. All ratings on the built payload are null or undefined.
  * 5. A homepage status error is thrown and SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR is enabled.
  *
@@ -148,7 +148,7 @@ const loopItems = async (
 
         if (!shouldCreate) {
           console.log(
-            `Skipping item at index ${index} because IMDb release date is in the future or incomplete.`,
+            `Skipping item at index ${index} because the IMDb release date or vote count check failed.`,
           );
           continue;
         }

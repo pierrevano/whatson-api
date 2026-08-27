@@ -2083,11 +2083,13 @@ const params = {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - config.maxAgeInDays);
       items.forEach((item) => {
-        expect(item).toHaveProperty("updated_at");
-        const updatedAt = new Date(item.updated_at);
-        expect(updatedAt.getTime()).toBeGreaterThanOrEqual(
-          cutoffDate.getTime(),
-        );
+        withErrorContext(`IMDb id: ${item.imdb?.id ?? "unknown"}`, () => {
+          expect(item).toHaveProperty("updated_at");
+          const updatedAt = new Date(item.updated_at);
+          expect(updatedAt.getTime()).toBeGreaterThanOrEqual(
+            cutoffDate.getTime(),
+          );
+        });
       });
     },
   },

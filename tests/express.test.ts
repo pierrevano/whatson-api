@@ -16,8 +16,8 @@ const {
  * in-process Express app and drives it over an ephemeral port, so it needs neither a
  * running server, MongoDB, nor network access. It exercises the app's framework-level
  * behaviors — routing, middleware ordering, error handling, query parsing, body parsing,
- * static assets and CORS — by reusing the real production middleware (`applyBaseMiddleware`)
- * and the real invalid-endpoint handler.
+ * static assets, CORS and response compression — by reusing the real production middleware
+ * (`applyBaseMiddleware`) and the real invalid-endpoint handler.
  */
 
 /**
@@ -234,5 +234,16 @@ describe("Express CORS middleware", () => {
     expect([200, 204]).toContain(res.status);
     expect(res.headers.get("access-control-allow-origin")).toBe("*");
     expect(res.headers.get("access-control-allow-methods")).toBeTruthy();
+  });
+});
+
+describe("Express response compression", () => {
+  test("responses above the size threshold are gzipped", async () => {
+    const padding = "x".repeat(1200);
+    const res = await fetch(`${baseURL}/echo/query?padding=${padding}`);
+    const { query } = await res.json();
+
+    expect(res.headers.get("content-encoding")).toBe("gzip");
+    expect(query.padding).toBe(padding);
   });
 });

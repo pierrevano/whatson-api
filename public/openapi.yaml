@@ -6,14 +6,14 @@ info:
     Aggregate movie and TV show ratings from IMDb, Rotten Tomatoes, AlloCiné,
     Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, and Trakt.
 
-    **Rate limiting** — 1 000 requests per hour. Pass an optional `api_key`
-    query parameter to remove this limit. The `Retry-After` header is set when the
-    limit is reached (HTTP 429).
+    **Rate limiting** — 50 requests per hour and 200 per day. Pass an optional
+    `api_key` query parameter for a higher limit. The `Retry-After` header is set
+    when the limit is reached (HTTP 429).
 
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.37.0
+  version: 3.38.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -728,7 +728,7 @@ components:
 
   responses:
     RateLimitExceeded:
-      description: Rate limit exceeded (1 000 requests per hour). Retry after the indicated delay.
+      description: Rate limit exceeded. Retry after the indicated delay.
       headers:
         Retry-After:
           description: Seconds to wait before retrying.

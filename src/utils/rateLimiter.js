@@ -1,8 +1,13 @@
-const { RateLimiterMemory } = require("rate-limiter-flexible");
+const {
+  RateLimiterMemory,
+  RateLimiterMongo,
+} = require("rate-limiter-flexible");
 
+const { client } = require("./mongoClient");
 const { config } = require("../config");
 const { getApiKey } = require("./getApiKey");
 const { getTierMessage } = require("./getTierMessage");
+const { isSponsorApiKey } = require("./isSponsorApiKey");
 const { sendResponse } = require("./sendRequest");
 const { sendToNewRelic } = require("./sendToNewRelic");
 
@@ -19,9 +24,30 @@ const createRateLimiter = (points) =>
     blockDuration: config.blockDuration, // block duration in seconds if rate limit is exceeded
   });
 
-const defaultLimiter = createRateLimiter(config.pointsAnonymous);
+/**
+ * Builds a Mongo-based rate limiter with the shared configuration defaults.
+ *
+ * @param {number} points - Maximum number of requests allowed per window.
+ * @returns {RateLimiterMongo} Configured rate limiter instance.
+ */
+const createDailyLimiter = (points) =>
+  new RateLimiterMongo({
+    storeClient: client,
+    dbName: config.dbName,
+    tableName: config.collectionNameRateLimit,
+    points, // maximum number of requests
+    duration: config.dailyDuration, // window duration in seconds
+    blockDuration: config.dailyDuration, // block duration in seconds if rate limit is exceeded
+  });
 
-// One persistent limiter instance per API key to preserve counters across requests.
+const createLimiters = (points) => [
+  createRateLimiter(points),
+  createDailyLimiter(points * config.dailyMultiplier),
+];
+
+const defaultLimiters = createLimiters(config.pointsAnonymous);
+
+// Persistent limiter instances per API key to preserve counters across requests.
 const keyedLimiters = new Map();
 
 /**
@@ -48,7 +74,7 @@ const limiter = async (req, res, next) => {
 
   let apiKeyDoc = null;
   let key = getRateLimiterKey(req);
-  let rateLimiter = defaultLimiter;
+  let [rateLimiter, dailyLimiter] = defaultLimiters;
 
   if (apiKeyValue) {
     apiKeyDoc = await getApiKey(apiKeyValue);
@@ -59,16 +85,17 @@ const limiter = async (req, res, next) => {
       if (!keyedLimiters.has(apiKeyValue)) {
         keyedLimiters.set(
           apiKeyValue,
-          createRateLimiter(apiKeyDoc.rate_limit_points),
+          createLimiters(apiKeyDoc.rate_limit_points),
         );
       }
-      rateLimiter = keyedLimiters.get(apiKeyValue);
+      [rateLimiter, dailyLimiter] = keyedLimiters.get(apiKeyValue);
       key = apiKeyValue;
     }
   }
 
   try {
     const result = await rateLimiter.consume(key);
+    if (!isSponsorApiKey(apiKeyDoc)) await dailyLimiter.consume(key);
     const rateLimitHeaders = {
       "X-RateLimit-Limit": result.remainingPoints + result.consumedPoints,
       "X-RateLimit-Remaining": result.remainingPoints,
@@ -83,6 +110,9 @@ const limiter = async (req, res, next) => {
     sendToNewRelic(req, null, null, rateLimitHeaders);
     next();
   } catch (result) {
+    /* Let the request through unless a rate limit was exceeded. */
+    if (result?.msBeforeNext === undefined) return next();
+
     const rateLimitHeaders = {
       "Retry-After": Math.ceil(result.msBeforeNext / 1000),
     };

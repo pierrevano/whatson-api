@@ -50,14 +50,17 @@ const config = {
   collectionName: "data",
   collectionNameApiKey: "apikey",
   collectionNamePreferences: "preferences",
+  collectionNameRateLimit: "ratelimit",
 
   /* Rate limit settings */
-  pointsAnonymous: 100,
+  pointsAnonymous: 50,
   pointsFree: 500,
   pointsSponsor: 5000,
   contactURL: "https://pierrevano.github.io",
   duration: 60 * 60, // 1 hour in seconds
   blockDuration: 60 * 60, // 1 hour in seconds
+  dailyMultiplier: 4, // multiple of the hourly limit
+  dailyDuration: 24 * 60 * 60, // 1 day in seconds
 
   /* Global settings */
   countryIs: "https://api.country.is/",
@@ -101,6 +104,8 @@ const config = {
   maxAgeInDays: 3,
   maxDaysInFuture: 14,
   maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 100),
+  maxFutureReleaseMonths: 3,
+  minimumFutureReleaseVoteCount: 600,
   ratingsDelayMs: 500,
   recentUpdateHours: 18,
   thirdPartyStatusTimeoutMs: 480000,
