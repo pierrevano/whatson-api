@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.38.0",
+  "version": "3.39.0",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -95,7 +95,7 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "cz-conventional-changelog": "^3.3.0",
-    "jest": "^30.4.2",
+    "jest": "^30.5.0",
     "jest-junit": "^17.0.0"
   },
   "config": {

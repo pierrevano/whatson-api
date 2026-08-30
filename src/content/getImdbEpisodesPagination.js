@@ -4,13 +4,17 @@ const { config } = require("../config");
 const {
   convertImdbDateToISOString,
 } = require("../utils/convertFrenchDateToISOString");
+const {
+  createSha256Hash,
+  EPISODES_PAGINATION_QUERY,
+} = require("../utils/createSha256Hash");
 const { formatDate } = require("../utils/formatDate");
 const { httpClient } = require("../utils/httpClient");
 const { logErrors } = require("../utils/logErrors");
 
 const GRAPHQL_URL = config.baseURLImdbGraphql;
 const OPERATION_NAME = config.imdbEpisodesPaginationOperation;
-const PERSISTED_QUERY_HASH = config.imdbEpisodesPaginationHash;
+const PERSISTED_QUERY_HASH = createSha256Hash(EPISODES_PAGINATION_QUERY);
 
 const buildVariables = (imdbId, cursor) => ({
   after: cursor || null,
@@ -99,6 +103,27 @@ const fetchEpisodesPage = async (imdbId, cursor) => {
     headers,
     metadata: { origin: "getImdbEpisodesPagination" },
   });
+
+  const isQueryUnregistered = response.data?.errors?.some(
+    (error) => error?.extensions?.code === "PERSISTED_QUERY_NOT_FOUND",
+  );
+
+  if (isQueryUnregistered) {
+    // Register the query by sending its full text alongside the hash.
+    const healed = await httpClient.post(
+      GRAPHQL_URL,
+      {
+        operationName: OPERATION_NAME,
+        variables: buildVariables(imdbId, cursor),
+        query: EPISODES_PAGINATION_QUERY,
+        extensions: {
+          persistedQuery: { sha256Hash: PERSISTED_QUERY_HASH, version: 1 },
+        },
+      },
+      { headers, metadata: { origin: "getImdbEpisodesPagination" } },
+    );
+    return healed.data?.data?.title?.episodes?.episodes;
+  }
 
   return response.data?.data?.title?.episodes?.episodes;
 };

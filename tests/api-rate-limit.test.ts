@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const axios = require("axios");
 
+const { client } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
 
 const isRemoteSource = process.env.SOURCE === "remote";
@@ -62,6 +63,52 @@ describe("What's on? API rate limiting tests", () => {
   );
 
   rateLimitTest(
+    "Rate Limiting should return 429 once the daily limit is exceeded",
+    async () => {
+      const apiCall = `${baseURL}/movie/121`;
+      const forwardedFor = "192.0.2.42";
+      const counterKey = `rlflx:${forwardedFor}`;
+      const rateLimitCollection = client
+        .db(config.dbName)
+        .collection(config.collectionNameRateLimit);
+
+      // Seed the daily counter at its limit so a single request exceeds it.
+      await rateLimitCollection.updateOne(
+        { key: counterKey },
+        {
+          $set: {
+            key: counterKey,
+            points: config.pointsAnonymous * config.dailyMultiplier,
+            expire: new Date(Date.now() + config.dailyDuration * 1000),
+          },
+        },
+        { upsert: true },
+      );
+
+      try {
+        const response = await axios.get(apiCall, {
+          headers: {
+            "X-Forwarded-For": forwardedFor,
+          },
+          validateStatus: (status) => status <= 500,
+        });
+
+        expect(response.status).toBe(429);
+        expect(response.data).toEqual({
+          code: 429,
+          message: `Too many requests (${config.pointsAnonymous} req/h, ${config.pointsAnonymous * config.dailyMultiplier} req/day limit). Request a free API key for a higher limit: ${config.contactURL}`,
+        });
+        expect(Number(response.headers["retry-after"])).toBeGreaterThan(
+          config.duration,
+        );
+      } finally {
+        await rateLimitCollection.deleteOne({ key: counterKey });
+      }
+    },
+    120000,
+  );
+
+  rateLimitTest(
     "Rate Limiting should return 429 with the sponsor upgrade message for a free API key",
     async () => {
       const apiCall = `${baseURL}/movie/121`;
@@ -103,4 +150,10 @@ describe("What's on? API rate limiting tests", () => {
     },
     120000,
   );
+
+  afterAll(async () => {
+    if (client) {
+      await client.close();
+    }
+  }, config.timeout);
 });

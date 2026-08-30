@@ -20,6 +20,35 @@ const removeLogs = process.env.REMOVE_LOGS === "true";
  * @type {Record<string, { query: string, expectedResult: (items: any) => void }>}
  */
 const params = {
+  title_search_should_only_return_movie_items: {
+    query: "?item_type=movie&title=wolf",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+      });
+    },
+  },
+
+  title_search_should_only_return_tvshow_items: {
+    query: "?item_type=tvshow&title=wolf",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+      });
+    },
+  },
+
+  title_search_should_return_both_item_types: {
+    query: "?item_type=movie,tvshow&title=wolf",
+    expectedResult: (items) => {
+      const itemTypes = items.map((item) => item.item_type);
+      expect(itemTypes).toContain("movie");
+      expect(itemTypes).toContain("tvshow");
+    },
+  },
+
   only_adult_items: {
     query: "?item_type=movie,tvshow&is_active=true,false&is_adult=true",
     expectedResult: (items) =>

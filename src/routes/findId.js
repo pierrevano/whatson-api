@@ -11,7 +11,7 @@ const normalizeString = (str) =>
 
 /**
  * Queries the database for a media item matching the given identifier or title.
- * Supports optional projection and episode filtering by seasons.
+ * Supports optional projection, episode filtering by seasons, and item type filtering.
  *
  * @param {Object} json - Input object with a supported key (e.g. `imdbid`, `tmdbid`, `title`, etc.).
  * @param {string} [append_to_response] - Additional fields to include in the projection.
@@ -137,6 +137,13 @@ const findId = async (json, append_to_response, filtered_seasons) => {
     }
 
     break; // exit after first match
+  }
+
+  // Apply the item type filter when a single type is requested.
+  const itemTypes = new Set(json.item_type?.split(",").filter(Boolean));
+  if (itemTypes.size === 1) {
+    const [itemType] = itemTypes;
+    query.item_type = itemType;
   }
 
   // Step 2: Build the projection object

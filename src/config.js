@@ -70,7 +70,6 @@ const config = {
   itemTypes: ["movie", "tvshow"],
   noMatchingItemsFoundMessage: "No matching items found.",
 
-  imdbEpisodesPaginationHash: process.env.IMDB_EPISODES_PAGINATION_HASH,
   imdbEpisodesPaginationOperation: "TitleEpisodesSubPagePagination",
 
   limit: 20,

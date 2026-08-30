@@ -317,6 +317,18 @@ const params = {
     },
   },
 
+  wrong_item_type_present_on_search: {
+    query: "?item_type=movies&title=wolf",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'. Received 'movies'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
   release_date_inverted_range_should_return_error: {
     query:
       "?item_type=movie,tvshow&is_active=true,false&release_date=from:2025-01-01,to:2010-01-01",

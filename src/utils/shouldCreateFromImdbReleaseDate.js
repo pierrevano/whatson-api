@@ -28,15 +28,18 @@ const shouldCreateFromImdbReleaseDate = async (imdbData) => {
   if (hasFullDate) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const nearReleaseCutoff = new Date(today);
+    nearReleaseCutoff.setDate(today.getDate() + config.maxDaysInFuture);
     const futureReleaseCutoff = new Date(today);
     futureReleaseCutoff.setMonth(
       today.getMonth() + config.maxFutureReleaseMonths,
     );
     const releaseDateObj = new Date(releaseYear, releaseMonth - 1, releaseDay);
-    shouldCreate = hasEnoughVotes && releaseDateObj <= futureReleaseCutoff;
-  } else {
     shouldCreate =
-      hasEnoughVotes && !isYearInFuture && Number.isInteger(releaseYear);
+      releaseDateObj <= nearReleaseCutoff ||
+      (hasEnoughVotes && releaseDateObj <= futureReleaseCutoff);
+  } else {
+    shouldCreate = !isYearInFuture && Number.isInteger(releaseYear);
   }
 
   return {
