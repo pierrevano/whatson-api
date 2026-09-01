@@ -11,7 +11,7 @@ const cache = new Map();
  * @returns {Promise<object|null>}
  */
 const getApiKey = async (value) => {
-  if (!value) return null;
+  if (typeof value !== "string" || value === "") return null;
 
   const cached = cache.get(value);
   if (cached && Date.now() < cached.expiresAt) {
@@ -20,6 +20,9 @@ const getApiKey = async (value) => {
 
   try {
     const doc = await collection.findOne({ value, is_active: true });
+    if (cache.size >= config.apiKeyCacheMaxEntries) {
+      cache.delete(cache.keys().next().value);
+    }
     cache.set(value, { doc, expiresAt: Date.now() + config.cacheTtlMs });
     return doc;
   } catch {

@@ -98,6 +98,7 @@ const config = {
   userAgentSafariAlt:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/538.36",
   cacheTtlMs: 15 * 60 * 1000,
+  apiKeyCacheMaxEntries: 5000,
   heapLimit: 1500,
   imdbRatingCountTolerancePct: 0.5,
   maxAgeInDays: 3,

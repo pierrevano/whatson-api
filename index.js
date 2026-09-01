@@ -18,6 +18,7 @@ const {
 } = require("./src/routes/getOrSaveUserPreferences");
 const { handleInvalidEndpoint } = require("./src/routes/handleInvalidEndpoint");
 const { limiter } = require("./src/utils/rateLimiter");
+const { validateQueryValues } = require("./src/utils/validateQueryValues");
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
 const getRatedEpisodes = require("./src/routes/getRatedEpisodes");
@@ -27,6 +28,9 @@ const PORT = config.localPort;
 
 /* Configure the shared application-level middleware. */
 applyBaseMiddleware(app, { staticDir: path.join(__dirname, "public") });
+
+/* Validate the query parameters. */
+app.use(validateQueryValues);
 
 /* A route that is used to get the data for all items. */
 app.get("/", limiter, getItems);

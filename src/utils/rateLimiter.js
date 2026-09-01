@@ -54,12 +54,9 @@ const keyedLimiters = new Map();
  * Normalises the requester identity used as the rate limit key.
  *
  * @param {import("express").Request} req - Incoming request.
- * @returns {string} IP address or the first forwarded IP value.
+ * @returns {string} The resolved client IP address.
  */
-const getRateLimiterKey = (req) => {
-  const forwardedFor = req.headers["x-forwarded-for"];
-  return forwardedFor ? forwardedFor.split(",")[0].trim() : req.ip;
-};
+const getRateLimiterKey = (req) => req.ip;
 
 /**
  * Express middleware enforcing rate limits based on the provided API key or client IP.

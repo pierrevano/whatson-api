@@ -14,6 +14,9 @@ const applyBaseMiddleware = (app, { staticDir }) => {
   /* Use the "extended" query string parser. */
   app.set("query parser", "extended");
 
+  /* Trust the proxy for the client IP. */
+  app.set("trust proxy", 1);
+
   /* Expose req.query as a writable object. */
   app.use((req, _res, next) => {
     Object.defineProperty(req, "query", {

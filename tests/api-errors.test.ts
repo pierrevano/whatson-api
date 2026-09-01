@@ -27,6 +27,18 @@ const params = {
     },
   },
 
+  non_string_query_parameter_present: {
+    query: "?item_type[$ne]=movie",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "Query parameters must be single string values.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
   not_lowercase_item_type_present: {
     query: "?item_type=moviE",
     expectedResult: (data) => {
