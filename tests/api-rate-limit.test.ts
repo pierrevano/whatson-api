@@ -4,6 +4,7 @@ const axios = require("axios");
 
 const { client } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
+const { getRateLimiterKey } = require("../src/utils/getRateLimiterKey");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -150,6 +151,24 @@ describe("What's on? API rate limiting tests", () => {
     },
     120000,
   );
+
+  describe("Rate limiter key resolution", () => {
+    // Resolve the rate limit key from the incoming request.
+    test("uses the leftmost forwarded IP when multiple hops are present", () => {
+      const req = {
+        headers: { "x-forwarded-for": "203.0.113.7, 10.0.0.1, 172.16.0.1" },
+        ip: "10.0.0.1",
+      };
+
+      expect(getRateLimiterKey(req)).toBe("203.0.113.7");
+    });
+
+    test("falls back to req.ip when no forwarded header is present", () => {
+      const req = { headers: {}, ip: "127.0.0.1" };
+
+      expect(getRateLimiterKey(req)).toBe("127.0.0.1");
+    });
+  });
 
   afterAll(async () => {
     if (client) {

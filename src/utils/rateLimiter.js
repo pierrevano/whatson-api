@@ -6,6 +6,7 @@ const {
 const { client } = require("./mongoClient");
 const { config } = require("../config");
 const { getApiKey } = require("./getApiKey");
+const { getRateLimiterKey } = require("./getRateLimiterKey");
 const { getTierMessage } = require("./getTierMessage");
 const { isSponsorApiKey } = require("./isSponsorApiKey");
 const { sendResponse } = require("./sendRequest");
@@ -49,14 +50,6 @@ const defaultLimiters = createLimiters(config.pointsAnonymous);
 
 // Persistent limiter instances per API key to preserve counters across requests.
 const keyedLimiters = new Map();
-
-/**
- * Normalises the requester identity used as the rate limit key.
- *
- * @param {import("express").Request} req - Incoming request.
- * @returns {string} The resolved client IP address.
- */
-const getRateLimiterKey = (req) => req.ip;
 
 /**
  * Express middleware enforcing rate limits based on the provided API key or client IP.
