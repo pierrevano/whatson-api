@@ -9,7 +9,6 @@ const { getApiKey } = require("./getApiKey");
 const { getRateLimiterKey } = require("./getRateLimiterKey");
 const { getTierMessage } = require("./getTierMessage");
 const { isSponsorApiKey } = require("./isSponsorApiKey");
-const { isTrustedProxyRequest } = require("./isTrustedProxyRequest");
 const { sendResponse } = require("../../utils/sendRequest");
 const { sendToNewRelic } = require("../../utils/sendToNewRelic");
 
@@ -60,9 +59,6 @@ const keyedLimiters = new Map();
  * @returns {Promise<void>}
  */
 const limiter = async (req, res, next) => {
-  /* Allow trusted requests through. */
-  if (isTrustedProxyRequest(req)) return next();
-
   const apiKeyValue = req.query.api_key;
 
   let apiKeyDoc = null;

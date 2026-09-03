@@ -35,7 +35,6 @@ const localPort = getEnvInt(process.env.PORT, 8081);
 const config = {
   /* Credentials */
   betaseriesApiKey: process.env.BETASERIES_API_KEY,
-  clientToken: process.env.CLIENT_TOKEN,
   digestSecretValue: process.env.DIGEST_SECRET_VALUE,
   internalApiKey: process.env.INTERNAL_API_KEY,
   mongoDbCredentials: process.env.CREDENTIALS,
