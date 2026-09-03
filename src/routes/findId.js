@@ -1,5 +1,6 @@
 const { buildProjection } = require("./buildProjection");
 const { collectionData } = require("../utils/mongoClient");
+const { config } = require("../config");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
 
 // Utility to normalize strings for fuzzy title matching
@@ -56,8 +57,13 @@ const findId = async (json, append_to_response, filtered_seasons) => {
     ].includes(key);
 
     if (isTitleKey) {
+      const normalizedTitle = normalizeString(value);
+
+      // Return no results for a blank title.
+      if (!normalizedTitle) return { results: [], total_results: 0 };
+
       // Match the provided title as a literal string by escaping special characters.
-      const normalizedInput = normalizeString(value).replace(
+      const normalizedInput = normalizedTitle.replace(
         /[.*+?^${}()|[\]\\]/g,
         "\\$&",
       );
@@ -119,6 +125,12 @@ const findId = async (json, append_to_response, filtered_seasons) => {
           ],
         },
       };
+
+      // Apply the adult-content filter.
+      const adultStates = new Set((json.is_adult || "false").split(","));
+      if (!(adultStates.has("true") && adultStates.has("false"))) {
+        query.is_adult = adultStates.has("true");
+      }
     } else if (isTraktIdKey) {
       const stringValue = typeof value === "string" ? value : String(value);
       const numericValue =
@@ -151,8 +163,11 @@ const findId = async (json, append_to_response, filtered_seasons) => {
 
   // Step 3: Execute query with projection
   let [results, total_results] = await Promise.all([
-    collectionData.find(query, { projection }).toArray(),
-    collectionData.countDocuments(query),
+    collectionData
+      .find(query, { projection, maxTimeMS: config.queryMaxTimeMS })
+      .limit(config.maxLimit)
+      .toArray(),
+    collectionData.countDocuments(query, { maxTimeMS: config.queryMaxTimeMS }),
   ]);
 
   // Step 4: Filter by seasons if needed

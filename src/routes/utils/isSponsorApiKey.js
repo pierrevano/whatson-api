@@ -1,4 +1,4 @@
-const { config } = require("../config");
+const { config } = require("../../config");
 
 /**
  * Returns true when the API key document belongs to a sponsor or internal tier.

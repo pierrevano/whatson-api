@@ -35,13 +35,14 @@ const localPort = getEnvInt(process.env.PORT, 8081);
 const config = {
   /* Credentials */
   betaseriesApiKey: process.env.BETASERIES_API_KEY,
+  clientToken: process.env.CLIENT_TOKEN,
   digestSecretValue: process.env.DIGEST_SECRET_VALUE,
   internalApiKey: process.env.INTERNAL_API_KEY,
-  testApiKey: process.env.TEST_API_KEY,
   mongoDbCredentials: process.env.CREDENTIALS,
-  traktApiKey: process.env.TRAKT_API_KEY,
+  testApiKey: process.env.TEST_API_KEY,
   theTvdbApiKey: process.env.THETVDB_API_KEY,
   tmdbApiKey: process.env.THEMOVIEDB_API_KEY,
+  traktApiKey: process.env.TRAKT_API_KEY,
 
   /* Database settings */
   mongoDbCredentialsLastPart:
@@ -120,6 +121,7 @@ const config = {
   baseURLRemote: process.env.WHATSON_API_URL,
   maxLimit: 900,
   maxLimitLargeDocuments: 100,
+  queryMaxTimeMS: 10000,
   checkItemsNumber: true,
   keysToCheck: [
     "_id",

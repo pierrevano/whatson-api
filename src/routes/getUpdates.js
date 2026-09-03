@@ -1,10 +1,12 @@
 const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
-const { getApiKey } = require("../utils/getApiKey");
-const { invalidItemTypeMessage } = require("../utils/itemTypeValidation");
-const { isSponsorApiKey } = require("../utils/isSponsorApiKey");
+const { getApiKey } = require("./utils/getApiKey");
+const { invalidItemTypeMessage } = require("./utils/itemTypeValidation");
+const { isSponsorApiKey } = require("./utils/isSponsorApiKey");
+const { resolveLimit } = require("./utils/resolveLimit");
 const { sendInternalError, sendResponse } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
+const { validateSharedQueryParams } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
 
 /**
@@ -53,8 +55,18 @@ const getUpdates = async (req, res) => {
       });
     }
 
+    const shared_query_params_error = validateSharedQueryParams(
+      req.query,
+      config,
+    );
+    if (shared_query_params_error) {
+      return sendResponse(res, 400, {
+        message: shared_query_params_error,
+      });
+    }
+
     const page = Number(req.query.page) || config.page;
-    const limit = Number(req.query.limit) || config.limit;
+    const limit = resolveLimit(req.query.limit);
 
     const internal_api_key = await getInternalApiKey();
     sendToNewRelic(req, api_key_query, internal_api_key, {
@@ -82,7 +94,9 @@ const getUpdates = async (req, res) => {
       },
     ];
 
-    const items = await collectionData.aggregate(pipeline).toArray();
+    const items = await collectionData
+      .aggregate(pipeline, { maxTimeMS: config.queryMaxTimeMS })
+      .toArray();
     const results = items[0]?.results || [];
     const total_results = items[0]?.total_count?.[0]?.count || 0;
 

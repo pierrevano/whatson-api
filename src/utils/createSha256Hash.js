@@ -50,7 +50,7 @@ const EPISODES_PAGINATION_QUERY = `
         }
         plot {
             plotText {
-                plaidHtml(showOriginalTitleText: $originalTitleText)
+                plainText(showOriginalTitleText: $originalTitleText)
             }
         }
         releaseDate {

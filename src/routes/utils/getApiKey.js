@@ -1,5 +1,5 @@
-const { collectionApiKey: collection } = require("./mongoClient");
-const { config } = require("../config");
+const { collectionApiKey: collection } = require("../../utils/mongoClient");
+const { config } = require("../../config");
 
 const cache = new Map();
 

@@ -1137,6 +1137,21 @@ const params = {
       }),
   },
 
+  only_ongoing_tvshows_with_1_and_2_seasons_without_an_item_type: {
+    query: "?status=ongoing&seasons_number=1,2",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
+
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.status).toBe("Ongoing");
+        expect(item.seasons_number).toBeLessThanOrEqual(2);
+      });
+    },
+  },
+
   return_correct_tvshow_item_type_on_same_path_id: {
     query: "/tvshow/10003?append_to_response",
     expectedResult: (item) => {
@@ -1231,6 +1246,30 @@ const params = {
       expect(item.id).toBe(60715);
       expect(Array.isArray(item.episodes_details)).toBe(true);
       expect(item.episodes_details.length).toBeGreaterThan(50);
+    },
+  },
+
+  tvshow_with_many_episodes_should_have_values_after_pagination: {
+    query: "/tvshow/46260?append_to_response=episodes_details",
+    expectedResult: (item) => {
+      expect(item.id).toBe(46260);
+      expect(Array.isArray(item.episodes_details)).toBe(true);
+
+      const seenPerSeason = {};
+      const paginatedEpisodes = item.episodes_details.filter((episode) => {
+        seenPerSeason[episode.season] =
+          (seenPerSeason[episode.season] || 0) + 1;
+        return seenPerSeason[episode.season] > 50;
+      });
+
+      expect(paginatedEpisodes.length).toBeGreaterThan(50);
+      expect(
+        paginatedEpisodes.filter((episode) => episode.title !== null).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+      expect(
+        paginatedEpisodes.filter((episode) => episode.description !== null)
+          .length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     },
   },
 

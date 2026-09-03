@@ -4,7 +4,8 @@ const axios = require("axios");
 
 const { client } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
-const { getRateLimiterKey } = require("../src/utils/getRateLimiterKey");
+const { getRateLimiterKey } = require("../src/routes/utils/getRateLimiterKey");
+const { resolveLimit } = require("../src/routes/utils/resolveLimit");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -167,6 +168,16 @@ describe("What's on? API rate limiting tests", () => {
       const req = { headers: {}, ip: "127.0.0.1" };
 
       expect(getRateLimiterKey(req)).toBe("127.0.0.1");
+    });
+  });
+
+  describe("Limit resolution", () => {
+    test("defaults when unset and clamps to the configured bounds", () => {
+      expect(resolveLimit(undefined)).toBe(config.limit);
+      expect(resolveLimit(50)).toBe(50);
+      expect(resolveLimit(config.maxLimit + 100)).toBe(config.maxLimit);
+      expect(resolveLimit(-1)).toBe(1);
+      expect(resolveLimit(0)).toBe(config.limit);
     });
   });
 

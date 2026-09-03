@@ -5,6 +5,7 @@ const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { parseMinimumRatings } = require("../utils/parseMinimumRatings");
 const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
+const { resolveLimit } = require("./utils/resolveLimit");
 const {
   sendInternalError,
   sendRequest,
@@ -52,9 +53,6 @@ const getRatedEpisodes = async (req, res) => {
     const api_key_query = req.query.api_key || "api_key_not_provided";
     req.query.api_key = api_key_query;
 
-    const limit_raw = req.query.limit;
-    const limit_provided = typeof limit_raw !== "undefined";
-
     const shared_query_params_error = validateSharedQueryParams(
       req.query,
       config,
@@ -76,9 +74,8 @@ const getRatedEpisodes = async (req, res) => {
       });
     }
 
-    const parsed_limit = Number(limit_raw);
     const order = req.query.order === "asc" ? "asc" : "desc";
-    const limit = limit_provided ? parsed_limit : config.limit;
+    const limit = resolveLimit(req.query.limit);
     const page = Number(req.query.page) || config.page;
     const minimumRatings = parseMinimumRatings(req.query.minimum_ratings);
     const parsedMinimumUsersRatingCount = Number(
@@ -322,7 +319,9 @@ const getRatedEpisodes = async (req, res) => {
       },
     });
 
-    const items = await collectionData.aggregate(pipeline).toArray();
+    const items = await collectionData
+      .aggregate(pipeline, { maxTimeMS: config.queryMaxTimeMS })
+      .toArray();
     const results = items[0]?.results || [];
     const total_results = items[0]?.total_results?.[0]?.total_results || 0;
 

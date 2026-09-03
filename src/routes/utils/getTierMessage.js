@@ -1,4 +1,4 @@
-const { config } = require("../config");
+const { config } = require("../../config");
 
 /**
  * Returns the rate limit exceeded message for the given API key.

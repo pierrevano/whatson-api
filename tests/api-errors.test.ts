@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const axios = require("axios");
 
+const { client, collectionData } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
 const { countLines } = require("./utils/countLines");
 const { generateRandomIp } = require("./utils/generateRandomIp");
@@ -73,6 +74,17 @@ const params = {
     },
   },
 
+  malformed_percent_encoded_name_filter: {
+    query: "?genres=%25",
+    expectedResult: (data, response) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toContain(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+      expect(response.status).toBe(404);
+    },
+  },
+
   mongo_memory_limit_error_message: {
     query: `?page=4000`,
     expectedResult: (data, response) => {
@@ -119,6 +131,16 @@ const params = {
   no_items_found_when_providing_wrong_popularity_and_ratings: {
     query:
       "?item_type=movie&is_active=true,false&popularity_filters=&ratings_filters=wrong_values",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+    },
+  },
+
+  no_items_found_on_a_blank_title_search: {
+    query: "?title=",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -582,6 +604,18 @@ const params = {
     },
   },
 
+  status_is_not_an_allowed_value: {
+    query: "?status=%25ended",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(
+        "Invalid status provided. Please specify one or more of 'canceled', 'ended', 'ongoing', 'pilot', 'unknown'. Received '%ended'.",
+      );
+      expect(data.code).toBe(400);
+    },
+  },
+
   filtered_seasons_is_not_an_integer_list: {
     query:
       "?item_type=tvshow&append_to_response=episodes_details&filtered_seasons=wrong_value",
@@ -799,5 +833,19 @@ describe("What's on? API tests", () => {
     expect(successfulResponse.headers).toHaveProperty("x-ratelimit-limit");
     expect(successfulResponse.headers).toHaveProperty("x-ratelimit-remaining");
     expect(successfulResponse.headers).not.toHaveProperty("retry-after");
+  });
+
+  test("A query exceeding its time limit is aborted", async () => {
+    expect(config.queryMaxTimeMS).toBeGreaterThan(0);
+
+    await expect(
+      collectionData
+        .aggregate([{ $sortByCount: "$title" }], { maxTimeMS: 1 })
+        .toArray(),
+    ).rejects.toThrow(/time limit|MaxTimeMSExpired/i);
+  });
+
+  afterAll(async () => {
+    await client.close();
   });
 });

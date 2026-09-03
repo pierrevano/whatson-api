@@ -1240,6 +1240,21 @@ const params = {
       }),
   },
 
+  title_search_excludes_adult_content_by_default: {
+    query: "?title=zombie",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      expect(items.some((item) => item.is_adult === true)).toBe(false);
+    },
+  },
+
+  title_search_includes_adult_content_when_requested: {
+    query: "?title=zombie&is_adult=true,false",
+    expectedResult: (items) => {
+      expect(items.some((item) => item.is_adult === true)).toBe(true);
+    },
+  },
+
   localized_title_search_should_return_expected_first_match: {
     query: "?title=La femme de ménage",
     expectedResult: (items) => {

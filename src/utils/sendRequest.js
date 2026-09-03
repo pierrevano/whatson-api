@@ -1,4 +1,6 @@
-const { areQuerySearchKeysMissing } = require("./itemTypeValidation");
+const {
+  areQuerySearchKeysMissing,
+} = require("../routes/utils/itemTypeValidation");
 const { isMongoMemoryLimitError } = require("./mongoMemoryLimitError");
 const { reportError } = require("./sendToNewRelic");
 

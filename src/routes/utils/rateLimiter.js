@@ -3,14 +3,15 @@ const {
   RateLimiterMongo,
 } = require("rate-limiter-flexible");
 
-const { client } = require("./mongoClient");
-const { config } = require("../config");
+const { client } = require("../../utils/mongoClient");
+const { config } = require("../../config");
 const { getApiKey } = require("./getApiKey");
 const { getRateLimiterKey } = require("./getRateLimiterKey");
 const { getTierMessage } = require("./getTierMessage");
 const { isSponsorApiKey } = require("./isSponsorApiKey");
-const { sendResponse } = require("./sendRequest");
-const { sendToNewRelic } = require("./sendToNewRelic");
+const { isTrustedProxyRequest } = require("./isTrustedProxyRequest");
+const { sendResponse } = require("../../utils/sendRequest");
+const { sendToNewRelic } = require("../../utils/sendToNewRelic");
 
 /**
  * Builds a memory-based rate limiter with the shared configuration defaults.
@@ -38,7 +39,6 @@ const createDailyLimiter = (points) =>
     tableName: config.collectionNameRateLimit,
     points, // maximum number of requests
     duration: config.dailyDuration, // window duration in seconds
-    blockDuration: config.dailyDuration, // block duration in seconds if rate limit is exceeded
   });
 
 const createLimiters = (points) => [
@@ -60,6 +60,9 @@ const keyedLimiters = new Map();
  * @returns {Promise<void>}
  */
 const limiter = async (req, res, next) => {
+  /* Allow trusted requests through. */
+  if (isTrustedProxyRequest(req)) return next();
+
   const apiKeyValue = req.query.api_key;
 
   let apiKeyDoc = null;

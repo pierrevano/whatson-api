@@ -10,6 +10,7 @@ const {
   getRatingsProjection,
 } = require("./getRatingsFilters");
 const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
+const { resolveLimit } = require("./utils/resolveLimit");
 
 /**
  * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.
@@ -131,7 +132,7 @@ const aggregateData = async (
   const next_episode = appendIncludes("next_episode");
   const highest_episode = appendIncludes("highest_episode");
   const lowest_episode = appendIncludes("lowest_episode");
-  const limit = isNaN(limit_query) ? config.limit : limit_query;
+  const limit = resolveLimit(limit_query);
   const minimum_ratings =
     typeof minimum_ratings_query !== "undefined" && minimum_ratings_query
       ? minimum_ratings_query
@@ -458,7 +459,8 @@ const aggregateData = async (
 
   if (id) {
     pipeline.push(match_id);
-  } else if (item_type === "tvshow") {
+  } else {
+    pipeline.push(match_item_type);
     getPipelineFromTVShow(
       config,
       is_active_item,
@@ -466,13 +468,11 @@ const aggregateData = async (
       is_must_see_item,
       is_users_certified_item,
       is_critics_certified_item,
-      item_type,
+      "",
       pipeline,
       seasons_number,
       status,
     );
-  } else {
-    pipeline.push(match_item_type);
   }
 
   if (!id) {
@@ -536,7 +536,9 @@ const aggregateData = async (
   pipeline.push(match_min_ratings_and_release_date);
   pipeline.push(facet);
 
-  const data = await collectionData.aggregate(pipeline);
+  const data = await collectionData.aggregate(pipeline, {
+    maxTimeMS: config.queryMaxTimeMS,
+  });
   let items = await data.toArray();
 
   items = await filterEpisodesBySeason(items, filtered_seasons);

@@ -25,8 +25,8 @@ const getPipelineByNames = (
   if (names) {
     const escapeRegExp = (s) => s.replace(/[.*+?{}()|[\]\\]/g, "\\$&");
 
-    const decodedNamesArray = decodeURIComponent(names).split(",");
-    const nameSet = new Set(decodedNamesArray.map((s) => s.trim()));
+    const namesArray = names.split(",").map((s) => s.trim());
+    const nameSet = new Set(namesArray.filter(Boolean));
 
     if (nameSet.has("all") || nameSet.has("allgenres")) return pipeline;
 

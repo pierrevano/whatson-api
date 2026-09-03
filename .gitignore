@@ -24,6 +24,7 @@ src/data/updateAllIds.sh
 
 # Assets
 src/assets/
+src/backup/
 
 # Temporary files
 temp_*

@@ -17,8 +17,10 @@ const {
   saveOrUpdateUserPreferences,
 } = require("./src/routes/getOrSaveUserPreferences");
 const { handleInvalidEndpoint } = require("./src/routes/handleInvalidEndpoint");
-const { limiter } = require("./src/utils/rateLimiter");
-const { validateQueryValues } = require("./src/utils/validateQueryValues");
+const { limiter } = require("./src/routes/utils/rateLimiter");
+const {
+  validateQueryValues,
+} = require("./src/routes/utils/validateQueryValues");
 const getId = require("./src/routes/getId");
 const getItems = require("./src/routes/getItems");
 const getRatedEpisodes = require("./src/routes/getRatedEpisodes");

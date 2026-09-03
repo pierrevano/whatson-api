@@ -190,6 +190,15 @@ remove_files () {
   fi
 }
 
+# A function that caps the backup history size.
+prune_backups () {
+  while [ "$(du -sk ./src/backup | awk '{print $1}')" -gt 102400 ]; do
+    OLDEST=$(ls -tr ./src/backup | head -1)
+    [[ -f "./src/backup/$OLDEST" ]] || break
+    rm -f "./src/backup/$OLDEST"
+  done
+}
+
 update_imdb_popularity_flags () {
   local json
 
@@ -831,22 +840,37 @@ else
   update_imdb_popularity_flags
 fi
 
-LOCAL_LINES=$(wc -l < "$FILMS_IDS_FILE_PATH" | awk '{print $1}')
+# Validate the id files before publishing
+BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+for ID_FILE in films_ids.txt series_ids.txt; do
+  # Skip a file that is not present locally
+  [[ -f "$FILMS_ASSETS_PATH/$ID_FILE" ]] || continue
 
-# Write to a temp file so a failed request is caught instead of counting as empty
-REMOTE_TMP=$(mktemp)
-if ! curl -fsS "$BASE_URL_ASSETS/$FILMS_FILE_NAME" -o "$REMOTE_TMP"; then
-  echo "Error: Failed to fetch $FILMS_FILE_NAME for comparison"
+  LOCAL_LINES=$(wc -l < "$FILMS_ASSETS_PATH/$ID_FILE" | awk '{print $1}')
+
+  # Write to a temp file so a failed request is caught
+  REMOTE_TMP=$(mktemp)
+  if ! curl -fsS "$BASE_URL_ASSETS/$ID_FILE" -o "$REMOTE_TMP"; then
+    echo "Error: Failed to fetch $ID_FILE for comparison"
+    rm -f "$REMOTE_TMP"
+    exit 1
+  fi
+
+  # Keep a copy as an offline fallback
+  if [[ $SOURCE != "circleci" ]]; then
+    mkdir -p ./src/backup
+    cp "$REMOTE_TMP" "./src/backup/${ID_FILE%.txt}_$BACKUP_TIMESTAMP.txt"
+    prune_backups
+  fi
+
+  REMOTE_LINES=$(wc -l < "$REMOTE_TMP" | awk '{print $1}')
   rm -f "$REMOTE_TMP"
-  exit 1
-fi
-REMOTE_LINES=$(wc -l < "$REMOTE_TMP" | awk '{print $1}')
-rm -f "$REMOTE_TMP"
 
-if [ "$LOCAL_LINES" -lt "$REMOTE_LINES" ]; then
-  echo "Error: Local file has fewer lines ($LOCAL_LINES) than the remote file ($REMOTE_LINES)"
-  exit 1
-fi
+  if [ "$LOCAL_LINES" -lt "$REMOTE_LINES" ]; then
+    echo "Error: $ID_FILE has fewer lines ($LOCAL_LINES) than the remote file ($REMOTE_LINES)"
+    exit 1
+  fi
+done
 
 if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{print $1}') -ge 6000 ]]; then
   remove_files

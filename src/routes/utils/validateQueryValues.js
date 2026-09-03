@@ -1,4 +1,4 @@
-const { sendResponse } = require("./sendRequest");
+const { sendResponse } = require("../../utils/sendRequest");
 
 /**
  * Rejects requests whose query parameters are not strings.

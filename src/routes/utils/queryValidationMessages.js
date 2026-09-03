@@ -64,7 +64,11 @@ const validateIntegerParam = (value, name, minimum = 1, maximum) => {
 
   const parsedValue = Number(trimmedValue);
 
-  if (parsedValue < minimum || (hasMaximum && parsedValue > maximum)) {
+  if (
+    !Number.isSafeInteger(parsedValue) ||
+    parsedValue < minimum ||
+    (hasMaximum && parsedValue > maximum)
+  ) {
     return `${message} Received ${receivedValue}.`;
   }
 
