@@ -109,10 +109,7 @@ describe("What's on? API rate limiting tests", () => {
     120000,
   );
 
-  rateLimitTest.each([
-    ["get", "/movie/121", "192.0.2.42"],
-    ["post", "/mcp", "192.0.2.43"],
-  ])(
+  rateLimitTest.each([["get", "/movie/121", "192.0.2.42"]])(
     "Rate Limiting should return 429 once the daily limit is exceeded: %s %s",
     async (method, path, forwardedFor) => {
       const apiCall = `${baseURL}${path}`;

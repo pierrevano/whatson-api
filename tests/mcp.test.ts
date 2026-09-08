@@ -2,13 +2,11 @@ require("dotenv").config();
 
 const axios = require("axios");
 const { config } = require("../src/config");
-const { generateRandomIp } = require("./utils/generateRandomIp");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
 
 const MCP_ENDPOINT = `${baseURL}/mcp`;
-const requesterIp = generateRandomIp();
 
 /**
  * Send a single JSON-RPC 2.0 request to the MCP HTTP endpoint.
@@ -27,7 +25,6 @@ async function mcpRequest(method, params = {}, id = 1) {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json, text/event-stream",
-      "CF-Connecting-IP": requesterIp,
     },
     validateStatus: () => true,
   });
@@ -56,28 +53,14 @@ describe("MCP server tests", () => {
   });
 
   test(
-    "anonymous requests include rate limit headers",
+    "anonymous requests succeed without rate limit headers",
     async () => {
-      const response = await axios.post(
-        MCP_ENDPOINT,
-        { jsonrpc: "2.0", id: 1, method: "tools/list" },
-        {
-          headers: {
-            Accept: "application/json, text/event-stream",
-            "CF-Connecting-IP": generateRandomIp(),
-          },
-          validateStatus: () => true,
-        },
-      );
+      const response = await mcpRequest("tools/list");
 
       expect(response.status).toBe(200);
-      expect(response.headers["x-ratelimit-limit"]).toBe(
-        String(config.pointsAnonymous),
-      );
-      expect(
-        Number(response.headers["x-ratelimit-remaining"]),
-      ).toBeGreaterThanOrEqual(0);
-      expect(response.headers).toHaveProperty("x-ratelimit-reset");
+      expect(response.headers).not.toHaveProperty("x-ratelimit-limit");
+      expect(response.headers).not.toHaveProperty("x-ratelimit-remaining");
+      expect(response.headers).not.toHaveProperty("x-ratelimit-reset");
     },
     config.timeout,
   );

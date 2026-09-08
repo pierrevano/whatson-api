@@ -1126,6 +1126,16 @@ const params = {
       }),
   },
 
+  status_values_accept_surrounding_whitespace: {
+    query: `?item_type=tvshow&is_active=true,false&status=${encodeURIComponent(" ongoing , ended ")}`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(["Ongoing", "Ended"]).toContain(item.status);
+      });
+    },
+  },
+
   ongoing_tvshows_with_1_and_2_seasons: {
     query: "?item_type=tvshow&status=ongoing&seasons_number=1,2",
     expectedResult: (items) =>

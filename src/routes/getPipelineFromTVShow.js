@@ -100,7 +100,9 @@ const getPipelineFromTVShow = (
           is_must_see_item,
           is_users_certified_item,
           is_critics_certified_item,
-          { status: { $in: status.split(",").map(capitalize) } },
+          {
+            status: { $in: status.split(",").map((s) => capitalize(s.trim())) },
+          },
           item_type_tvshow,
         ],
       },

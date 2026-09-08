@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.39.5",
+  "version": "3.39.51",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "confirm-dataset": "npm run confirm-dataset-movie && npm run confirm-dataset-tvshow",
     "mcp": "node src/mcp/server.mjs",
     "check-api-version": "node src/utils/checkApiVersion.js",
-    "commit": "git add . && czg ai",
+    "commit": "git add . && czg",
     "pull-all-platforms": "git pull origin main && git pull bitbucket main && git pull bitbucket_2 main && git pull bitbucket_3 main",
     "push-all-platforms": "git push origin main && git push bitbucket main && git push bitbucket_2 main && git push bitbucket_3 main",
     "push": "npm run check-api-version && npm run check-static-usage && npm run prettier && npm run test && npm run commit && npm run push-all-platforms",
