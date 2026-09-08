@@ -68,7 +68,17 @@ const config = {
   appendToResponse:
     "awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
   itemTypes: ["movie", "tvshow"],
+  invalidItemTypeMessage:
+    "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
+  invalidLimitMessage: "The limit must be an integer between 1",
+  invalidMinimumRatingsMessage:
+    "The minimum_ratings must contain only numbers.",
+  invalidPageMessage: "The page must be an integer greater than 0.",
+  invalidQueryValuesMessage: "Query parameters must be single string values.",
+  invalidRequestMessage: "Invalid request.",
   noMatchingItemsFoundMessage: "No matching items found.",
+  queryMemoryLimitMessage:
+    "Something went wrong. Please reduce the number of pages requested or lower the limit and try again.",
 
   imdbEpisodesPaginationOperation: "TitleEpisodesSubPagePagination",
 
@@ -379,6 +389,8 @@ const config = {
     "tmdbid",
     "traktid",
   ],
+  numericIdKeys: ["allocineid", "senscritiqueid", "thetvdbid", "tmdbid"],
+  releaseDateShortcuts: ["new", "everything"],
 };
 
 module.exports = { config };

@@ -2,7 +2,14 @@ require("dotenv").config();
 
 const axios = require("axios");
 
+const {
+  client,
+  collectionApiKey,
+  collectionData,
+} = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
+const { generateRandomIp } = require("./utils/generateRandomIp");
+const getUpdates = require("../src/routes/getUpdates");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
@@ -17,6 +24,7 @@ describe("What's on? API updates endpoint tests", () => {
 
   test("should return 403 without an API key", async () => {
     const response = await axios.get(`${baseURL}/updates`, {
+      headers: { "CF-Connecting-IP": generateRandomIp() },
       params: { since: VALID_SINCE },
       validateStatus: () => true,
     });
@@ -73,22 +81,73 @@ describe("What's on? API updates endpoint tests", () => {
 
     expect(response.status).toBe(400);
     expect(response.data.code).toBe(400);
-    expect(response.data.message).toMatch(/invalid item type/i);
+    expect(response.data.message).toContain(config.invalidItemTypeMessage);
   });
 
-  test("should return valid response structure with a sponsor API key", async () => {
-    const response = await axios.get(`${baseURL}/updates`, {
-      params: { api_key: config.internalApiKey, since: VALID_SINCE },
-      validateStatus: () => true,
-    });
+  test.each(["api_key", "API_KEY"])(
+    "should accept API key parameter casing: %s",
+    async (keyName) => {
+      const response = await axios.get(`${baseURL}/updates`, {
+        params: { [keyName]: config.internalApiKey, since: VALID_SINCE },
+        validateStatus: () => true,
+      });
 
-    expect(response.status).toBe(200);
-    expect(response.data).toMatchObject({
-      page: expect.any(Number),
-      total_pages: expect.any(Number),
-      total_results: expect.any(Number),
-      updated: expect.any(Object),
+      expect(response.status).toBe(200);
+      expect(response.data).toMatchObject({
+        page: expect.any(Number),
+        total_pages: expect.any(Number),
+        total_results: expect.any(Number),
+        updated: expect.any(Object),
+      });
+    },
+  );
+
+  test("should return valid response structure with a sponsor API key", async () => {
+    const apiKey = {
+      value: "updates-sponsor-test-key",
+      is_active: true,
+      is_internal: false,
+      rate_limit_points: config.pointsSponsor,
+    };
+    const findApiKey = jest
+      .spyOn(collectionApiKey, "findOne")
+      .mockImplementation(async (query) =>
+        query.value === apiKey.value ? apiKey : null,
+      );
+    const aggregate = jest.spyOn(collectionData, "aggregate").mockReturnValue({
+      toArray: jest.fn().mockResolvedValue([
+        {
+          results: [
+            { id: 550, item_type: "movie" },
+            { id: 1396, item_type: "tvshow" },
+          ],
+          total_count: [{ count: 2 }],
+        },
+      ]),
     });
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    try {
+      await getUpdates(
+        { query: { api_key: apiKey.value, since: VALID_SINCE, limit: "2" } },
+        res,
+      );
+
+      expect(findApiKey).toHaveBeenCalledWith({
+        value: apiKey.value,
+        is_active: true,
+      });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        page: 1,
+        total_pages: 1,
+        total_results: 2,
+        updated: { movie: [550], tvshow: [1396] },
+      });
+    } finally {
+      aggregate.mockRestore();
+      findApiKey.mockRestore();
+    }
   });
 
   test("should return ids as numbers grouped by item_type", async () => {
@@ -163,6 +222,71 @@ describe("What's on? API updates endpoint tests", () => {
     expect(response.data.updated).toEqual({ movie: [], tvshow: [] });
   });
 
+  test.each([
+    "2096-02-29",
+    "2096-02-29T00:00Z",
+    "2096-02-29T00:00:00.000Z",
+    "2096-02-29T00:00:00+02:00",
+  ])("should accept a valid since date: %s", async (since) => {
+    const response = await axios.get(`${baseURL}/updates`, {
+      params: { api_key: config.internalApiKey, since },
+      validateStatus: () => true,
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.data).toEqual({
+      page: 1,
+      updated: { movie: [], tvshow: [] },
+      total_pages: 0,
+      total_results: 0,
+    });
+  });
+
+  test("should include an item exactly at the since cutoff", async () => {
+    const item = {
+      id: 550,
+      item_type: "movie",
+      updated_at: "2096-02-29T00:00:00.000Z",
+    };
+    const aggregate = jest.spyOn(collectionData, "aggregate").mockReturnValue({
+      toArray: jest
+        .fn()
+        .mockResolvedValue([{ results: [item], total_count: [{ count: 1 }] }]),
+    });
+    const findApiKey = jest
+      .spyOn(collectionApiKey, "findOne")
+      .mockResolvedValue({ is_internal: true, value: "cutoff-test-key" });
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    try {
+      await getUpdates(
+        {
+          query: {
+            api_key: "cutoff-test-key",
+            since: "2096-02-29",
+            item_type: "movie",
+          },
+        },
+        res,
+      );
+
+      expect(aggregate).toHaveBeenCalledTimes(1);
+      expect(aggregate.mock.calls[0][0][0]).toEqual({
+        $match: { updated_at: { $gte: item.updated_at }, item_type: "movie" },
+      });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        page: 1,
+        updated: { movie: [item.id] },
+        total_pages: 1,
+        total_results: 1,
+      });
+    } finally {
+      aggregate.mockRestore();
+      findApiKey.mockRestore();
+    }
+  });
+
   test("should return empty results for a page beyond total_pages", async () => {
     const response = await axios.get(`${baseURL}/updates`, {
       params: {
@@ -230,4 +354,8 @@ describe("What's on? API updates endpoint tests", () => {
     const overlap = ids1.filter((id) => ids2.includes(id));
     expect(overlap).toHaveLength(0);
   });
+
+  afterAll(async () => {
+    await client.close();
+  }, config.timeout);
 });

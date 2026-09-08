@@ -1281,7 +1281,7 @@ const params = {
       checkSingleItemId(items, 974950);
     },
   },
-  should_return_imdb_id_case_sensitive_on_search: {
+  imdb_lookup_accepts_mixed_case_parameter_name: {
     query: "?imdbId=tt20221436&letterboxdid=unknown",
     expectedResult: (items) => {
       checkSingleItemId(items, 974950);

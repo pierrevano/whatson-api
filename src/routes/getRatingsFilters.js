@@ -30,21 +30,11 @@ const getRatingsFilters = async (ratings_filters_query) => {
   let ratings_filters = [];
 
   if (ratings_filters_array.includes("all")) {
-    // prettier-ignore
-    ratings_filters = [
-      { $divide: ["$allocine.critics_rating", 1] },
-      { $divide: ["$allocine.users_rating", 1] },
-      { $divide: ["$betaseries.users_rating", 1] },
-      { $divide: ["$imdb.users_rating", 2] },
-      { $divide: ["$metacritic.critics_rating", 20] },
-      { $divide: ["$metacritic.users_rating", 2] },
-      { $divide: ["$rotten_tomatoes.critics_rating", 20] },
-      { $divide: ["$rotten_tomatoes.users_rating", 20] },
-      { $divide: ["$letterboxd.users_rating", 1] },
-      { $divide: ["$senscritique.users_rating", 2] },
-      { $divide: ["$tmdb.users_rating", 2] },
-      { $divide: ["$trakt.users_rating", 20] }
-    ];
+    ratings_filters = Object.values(ratingsDivisors).map(
+      ({ path, divisor }) => ({
+        $divide: [path, divisor],
+      }),
+    );
   } else {
     ratings_filters_array.forEach((filter) => {
       if (ratingsDivisors[filter]) {

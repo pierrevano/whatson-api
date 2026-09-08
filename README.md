@@ -77,32 +77,32 @@ Active items are fetched from 2 different links:
 > https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&top_ranking_order=asc,desc&mojo_rank_order=asc,desc&page=<integer>&limit=<integer>
 > ```
 
-| Parameter            | Value                                                                                                                                                                                                                                     | Description                                                                                               |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| ratings_filters      | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users                                    | Ratings filters source (or _all_ for every values)                                                        |
-| popularity_filters   | allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity                                                                                                                                                                      | Popularity filters source (use _all_ for all values, _none_ to disable)                                   |
-| item_type            | movie,tvshow                                                                                                                                                                                                                              | The type of the item (_movie_, _tvshow_ or both)                                                          |
-| is_active            | true,false                                                                                                                                                                                                                                | Is the item currently on screens (_true_, _false_ or both)                                                |
-| is_adult             | true,false                                                                                                                                                                                                                                | Is the item marked as adult content (_true_, _false_ or both)                                             |
-| must_see             | true,false                                                                                                                                                                                                                                | Is the item a Metacritic must see (_true_, _false_ or both)                                               |
-| users_certified      | true,false                                                                                                                                                                                                                                | Has the item received the Rotten Tomatoes "Verified Audience" certification (_true_, _false_ or both)     |
-| critics_certified    | true,false                                                                                                                                                                                                                                | Has the item received the Rotten Tomatoes "Certified Fresh" status from critics (_true_, _false_ or both) |
-| minimum_ratings      | _number_                                                                                                                                                                                                                                  | Minimum ratings to return                                                                                 |
-| release_date         | new,from:yyyy-mm-dd,to:yyyy-mm-dd                                                                                                                                                                                                         | Use `new` for recent items or `from:`/`to:` with `yyyy-mm-dd` to set an inclusive date range              |
-| runtime              | _integer_,_integer_                                                                                                                                                                                                                       | Filter items by runtime in seconds (one value for exact match or two values for an inclusive range)       |
-| seasons_number       | 1,2,3,4,5                                                                                                                                                                                                                                 | Number of seasons (5 means 5+) (only valid for tvshows)                                                   |
-| status               | canceled,ended,ongoing,pilot,unknown                                                                                                                                                                                                      | TV show's status (only valid for tvshows)                                                                 |
-| directors            | _string_                                                                                                                                                                                                                                  | Directors (or `all` for every value)                                                                      |
-| genres               | _string_                                                                                                                                                                                                                                  | Genres (or `all` for every value)                                                                         |
-| platforms            | _string_                                                                                                                                                                                                                                  | Platforms links (or `all` for every value)                                                                |
-| networks             | _string_                                                                                                                                                                                                                                  | Networks (or `all` for every value)                                                                       |
-| production_companies | _string_                                                                                                                                                                                                                                  | Production companies (or `all` for every value)                                                           |
-| append_to_response   | awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide | Should we return specific keys in the response                                                            |
-| filtered_seasons     | _integer_,_integer_                                                                                                                                                                                                                       | Filter episodes by one or more seasons                                                                    |
-| top_ranking_order    | asc,desc                                                                                                                                                                                                                                  | Sort by IMDb top ranking (`asc` shows #1 first, `desc` shows #1 last; only ranked items)                  |
-| mojo_rank_order      | asc,desc                                                                                                                                                                                                                                  | Sort by Box Office Mojo rank (`asc` shows #1 first, `desc` shows #1 last; only ranked items)              |
-| page                 | _integer_                                                                                                                                                                                                                                 | Page number                                                                                               |
-| limit                | _integer_                                                                                                                                                                                                                                 | Page items limit                                                                                          |
+| Parameter            | Value                                                                                                                                                                                                                                     | Description                                                                                                                               |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| ratings_filters      | allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users                                    | Ratings filters source (or _all_ for every values)                                                                                        |
+| popularity_filters   | allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity                                                                                                                                                                      | Popularity filters source (use _all_ for all values, _none_ to disable)                                                                   |
+| item_type            | movie,tvshow                                                                                                                                                                                                                              | The type of the item (_movie_, _tvshow_ or both)                                                                                          |
+| is_active            | true,false                                                                                                                                                                                                                                | Is the item currently on screens (_true_, _false_ or both)                                                                                |
+| is_adult             | true,false                                                                                                                                                                                                                                | Is the item marked as adult content (_true_, _false_ or both)                                                                             |
+| must_see             | true,false                                                                                                                                                                                                                                | Is the item a Metacritic must see (_true_, _false_ or both)                                                                               |
+| users_certified      | true,false                                                                                                                                                                                                                                | Has the item received the Rotten Tomatoes "Verified Audience" certification (_true_, _false_ or both)                                     |
+| critics_certified    | true,false                                                                                                                                                                                                                                | Has the item received the Rotten Tomatoes "Certified Fresh" status from critics (_true_, _false_ or both)                                 |
+| minimum_ratings      | _number_                                                                                                                                                                                                                                  | Minimum ratings to return                                                                                                                 |
+| release_date         | new,everything,from:yyyy-mm-dd,to:yyyy-mm-dd                                                                                                                                                                                              | Use `new` for recent items, `everything` alone for no release-date filter, or `from:`/`to:` with `yyyy-mm-dd` for an inclusive date range |
+| runtime              | _integer_,_integer_                                                                                                                                                                                                                       | Filter items by runtime in seconds (one value for exact match or two values for an inclusive range)                                       |
+| seasons_number       | 1,2,3,4,5                                                                                                                                                                                                                                 | Number of seasons (5 means 5+) (only valid for tvshows)                                                                                   |
+| status               | canceled,ended,ongoing,pilot,unknown                                                                                                                                                                                                      | TV show's status (only valid for tvshows)                                                                                                 |
+| directors            | _string_                                                                                                                                                                                                                                  | Directors (or `all` for every value)                                                                                                      |
+| genres               | _string_                                                                                                                                                                                                                                  | Genres (or `all` for every value)                                                                                                         |
+| platforms            | _string_                                                                                                                                                                                                                                  | Platforms links (or `all` for every value)                                                                                                |
+| networks             | _string_                                                                                                                                                                                                                                  | Networks (or `all` for every value)                                                                                                       |
+| production_companies | _string_                                                                                                                                                                                                                                  | Production companies (or `all` for every value)                                                                                           |
+| append_to_response   | awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide | Should we return specific keys in the response                                                                                            |
+| filtered_seasons     | _integer_,_integer_                                                                                                                                                                                                                       | Filter episodes by one or more seasons                                                                                                    |
+| top_ranking_order    | asc,desc                                                                                                                                                                                                                                  | Sort by IMDb top ranking (`asc` shows #1 first, `desc` shows #1 last; only ranked items)                                                  |
+| mojo_rank_order      | asc,desc                                                                                                                                                                                                                                  | Sort by Box Office Mojo rank (`asc` shows #1 first, `desc` shows #1 last; only ranked items)                                              |
+| page                 | _integer_                                                                                                                                                                                                                                 | Page number                                                                                                                               |
+| limit                | _integer_                                                                                                                                                                                                                                 | Page items limit                                                                                                                          |
 
 _For directors, genres, platforms, networks, and production companies, you can use the `^` and `$` regex delimiters to perform strict matching._
 
@@ -140,6 +140,7 @@ The query parameters provided below are solely for item search purposes and must
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
+- `503` Service unavailable
 
 ---
 
@@ -183,6 +184,7 @@ You can also see it live at https://whatson-top-episodes.vercel.app.
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
+- `503` Service unavailable
 
 Example of a rated episodes response returned:
 
@@ -226,20 +228,22 @@ Returns the TMDB IDs of items added or updated since a given timestamp, grouped 
 > https://whatson-api.onrender.com/updates?since=<ISO 8601 date>&item_type=movie,tvshow&page=<integer>&limit=<integer>
 > ```
 
-| Parameter | Value           | Description                                                                          |
-| --------- | --------------- | ------------------------------------------------------------------------------------ |
-| since     | _ISO 8601 date_ | Return items added or updated after this timestamp (e.g. `2026-01-01T00:00:00.000Z`) |
-| item_type | movie,tvshow    | The type of the item (_movie_, _tvshow_ or both)                                     |
-| page      | _integer_       | Page number                                                                          |
-| limit     | _integer_       | Page items limit                                                                     |
+| Parameter | Value           | Description                                                                                                                 |
+| --------- | --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| since     | _ISO 8601 date_ | Return items added or updated since this date (`YYYY-MM-DD`) or timestamp with a timezone (e.g. `2026-01-01T00:00:00.000Z`) |
+| item_type | movie,tvshow    | The type of the item (_movie_, _tvshow_ or both)                                                                            |
+| page      | _integer_       | Page number                                                                                                                 |
+| limit     | _integer_       | Page items limit                                                                                                            |
 
 #### Responses:
 
 - `200` A successful response
 - `400` Invalid query parameters were passed
 - `403` A sponsor API key is required
+- `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
+- `503` Service unavailable
 
 Example of an updates response returned:
 
@@ -278,6 +282,7 @@ Provides detailed information about a specific item (movie or tvshow) by its typ
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
+- `503` Service unavailable
 
 ---
 
@@ -576,10 +581,12 @@ Returns season-level metadata for a tvshow.
 #### Responses:
 
 - `200` A successful response
+- `400` Invalid query parameters were passed
 - `404` No items have been found (or invalid endpoint)
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
+- `503` Service unavailable
 
 ---
 
@@ -599,16 +606,18 @@ Returns the list of episodes for a specific season, with optional episode-level 
 #### Responses:
 
 - `200` A successful response
+- `400` Invalid query parameters were passed
 - `404` No items have been found (or invalid endpoint)
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
+- `503` Service unavailable
 
 ---
 
 ### **GET /tvshow/{id}/seasons/{season_number}/episodes/{episode_number}**
 
-Returns details for a specific episode inside a specific season.
+Returns details for a specific episode inside a specific season. Season numbers must be `1` or greater; episode numbers can be `0` or greater.
 
 > ```
 > https://whatson-api.onrender.com/tvshow/:id/seasons/:season_number/episodes/:episode_number
@@ -617,10 +626,12 @@ Returns details for a specific episode inside a specific season.
 #### Responses:
 
 - `200` A successful response
+- `400` Invalid query parameters were passed
 - `404` No items have been found (or invalid endpoint)
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
+- `503` Service unavailable
 
 ---
 

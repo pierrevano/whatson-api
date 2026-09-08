@@ -14,7 +14,7 @@ const areQuerySearchKeysMissing = (query, keysToCheckForSearch) => {
 };
 
 const invalidItemTypeMessage = (itemTypeQuery) =>
-  `Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.${
+  `${config.invalidItemTypeMessage}${
     itemTypeQuery ? ` Received '${itemTypeQuery}'.` : ""
   }`;
 

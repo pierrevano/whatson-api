@@ -4,12 +4,12 @@ const axios = require("axios");
 
 const { config } = require("../src/config");
 const {
-  expectPositiveInteger,
-  expectImdbId,
-  expectSlugLikeId,
-  expectPersistentId,
-  expectNumericIdOrNumericString,
   expectIdRatingConsistency,
+  expectImdbId,
+  expectNumericIdOrNumericString,
+  expectPersistentId,
+  expectPositiveInteger,
+  expectSlugLikeId,
 } = require("./utils/idExpectations");
 const { formatDate } = require("../src/utils/formatDate");
 const { withErrorContext } = require("./utils/withErrorContext");
@@ -1501,18 +1501,6 @@ const params = {
     },
   },
 
-  ratings_average_for_incorrect_minimum_ratings: {
-    query:
-      "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
-    expectedResult: (items) => {
-      for (let i = 1; i < items.length; i++) {
-        expect(items[i].ratings_average).toBeLessThanOrEqual(
-          items[i - 1].ratings_average,
-        );
-      }
-    },
-  },
-
   items_with_all_required_keys_active_tvshow: {
     query: `?item_type=tvshow&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
     expectedResult: checkItemProperties,
@@ -1859,7 +1847,7 @@ const params = {
     },
   },
 
-  should_have_release_date_after_current_date: {
+  next_episode_release_date_should_not_be_older_than_48_hours: {
     query: `?item_type=tvshow&is_active=true&append_to_response=last_episode,next_episode&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       const currentDate = new Date().getTime();

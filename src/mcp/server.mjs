@@ -13,14 +13,16 @@
  *   WHATSON_API_KEY  – optional API key passed as ?api_key=…
  */
 
-import { fileURLToPath } from "url";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import axios from "axios";
+
+import { AjvJsonSchemaValidator } from "@modelcontextprotocol/sdk/validation/ajv";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import axios from "axios";
+import { fileURLToPath } from "url";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 // ---------------------------------------------------------------------------
 // HTTP client
@@ -402,7 +404,18 @@ const TOOLS = [
       },
     },
   },
-];
+].map((tool) => ({
+  ...tool,
+  inputSchema: { ...tool.inputSchema, additionalProperties: false },
+}));
+
+const schemaValidator = new AjvJsonSchemaValidator();
+const toolValidators = new Map(
+  TOOLS.map((tool) => [
+    tool.name,
+    schemaValidator.getValidator(tool.inputSchema),
+  ]),
+);
 
 // ---------------------------------------------------------------------------
 // Server factory
@@ -422,6 +435,13 @@ export function createMCPServer() {
     const { name, arguments: args = {} } = request.params;
 
     try {
+      const validate = toolValidators.get(name);
+      if (validate && !validate(args).valid) {
+        return {
+          content: [{ type: "text", text: "Invalid tool arguments." }],
+          isError: true,
+        };
+      }
       let response;
 
       switch (name) {

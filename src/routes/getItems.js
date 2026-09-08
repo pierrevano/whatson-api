@@ -1,27 +1,16 @@
 const { aggregateData } = require("./aggregateData");
 const { config } = require("../config");
-const {
-  sendInternalError,
-  sendRequest,
-  sendResponse,
-} = require("../utils/sendRequest");
+const { sendInternalError, sendRequest } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
-const { validateIntegerListParam } = require("./utils/queryValidationMessages");
-const {
-  validateItemTypeQuery,
-  validateSharedQueryParams,
-} = require("./utils/queryParamsValidation");
 const findId = require("./findId");
 const getInternalApiKey = require("./getInternalApiKey");
 
 /**
- * Handles the public `/` endpoint by translating query parameters into a Mongo aggregation
- * pipeline, enriching the response when identifier searches are detected, and delegating the
- * response serialization to the shared request helpers.
+ * Returns matching items.
  *
  * @param {import("express").Request} req - Express request containing filters and pagination options.
  * @param {import("express").Response} res - Express response used to return JSON payloads or errors.
- * @returns {Promise<void>} Resolves once the response has been sent.
+ * @returns {Promise<import("express").Response|void>} Resolves once the response has been sent.
  */
 const getItems = async (req, res) => {
   try {
@@ -58,40 +47,6 @@ const getItems = async (req, res) => {
       users_certified: is_users_certified_query,
     } = req.query;
 
-    const item_type_error = validateItemTypeQuery(item_type_query);
-    if (item_type_error) {
-      return sendResponse(res, 400, {
-        message: item_type_error,
-      });
-    }
-
-    const shared_query_params_error = validateSharedQueryParams(
-      req.query,
-      config,
-    );
-    if (shared_query_params_error) {
-      return sendResponse(res, 400, {
-        message: shared_query_params_error,
-      });
-    }
-
-    const runtime_error = validateIntegerListParam(runtime_query, "runtime", 0);
-    if (runtime_error) {
-      return sendResponse(res, 400, {
-        message: runtime_error,
-      });
-    }
-
-    const seasons_number_error = validateIntegerListParam(
-      seasons_number_query,
-      "seasons_number",
-    );
-    if (seasons_number_error) {
-      return sendResponse(res, 400, {
-        message: seasons_number_error,
-      });
-    }
-
     const parsed_limit = Number(limit_raw);
     const limit_query = limit_provided ? parsed_limit : undefined;
     const page_query = Number(req.query.page);
@@ -110,7 +65,28 @@ const getItems = async (req, res) => {
       newRelicQueryAttributes,
     );
 
-    let { items, limit, page, is_active_item } = await aggregateData(
+    if (
+      config.keysToCheckForSearch.some((key) => Object.hasOwn(req.query, key))
+    ) {
+      const { results, total_results } = await findId(
+        req.query,
+        append_to_response,
+        filtered_seasons_query,
+      );
+      return sendRequest(
+        req,
+        res,
+        {
+          page: 1,
+          results,
+          total_pages: 1,
+          total_results,
+        },
+        config,
+      );
+    }
+
+    const { items, limit, page, is_active_item } = await aggregateData(
       append_to_response,
       directors_query,
       genres_query,
@@ -141,40 +117,12 @@ const getItems = async (req, res) => {
     const total_results =
       results.length > 0 ? items[0].total_results[0].total_results : 0;
 
-    let json = {
+    const json = {
       page,
       results,
       total_pages: Math.ceil(total_results / limit),
       total_results,
     };
-
-    for (let index = 0; index < config.keysToCheckForSearch.length; index++) {
-      const key = config.keysToCheckForSearch[index];
-
-      const lowerCaseQuery = {};
-      for (let queryKey in req.query) {
-        lowerCaseQuery[queryKey.toLowerCase()] = req.query[queryKey];
-      }
-
-      if (lowerCaseQuery.hasOwnProperty(key)) {
-        const items = await findId(
-          lowerCaseQuery,
-          append_to_response,
-          filtered_seasons_query,
-        );
-        const results = items.results;
-        const total_results = items.total_results;
-
-        json = {
-          page: 1,
-          results,
-          total_pages: 1,
-          total_results,
-        };
-
-        break;
-      }
-    }
 
     await sendRequest(req, res, json, config, is_active_item);
   } catch (error) {

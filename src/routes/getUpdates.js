@@ -1,12 +1,11 @@
 const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const { getApiKey } = require("./utils/getApiKey");
-const { invalidItemTypeMessage } = require("./utils/itemTypeValidation");
 const { isSponsorApiKey } = require("./utils/isSponsorApiKey");
+const { isValidISODate } = require("../utils/parseReleaseDateRange");
 const { resolveLimit } = require("./utils/resolveLimit");
 const { sendInternalError, sendResponse } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
-const { validateSharedQueryParams } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
 
 /**
@@ -36,34 +35,20 @@ const getUpdates = async (req, res) => {
       });
     }
 
-    const sinceDate = new Date(since);
-    if (isNaN(sinceDate.getTime())) {
+    if (!isValidISODate(since)) {
       return sendResponse(res, 400, {
         message:
           "The 'since' parameter must be a valid ISO 8601 date string (e.g. 2026-01-01T00:00:00.000Z).",
       });
     }
+    const sinceDate = new Date(since);
 
-    const requestedTypes = req.query.item_type?.split(",");
+    const requestedTypes = req.query.item_type
+      ? req.query.item_type.split(",")
+      : undefined;
     const itemTypes = config.itemTypes.filter(
       (t) => !requestedTypes || requestedTypes.includes(t),
     );
-
-    if (itemTypes.length === 0) {
-      return sendResponse(res, 400, {
-        message: invalidItemTypeMessage(req.query.item_type),
-      });
-    }
-
-    const shared_query_params_error = validateSharedQueryParams(
-      req.query,
-      config,
-    );
-    if (shared_query_params_error) {
-      return sendResponse(res, 400, {
-        message: shared_query_params_error,
-      });
-    }
 
     const page = Number(req.query.page) || config.page;
     const limit = resolveLimit(req.query.limit);

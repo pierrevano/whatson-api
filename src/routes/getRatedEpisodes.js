@@ -6,14 +6,8 @@ const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { parseMinimumRatings } = require("../utils/parseMinimumRatings");
 const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
 const { resolveLimit } = require("./utils/resolveLimit");
-const {
-  sendInternalError,
-  sendRequest,
-  sendResponse,
-} = require("../utils/sendRequest");
+const { sendInternalError, sendRequest } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
-const { validateIntegerParam } = require("./utils/queryValidationMessages");
-const { validateSharedQueryParams } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
 
 /**
@@ -52,27 +46,6 @@ const getRatedEpisodes = async (req, res) => {
   try {
     const api_key_query = req.query.api_key || "api_key_not_provided";
     req.query.api_key = api_key_query;
-
-    const shared_query_params_error = validateSharedQueryParams(
-      req.query,
-      config,
-    );
-    if (shared_query_params_error) {
-      return sendResponse(res, 400, {
-        message: shared_query_params_error,
-      });
-    }
-
-    const minimum_users_rating_count_error = validateIntegerParam(
-      req.query.minimum_users_rating_count,
-      "minimum_users_rating_count",
-      0,
-    );
-    if (minimum_users_rating_count_error) {
-      return sendResponse(res, 400, {
-        message: minimum_users_rating_count_error,
-      });
-    }
 
     const order = req.query.order === "asc" ? "asc" : "desc";
     const limit = resolveLimit(req.query.limit);

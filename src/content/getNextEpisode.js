@@ -1,3 +1,4 @@
+const { buildEpisodeSummary } = require("../utils/buildEpisodeSummary");
 const { config } = require("../config");
 const { formatDate } = require("../utils/formatDate");
 const { getAllocineInfo } = require("./getAllocineInfo");
@@ -82,16 +83,8 @@ const getNextEpisode = async (
 
     if ((await getAllocineInfo(allocineHomepage, false)).status !== "Ended") {
       nextEpisodeDetails = {
-        season: nextEpisode.season,
-        episode: nextEpisode.episode,
+        ...buildEpisodeSummary(nextEpisode),
         episode_type: updateToReadableString(episode_type),
-        title: nextEpisode.title,
-        description: nextEpisode.description,
-        id: nextEpisode.id,
-        url: nextEpisode.url,
-        release_date: nextEpisode.release_date,
-        users_rating: nextEpisode.users_rating,
-        users_rating_count: nextEpisode.users_rating_count,
       };
     }
   } catch (error) {

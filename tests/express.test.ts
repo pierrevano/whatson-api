@@ -114,15 +114,32 @@ describe("Express routing", () => {
 });
 
 describe("Express error handling (405 method-not-allowed)", () => {
-  test("known route hit with the wrong method returns 405 and an Allow header", async () => {
-    const res = await fetch(`${baseURL}/movie/123`, { method: "POST" });
-    const body = await res.json();
+  test.each(
+    [
+      "/episodes/rated",
+      "/movie/123",
+      "/tvshow/123",
+      "/tvshow/123/seasons",
+      "/tvshow/123/seasons/1/episodes",
+      "/tvshow/123/seasons/1/episodes/1",
+      "/updates",
+    ].flatMap((routePath) => [
+      routePath,
+      `${routePath}/`,
+      routePath.toUpperCase(),
+    ]),
+  )(
+    "known route hit with the wrong method returns 405 and an Allow header: %s",
+    async (routePath) => {
+      const res = await fetch(`${baseURL}${routePath}`, { method: "POST" });
+      const body = await res.json();
 
-    expect(res.status).toBe(405);
-    expect(res.headers.get("allow")).toBe("GET");
-    expect(body.message).toContain("Method not allowed");
-    expect(body.code).toBe(405);
-  });
+      expect(res.status).toBe(405);
+      expect(res.headers.get("allow")).toBe("GET");
+      expect(body.message).toContain("Method not allowed");
+      expect(body.code).toBe(405);
+    },
+  );
 
   test("root path with a disallowed method returns 405", async () => {
     const res = await fetch(`${baseURL}/`, { method: "DELETE" });

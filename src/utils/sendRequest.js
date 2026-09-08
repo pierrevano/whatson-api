@@ -1,6 +1,7 @@
 const {
   areQuerySearchKeysMissing,
 } = require("../routes/utils/itemTypeValidation");
+const { config } = require("../config");
 const { isMongoMemoryLimitError } = require("./mongoMemoryLimitError");
 const { reportError } = require("./sendToNewRelic");
 
@@ -29,32 +30,16 @@ const sendResponse = (res, statusCode, data) => {
 };
 
 /**
- * Validates query parameters, applies standard error handling, and ultimately dispatches
- * the response payload produced by the aggregation helpers.
+ * Sends the response with standard error handling.
  *
  * @param {import("express").Request} req - Express request containing the original user query.
  * @param {import("express").Response} res - Express response used to send the outcome.
- * @param {object|null} json - Aggregated payload returned by the Mongo pipeline.
+ * @param {object|null|undefined} json - Aggregated payload returned by the Mongo pipeline.
  * @param {typeof import("../config").config} config - Shared configuration values.
- * @param {{ is_active: boolean }} [is_active_item] - Activity metadata returned by the aggregation pipeline.
+ * @param {{ is_active: boolean }|{ $or: Array<{ is_active: boolean }> }} [is_active_item] - Activity metadata returned by the aggregation pipeline.
  * @returns {import("express").Response} The Express response after being sent.
  */
 const sendRequest = (req, res, json, config, is_active_item) => {
-  const allowedParams = [
-    ...config.allowedQueryParams,
-    ...config.keysToCheckForSearch,
-  ];
-
-  const invalidParams = Object.keys(req.query).filter(
-    (key) => !allowedParams.includes(key.toLowerCase()),
-  );
-
-  if (invalidParams.length > 0) {
-    return sendResponse(res, 400, {
-      message: `Invalid query parameter(s): ${invalidParams.join(", ")}`,
-    });
-  }
-
   const { keysToCheckForSearch } = config;
   const areNoResults = json && json.results && json.results.length === 0;
   const isQuerySearchKeyMissing = areQuerySearchKeysMissing(
@@ -84,8 +69,7 @@ const sendRequest = (req, res, json, config, is_active_item) => {
   };
 
   if (!json || areNoResults) {
-    const isActiveUndefinedOrMissing =
-      !req.query.is_active || typeof req.query.is_active === "undefined";
+    const isActiveUndefinedOrMissing = !req.query.is_active;
     const isRootPath = req.path === "/";
     const errorMessage = `${config.noMatchingItemsFoundMessage}${
       isActiveUndefinedOrMissing && isQuerySearchKeyMissing && isRootPath
@@ -100,12 +84,11 @@ const sendRequest = (req, res, json, config, is_active_item) => {
 };
 
 /**
- * Authorises and serves the preferences API, supporting both retrieval and upsert operations
- * depending on the `post` flag.
+ * Retrieves or upserts preferences.
  *
  * @param {import("express").Response} res - Express response used to return the outcome.
  * @param {string} calculatedDigest - Expected digest computed from the email and secret.
- * @param {string} digest - Digest provided by the caller for verification.
+ * @param {string|undefined} digest - Digest provided by the caller for verification.
  * @param {import("mongodb").Collection} collectionNamePreferences - Mongo collection storing preferences.
  * @param {string} email - Target email address.
  * @param {object} [preferences] - Preferences payload when performing an update.
@@ -139,9 +122,7 @@ const sendPreferencesRequest = async (
         message: "Preferences have been successfully updated.",
       });
     } catch (error) {
-      reportError(null, null, null, error);
-
-      return sendResponse(res, 500, { message: error.message });
+      return sendInternalError(res, error);
     }
   } else {
     try {
@@ -155,9 +136,7 @@ const sendPreferencesRequest = async (
         return sendResponse(res, 200, preferences);
       }
     } catch (error) {
-      reportError(null, null, null, error);
-
-      return sendResponse(res, 500, { message: error.message });
+      return sendInternalError(res, error);
     }
   }
 };
@@ -176,15 +155,28 @@ const sendInternalError = async (res, error) => {
 
   if (isMongoMemoryLimitError(error)) {
     return sendResponse(res, 500, {
-      message:
-        "Something went wrong. Please reduce the number of pages requested or lower the limit and try again.",
+      message: config.queryMemoryLimitMessage,
     });
   }
 
   return sendResponse(res, 500, { message: "Something went wrong." });
 };
 
+const handleRequestError = (error, _req, res, next) => {
+  if (res.headersSent) return next(error);
+
+  const status = error.status;
+  if (Number.isInteger(status) && status >= 400 && status < 500) {
+    return sendResponse(res, status, {
+      message: config.invalidRequestMessage,
+    });
+  }
+
+  return sendInternalError(res, error);
+};
+
 module.exports = {
+  handleRequestError,
   sendInternalError,
   sendPreferencesRequest,
   sendRequest,

@@ -8,19 +8,27 @@ const allowedEndpoints = [
   "GET /tvshow/:id/seasons",
   "GET /tvshow/:id/seasons/:season_number/episodes",
   "GET /tvshow/:id/seasons/:season_number/episodes/:episode_number",
+  "GET /updates",
 ];
 
 const routeSpecs = [
   { pattern: /^\/$/, methods: ["GET"] },
-  { pattern: /^\/episodes\/rated$/, methods: ["GET"] },
-  { pattern: /^\/movie\/[^/]+$/, methods: ["GET"] },
-  { pattern: /^\/tvshow\/[^/]+$/, methods: ["GET"] },
-  { pattern: /^\/tvshow\/[^/]+\/seasons$/, methods: ["GET"] },
-  { pattern: /^\/tvshow\/[^/]+\/seasons\/[^/]+\/episodes$/, methods: ["GET"] },
+  { pattern: /^\/episodes\/rated\/?$/i, methods: ["GET"] },
+  { pattern: /^\/movie\/[^/]+\/?$/i, methods: ["GET"] },
+  { pattern: /^\/tvshow\/[^/]+\/?$/i, methods: ["GET"] },
   {
-    pattern: /^\/tvshow\/[^/]+\/seasons\/[^/]+\/episodes\/[^/]+$/,
+    pattern: /^\/tvshow\/[^/]+\/seasons\/?$/i,
     methods: ["GET"],
   },
+  {
+    pattern: /^\/tvshow\/[^/]+\/seasons\/[^/]+\/episodes\/?$/i,
+    methods: ["GET"],
+  },
+  {
+    pattern: /^\/tvshow\/[^/]+\/seasons\/[^/]+\/episodes\/[^/]+\/?$/i,
+    methods: ["GET"],
+  },
+  { pattern: /^\/updates\/?$/i, methods: ["GET"] },
 ];
 
 const handleInvalidEndpoint = (req, res) => {
@@ -36,7 +44,7 @@ const handleInvalidEndpoint = (req, res) => {
   }
 
   return sendResponse(res, 404, {
-    message: `Invalid endpoint: ${req.originalUrl}. Allowed endpoints are: ${allowedEndpoints.join(", ")}.`,
+    message: `Invalid endpoint: ${req.path}. Allowed endpoints are: ${allowedEndpoints.join(", ")}.`,
   });
 };
 

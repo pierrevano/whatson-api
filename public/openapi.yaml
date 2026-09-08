@@ -13,7 +13,7 @@ info:
     **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
     0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
     AlloCiné native, etc.).
-  version: 3.39.4
+  version: 3.39.5
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -787,6 +787,7 @@ paths:
 
             Special shortcut: `new` returns recently released titles
             (last 6 months for movies, last 18 months for TV shows).
+            Use `everything` alone to apply no release-date filter.
           schema:
             type: string
             example: "from:2020-01-01,to:2024-12-31"
@@ -971,6 +972,68 @@ paths:
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
           description: Internal server error.
+        "503":
+          description: Service unavailable.
+
+  /updates:
+    get:
+      operationId: getUpdates
+      summary: Get updated title IDs
+      description: Returns IDs of titles added or updated since a given date, grouped by item type. Requires a sponsor API key.
+      tags: [Titles]
+      parameters:
+        - name: since
+          in: query
+          required: true
+          description: ISO 8601 date (YYYY-MM-DD) or timestamp with a timezone. The lower bound is inclusive.
+          schema:
+            type: string
+            example: "2026-01-01T00:00:00.000Z"
+        - name: item_type
+          in: query
+          description: One or both item types, separated by a comma.
+          schema:
+            type: string
+            enum: [movie, tvshow, "movie,tvshow", "tvshow,movie"]
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Paginated IDs grouped by item type.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                  updated:
+                    type: object
+                    properties:
+                      movie:
+                        type: array
+                        items:
+                          type: integer
+                      tvshow:
+                        type: array
+                        items:
+                          type: integer
+                  total_pages:
+                    type: integer
+                  total_results:
+                    type: integer
+        "400":
+          description: Invalid query parameters.
+        "403":
+          description: A sponsor API key is required.
+        "405":
+          description: Method not allowed.
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
+        "500":
+          description: Internal server error.
+        "503":
+          description: Service unavailable.
 
   /movie/{id}:
     get:
@@ -1013,6 +1076,8 @@ paths:
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
           description: Internal server error.
+        "503":
+          description: Service unavailable.
 
   /tvshow/{id}:
     get:
@@ -1055,6 +1120,8 @@ paths:
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
           description: Internal server error.
+        "503":
+          description: Service unavailable.
 
   /tvshow/{id}/seasons:
     get:
@@ -1092,6 +1159,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TvShowSeasons"
+        "400":
+          description: Invalid query parameters.
         "404":
           description: Not found.
           content:
@@ -1104,6 +1173,8 @@ paths:
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
           description: Internal server error.
+        "503":
+          description: Service unavailable.
 
   /tvshow/{id}/seasons/{season_number}/episodes:
     get:
@@ -1142,6 +1213,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TvShowSeasonEpisodes"
+        "400":
+          description: Invalid query parameters.
         "404":
           description: Not found.
           content:
@@ -1154,6 +1227,8 @@ paths:
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
           description: Internal server error.
+        "503":
+          description: Service unavailable.
 
   /tvshow/{id}/seasons/{season_number}/episodes/{episode_number}:
     get:
@@ -1180,10 +1255,10 @@ paths:
         - name: episode_number
           in: path
           required: true
-          description: Episode number within the season (1-based).
+          description: Episode number within the season (0 or greater).
           schema:
             type: integer
-            minimum: 1
+            minimum: 0
             example: 10
       responses:
         "200":
@@ -1192,6 +1267,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TvShowEpisodeDetail"
+        "400":
+          description: Invalid query parameters.
         "404":
           description: Not found.
           content:
@@ -1204,6 +1281,8 @@ paths:
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
           description: Internal server error.
+        "503":
+          description: Service unavailable.
 
   /episodes/rated:
     get:
@@ -1342,3 +1421,5 @@ paths:
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
           description: Internal server error.
+        "503":
+          description: Service unavailable.

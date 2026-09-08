@@ -49,12 +49,7 @@ const findId = async (json, append_to_response, filtered_seasons) => {
 
     const isTitleKey = key === "title";
     const isTraktIdKey = key === "traktid";
-    const isNumericIdKey = [
-      "allocineid",
-      "senscritiqueid",
-      "thetvdbid",
-      "tmdbid",
-    ].includes(key);
+    const isNumericIdKey = config.numericIdKeys.includes(key);
 
     if (isTitleKey) {
       const normalizedTitle = normalizeString(value);

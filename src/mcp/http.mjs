@@ -1,16 +1,13 @@
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { createMCPServer } from "./server.mjs";
+import { limiter } from "../routes/utils/rateLimiter.js";
 
 export function setupMCPRoutes(app) {
-  app.post("/mcp", async (req, res) => {
-    try {
-      const transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: undefined, // stateless — no session state needed
-      });
-      await createMCPServer().connect(transport);
-      await transport.handleRequest(req, res, req.body);
-    } catch (error) {
-      if (!res.headersSent) res.status(500).json({ error: error.message });
-    }
+  app.post("/mcp", limiter, async (req, res) => {
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: undefined, // Stateless transport.
+    });
+    await createMCPServer().connect(transport);
+    await transport.handleRequest(req, res, req.body);
   });
 }

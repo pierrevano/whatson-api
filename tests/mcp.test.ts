@@ -2,11 +2,13 @@ require("dotenv").config();
 
 const axios = require("axios");
 const { config } = require("../src/config");
+const { generateRandomIp } = require("./utils/generateRandomIp");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
 
 const MCP_ENDPOINT = `${baseURL}/mcp`;
+const requesterIp = generateRandomIp();
 
 /**
  * Send a single JSON-RPC 2.0 request to the MCP HTTP endpoint.
@@ -25,6 +27,7 @@ async function mcpRequest(method, params = {}, id = 1) {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json, text/event-stream",
+      "CF-Connecting-IP": requesterIp,
     },
     validateStatus: () => true,
   });
@@ -51,6 +54,33 @@ describe("MCP server tests", () => {
   beforeAll(() => {
     console.log(`Testing MCP on ${MCP_ENDPOINT}`);
   });
+
+  test(
+    "anonymous requests include rate limit headers",
+    async () => {
+      const response = await axios.post(
+        MCP_ENDPOINT,
+        { jsonrpc: "2.0", id: 1, method: "tools/list" },
+        {
+          headers: {
+            Accept: "application/json, text/event-stream",
+            "CF-Connecting-IP": generateRandomIp(),
+          },
+          validateStatus: () => true,
+        },
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.headers["x-ratelimit-limit"]).toBe(
+        String(config.pointsAnonymous),
+      );
+      expect(
+        Number(response.headers["x-ratelimit-remaining"]),
+      ).toBeGreaterThanOrEqual(0);
+      expect(response.headers).toHaveProperty("x-ratelimit-reset");
+    },
+    config.timeout,
+  );
 
   test(
     "initialize returns server info",
@@ -184,6 +214,45 @@ describe("MCP server tests", () => {
       const parsed = JSON.parse(result.content[0].text);
       expect(parsed).toHaveProperty("results");
       expect(parsed.results.length).toBeGreaterThan(0);
+    },
+    config.timeout,
+  );
+
+  test.each([
+    ["get_title", {}],
+    ["get_title", { id: 550 }],
+    ["get_title", { item_type: "movie" }],
+    ["get_title", { id: "550", item_type: "movie" }],
+    ["get_title", { id: 550.5, item_type: "movie" }],
+    ["get_title", { id: "../updates", item_type: "movie" }],
+    ["get_title", { id: 550, item_type: "movie/../updates" }],
+    ["get_title", { id: 550, item_type: "movie", extra: true }],
+    ["get_tvshow_seasons", {}],
+    ["get_tvshow_seasons", { id: [1396] }],
+    ["get_tvshow_seasons", { id: 1396, extra: true }],
+    ["get_season_episodes", { id: 1396 }],
+    ["get_season_episodes", { id: 1396, season_number: "1/episodes" }],
+    ["get_season_episodes", { id: 1396, season_number: 1.5 }],
+    ["get_season_episodes", { id: 1396, season_number: 1, extra: true }],
+    ["search_titles", { limit: "1" }],
+    ["search_titles", { title: { $ne: "" } }],
+    ["search_titles", { api_key: "invalid" }],
+    ["get_rated_episodes", { minimum_ratings: "invalid" }],
+    ["get_rated_episodes", { order: "invalid" }],
+    ["get_rated_episodes", { extra: true }],
+  ])(
+    "%s rejects invalid arguments: %j",
+    async (name, args) => {
+      const response = await mcpRequest("tools/call", {
+        name,
+        arguments: args,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.data.result).toEqual({
+        content: [{ type: "text", text: "Invalid tool arguments." }],
+        isError: true,
+      });
     },
     config.timeout,
   );

@@ -17,7 +17,11 @@ const {
   saveOrUpdateUserPreferences,
 } = require("./src/routes/getOrSaveUserPreferences");
 const { handleInvalidEndpoint } = require("./src/routes/handleInvalidEndpoint");
+const { handleRequestError } = require("./src/utils/sendRequest");
 const { limiter } = require("./src/routes/utils/rateLimiter");
+const {
+  validateQueryParams,
+} = require("./src/routes/utils/queryParamsValidation");
 const {
   validateQueryValues,
 } = require("./src/routes/utils/validateQueryValues");
@@ -35,27 +39,43 @@ applyBaseMiddleware(app, { staticDir: path.join(__dirname, "public") });
 app.use(validateQueryValues);
 
 /* A route that is used to get the data for all items. */
-app.get("/", limiter, getItems);
+app.get("/", limiter, validateQueryParams(undefined, true), getItems);
 
 /* A route that is used to get the rated episodes across all tvshows. */
-app.get("/episodes/rated", limiter, getRatedEpisodes);
+app.get("/episodes/rated", limiter, validateQueryParams(), getRatedEpisodes);
 
 /* A route that is used to get items added or updated since a given timestamp. */
-app.get("/updates", limiter, getUpdates);
+app.get(
+  "/updates",
+  limiter,
+  validateQueryParams(["api_key", "since", "item_type", "page", "limit"]),
+  getUpdates,
+);
 
 /* A route that is used to get the data for a specific movie. */
-app.get("/movie/:id", limiter, getId);
+app.get("/movie/:id", limiter, validateQueryParams(), getId);
 
 /* A route that is used to get the data for a specific tvshow. */
-app.get("/tvshow/:id", limiter, getId);
+app.get("/tvshow/:id", limiter, validateQueryParams(), getId);
 
 /* A route that is used to get all seasons for a specific tvshow. */
-app.get("/tvshow/:id/seasons", limiter, getTvShowSeasons);
+app.get(
+  "/tvshow/:id/seasons",
+  limiter,
+  validateQueryParams(["api_key", "append_to_response"]),
+  getTvShowSeasons,
+);
 
 /* A route that is used to get all episodes for a specific tvshow season. */
 app.get(
   "/tvshow/:id/seasons/:season_number/episodes",
   limiter,
+  validateQueryParams([
+    "api_key",
+    "append_to_response",
+    "minimum_ratings",
+    "release_date",
+  ]),
   getTvShowSeasonEpisodes,
 );
 
@@ -63,6 +83,7 @@ app.get(
 app.get(
   "/tvshow/:id/seasons/:season_number/episodes/:episode_number",
   limiter,
+  validateQueryParams(["api_key", "append_to_response"]),
   getTvShowSeasonEpisodeDetails,
 );
 
@@ -80,6 +101,7 @@ async function start() {
 
   /* Catch-all route for invalid endpoints. */
   app.all("/{*splat}", handleInvalidEndpoint);
+  app.use(handleRequestError);
 
   /* Starting the server on the port defined in the PORT variable. */
   app.listen(PORT, () => {

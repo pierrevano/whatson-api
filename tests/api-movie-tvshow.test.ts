@@ -16,10 +16,47 @@ const maxLimitLargeDocuments = config.maxLimitLargeDocuments;
 const removeLogs = process.env.REMOVE_LOGS === "true";
 
 /**
- * An object containing various query parameters and their expected results.
- * @type {Record<string, { query: string, expectedResult: (items: any) => void }>}
+ * Request cases and their expected results.
+ * @type {Record<string, { query: string, expectedResult: (items: any, response: any) => void }>}
  */
 const params = {
+  query_parameter_names_accept_mixed_casing: {
+    query: "?PAGE=2&Limit=1&ITEM_TYPE=movie",
+    expectedResult: (items, response) => {
+      expect(response.status).toBe(200);
+      expect(response.data.page).toBe(2);
+      expect(items).toHaveLength(1);
+      expect(items[0].item_type).toBe("movie");
+    },
+  },
+
+  lookup_parameter_name_accepts_mixed_casing: {
+    query: "?tmdbId=550&item_type=movie",
+    expectedResult: (items) => {
+      expect(items).toHaveLength(1);
+      expect(items[0].id).toBe(550);
+      expect(items[0].item_type).toBe("movie");
+    },
+  },
+
+  title_parameter_name_accepts_mixed_casing: {
+    query: "?TITLE=wolf&item_type=movie&append_to_response=title_variants",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        const titles = [
+          item.title,
+          item.original_title,
+          ...Object.values(item.title_variants || {}),
+        ];
+        expect(
+          titles.some((title) => title?.toLowerCase().includes("wolf")),
+        ).toBe(true);
+      });
+    },
+  },
+
   title_search_should_only_return_movie_items: {
     query: "?item_type=movie&title=wolf",
     expectedResult: (items) => {
@@ -576,7 +613,7 @@ describe("What's on? API tests", () => {
       const data = response.data;
       const items = query.startsWith("/") ? data : data.results;
 
-      expectedResult(items, null);
+      expectedResult(items, response);
     }
 
     test(
@@ -587,6 +624,38 @@ describe("What's on? API tests", () => {
       config.timeout,
     );
   });
+
+  test(
+    "single_item_routes_ignore_valid_pages",
+    async () => {
+      for (const query of ["/movie/550", "/tvshow/1396"]) {
+        const apiCall = `${baseURL}${query}?api_key=${config.internalApiKey}`;
+
+        if (!removeLogs) {
+          console.log(`Calling: ${apiCall}`);
+        }
+
+        const response = await axios.get(apiCall, {
+          validateStatus: (status) => status < 500,
+        });
+        const item = response.data;
+        const [, itemType, id] = query.split("/");
+        expect(response.status).toBe(200);
+        expect(item).toEqual(
+          expect.objectContaining({ id: Number(id), item_type: itemType }),
+        );
+
+        const withPage = await axios.get(apiCall, {
+          params: { page: 2 },
+          validateStatus: (status) => status < 500,
+        });
+
+        expect(withPage.status).toBe(200);
+        expect(withPage.data).toEqual(item);
+      }
+    },
+    config.timeout,
+  );
 
   test(
     "api_response_time_should_be_within_an_acceptable_range_on_important_limit",

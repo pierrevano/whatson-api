@@ -1,3 +1,4 @@
+const { buildEpisodeSummary } = require("../utils/buildEpisodeSummary");
 const { config } = require("../config");
 const { formatDate } = require("../utils/formatDate");
 const { logErrors } = require("../utils/logErrors");
@@ -47,16 +48,8 @@ const getLastEpisode = async (allocineHomepage, episodesDetails, data) => {
     }
 
     lastEpisodeDetails = {
-      season: lastEpisode.season,
-      episode: lastEpisode.episode,
+      ...buildEpisodeSummary(lastEpisode),
       episode_type: updateToReadableString(episode_type),
-      title: lastEpisode.title,
-      description: lastEpisode.description,
-      id: lastEpisode.id,
-      url: lastEpisode.url,
-      release_date: lastEpisode.release_date,
-      users_rating: lastEpisode.users_rating,
-      users_rating_count: lastEpisode.users_rating_count,
     };
   } catch (error) {
     logErrors(error, allocineHomepage, "getLastEpisode");

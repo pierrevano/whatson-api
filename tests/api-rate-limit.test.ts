@@ -1,10 +1,27 @@
 require("dotenv").config();
 
+const mockIndexCreations = [];
+
+jest.mock("rate-limiter-flexible", () => {
+  const actual = jest.requireActual("rate-limiter-flexible");
+  return {
+    ...actual,
+    RateLimiterMongo: class extends actual.RateLimiterMongo {
+      createIndexes() {
+        const pending = super.createIndexes();
+        mockIndexCreations.push(pending);
+        return pending;
+      }
+    },
+  };
+});
+
 const axios = require("axios");
 
-const { client } = require("../src/utils/mongoClient");
+const { client, collectionApiKey } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
 const { getRateLimiterKey } = require("../src/routes/utils/getRateLimiterKey");
+const { limiter } = require("../src/routes/utils/rateLimiter");
 const { resolveLimit } = require("../src/routes/utils/resolveLimit");
 
 const isRemoteSource = process.env.SOURCE === "remote";
@@ -12,6 +29,33 @@ const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
 const removeLogs = process.env.REMOVE_LOGS === "true";
 
 const rateLimitTest = isRemoteSource ? test.skip : test;
+
+const requestLimit = async (ip, apiKey) => {
+  const response = { status: 200, headers: {}, data: null, next: jest.fn() };
+  await limiter(
+    {
+      headers: { "cf-connecting-ip": ip },
+      query: { api_key: apiKey },
+      socket: { remoteAddress: ip },
+    },
+    {
+      set(headers) {
+        for (const [key, value] of Object.entries(headers)) {
+          response.headers[key.toLowerCase()] = value;
+        }
+      },
+      status(code) {
+        response.status = code;
+        return this;
+      },
+      json(data) {
+        response.data = data;
+      },
+    },
+    response.next,
+  );
+  return response;
+};
 
 describe("What's on? API rate limiting tests", () => {
   if (!removeLogs) {
@@ -39,6 +83,7 @@ describe("What's on? API rate limiting tests", () => {
           Array.from({ length: currentBatchSize }).map(() =>
             axios.get(apiCall, {
               headers: {
+                "CF-Connecting-IP": forwardedFor,
                 "X-Forwarded-For": forwardedFor,
               },
               validateStatus: (status) => status <= 500,
@@ -64,11 +109,13 @@ describe("What's on? API rate limiting tests", () => {
     120000,
   );
 
-  rateLimitTest(
-    "Rate Limiting should return 429 once the daily limit is exceeded",
-    async () => {
-      const apiCall = `${baseURL}/movie/121`;
-      const forwardedFor = "192.0.2.42";
+  rateLimitTest.each([
+    ["get", "/movie/121", "192.0.2.42"],
+    ["post", "/mcp", "192.0.2.43"],
+  ])(
+    "Rate Limiting should return 429 once the daily limit is exceeded: %s %s",
+    async (method, path, forwardedFor) => {
+      const apiCall = `${baseURL}${path}`;
       const counterKey = `rlflx:${forwardedFor}`;
       const rateLimitCollection = client
         .db(config.dbName)
@@ -88,8 +135,11 @@ describe("What's on? API rate limiting tests", () => {
       );
 
       try {
-        const response = await axios.get(apiCall, {
+        const response = await axios.request({
+          method,
+          url: apiCall,
           headers: {
+            "CF-Connecting-IP": forwardedFor,
             "X-Forwarded-For": forwardedFor,
           },
           validateStatus: (status) => status <= 500,
@@ -154,20 +204,94 @@ describe("What's on? API rate limiting tests", () => {
   );
 
   describe("Rate limiter key resolution", () => {
-    // Resolve the rate limit key from the incoming request.
-    test("uses the leftmost forwarded IP when multiple hops are present", () => {
-      const req = {
-        headers: { "x-forwarded-for": "203.0.113.7, 10.0.0.1, 172.16.0.1" },
-        ip: "10.0.0.1",
-      };
-
-      expect(getRateLimiterKey(req)).toBe("203.0.113.7");
+    beforeEach(() => {
+      jest.replaceProperty(process, "env", { ...process.env, RENDER: "true" });
     });
 
-    test("falls back to req.ip when no forwarded header is present", () => {
-      const req = { headers: {}, ip: "127.0.0.1" };
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
 
-      expect(getRateLimiterKey(req)).toBe("127.0.0.1");
+    test("rejects anonymous requests when the client address is unavailable", async () => {
+      const response = await requestLimit(undefined);
+      expect(response.status).toBe(503);
+    });
+
+    test.each(["sponsor", "internal"])(
+      "accepts a valid %s key when the client address is unavailable",
+      async (tier) => {
+        const value = `test-no-address-${tier}`;
+        jest.spyOn(collectionApiKey, "findOne").mockResolvedValue({
+          value,
+          is_active: true,
+          is_internal: tier === "internal",
+          rate_limit_points: config.pointsSponsor,
+        });
+
+        const response = await requestLimit(undefined, value);
+
+        expect(response.status).toBe(200);
+        expect(response.data).toBeNull();
+        expect(response.next).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    test("rejects an invalid key when the client address is unavailable", async () => {
+      jest.spyOn(collectionApiKey, "findOne").mockResolvedValue(null);
+
+      const response = await requestLimit(undefined, "test-no-address-invalid");
+
+      expect(response.status).toBe(503);
+      expect(response.data).toEqual({
+        code: 503,
+        message: `We could not process your request due to a connection issue. Please retry or contact me at ${config.contactURL} if it persists.`,
+      });
+      expect(response.next).not.toHaveBeenCalled();
+    });
+
+    test.each(["203.0.113.7", "203.0.113.8", "2001:db8::7"])(
+      "uses the edge address regardless of forwarded headers: %s",
+      (ip) => {
+        for (const forwardedFor of ["198.51.100.1", "198.51.100.2, 10.0.0.1"]) {
+          expect(
+            getRateLimiterKey({
+              headers: {
+                "cf-connecting-ip": ip,
+                "x-forwarded-for": forwardedFor,
+              },
+              socket: { remoteAddress: "10.0.0.1" },
+            }),
+          ).toBe(ip);
+        }
+      },
+    );
+
+    test.each([
+      [undefined],
+      [""],
+      ["invalid"],
+      ["203.0.113.7, 203.0.113.8"],
+      [["203.0.113.7"]],
+    ])("does not fall back when the edge address is invalid: %j", (ip) => {
+      expect(
+        getRateLimiterKey({
+          headers: { "cf-connecting-ip": ip, "x-forwarded-for": "203.0.113.9" },
+          socket: { remoteAddress: "10.0.0.1" },
+        }),
+      ).toBeNull();
+    });
+
+    test("uses the socket address in local mode regardless of forwarded headers", () => {
+      jest.replaceProperty(process, "env", { ...process.env, RENDER: "false" });
+      expect(
+        getRateLimiterKey({
+          headers: {
+            "cf-connecting-ip": "203.0.113.7",
+            "x-forwarded-for": "203.0.113.8",
+          },
+          socket: { remoteAddress: "127.0.0.1" },
+        }),
+      ).toBe("127.0.0.1");
     });
   });
 
@@ -182,8 +306,11 @@ describe("What's on? API rate limiting tests", () => {
   });
 
   afterAll(async () => {
+    const results = await Promise.allSettled(mockIndexCreations);
     if (client) {
       await client.close();
     }
+    const failed = results.find((result) => result.status === "rejected");
+    if (failed) throw failed.reason;
   }, config.timeout);
 });

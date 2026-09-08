@@ -1,14 +1,13 @@
-const {
-  RateLimiterMemory,
-  RateLimiterMongo,
-} = require("rate-limiter-flexible");
-
 const { client } = require("../../utils/mongoClient");
 const { config } = require("../../config");
 const { getApiKey } = require("./getApiKey");
 const { getRateLimiterKey } = require("./getRateLimiterKey");
 const { getTierMessage } = require("./getTierMessage");
 const { isSponsorApiKey } = require("./isSponsorApiKey");
+const {
+  RateLimiterMemory,
+  RateLimiterMongo,
+} = require("rate-limiter-flexible");
 const { sendResponse } = require("../../utils/sendRequest");
 const { sendToNewRelic } = require("../../utils/sendToNewRelic");
 
@@ -80,6 +79,12 @@ const limiter = async (req, res, next) => {
       [rateLimiter, dailyLimiter] = keyedLimiters.get(apiKeyValue);
       key = apiKeyValue;
     }
+  }
+
+  if (!key) {
+    return sendResponse(res, 503, {
+      message: `We could not process your request due to a connection issue. Please retry or contact me at ${config.contactURL} if it persists.`,
+    });
   }
 
   try {

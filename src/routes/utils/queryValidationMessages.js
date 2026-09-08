@@ -1,17 +1,22 @@
+const { config } = require("../../config");
+
 const INTEGER_PATTERN = /^-?\d+$/;
 
 /**
  * Returns the validation message for integer params that only have a minimum.
  *
  * @param {string} name
+ * @param {number} minimum
  * @returns {string}
  */
-const getMinimumMessage = (name) => {
-  if (name === "page") {
-    return `The ${name} must be an integer greater than 0.`;
+const getMinimumMessage = (name, minimum) => {
+  if (minimum === 1) {
+    return name === "page"
+      ? config.invalidPageMessage
+      : `The ${name} must be an integer greater than 0.`;
   }
 
-  return `The ${name} must be an integer greater than or equal to 0.`;
+  return `The ${name} must be an integer greater than or equal to ${minimum}.`;
 };
 
 /**
@@ -23,7 +28,9 @@ const getMinimumMessage = (name) => {
  * @returns {string}
  */
 const getMinimumAndMaximumMessage = (name, minimum, maximum) =>
-  `The ${name} must be an integer between ${minimum} and ${maximum}.`;
+  name === "limit" && minimum === 1
+    ? `${config.invalidLimitMessage} and ${maximum}.`
+    : `The ${name} must be an integer between ${minimum} and ${maximum}.`;
 
 /**
  * Returns the validation message for comma-separated integer lists.
@@ -56,7 +63,7 @@ const validateIntegerParam = (value, name, minimum = 1, maximum) => {
   const receivedValue = `'${String(value)}'`;
   const message = hasMaximum
     ? getMinimumAndMaximumMessage(name, minimum, maximum)
-    : getMinimumMessage(name);
+    : getMinimumMessage(name, minimum);
 
   if (!INTEGER_PATTERN.test(trimmedValue)) {
     return `${message} Received ${receivedValue}.`;
@@ -88,16 +95,10 @@ const validateIntegerListParam = (value, name, minimum = 1) => {
     return null;
   }
 
-  const values = String(value)
-    .split(",")
-    .map((item) => item.trim());
+  const values = String(value).split(",");
   const receivedValue = `'${String(value)}'`;
 
-  if (values.some((item) => item === "" || !INTEGER_PATTERN.test(item))) {
-    return `${getCommaSeparatedContainMessage(name, minimum)} Received ${receivedValue}.`;
-  }
-
-  if (values.some((item) => Number(item) < minimum)) {
+  if (values.some((item) => validateIntegerParam(item, name, minimum))) {
     return `${getCommaSeparatedContainMessage(name, minimum)} Received ${receivedValue}.`;
   }
 

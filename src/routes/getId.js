@@ -1,6 +1,4 @@
 const { aggregateData } = require("./aggregateData");
-const { buildProjection } = require("./buildProjection");
-const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const {
   sendInternalError,
@@ -8,7 +6,7 @@ const {
   sendResponse,
 } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
-const { validateItemTypeQuery } = require("./utils/queryParamsValidation");
+const { validateIntegerParam } = require("./utils/queryValidationMessages");
 const getInternalApiKey = require("./getInternalApiKey");
 
 /**
@@ -24,25 +22,23 @@ const getId = async (req, res) => {
     const api_key_query = req.query.api_key || "api_key_not_provided";
     req.query.api_key = api_key_query;
 
-    const id_path = parseInt(req.params.id);
+    if (validateIntegerParam(req.params.id, "id")) {
+      return sendResponse(res, 404, {
+        message: config.noMatchingItemsFoundMessage,
+      });
+    }
+    const id_path = Number(req.params.id);
     const item_type_query = req.query.item_type;
     const ratings_filters_query = req.query.ratings_filters;
     const url = `${req.headers["host"]}${req.url}`;
     const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
     const append_to_response = req.query.append_to_response;
 
-    const item_type_error = validateItemTypeQuery(item_type_query);
-    if (item_type_error) {
-      return sendResponse(res, 400, {
-        message: item_type_error,
-      });
-    }
-
     const internal_api_key = await getInternalApiKey();
 
     const newRelicQueryAttributes = {
       ...req.query,
-      path_id: Number.isFinite(id_path) ? id_path : "invalid_or_missing",
+      path_id: id_path,
       new_relic_route: "getId",
     };
 
@@ -53,57 +49,30 @@ const getId = async (req, res) => {
       newRelicQueryAttributes,
     );
 
-    if (id_path) {
-      try {
-        const { items } = await aggregateData(
-          append_to_response,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          id_path,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          item_type_query,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          ratings_filters_query,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-        );
-        // Default to an empty list when no item is returned.
-        const filteredResults = (items[0]?.results || []).filter((result) => {
-          return result.item_type === item_type;
-        });
-        await sendRequest(req, res, filteredResults[0], config);
-      } catch (error) {
-        await sendInternalError(res, error);
-      }
-    } else {
-      try {
-        // Dynamically build the projection object based on query parameters
-        const projection = buildProjection(append_to_response);
-
-        const query = { id: id_path, item_type: item_type };
-        const items = await collectionData.findOne(query, { projection });
-
-        await sendRequest(req, res, items, config);
-      } catch (error) {
-        await sendInternalError(res, error);
-      }
-    }
+    const { items } = await aggregateData(
+      append_to_response,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      id_path,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      item_type_query,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ratings_filters_query,
+    );
+    const item = (items[0]?.results || []).find(
+      (result) => result.item_type === item_type,
+    );
+    await sendRequest(req, res, item, config);
   } catch (error) {
     await sendInternalError(res, error);
   }

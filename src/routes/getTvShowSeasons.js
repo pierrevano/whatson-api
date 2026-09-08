@@ -10,6 +10,7 @@ const { parseReleaseDateRange } = require("../utils/parseReleaseDateRange");
 const { sendInternalError, sendResponse } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
 const { sortEpisodes } = require("../utils/sortEpisodes");
+const { validateIntegerParam } = require("./utils/queryValidationMessages");
 const getInternalApiKey = require("./getInternalApiKey");
 const getTvShowById = require("./getTvShowById");
 
@@ -41,6 +42,11 @@ const buildAppendToResponseConfig = (appendToResponseRaw = "") => {
 
 const getTvShowSeasons = async (req, res) => {
   try {
+    if (validateIntegerParam(req.params.id, "id")) {
+      return sendResponse(res, 404, {
+        message: config.noMatchingItemsFoundMessage,
+      });
+    }
     const api_key_query = req.query.api_key || "api_key_not_provided";
     req.query.api_key = api_key_query;
 
@@ -89,6 +95,14 @@ const getTvShowSeasons = async (req, res) => {
 
 const getTvShowSeasonEpisodes = async (req, res) => {
   try {
+    if (
+      validateIntegerParam(req.params.id, "id") ||
+      validateIntegerParam(req.params.season_number, "season_number")
+    ) {
+      return sendResponse(res, 404, {
+        message: config.noMatchingItemsFoundMessage,
+      });
+    }
     const api_key_query = req.query.api_key || "api_key_not_provided";
     req.query.api_key = api_key_query;
 
@@ -97,12 +111,6 @@ const getTvShowSeasonEpisodes = async (req, res) => {
 
     const minimumRatings = parseMinimumRatings(req.query.minimum_ratings);
     const releaseDateRange = parseReleaseDateRange(req.query.release_date);
-
-    if (!Number.isInteger(seasonNumber) || seasonNumber < 1) {
-      return sendResponse(res, 404, {
-        message: config.noMatchingItemsFoundMessage,
-      });
-    }
 
     const internal_api_key = await getInternalApiKey();
 
@@ -154,6 +162,15 @@ const getTvShowSeasonEpisodes = async (req, res) => {
 
 const getTvShowSeasonEpisodeDetails = async (req, res) => {
   try {
+    if (
+      validateIntegerParam(req.params.id, "id") ||
+      validateIntegerParam(req.params.season_number, "season_number") ||
+      validateIntegerParam(req.params.episode_number, "episode_number", 0)
+    ) {
+      return sendResponse(res, 404, {
+        message: config.noMatchingItemsFoundMessage,
+      });
+    }
     const api_key_query = req.query.api_key || "api_key_not_provided";
     req.query.api_key = api_key_query;
 
