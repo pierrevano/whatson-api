@@ -107,7 +107,7 @@ const config = {
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/606.1.15",
   userAgentSafariAlt:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/538.36",
-  cacheTtlMs: 15 * 60 * 1000,
+  cacheTtlMs: 60 * 1000,
   apiKeyCacheMaxEntries: 5000,
   heapLimit: 1500,
   imdbRatingCountTolerancePct: 0.5,

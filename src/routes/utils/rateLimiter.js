@@ -87,9 +87,13 @@ const limiter = async (req, res, next) => {
     });
   }
 
+  let rateLimitWindow = "hourly";
   try {
     const result = await rateLimiter.consume(key);
-    if (!isSponsorApiKey(apiKeyDoc)) await dailyLimiter.consume(key);
+    if (!isSponsorApiKey(apiKeyDoc)) {
+      rateLimitWindow = "daily";
+      await dailyLimiter.consume(key);
+    }
     const rateLimitHeaders = {
       "X-RateLimit-Limit": result.remainingPoints + result.consumedPoints,
       "X-RateLimit-Remaining": result.remainingPoints,
@@ -114,7 +118,15 @@ const limiter = async (req, res, next) => {
     console.log("Rate Limit Headers on error:", rateLimitHeaders);
 
     res.set(rateLimitHeaders);
-    sendToNewRelic(req, null, null, rateLimitHeaders);
+    sendToNewRelic(req, null, null, {
+      ...rateLimitHeaders,
+      rate_limit_window: rateLimitWindow,
+      auth_category: apiKeyDoc
+        ? "valid_key"
+        : apiKeyValue
+          ? "invalid_key"
+          : "anonymous",
+    });
     sendResponse(res, 429, { message: getTierMessage(apiKeyDoc) });
   }
 };

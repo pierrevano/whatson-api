@@ -84,7 +84,8 @@ fi
 
 # Check if What's on? API is up
 while true; do
-  status_code=$(curl -o /dev/null -s -w "%{http_code}" "$WHATSON_API_URL")
+  response_headers=$(curl -o /dev/null -s -D - -w "%{http_code}" -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$WHATSON_API_URL")
+  status_code=$(printf '%s\n' "$response_headers" | tail -n 1)
 
   if [[ "$status_code" -eq 200 ]]; then
     echo "Correct status code $status_code from $WHATSON_API_URL."
@@ -99,7 +100,14 @@ while true; do
     echo $SEPARATOR
   fi
 
-  sleep 5
+  retry_after=5
+  if [[ "$status_code" -eq 429 ]]; then
+    retry_after=$(printf '%s\n' "$response_headers" | awk '
+      tolower($1) == "retry-after:" { delay = $2; sub(/\r$/, "", delay) }
+      END { print (delay ~ /^[0-9]+$/ && delay > 0) ? delay : 5 }
+    ')
+  fi
+  sleep "$retry_after"
 done
 
 if [[ $SOURCE == "circleci" ]]; then
@@ -535,7 +543,7 @@ do
           QUERY_WHATSON_API="$WHATSON_API_URL/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all&api_key=$INTERNAL_API_KEY"
           echo "Querying: $QUERY_WHATSON_API"
 
-          ITEM=$(curl -s $QUERY_WHATSON_API)
+          ITEM=$(curl -s -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$QUERY_WHATSON_API")
 
           if [[ -z $ITEM ]]; then
             echo $SEPARATOR

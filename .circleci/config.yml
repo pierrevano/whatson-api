@@ -35,7 +35,7 @@ commands:
 
             echo "Calling: $WHATSON_API_URL"
 
-            if ! curl -sf "$WHATSON_API_URL" > /dev/null; then
+            if ! curl -sf -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$WHATSON_API_URL" > /dev/null; then
               echo "Error: Failed to reach $WHATSON_API_URL"
               exit 1
             fi

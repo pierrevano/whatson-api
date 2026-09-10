@@ -20,7 +20,10 @@ const getWhatsonResponse = async (itemTypeApi, tmdbId, appendToResponse) => {
       ? `&append_to_response=${appendToResponse}`
       : "";
     const apiUrl = `${config.baseURLRemote}/${itemTypeApi}/${tmdbId}?api_key=${config.internalApiKey}${appendParam}`;
-    const response = await axios.get(apiUrl, { validateStatus: () => true });
+    const response = await axios.get(apiUrl, {
+      headers: { "User-Agent": process.env.WHATSON_SYNC_USER_AGENT },
+      validateStatus: () => true,
+    });
     if (![200, 404].includes(response.status)) {
       console.error(
         `Failed to fetch What's on? API data: status code ${response.status}`,

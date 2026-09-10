@@ -32,7 +32,11 @@ const BASE_URL =
   process.env.WHATSON_API_URL || "https://whatson-api.onrender.com";
 const API_KEY = process.env.WHATSON_API_KEY || "";
 
-const apiClient = axios.create({ baseURL: BASE_URL, timeout: 60000 });
+const apiClient = axios.create({
+  baseURL: BASE_URL,
+  headers: { "User-Agent": process.env.WHATSON_MCP_USER_AGENT },
+  timeout: 60000,
+});
 
 /** Strip undefined/null/"" values and inject the API key when present. */
 const buildParams = (args = {}) => {
