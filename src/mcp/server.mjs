@@ -56,7 +56,7 @@ const TOOLS = [
   {
     name: "search_titles",
     description:
-      "Search for movies and TV shows. Supports filtering by title, genre, platform, network, director, production company, runtime, season count, release date, rating, status, and content flags (active, adult, must-see, certified). Supports sorting by popularity, IMDb top chart position, and Box Office Mojo rank. Returns paginated results with aggregate ratings from IMDb, Rotten Tomatoes, AlloCiné, Metacritic, Letterboxd, BetaSeries, SensCritique, TMDB, and Trakt. Use append_to_response to include optional fields such as genres, platforms_links, directors, or episode highlights. Can also look up a single title by an external platform ID (imdbid, tmdbid, allocineid, betaseriesid, letterboxdid, metacriticid, rottentomatoesid, senscritiqueid, thetvdbid, traktid).",
+      "Search movies and TV shows with paginated results and ratings from multiple sources. Without title or an external ID, combine the available filters and sorting options. Title or ID searches support item_type, page, limit, append_to_response, filtered_seasons, and is_adult (default false). Other filters and sorting options are ignored. Provide one title or ID parameter; an ID can match multiple items.",
     inputSchema: {
       type: "object",
       properties: {
@@ -86,13 +86,13 @@ const TOOLS = [
         },
         status: {
           type: "string",
-          enum: ["canceled", "ended", "ongoing", "pilot", "unknown"],
-          description: "TV show production status.",
+          description:
+            "Comma-separated TV show statuses (canceled, ended, ongoing, pilot, unknown).",
         },
         release_date: {
           type: "string",
           description:
-            'Date range filter. Either bound is optional. Format: "from:YYYY-MM-DD,to:YYYY-MM-DD". Example: "from:2020-01-01,to:2024-12-31". Use "new" as a shortcut for recently released titles (last 6 months for movies, last 18 months for TV shows).',
+            'Date range filter. Either bound is optional. Format: "from:YYYY-MM-DD,to:YYYY-MM-DD". Example: "from:2020-01-01,to:2024-12-31". Use "new" to include releases from 6 months ago onward when item_type=movie, or 18 months ago onward when TV shows or both types are requested. Use "everything" alone to apply no release-date filter.',
         },
         minimum_ratings: {
           type: "number",
@@ -157,7 +157,7 @@ const TOOLS = [
         append_to_response: {
           type: "string",
           description:
-            "Comma-separated optional fields to include in results. Available: genres, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
+            "Comma-separated optional fields to include in results. Available: awards, genres, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
         },
         filtered_seasons: {
           type: "string",
@@ -166,47 +166,43 @@ const TOOLS = [
         },
         imdbid: {
           type: "string",
-          description: "IMDb ID (e.g. tt0903747). Returns a single result.",
+          description: "IMDb ID (e.g. tt0903747).",
         },
         tmdbid: {
           type: "integer",
-          description: "TMDB numeric ID. Returns a single result.",
+          description: "TMDB numeric ID.",
         },
         allocineid: {
           type: "integer",
-          description: "AlloCiné ID. Returns a single result.",
+          description: "AlloCiné ID.",
         },
         betaseriesid: {
           type: "string",
-          description: "BetaSeries ID. Returns a single result.",
+          description: "BetaSeries ID.",
         },
         letterboxdid: {
           type: "string",
-          description: "Letterboxd ID. Returns a single result. Movie only.",
+          description: "Letterboxd ID. Movie only.",
         },
         metacriticid: {
           type: "string",
-          description: "Metacritic slug. Returns a single result.",
+          description: "Metacritic slug.",
         },
         rottentomatoesid: {
           type: "string",
-          description: "Rotten Tomatoes slug. Returns a single result.",
+          description: "Rotten Tomatoes slug.",
         },
         senscritiqueid: {
           type: "integer",
-          description: "SensCritique ID. Returns a single result.",
+          description: "SensCritique ID.",
         },
         thetvdbid: {
           type: "integer",
-          description: "TheTVDB ID. Returns a single result.",
+          description: "TheTVDB ID.",
         },
         traktid: {
           type: "string",
-          description: "Trakt ID or slug. Returns a single result.",
-        },
-        limit: {
-          type: "integer",
-          description: "Results per page (default 20).",
+          description: "Trakt ID or slug.",
         },
         top_ranking_order: {
           type: "string",
@@ -222,7 +218,12 @@ const TOOLS = [
         },
         page: {
           type: "integer",
-          description: "Page number, 1-based (default 1).",
+          description: "Page number",
+        },
+        limit: {
+          type: "integer",
+          description:
+            "Page items limit (20 results by default). Specify `limit` explicitly to request more.",
         },
       },
     },
@@ -247,7 +248,7 @@ const TOOLS = [
         append_to_response: {
           type: "string",
           description:
-            "Comma-separated optional fields to include. Available: genres, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
+            "Comma-separated optional fields to include. Available: awards, genres, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
         },
         ratings_filters: {
           type: "string",
@@ -369,8 +370,8 @@ const TOOLS = [
         },
         status: {
           type: "string",
-          enum: ["canceled", "ended", "ongoing", "pilot", "unknown"],
-          description: "Filter by parent TV show production status.",
+          description:
+            "Comma-separated TV show statuses (canceled, ended, ongoing, pilot, unknown).",
         },
         filtered_seasons: {
           type: "string",
@@ -397,13 +398,14 @@ const TOOLS = [
           description:
             "desc returns top-rated episodes, asc returns lowest-rated episodes (default: desc).",
         },
-        limit: {
-          type: "integer",
-          description: "Results per page (default 20).",
-        },
         page: {
           type: "integer",
-          description: "Page number, 1-based (default 1).",
+          description: "Page number",
+        },
+        limit: {
+          type: "integer",
+          description:
+            "Page items limit (20 results by default). Specify `limit` explicitly to request more.",
         },
       },
     },

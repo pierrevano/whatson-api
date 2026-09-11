@@ -440,15 +440,6 @@ const params = {
     },
   },
 
-  results_count_on_search: {
-    query: "?title=wolf",
-    expectedResult: (data) => {
-      expect(data).toHaveProperty("page");
-      expect(data.page).toBe(1);
-      expect(data.results.length).toEqual(data.total_results);
-    },
-  },
-
   no_items_found_for_invalid_query: {
     query: "?title=some invalid value to be tested",
     expectedResult: (data) => {

@@ -54,7 +54,10 @@ function reportError(data, responseWithCode, statusCode, error) {
   }
 
   if (error) {
-    newrelic.noticeError(error);
+    newrelic.noticeError(error, {
+      statusCode,
+      ...error.newRelicAttributes,
+    });
     return;
   }
 

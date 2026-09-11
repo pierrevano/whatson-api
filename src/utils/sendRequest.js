@@ -12,9 +12,10 @@ const { reportError } = require("./sendToNewRelic");
  * @param {import("express").Response} res - Express response instance.
  * @param {number} statusCode - HTTP status code to return.
  * @param {object} data - Payload (already shaped) to serialise in the response body.
+ * @param {Error} [error] - Exception to report for an error response.
  * @returns {import("express").Response} The Express response after being written.
  */
-const sendResponse = (res, statusCode, data) => {
+const sendResponse = (res, statusCode, data, error) => {
   if (statusCode === 200) {
     return res.status(statusCode).json(data);
   } else {
@@ -23,7 +24,7 @@ const sendResponse = (res, statusCode, data) => {
       code: statusCode,
     };
 
-    reportError(data, responseWithCode, statusCode);
+    reportError(data, responseWithCode, statusCode, error);
 
     return res.status(statusCode).json(responseWithCode);
   }
@@ -151,15 +152,11 @@ const sendPreferencesRequest = async (
 const sendInternalError = async (res, error) => {
   console.error("Internal server error:", error);
 
-  reportError(null, null, null, error);
+  const message = isMongoMemoryLimitError(error)
+    ? config.queryMemoryLimitMessage
+    : "Something went wrong.";
 
-  if (isMongoMemoryLimitError(error)) {
-    return sendResponse(res, 500, {
-      message: config.queryMemoryLimitMessage,
-    });
-  }
-
-  return sendResponse(res, 500, { message: "Something went wrong." });
+  return sendResponse(res, 500, { message }, error);
 };
 
 const handleRequestError = (error, _req, res, next) => {

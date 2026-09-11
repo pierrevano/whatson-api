@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.39.52",
+  "version": "3.39.6",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -77,7 +77,7 @@
     "axios": "^1.20.0",
     "axios-retry": "^4.5.0",
     "cheerio": "^1.2.0",
-    "compression": "^1.8.1",
+    "compression": "^1.8.2",
     "cors": "^2.8.6",
     "csvtojson": "^2.0.14",
     "dotenv": "^17.4.2",

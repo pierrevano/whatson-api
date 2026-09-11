@@ -2,27 +2,32 @@ const { buildProjection } = require("./buildProjection");
 const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
+const { resolveLimit } = require("./utils/resolveLimit");
 
 // Utility to normalize strings for fuzzy title matching
 const normalizeString = (str) =>
   str
     .toLowerCase() // make all characters lowercase
+    .replace(/,/g, "") // remove commas
     .replace(/\s+/g, " ") // collapse multiple spaces into one
     .trim(); // remove leading/trailing whitespace
 
 /**
- * Queries the database for a media item matching the given identifier or title.
+ * Queries the database for media items matching the given identifier or title.
  * Supports optional projection, episode filtering by seasons, and item type filtering.
  *
  * @param {Object} json - Input object with a supported key (e.g. `imdbid`, `tmdbid`, `title`, etc.).
  * @param {string} [append_to_response] - Additional fields to include in the projection.
  * @param {string} [filtered_seasons] - Seasons numbers to filter episodes by (if applicable).
- * @returns {Promise<{ results: Object[], total_results: number }>} Filtered results and total count.
+ * @returns {Promise<{ limit: number, page: number, results: Object[], total_results: number }>} Results and pagination details.
  */
 const findId = async (json, append_to_response, filtered_seasons) => {
   if (!json || typeof json !== "object" || Object.keys(json).length === 0) {
     throw new Error("Invalid or empty input object in finding a unique ID.");
   }
+
+  const limit = resolveLimit(json.limit);
+  const page = Number(json.page) || config.page;
 
   const keysMapping = {
     allocineid: "allocine.id",
@@ -39,11 +44,13 @@ const findId = async (json, append_to_response, filtered_seasons) => {
   };
 
   // Step 1: Build the query object
+  let lookupType;
   let query = {};
 
   for (const [key, mappedKeyRaw] of Object.entries(keysMapping)) {
     if (!(key in json)) continue;
 
+    lookupType = key;
     const value = json[key];
     const mappedKey = mappedKeyRaw ?? key;
 
@@ -55,13 +62,13 @@ const findId = async (json, append_to_response, filtered_seasons) => {
       const normalizedTitle = normalizeString(value);
 
       // Return no results for a blank title.
-      if (!normalizedTitle) return { results: [], total_results: 0 };
+      if (!normalizedTitle)
+        return { limit, page, results: [], total_results: 0 };
 
-      // Match the provided title as a literal string by escaping special characters.
-      const normalizedInput = normalizedTitle.replace(
-        /[.*+?^${}()|[\]\\]/g,
-        "\\$&",
-      );
+      // Build the title search pattern.
+      const normalizedInput = normalizedTitle
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+        .replace(/ /g, "\\s+");
 
       // Match title, original_title, and every stored localized title variant.
       query = {
@@ -120,12 +127,6 @@ const findId = async (json, append_to_response, filtered_seasons) => {
           ],
         },
       };
-
-      // Apply the adult-content filter.
-      const adultStates = new Set((json.is_adult || "false").split(","));
-      if (!(adultStates.has("true") && adultStates.has("false"))) {
-        query.is_adult = adultStates.has("true");
-      }
     } else if (isTraktIdKey) {
       const stringValue = typeof value === "string" ? value : String(value);
       const numericValue =
@@ -146,6 +147,12 @@ const findId = async (json, append_to_response, filtered_seasons) => {
     break; // exit after first match
   }
 
+  // Apply the adult-content filter.
+  const adultStates = new Set((json.is_adult || "false").split(","));
+  if (!(adultStates.has("true") && adultStates.has("false"))) {
+    query.is_adult = adultStates.has("true");
+  }
+
   // Apply the item type filter when a single type is requested.
   const itemTypes = new Set(json.item_type?.split(",").filter(Boolean));
   if (itemTypes.size === 1) {
@@ -156,22 +163,45 @@ const findId = async (json, append_to_response, filtered_seasons) => {
   // Step 2: Build the projection object
   const projection = buildProjection(append_to_response);
 
+  const executeQuery = async (operation, callback) => {
+    const startedAt = performance.now();
+    try {
+      return await callback();
+    } catch (error) {
+      error.newRelicAttributes = {
+        db_operation: operation,
+        db_duration_ms: Math.round(performance.now() - startedAt),
+        db_error_code: error.code,
+        lookup_type: lookupType,
+      };
+      throw error;
+    }
+  };
+
   // Step 3: Execute query with projection
-  let [results, total_results] = await Promise.all([
+  let results = await executeQuery("find", () =>
     collectionData
       .find(query, { projection, maxTimeMS: config.queryMaxTimeMS })
-      .limit(config.maxLimit)
+      .sort({ _id: 1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
       .toArray(),
-    collectionData.countDocuments(query, { maxTimeMS: config.queryMaxTimeMS }),
-  ]);
+  );
+  let total_results = results.length;
+  if (page > 1 || results.length === limit) {
+    total_results = await executeQuery("countDocuments", () =>
+      collectionData.countDocuments(query, {
+        maxTimeMS: config.queryMaxTimeMS,
+      }),
+    );
+  }
 
   // Step 4: Filter by seasons if needed
   if (filtered_seasons) {
     results = await filterEpisodesBySeason(results, filtered_seasons);
-    total_results = results.length;
   }
 
-  return { results, total_results };
+  return { limit, page, results, total_results };
 };
 
 module.exports = findId;

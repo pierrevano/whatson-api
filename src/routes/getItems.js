@@ -68,7 +68,7 @@ const getItems = async (req, res) => {
     if (
       config.keysToCheckForSearch.some((key) => Object.hasOwn(req.query, key))
     ) {
-      const { results, total_results } = await findId(
+      const { limit, page, results, total_results } = await findId(
         req.query,
         append_to_response,
         filtered_seasons_query,
@@ -77,9 +77,9 @@ const getItems = async (req, res) => {
         req,
         res,
         {
-          page: 1,
+          page,
           results,
-          total_pages: 1,
+          total_pages: Math.ceil(total_results / limit),
           total_results,
         },
         config,

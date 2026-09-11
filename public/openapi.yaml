@@ -10,10 +10,12 @@ info:
     `api_key` query parameter for a higher limit. The `Retry-After` header is set
     when the limit is reached (HTTP 429).
 
-    **Ratings scale** — `ratings_average` and `minimum_ratings` use a normalised
-    0–5 scale across all sources (IMDb ÷ 2, Metacritic ÷ 20, Rotten Tomatoes ÷ 20,
-    AlloCiné native, etc.).
-  version: 3.39.52
+    **Ratings scale** — `ratings_average` uses a normalised 0–5 scale
+    (IMDb ÷ 2, Metacritic critics ÷ 20, Metacritic users ÷ 2,
+    Rotten Tomatoes ÷ 20, AlloCiné native, etc.). `minimum_ratings` uses
+    the 0–5 scale when filtering movies and TV shows, and the 0–10 scale when filtering episodes.
+    Movie and TV show searches by title or ID ignore this filter; episode searches support it.
+  version: 3.39.6
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -26,6 +28,7 @@ servers:
     description: Production
 
 security:
+  - {}
   - apiKey: []
 
 # ---------------------------------------------------------------------------
@@ -127,24 +130,23 @@ components:
         type: string
         example: "HBO,AMC"
 
-    limit:
-      name: limit
-      in: query
-      description: Number of results per page (default 20).
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 900
-        default: 20
-
     page:
       name: page
       in: query
-      description: Page number, 1-based (default 1).
+      description: Page number
       schema:
         type: integer
         minimum: 1
         default: 1
+
+    limit:
+      name: limit
+      in: query
+      description: Page items limit (20 results by default). Specify `limit` explicitly to request more.
+      schema:
+        type: integer
+        minimum: 1
+        default: 20
 
   schemas:
     PaginatedItems:
@@ -282,13 +284,19 @@ components:
                 nominations:
                   type: ["integer", "null"]
         genres:
-          type: object
+          type: ["array", "null"]
+          items:
+            type: string
           description: Genre names. Included when `genres` is in `append_to_response`.
         directors:
-          type: object
+          type: ["array", "null"]
+          items:
+            type: string
           description: Director names. Included when `directors` is in `append_to_response`.
         networks:
-          type: object
+          type: ["array", "null"]
+          items:
+            type: string
           description: Network names. Included when `networks` is in `append_to_response`.
         platforms_links:
           type: array
@@ -303,7 +311,9 @@ components:
                 type: string
                 format: uri
         production_companies:
-          type: object
+          type: ["array", "null"]
+          items:
+            type: string
           description: Production company names. Included when `production_companies` is in `append_to_response`.
         title_variants:
           type: object
@@ -353,7 +363,7 @@ components:
           description: Lowest IMDb-rated episode across all seasons. Included when `lowest_episode` is in `append_to_response`. TV shows only.
           $ref: "#/components/schemas/RatedEpisode"
         episodes_details:
-          type: array
+          type: ["array", "null"]
           description: All episodes with IMDb ratings. Included when `episodes_details` is in `append_to_response`. TV shows only.
           items:
             $ref: "#/components/schemas/RatedEpisode"
@@ -528,38 +538,38 @@ components:
           description: Lifetime worldwide gross in USD.
 
     RatedEpisode:
-      type: object
+      type: ["object", "null"]
       properties:
         season:
-          type: integer
+          type: ["integer", "null"]
         episode:
-          type: integer
+          type: ["integer", "null"]
         title:
-          type: string
+          type: ["string", "null"]
         description:
-          type: string
+          type: ["string", "null"]
         id:
-          type: string
+          type: ["string", "null"]
           description: IMDb episode ID (e.g. tt1267295).
         url:
-          type: string
+          type: ["string", "null"]
           format: uri
         release_date:
-          type: string
+          type: ["string", "null"]
           format: date
         users_rating:
-          type: number
+          type: ["number", "null"]
           description: IMDb user rating 0–10.
         users_rating_count:
-          type: integer
+          type: ["integer", "null"]
 
     AiringEpisode:
       allOf:
         - $ref: "#/components/schemas/RatedEpisode"
-        - type: object
+        - type: ["object", "null"]
           properties:
             episode_type:
-              type: string
+              type: ["string", "null"]
 
     SeasonMetadata:
       type: object
@@ -600,7 +610,9 @@ components:
           type: string
           format: uri
         networks:
-          type: object
+          type: ["array", "null"]
+          items:
+            type: string
         seasons_number:
           type: integer
         status:
@@ -638,7 +650,9 @@ components:
           type: string
           format: uri
         networks:
-          type: object
+          type: ["array", "null"]
+          items:
+            type: string
         season_number:
           type: integer
         seasons_number:
@@ -667,7 +681,9 @@ components:
           type: string
           format: uri
         networks:
-          type: object
+          type: ["array", "null"]
+          items:
+            type: string
         season_number:
           type: integer
         episode_number:
@@ -712,7 +728,9 @@ components:
                   type: string
                   format: uri
                 networks:
-                  type: object
+                  type: ["array", "null"]
+                  items:
+                    type: string
                 seasons_number:
                   type: integer
                 status:
@@ -721,19 +739,58 @@ components:
 
     Error:
       type: object
+      required: [code, message]
       properties:
+        code:
+          type: integer
+          example: 404
         message:
           type: string
           example: "No matching items found."
 
   responses:
+    BadRequest:
+      description: Invalid query parameters.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: No matching items found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    MethodNotAllowed:
+      description: Method not allowed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
     RateLimitExceeded:
       description: Rate limit exceeded. Retry after the indicated delay.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
       headers:
         Retry-After:
           description: Seconds to wait before retrying.
           schema:
             type: integer
+
+    InternalServerError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServiceUnavailable:
+      description: Service unavailable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -744,13 +801,13 @@ paths:
       operationId: searchTitles
       summary: Search and filter movies and TV shows
       description: |
-        The main discovery endpoint. Supports filtering by title, genre, platform,
-        network, release date, ratings, popularity, status, and more.
-        Returns paginated results sorted by `ratings_average` or `popularity_average`
-        depending on the filters applied.
+        Without `title` or an external ID, combine the filters and sorting options below.
 
-        You can also look up a title by an external platform ID using any of these
-        query parameters (returns a single result):
+        Title or ID searches support `item_type`, `page`, `limit`, `append_to_response`,
+        `filtered_seasons`, and `is_adult` (default `false`). Other filters and sorting options are ignored.
+        Provide one title or ID parameter; an ID can match multiple items.
+
+        Supported external ID query parameters:
         `imdbId`, `tmdbId`, `allocineId`, `betaseriesId`, `letterboxdId`,
         `metacriticId`, `rottentomatoesId`, `senscritiqueId`, `thetvdbId`,
         `traktId`.
@@ -775,18 +832,18 @@ paths:
         - $ref: "#/components/parameters/networks"
         - name: status
           in: query
-          description: TV show production status.
+          description: Comma-separated TV show statuses (canceled, ended, ongoing, pilot, unknown).
           schema:
             type: string
-            enum: [canceled, ended, ongoing, pilot, unknown]
+            example: "ended,ongoing"
         - name: release_date
           in: query
           description: |
             Date range filter. Either bound is optional.
             Format: `new,from:YYYY-MM-DD,to:YYYY-MM-DD`
 
-            Special shortcut: `new` returns recently released titles
-            (last 6 months for movies, last 18 months for TV shows).
+            Special shortcut: `new` includes releases from 6 months ago onward when `item_type=movie`,
+            or 18 months ago onward when TV shows or both types are requested.
             Use `everything` alone to apply no release-date filter.
           schema:
             type: string
@@ -893,60 +950,60 @@ paths:
             enum: [asc, desc]
         - name: imdbId
           in: query
-          description: Look up by IMDb ID (e.g. tt0903747). Returns a single result.
+          description: Look up by IMDb ID (e.g. tt0903747).
           schema:
             type: string
             example: "tt0903747"
         - name: tmdbId
           in: query
-          description: Look up by TMDB numeric ID. Returns a single result.
+          description: Look up by TMDB numeric ID.
           schema:
             type: integer
         - name: allocineId
           in: query
-          description: Look up by AlloCiné ID. Returns a single result.
+          description: Look up by AlloCiné ID.
           schema:
             type: integer
         - name: betaseriesId
           in: query
-          description: Look up by BetaSeries ID. Returns a single result.
+          description: Look up by BetaSeries ID.
           schema:
             type: string
         - name: letterboxdId
           in: query
-          description: Look up by Letterboxd ID. Returns a single result. Movie only.
+          description: Look up by Letterboxd ID. Movie only.
           schema:
             type: string
         - name: metacriticId
           in: query
-          description: Look up by Metacritic slug. Returns a single result.
+          description: Look up by Metacritic slug.
           schema:
             type: string
         - name: rottentomatoesId
           in: query
-          description: Look up by Rotten Tomatoes slug. Returns a single result.
+          description: Look up by Rotten Tomatoes slug.
           schema:
             type: string
         - name: senscritiqueId
           in: query
-          description: Look up by SensCritique ID. Returns a single result.
+          description: Look up by SensCritique ID.
           schema:
             type: integer
         - name: thetvdbId
           in: query
-          description: Look up by TheTVDB ID. Returns a single result.
+          description: Look up by TheTVDB ID.
           schema:
             type: integer
         - name: traktId
           in: query
-          description: Look up by Trakt ID or slug. Returns a single result.
+          description: Look up by Trakt ID or slug.
           schema:
             oneOf:
               - type: string
               - type: integer
         - $ref: "#/components/parameters/appendToResponse"
-        - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
       responses:
         "200":
           description: Paginated list of matching titles.
@@ -955,29 +1012,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/PaginatedItems"
         "400":
-          description: Invalid query parameters.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/BadRequest"
         "404":
-          description: No matching items found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/NotFound"
         "405":
-          description: Method not allowed.
+          $ref: "#/components/responses/MethodNotAllowed"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
-          description: Internal server error.
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: Service unavailable.
+          $ref: "#/components/responses/ServiceUnavailable"
 
   /updates:
     get:
       operationId: getUpdates
+      security:
+        - apiKey: []
       summary: Get updated title IDs
       description: Returns IDs of titles added or updated since a given date, grouped by item type. Requires a sponsor API key.
       tags: [Titles]
@@ -1023,17 +1074,21 @@ paths:
                   total_results:
                     type: integer
         "400":
-          description: Invalid query parameters.
+          $ref: "#/components/responses/BadRequest"
         "403":
           description: A sponsor API key is required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "405":
-          description: Method not allowed.
+          $ref: "#/components/responses/MethodNotAllowed"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
-          description: Internal server error.
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: Service unavailable.
+          $ref: "#/components/responses/ServiceUnavailable"
 
   /movie/{id}:
     get:
@@ -1059,25 +1114,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/Item"
         "400":
-          description: Invalid query parameters.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/BadRequest"
         "404":
-          description: Not found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/NotFound"
         "405":
-          description: Method not allowed.
+          $ref: "#/components/responses/MethodNotAllowed"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
-          description: Internal server error.
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: Service unavailable.
+          $ref: "#/components/responses/ServiceUnavailable"
 
   /tvshow/{id}:
     get:
@@ -1103,25 +1150,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/Item"
         "400":
-          description: Invalid query parameters.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/BadRequest"
         "404":
-          description: Not found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/NotFound"
         "405":
-          description: Method not allowed.
+          $ref: "#/components/responses/MethodNotAllowed"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
-          description: Internal server error.
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: Service unavailable.
+          $ref: "#/components/responses/ServiceUnavailable"
 
   /tvshow/{id}/seasons:
     get:
@@ -1160,21 +1199,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/TvShowSeasons"
         "400":
-          description: Invalid query parameters.
+          $ref: "#/components/responses/BadRequest"
         "404":
-          description: Not found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/NotFound"
         "405":
-          description: Method not allowed.
+          $ref: "#/components/responses/MethodNotAllowed"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
-          description: Internal server error.
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: Service unavailable.
+          $ref: "#/components/responses/ServiceUnavailable"
 
   /tvshow/{id}/seasons/{season_number}/episodes:
     get:
@@ -1214,21 +1249,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/TvShowSeasonEpisodes"
         "400":
-          description: Invalid query parameters.
+          $ref: "#/components/responses/BadRequest"
         "404":
-          description: Not found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/NotFound"
         "405":
-          description: Method not allowed.
+          $ref: "#/components/responses/MethodNotAllowed"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
-          description: Internal server error.
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: Service unavailable.
+          $ref: "#/components/responses/ServiceUnavailable"
 
   /tvshow/{id}/seasons/{season_number}/episodes/{episode_number}:
     get:
@@ -1268,21 +1299,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/TvShowEpisodeDetail"
         "400":
-          description: Invalid query parameters.
+          $ref: "#/components/responses/BadRequest"
         "404":
-          description: Not found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/NotFound"
         "405":
-          description: Method not allowed.
+          $ref: "#/components/responses/MethodNotAllowed"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
-          description: Internal server error.
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: Service unavailable.
+          $ref: "#/components/responses/ServiceUnavailable"
 
   /episodes/rated:
     get:
@@ -1359,10 +1386,10 @@ paths:
             type: string
         - name: status
           in: query
-          description: Filter the parent TV show by production status.
+          description: Comma-separated TV show statuses (canceled, ended, ongoing, pilot, unknown).
           schema:
             type: string
-            enum: [canceled, ended, ongoing, pilot, unknown]
+            example: "ended,ongoing"
         - name: filtered_seasons
           in: query
           description: |
@@ -1394,8 +1421,8 @@ paths:
             type: string
             enum: [asc, desc]
             default: desc
-        - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
       responses:
         "200":
           description: Paginated rated episodes.
@@ -1404,22 +1431,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/PaginatedRatedEpisodes"
         "400":
-          description: Invalid query parameters.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/BadRequest"
         "404":
-          description: No matching items found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: "#/components/responses/NotFound"
         "405":
-          description: Method not allowed.
+          $ref: "#/components/responses/MethodNotAllowed"
         "429":
           $ref: "#/components/responses/RateLimitExceeded"
         "500":
-          description: Internal server error.
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: Service unavailable.
+          $ref: "#/components/responses/ServiceUnavailable"

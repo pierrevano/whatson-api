@@ -17,7 +17,7 @@ const removeLogs = process.env.REMOVE_LOGS === "true";
 
 /**
  * Request cases and their expected results.
- * @type {Record<string, { query: string, expectedResult: (items: any, response: any) => void }>}
+ * @type {Record<string, { query: string, expectedResult: (items: any, response: any) => void | Promise<void> }>}
  */
 const params = {
   query_parameter_names_accept_mixed_casing: {
@@ -57,6 +57,57 @@ const params = {
     },
   },
 
+  title_search_respects_default_limit_and_pagination: {
+    query: "?title=a",
+    expectedResult: async (items, response) => {
+      expect(items).toHaveLength(config.limit);
+      expect(response.data.total_results).toBeGreaterThan(config.limit);
+      expect(response.data.page).toBe(1);
+      expect(response.data.total_pages).toBe(
+        Math.ceil(response.data.total_results / config.limit),
+      );
+
+      const nextPage = await axios.get(response.config.url, {
+        params: { page: 2 },
+      });
+      expect(nextPage.data.page).toBe(2);
+      expect(nextPage.data.total_pages).toBe(response.data.total_pages);
+      expect(nextPage.data.total_results).toBe(response.data.total_results);
+      expect(nextPage.data.results).toHaveLength(
+        Math.min(config.limit, response.data.total_results - config.limit),
+      );
+      const firstPageIds = items.map((item) => item._id);
+      nextPage.data.results.forEach((item) => {
+        expect(firstPageIds).not.toContain(item._id);
+      });
+    },
+  },
+
+  title_search_respects_explicit_limit_without_truncating_total: {
+    query: "?title=wolf&limit=1",
+    expectedResult: (items, response) => {
+      expect(items).toHaveLength(1);
+      expect(response.data.total_results).toBeGreaterThan(items.length);
+    },
+  },
+
+  title_search_preserves_total_on_partial_last_page_with_default_limit: {
+    query: "?title=wolf",
+    expectedResult: async (items, response) => {
+      const { total_results, total_pages } = response.data;
+      const remainingItems = total_results % items.length;
+      expect(total_pages).toBeGreaterThan(1);
+      expect(remainingItems).toBeGreaterThan(0);
+
+      const lastPage = await axios.get(response.config.url, {
+        params: { page: total_pages },
+      });
+      expect(lastPage.data.page).toBe(total_pages);
+      expect(lastPage.data.results).toHaveLength(remainingItems);
+      expect(lastPage.data.total_results).toBe(total_results);
+    },
+  },
+
   title_search_should_only_return_movie_items: {
     query: "?item_type=movie&title=wolf",
     expectedResult: (items) => {
@@ -78,7 +129,7 @@ const params = {
   },
 
   title_search_should_return_both_item_types: {
-    query: "?item_type=movie,tvshow&title=wolf",
+    query: `?item_type=movie,tvshow&title=wolf&limit=${config.maxLimit}`,
     expectedResult: (items) => {
       const itemTypes = items.map((item) => item.item_type);
       expect(itemTypes).toContain("movie");
@@ -613,7 +664,7 @@ describe("What's on? API tests", () => {
       const data = response.data;
       const items = query.startsWith("/") ? data : data.results;
 
-      expectedResult(items, response);
+      await expectedResult(items, response);
     }
 
     test(
