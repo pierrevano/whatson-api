@@ -28,7 +28,16 @@ const applyBaseMiddleware = (app, { staticDir }) => {
   app.use(compression());
 
   /* Use CORS middleware. */
-  app.use(cors());
+  app.use(
+    cors({
+      exposedHeaders: [
+        "Retry-After",
+        "X-RateLimit-Limit",
+        "X-RateLimit-Remaining",
+        "X-RateLimit-Reset",
+      ],
+    }),
+  );
 
   /* Handle CORS pre-flight requests. */
   app.options("/{*splat}", cors());

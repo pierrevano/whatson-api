@@ -30,8 +30,7 @@ const getId = async (req, res) => {
     const id_path = Number(req.params.id);
     const item_type_query = req.query.item_type;
     const ratings_filters_query = req.query.ratings_filters;
-    const url = `${req.headers["host"]}${req.url}`;
-    const item_type = url.split("/")[1] === "movie" ? "movie" : "tvshow";
+    const item_type = req.route.path.split("/")[1];
     const append_to_response = req.query.append_to_response;
 
     const internal_api_key = await getInternalApiKey();

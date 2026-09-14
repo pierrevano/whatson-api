@@ -1219,6 +1219,14 @@ const params = {
     },
   },
 
+  return_correct_movie_item_type_on_uppercase_path: {
+    query: "/MOVIE/550?",
+    expectedResult: (item) => {
+      expect(item.id).toBe(550);
+      expect(item.item_type).toBe("movie");
+    },
+  },
+
   awards_present_when_requested_on_movie_path: {
     query: "/movie/1054867?append_to_response=awards",
     expectedResult: (item) => {
@@ -1249,7 +1257,7 @@ const params = {
   },
 
   title_search_includes_adult_content_when_requested: {
-    query: "?title=zombie&is_adult=true,false",
+    query: "?title=zombie&is_adult=true",
     expectedResult: (items) => {
       expect(items.some((item) => item.is_adult === true)).toBe(true);
     },

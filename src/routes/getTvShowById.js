@@ -1,5 +1,6 @@
 const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
 const { collectionData } = require("../utils/mongoClient");
+const { config } = require("../config");
 
 const buildTvShowProjection = (appendToResponse = "") => {
   const includes = buildAppendIncludes(appendToResponse);
@@ -24,7 +25,10 @@ const buildTvShowProjection = (appendToResponse = "") => {
 const getTvShowById = async (id, appendToResponse = "") =>
   collectionData.findOne(
     { id, item_type: "tvshow" },
-    { projection: buildTvShowProjection(appendToResponse) },
+    {
+      projection: buildTvShowProjection(appendToResponse),
+      maxTimeMS: config.queryMaxTimeMS,
+    },
   );
 
 module.exports = getTvShowById;
