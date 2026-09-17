@@ -4,8 +4,9 @@ const axios = require("axios");
 
 const { client, collectionData } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
-const { countLines } = require("./utils/countLines");
-const { generateRandomIp } = require("./utils/generateRandomIp");
+const {
+  getInvalidSortOrderMessage,
+} = require("./utils/getInvalidSortOrderMessage");
 const { handleRequestError } = require("../src/utils/sendRequest");
 const { limiter } = require("../src/routes/utils/rateLimiter");
 
@@ -84,6 +85,174 @@ const params = {
     },
   },
 
+  is_active_is_invalid: {
+    query: "?is_active=invalid",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidBooleanMessage} Received 'invalid' for 'is_active'.`,
+      });
+    },
+  },
+
+  is_active_has_duplicate_values: {
+    query: "?is_active=true,true",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidBooleanMessage} Received 'true,true' for 'is_active'.`,
+      });
+    },
+  },
+
+  item_type_has_duplicate_values: {
+    query: "?item_type=movie,movie",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidItemTypeMessage} Received 'movie,movie'.`,
+      });
+    },
+  },
+
+  item_type_is_empty: {
+    query: "?item_type=",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidItemTypeMessage} Received ''.`,
+      });
+    },
+  },
+
+  status_has_duplicate_values: {
+    query: "?status=ended,ended",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidStatusMessage} Received 'ended,ended'.`,
+      });
+    },
+  },
+
+  status_is_empty: {
+    query: "?status=",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidStatusMessage} Received ''.`,
+      });
+    },
+  },
+
+  append_to_response_is_invalid: {
+    query: "?append_to_response=invalid",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidAppendToResponseMessage} Received 'invalid'.`,
+      });
+    },
+  },
+
+  popularity_filters_is_invalid: {
+    query: "?item_type=tvshow&popularity_filters=wrong_value",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidPopularityFiltersMessage} Received 'wrong_value'.`,
+      });
+    },
+  },
+
+  seasons_append_to_response_is_invalid: {
+    query: "/tvshow/1396/seasons?append_to_response=awards",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidSeasonAppendToResponseMessage} Received 'awards'.`,
+      });
+    },
+  },
+
+  rated_episodes_minimum_ratings_exceeds_maximum: {
+    query: "/episodes/rated?minimum_ratings=11",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidMinimumRatingsRangeMessage.replace(
+          "{maximum}",
+          10,
+        )} Received '11'.`,
+      });
+    },
+  },
+
+  rated_episodes_order_has_multiple_values: {
+    query: "/episodes/rated?order=asc,desc",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: getInvalidSortOrderMessage("order", "asc,desc"),
+      });
+    },
+  },
+
+  top_ranking_order_has_multiple_values: {
+    query: "?top_ranking_order=asc,desc",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: getInvalidSortOrderMessage("top_ranking_order", "asc,desc"),
+      });
+    },
+  },
+
+  top_ranking_order_is_invalid: {
+    query: "?top_ranking_order=invalid",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: getInvalidSortOrderMessage("top_ranking_order", "invalid"),
+      });
+    },
+  },
+
+  mojo_rank_order_has_multiple_values: {
+    query: "?mojo_rank_order=asc,desc",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: getInvalidSortOrderMessage("mojo_rank_order", "asc,desc"),
+      });
+    },
+  },
+
+  mojo_rank_order_is_invalid: {
+    query: "?mojo_rank_order=invalid",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: getInvalidSortOrderMessage("mojo_rank_order", "invalid"),
+      });
+    },
+  },
+
   request_body_is_invalid_json: {
     query: "/mcp?",
     method: "post",
@@ -140,7 +309,7 @@ const params = {
     },
   },
 
-  wrong_item_type_present: {
+  item_type_is_invalid: {
     query: "?item_type=movies",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
@@ -162,7 +331,7 @@ const params = {
     },
   },
 
-  not_lowercase_item_type_present: {
+  item_type_is_not_lowercase: {
     query: "?item_type=moviE",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
@@ -174,29 +343,31 @@ const params = {
     },
   },
 
-  limit_is_higher_than_max_mongodb_items_limit: {
+  limit_exceeds_maximum: {
     query: `?item_type=tvshow&is_active=true,false&limit=${parseInt(config.maxLimit) + 1}`,
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `${config.invalidLimitMessage} and ${config.maxLimit}. Received '${parseInt(config.maxLimit) + 1}'.`,
+        `Invalid limit provided. Please specify an integer between 1 and ${config.maxLimit}. Received '${parseInt(config.maxLimit) + 1}'.`,
       );
       expect(data.code).toBe(400);
     },
   },
 
-  wrong_query_parameter: {
+  query_parameter_is_unsupported: {
     query: "?invalid_value=invalid_value&is_active",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe("Invalid query parameter(s): invalid_value");
+      expect(data.message).toBe(
+        `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
+      );
       expect(data.code).toBe(400);
     },
   },
 
-  percent_sign_genre_filter_should_return_404: {
+  percent_sign_genre_filter_has_no_matches: {
     query: "?genres=%25",
     expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
@@ -218,25 +389,6 @@ const params = {
     },
   },
 
-  page_2_with_20_items: {
-    query: "?item_type=tvshow&seasons_number=1,2&page=2&limit=20",
-    expectedResult: (data) => {
-      expect(data).toHaveProperty("page");
-      expect(data).toHaveProperty("total_pages");
-      expect(data.page).toBe(2);
-      expect(data.results.length).toBe(20);
-    },
-  },
-
-  higher_total_results_than_results: {
-    query: `?item_type=movie,tvshow&is_active=true,false&limit=${maxLimitLargeDocuments}`,
-    expectedResult: (data) => {
-      expect(data).toHaveProperty("page");
-      expect(data.page).toBe(1);
-      expect(data.total_results).toBeGreaterThan(data.results.length);
-    },
-  },
-
   no_items_found_on_page_3: {
     query:
       "?item_type=tvshow&is_active=true&seasons_number=1,2&page=3&limit=200",
@@ -248,14 +400,15 @@ const params = {
     },
   },
 
-  no_items_found_when_providing_wrong_popularity_and_ratings: {
-    query:
-      "?item_type=movie&is_active=true,false&popularity_filters=&ratings_filters=wrong_values",
+  ratings_filters_is_invalid: {
+    query: "?ratings_filters=wrong_values",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
-      expect(data.code).toBe(404);
+      expect(data.message).toBe(
+        `${config.invalidRatingsFiltersMessage} Received 'wrong_values'.`,
+      );
+      expect(data.code).toBe(400);
     },
   },
 
@@ -269,8 +422,8 @@ const params = {
     },
   },
 
-  unknown_tvshow_on_seasons_path_should_return_404: {
-    query: "/tvshow/999999999/seasons?append_to_response",
+  unknown_tvshow_on_seasons_path: {
+    query: "/tvshow/999999999/seasons?",
     expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -280,8 +433,8 @@ const params = {
     },
   },
 
-  invalid_tvshow_season_number_on_episodes_path_should_return_404: {
-    query: "/tvshow/1396/seasons/0/episodes?append_to_response",
+  invalid_tvshow_season_number_on_episodes_path: {
+    query: "/tvshow/1396/seasons/0/episodes?",
     expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -291,8 +444,8 @@ const params = {
     },
   },
 
-  unknown_tvshow_episode_on_episode_details_path_should_return_404: {
-    query: "/tvshow/1396/seasons/1/episodes/999999?append_to_response",
+  unknown_tvshow_episode_on_episode_details_path: {
+    query: "/tvshow/1396/seasons/1/episodes/999999?",
     expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -302,125 +455,8 @@ const params = {
     },
   },
 
-  same_files_line_number_as_remote: {
-    query: "?item_type=movie,tvshow&is_active=true,false",
-    skipRemote: true,
-    expectedResult: (items) => {
-      if (config.checkItemsNumber) {
-        const filmsLines = countLines(config.filmsIdsFilePath);
-        const seriesLines = countLines(config.seriesIdsFilePath);
-
-        expect(filmsLines + seriesLines + config.margin).toBeGreaterThanOrEqual(
-          items.total_results,
-        );
-      }
-    },
-  },
-
-  correct_tmdb_id_returned: {
-    query:
-      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details,highest_episode,last_episode,lowest_episode,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
-    expectedResult: (data) => {
-      expect(typeof data).toBe("object");
-      expect(data.id).toBe(249042);
-      expect(data.ratings_average).toBeGreaterThan(0);
-
-      expect(Array.isArray(data.allocine.critics_rating_details)).toBeTruthy();
-      expect(Array.isArray(data.episodes_details)).toBeTruthy();
-      expect(typeof data.last_episode).toBe("object");
-      expect(typeof data.highest_episode).toBe("object");
-      expect(typeof data.lowest_episode).toBe("object");
-      expect(Array.isArray(data.production_companies)).toBeTruthy();
-      expect(Array.isArray(data.platforms_links)).toBeTruthy();
-      expect(typeof data.title).toBe("string");
-      expect(typeof data.title_variants).toBe("object");
-      expect(data.title_variants).toHaveProperty("fr");
-      expect(typeof data.image_variants).toBe("object");
-      expect(data.image_variants).toHaveProperty("fr");
-      expect(typeof data.certification_variants).toBe("object");
-      expect(data.certification_variants).toHaveProperty("fr");
-      expect(typeof data.parents_guide).toBe("object");
-      expect(typeof data.parents_guide.url).toBe("string");
-      expect(Array.isArray(data.parents_guide.categories)).toBeTruthy();
-    },
-  },
-
-  correct_tmdb_id_returned_without_critics_rating_details: {
-    query:
-      "/tvshow/249042?ratings_filters=all&append_to_response=episodes_details",
-    expectedResult: (data) => {
-      expect(typeof data).toBe("object");
-      expect(data.id).toBe(249042);
-      expect(data.ratings_average).toBeGreaterThan(0);
-
-      expect(
-        Array.isArray(data.allocine.critics_rating_details),
-      ).not.toBeTruthy();
-      expect(Array.isArray(data.episodes_details)).toBeTruthy();
-    },
-  },
-
-  correct_tmdb_id_returned_without_episodes_details: {
-    query:
-      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details",
-    expectedResult: (data) => {
-      expect(typeof data).toBe("object");
-      expect(data.id).toBe(249042);
-      expect(data.ratings_average).toBeGreaterThan(0);
-
-      expect(Array.isArray(data.allocine.critics_rating_details)).toBeTruthy();
-      expect(Array.isArray(data.episodes_details)).not.toBeTruthy();
-    },
-  },
-
-  correct_tmdb_id_returned_without_critics_rating_details_and_episodes_details:
-    {
-      query: "/tvshow/249042?ratings_filters=all",
-      expectedResult: (data) => {
-        expect(typeof data).toBe("object");
-        expect(Object.keys(data).length).toEqual(
-          config.keysToCheck.length - 15,
-        );
-        expect(data.id).toBe(249042);
-        expect(data.ratings_average).toBeGreaterThan(0);
-
-        expect(data.allocine).not.toHaveProperty("critics_rating_details");
-        expect(data).not.toHaveProperty("episodes_details");
-        expect(data).not.toHaveProperty("last_episode");
-        expect(data).not.toHaveProperty("next_episode");
-        expect(data).not.toHaveProperty("highest_episode");
-        expect(data).not.toHaveProperty("lowest_episode");
-        expect(data).not.toHaveProperty("directors");
-        expect(data).not.toHaveProperty("genres");
-        expect(data).not.toHaveProperty("networks");
-        expect(data).not.toHaveProperty("platforms_links");
-        expect(data).not.toHaveProperty("production_companies");
-        expect(typeof data.title).toBe("string");
-        expect(data).not.toHaveProperty("title_variants");
-        expect(data).not.toHaveProperty("image_variants");
-        expect(data).not.toHaveProperty("certification_variants");
-        expect(data).not.toHaveProperty("parents_guide");
-      },
-    },
-
-  correct_tvshow_item_type_returned: {
-    query: "/tvshow/121?is_active",
-    expectedResult: (data) => {
-      expect(typeof data).toBe("object");
-      expect(data.item_type).toBe("tvshow");
-    },
-  },
-
-  correct_movie_item_type_returned: {
-    query: "/movie/121?is_active",
-    expectedResult: (data) => {
-      expect(typeof data).toBe("object");
-      expect(data.item_type).toBe("movie");
-    },
-  },
-
-  undefined_movie_id_should_return_404: {
-    query: "/movie/undefined?is_active",
+  movie_id_is_undefined_string: {
+    query: "/movie/undefined?",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
@@ -429,7 +465,7 @@ const params = {
     },
   },
 
-  unknown_id_with_ratings_filters_should_return_404: {
+  unknown_tvshow_id_with_ratings_filters: {
     query: "/tvshow/999999999?ratings_filters=all",
     expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
@@ -450,7 +486,7 @@ const params = {
     },
   },
 
-  invalid_item_type_with_unmatched_title_should_return_400: {
+  invalid_item_type_with_unmatched_title: {
     query: "?item_type=movies&title=some invalid value to be tested",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
@@ -462,7 +498,7 @@ const params = {
     },
   },
 
-  wrong_item_type_present_on_search: {
+  search_item_type_is_invalid: {
     query: "?item_type=movies&title=wolf",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
@@ -485,26 +521,47 @@ const params = {
     },
   },
 
-  minimum_ratings_invalid_should_return_400: {
+  minimum_ratings_is_invalid: {
     query:
       "?item_type=tvshow&popularity_filters=none&minimum_ratings=some invalid value to be tested",
     expectedResult: (data) => {
       expect(data.code).toBe(400);
-      expect(data.message).toBe(config.invalidMinimumRatingsMessage);
+      expect(data.message).toBe(
+        `${config.invalidMinimumRatingsMessage} Received 'some invalid value to be tested'.`,
+      );
     },
   },
 
-  minimum_ratings_too_high_should_return_404: {
+  minimum_ratings_exceeds_maximum: {
     query: "?item_type=movie,tvshow&is_active=true,false&minimum_ratings=9,9",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
-      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
-      expect(data.code).toBe(404);
+      expect(data.message).toBe(
+        `${config.invalidMinimumRatingsRangeMessage.replace(
+          "{maximum}",
+          5,
+        )} Received '9,9'.`,
+      );
+      expect(data.code).toBe(400);
     },
   },
 
-  rated_episodes_minimum_users_rating_count_too_high_should_return_404: {
+  minimum_ratings_is_negative: {
+    query: "?minimum_ratings=-1",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidMinimumRatingsRangeMessage.replace(
+          "{maximum}",
+          5,
+        )} Received '-1'.`,
+      });
+    },
+  },
+
+  rated_episodes_minimum_users_rating_count_has_no_matches: {
     query: "/episodes/rated?minimum_users_rating_count=999999999",
     expectedResult: (data, response) => {
       expect(data).toHaveProperty("message");
@@ -586,7 +643,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "Invalid endpoint: /invalid-path. Allowed endpoints are: GET /, GET /episodes/rated, GET /movie/:id, GET /tvshow/:id, GET /tvshow/:id/seasons, GET /tvshow/:id/seasons/:season_number/episodes, GET /tvshow/:id/seasons/:season_number/episodes/:episode_number, GET /updates.",
+        `${config.invalidEndpointMessage} Allowed endpoints are: GET /, GET /episodes/rated, GET /movie/:id, GET /tvshow/:id, GET /tvshow/:id/seasons, GET /tvshow/:id/seasons/:season_number/episodes, GET /tvshow/:id/seasons/:season_number/episodes/:episode_number, GET /updates. Received '/invalid-path'.`,
       );
       expect(data.code).toBe(404);
     },
@@ -598,7 +655,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `${config.invalidLimitMessage} and ${config.maxLimit}. Received '0'.`,
+        `Invalid limit provided. Please specify an integer between 1 and ${config.maxLimit}. Received '0'.`,
       );
       expect(data.code).toBe(400);
     },
@@ -610,7 +667,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `${config.invalidLimitMessage} and ${config.maxLimit}. Received '-5'.`,
+        `Invalid limit provided. Please specify an integer between 1 and ${config.maxLimit}. Received '-5'.`,
       );
       expect(data.code).toBe(400);
     },
@@ -622,7 +679,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `${config.invalidLimitMessage} and ${config.maxLimit}. Received '10.5'.`,
+        `Invalid limit provided. Please specify an integer between 1 and ${config.maxLimit}. Received '10.5'.`,
       );
       expect(data.code).toBe(400);
     },
@@ -634,7 +691,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `${config.invalidLimitMessage} and ${config.maxLimit}. Received 'abc'.`,
+        `Invalid limit provided. Please specify an integer between 1 and ${config.maxLimit}. Received 'abc'.`,
       );
       expect(data.code).toBe(400);
     },
@@ -696,7 +753,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "The runtime must contain only integers greater than or equal to 0. Received 'invalid'.",
+        "Invalid runtime provided. Please specify only integers greater than or equal to 0. Received 'invalid'.",
       );
       expect(data.code).toBe(400);
     },
@@ -708,7 +765,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "The seasons_number must contain only integers greater than 0. Received '1,wrong_value'.",
+        "Invalid seasons_number provided. Please specify only integers greater than or equal to 1. Received '1,wrong_value'.",
       );
       expect(data.code).toBe(400);
     },
@@ -720,7 +777,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "Invalid status provided. Please specify one or more of 'canceled', 'ended', 'ongoing', 'pilot', 'unknown'. Received '%ended'.",
+        `${config.invalidStatusMessage} Received '%ended'.`,
       );
       expect(data.code).toBe(400);
     },
@@ -733,7 +790,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "The filtered_seasons must contain only integers greater than 0. Received 'wrong_value'.",
+        "Invalid filtered_seasons provided. Please specify only integers greater than or equal to 1. Received 'wrong_value'.",
       );
       expect(data.code).toBe(400);
     },
@@ -746,7 +803,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "The filtered_seasons must contain only integers greater than 0. Received 'wrong_value'.",
+        "Invalid filtered_seasons provided. Please specify only integers greater than or equal to 1. Received 'wrong_value'.",
       );
       expect(data.code).toBe(400);
     },
@@ -758,7 +815,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "The filtered_seasons must contain only integers greater than 0. Received '1,wrong_value'.",
+        "Invalid filtered_seasons provided. Please specify only integers greater than or equal to 1. Received '1,wrong_value'.",
       );
       expect(data.code).toBe(400);
     },
@@ -770,7 +827,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "The minimum_users_rating_count must be an integer greater than or equal to 0. Received '10.5'.",
+        "Invalid minimum_users_rating_count provided. Please specify an integer greater than or equal to 0. Received '10.5'.",
       );
       expect(data.code).toBe(400);
     },
@@ -782,7 +839,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        "The minimum_users_rating_count must be an integer greater than or equal to 0. Received '-1'.",
+        "Invalid minimum_users_rating_count provided. Please specify an integer greater than or equal to 0. Received '-1'.",
       );
       expect(data.code).toBe(400);
     },
@@ -800,19 +857,19 @@ const params = {
     },
   },
 
-  no_items_found_with_is_active_error_message_and_empty_value: {
+  is_active_is_empty: {
     query: "?item_type=movie&directors=some_wrong_value&is_active=",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `${config.noMatchingItemsFoundMessage} Ensure 'is_active' is correctly set (currently true,false).`,
+        `${config.invalidBooleanMessage} Received '' for 'is_active'.`,
       );
-      expect(data.code).toBe(404);
+      expect(data.code).toBe(400);
     },
   },
 
-  invalid_imdbId_should_return_404: {
+  imdb_lookup_has_no_match: {
     query: "?imdbId=wrong_value",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
@@ -1051,7 +1108,7 @@ const params = {
       expect(response.status).toBe(405);
       expect(data).toEqual({
         code: 405,
-        message: "Method not allowed: POST /updates. Allowed methods: GET.",
+        message: `${config.invalidMethodMessage} Allowed methods are: GET. Received 'POST /updates'.`,
       });
       expect(response.headers.allow).toBe("GET");
     },
@@ -1063,7 +1120,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "Invalid query parameter(s): invalid_value",
+        message: `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
       });
     },
   },
@@ -1074,7 +1131,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "Invalid query parameter(s): invalid_value",
+        message: `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
       });
     },
   },
@@ -1085,7 +1142,29 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "Invalid query parameter(s): invalid_value",
+        message: `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
+      });
+    },
+  },
+
+  movie_has_unsupported_is_active_parameter: {
+    query: "/movie/550?is_active=true",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidQueryParamsMessage} Received 'is_active'.`,
+      });
+    },
+  },
+
+  movie_has_unsupported_page_parameter: {
+    query: "/movie/550?page=2",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidQueryParamsMessage} Received 'page'.`,
       });
     },
   },
@@ -1096,7 +1175,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "Invalid query parameter(s): invalid_value",
+        message: `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
       });
     },
   },
@@ -1107,7 +1186,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "Invalid query parameter(s): invalid_value",
+        message: `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
       });
     },
   },
@@ -1118,7 +1197,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "Invalid query parameter(s): invalid_value",
+        message: `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
       });
     },
   },
@@ -1129,7 +1208,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "Invalid query parameter(s): invalid_value",
+        message: `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
       });
     },
   },
@@ -1140,7 +1219,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "Invalid query parameter(s): invalid_value",
+        message: `${config.invalidQueryParamsMessage} Received 'invalid_value'.`,
       });
     },
   },
@@ -1152,7 +1231,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The tmdbid must be an integer greater than 0. Received '550abc'.",
+          "Invalid tmdbid provided. Please specify an integer greater than or equal to 1. Received '550abc'.",
       });
     },
   },
@@ -1164,7 +1243,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The tmdbid must be an integer greater than 0. Received '550.5'.",
+          "Invalid tmdbid provided. Please specify an integer greater than or equal to 1. Received '550.5'.",
       });
     },
   },
@@ -1176,7 +1255,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The tmdbid must be an integer greater than 0. Received '9007199254740992'.",
+          "Invalid tmdbid provided. Please specify an integer greater than or equal to 1. Received '9007199254740992'.",
       });
     },
   },
@@ -1188,7 +1267,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The allocineid must be an integer greater than 0. Received '0'.",
+          "Invalid allocineid provided. Please specify an integer greater than or equal to 1. Received '0'.",
       });
     },
   },
@@ -1200,7 +1279,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The senscritiqueid must be an integer greater than 0. Received '-1'.",
+          "Invalid senscritiqueid provided. Please specify an integer greater than or equal to 1. Received '-1'.",
       });
     },
   },
@@ -1212,7 +1291,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The thetvdbid must be an integer greater than 0. Received '1e3'.",
+          "Invalid thetvdbid provided. Please specify an integer greater than or equal to 1. Received '1e3'.",
       });
     },
   },
@@ -1235,7 +1314,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The runtime must contain only integers greater than or equal to 0. Received '0,9007199254740992'.",
+          "Invalid runtime provided. Please specify only integers greater than or equal to 0. Received '0,9007199254740992'.",
       });
     },
   },
@@ -1247,7 +1326,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The seasons_number must contain only integers greater than 0. Received '1,9007199254740992'.",
+          "Invalid seasons_number provided. Please specify only integers greater than or equal to 1. Received '1,9007199254740992'.",
       });
     },
   },
@@ -1259,7 +1338,20 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The filtered_seasons must contain only integers greater than 0. Received '1,9007199254740992'.",
+          "Invalid filtered_seasons provided. Please specify only integers greater than or equal to 1. Received '1,9007199254740992'.",
+      });
+    },
+  },
+
+  filtered_seasons_is_empty: {
+    query: "?filtered_seasons=",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidIntegerListMinimumMessage
+          .replace("{name}", "filtered_seasons")
+          .replace("{minimum}", 1)} Received ''.`,
       });
     },
   },
@@ -1271,7 +1363,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The filtered_seasons must contain only integers greater than 0. Received '1,'.",
+          "Invalid filtered_seasons provided. Please specify only integers greater than or equal to 1. Received '1,'.",
       });
     },
   },
@@ -1283,7 +1375,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The filtered_seasons must contain only integers greater than 0. Received '1, ,2'.",
+          "Invalid filtered_seasons provided. Please specify only integers greater than or equal to 1. Received '1, ,2'.",
       });
     },
   },
@@ -1295,7 +1387,7 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message:
-          "The filtered_seasons must contain only integers greater than 0. Received '1,2.5'.",
+          "Invalid filtered_seasons provided. Please specify only integers greater than or equal to 1. Received '1,2.5'.",
       });
     },
   },
@@ -1306,8 +1398,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received ''.`,
       });
     },
   },
@@ -1318,8 +1409,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received '2024-01-01'.`,
       });
     },
   },
@@ -1330,8 +1420,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'from:2025-02-29'.`,
       });
     },
   },
@@ -1342,8 +1431,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'from:2024-01-01,FROM:2024-02-01'.`,
       });
     },
   },
@@ -1354,8 +1442,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'to:2024-01-01,to:2024-02-01'.`,
       });
     },
   },
@@ -1366,8 +1453,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'from:2024-01-01,'.`,
       });
     },
   },
@@ -1378,8 +1464,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'new,new'.`,
       });
     },
   },
@@ -1390,8 +1475,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'from:2024-02-30'.`,
       });
     },
   },
@@ -1402,8 +1486,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'new'.`,
       });
     },
   },
@@ -1414,8 +1497,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'to:2024-13-01'.`,
       });
     },
   },
@@ -1426,8 +1508,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+        message: `${config.invalidReleaseDateMessage} Received 'everything'.`,
       });
     },
   },
@@ -1438,7 +1519,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: config.invalidMinimumRatingsMessage,
+        message: `${config.invalidMinimumRatingsMessage} Received ''.`,
       });
     },
   },
@@ -1449,7 +1530,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: config.invalidMinimumRatingsMessage,
+        message: `${config.invalidMinimumRatingsMessage} Received '3,'.`,
       });
     },
   },
@@ -1460,7 +1541,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: config.invalidMinimumRatingsMessage,
+        message: `${config.invalidMinimumRatingsMessage} Received '3,invalid'.`,
       });
     },
   },
@@ -1471,7 +1552,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: config.invalidMinimumRatingsMessage,
+        message: `${config.invalidMinimumRatingsMessage} Received '0x10'.`,
       });
     },
   },
@@ -1482,7 +1563,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: config.invalidMinimumRatingsMessage,
+        message: `${config.invalidMinimumRatingsMessage} Received '${"9".repeat(309)}'.`,
       });
     },
   },
@@ -1493,7 +1574,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: config.invalidMinimumRatingsMessage,
+        message: `${config.invalidMinimumRatingsMessage} Received 'NaN'.`,
       });
     },
   },
@@ -1504,7 +1585,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: config.invalidMinimumRatingsMessage,
+        message: `${config.invalidMinimumRatingsMessage} Received 'Infinity'.`,
       });
     },
   },
@@ -1515,7 +1596,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "The order must be 'asc' or 'desc'.",
+        message: getInvalidSortOrderMessage("order", ""),
       });
     },
   },
@@ -1526,7 +1607,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "The order must be 'asc' or 'desc'.",
+        message: getInvalidSortOrderMessage("order", "ASC"),
       });
     },
   },
@@ -1537,7 +1618,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: "The order must be 'asc' or 'desc'.",
+        message: getInvalidSortOrderMessage("order", "invalid"),
       });
     },
   },
@@ -1548,8 +1629,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The 'since' parameter must be a valid ISO 8601 date string (e.g. 2026-01-01T00:00:00.000Z).",
+        message: `${config.invalidSinceMessage} Received '2025-02-29'.`,
       });
     },
   },
@@ -1560,8 +1640,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The 'since' parameter must be a valid ISO 8601 date string (e.g. 2026-01-01T00:00:00.000Z).",
+        message: `${config.invalidSinceMessage} Received '2024-02-30T00:00:00.000Z'.`,
       });
     },
   },
@@ -1572,8 +1651,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The 'since' parameter must be a valid ISO 8601 date string (e.g. 2026-01-01T00:00:00.000Z).",
+        message: `${config.invalidSinceMessage} Received '2024-01-01T00:00:00'.`,
       });
     },
   },
@@ -1584,8 +1662,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The 'since' parameter must be a valid ISO 8601 date string (e.g. 2026-01-01T00:00:00.000Z).",
+        message: `${config.invalidSinceMessage} Received '2024-01-01T24:00:00Z'.`,
       });
     },
   },
@@ -1596,8 +1673,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The 'since' parameter must be a valid ISO 8601 date string (e.g. 2026-01-01T00:00:00.000Z).",
+        message: `${config.invalidSinceMessage} Received '2024-01-01T00:00:00+25:00'.`,
       });
     },
   },
@@ -1608,8 +1684,7 @@ const params = {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message:
-          "The 'since' parameter must be a valid ISO 8601 date string (e.g. 2026-01-01T00:00:00.000Z).",
+        message: `${config.invalidSinceMessage} Received '01/02/2024'.`,
       });
     },
   },
@@ -1687,7 +1762,7 @@ describe("What's on? API tests", () => {
     },
   );
 
-  test("Method Not Allowed should return 405 on known route", async () => {
+  test("Known route should reject a disallowed method", async () => {
     const apiCall = `${baseURL}/movie/121?api_key=${config.internalApiKey}`;
 
     const response = await axios.post(
@@ -1704,31 +1779,7 @@ describe("What's on? API tests", () => {
     expect(response.headers.allow).toContain("GET");
   });
 
-  test("Rate Limiting should apply headers on successful requests", async () => {
-    // Send 1 request without API key
-    const responses = await Promise.all(
-      Array.from({ length: 1 }).map(() =>
-        axios.get(baseURL, {
-          headers: {
-            "CF-Connecting-IP": generateRandomIp(),
-            "X-Forwarded-For": generateRandomIp(),
-          },
-          validateStatus: (status) => status < 500,
-        }),
-      ),
-    );
-
-    const successfulResponse = responses.find(
-      (response) => response.status === 200,
-    );
-
-    expect(successfulResponse).toBeDefined();
-    expect(successfulResponse.headers).toHaveProperty("x-ratelimit-limit");
-    expect(successfulResponse.headers).toHaveProperty("x-ratelimit-remaining");
-    expect(successfulResponse.headers).not.toHaveProperty("retry-after");
-  });
-
-  test("Missing request identity returns 503", async () => {
+  test("Missing request identity is rejected", async () => {
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),

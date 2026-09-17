@@ -67,18 +67,68 @@ const config = {
   webhooksURL: process.env.WEBHOOKS_URL,
   appendToResponse:
     "awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
+  booleanQueryValues: ["false", "true"],
   itemTypes: ["movie", "tvshow"],
+  invalidAppendToResponseMessage:
+    "Invalid append_to_response provided. Please specify one or more of 'awards', 'critics_rating_details', 'directors', 'episodes_details', 'genres', 'highest_episode', 'last_episode', 'lowest_episode', 'networks', 'next_episode', 'platforms_links', 'production_companies', 'certification_variants', 'image_variants', 'title_variants', 'parents_guide'.",
+  invalidBooleanMessage:
+    "Invalid boolean value provided. Please specify 'true', 'false', or a combination like 'true,false' or 'false,true'.",
+  invalidEndpointMessage:
+    "Invalid endpoint provided. Please specify one of the allowed endpoints.",
+  invalidIntegerListMinimumMessage:
+    "Invalid {name} provided. Please specify only integers greater than or equal to {minimum}.",
+  invalidIntegerMinimumMessage:
+    "Invalid {name} provided. Please specify an integer greater than or equal to {minimum}.",
+  invalidIntegerRangeMessage:
+    "Invalid {name} provided. Please specify an integer between {minimum} and {maximum}.",
   invalidItemTypeMessage:
     "Invalid item type provided. Please specify 'movie', 'tvshow', or a combination like 'movie,tvshow'.",
-  invalidLimitMessage: "The limit must be an integer between 1",
+  invalidMethodMessage:
+    "Invalid method provided. Please specify one of the allowed methods.",
   invalidMinimumRatingsMessage:
-    "The minimum_ratings must contain only numbers.",
-  invalidPageMessage: "The page must be an integer greater than 0.",
-  invalidQueryValuesMessage: "Query parameters must be single string values.",
-  invalidRequestMessage: "Invalid request.",
+    "Invalid minimum_ratings provided. Please specify only numbers.",
+  invalidMinimumRatingsRangeMessage:
+    "Invalid minimum_ratings provided. Please specify numbers between 0 and {maximum}.",
+  invalidPageMessage:
+    "Invalid page provided. Please specify an integer greater than 0.",
+  invalidPopularityFiltersMessage:
+    "Invalid popularity_filters provided. Please specify one or more of 'allocine_popularity', 'imdb_popularity', 'tmdb_popularity', 'trakt_popularity', 'all', 'none'.",
+  invalidQueryParamsMessage:
+    "Invalid query parameters provided. Please specify supported parameter names.",
+  invalidQueryValuesMessage:
+    "Invalid query parameters provided. Please specify single string values.",
+  invalidRatingsFiltersMessage:
+    "Invalid ratings_filters provided. Please specify one or more of 'allocine_critics', 'allocine_users', 'betaseries_users', 'imdb_users', 'metacritic_critics', 'metacritic_users', 'rottentomatoes_critics', 'rottentomatoes_users', 'letterboxd_users', 'senscritique_users', 'tmdb_users', 'trakt_users', 'all'.",
+  invalidReleaseDateMessage:
+    "Invalid release_date provided. Please specify valid from:YYYY-MM-DD or to:YYYY-MM-DD values.",
+  invalidRequestMessage:
+    "Invalid request provided. Please specify a valid request.",
+  invalidSeasonAppendToResponseMessage:
+    "Invalid append_to_response provided. Please specify one or more of 'highest_episode', 'last_episode', 'lowest_episode', 'next_episode', 'rating_distribution', 'rating_distribution_episodes'.",
+  invalidSinceMessage:
+    "Invalid since provided. Please specify a valid ISO 8601 date string such as '2026-01-01T00:00:00.000Z'.",
+  invalidSortOrderMessage:
+    "Invalid {name} provided. Please specify one of 'asc', 'desc'.",
+  invalidStatusMessage:
+    "Invalid status provided. Please specify one or more of 'canceled', 'ended', 'ongoing', 'pilot', 'unknown'.",
   noMatchingItemsFoundMessage: "No matching items found.",
+  popularityFilters: [
+    "allocine_popularity",
+    "imdb_popularity",
+    "tmdb_popularity",
+    "trakt_popularity",
+  ],
   queryMemoryLimitMessage:
     "Something went wrong. Please reduce the number of pages requested or lower the limit and try again.",
+  seasonAppendToResponseValues: [
+    "highest_episode",
+    "last_episode",
+    "lowest_episode",
+    "next_episode",
+    "rating_distribution",
+    "rating_distribution_episodes",
+  ],
+  sortOrders: ["asc", "desc"],
 
   imdbEpisodesPaginationOperation: "TitleEpisodesSubPagePagination",
 

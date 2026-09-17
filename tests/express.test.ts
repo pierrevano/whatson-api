@@ -5,6 +5,7 @@ const http = require("http");
 const path = require("path");
 
 const { applyBaseMiddleware } = require("../src/routes/appMiddleware");
+const { config } = require("../src/config");
 const {
   handleInvalidEndpoint,
 } = require("../src/routes/handleInvalidEndpoint");
@@ -87,12 +88,12 @@ afterAll(async () => {
 });
 
 describe("Express routing", () => {
-  test("named-wildcard catch-all returns 404 for unknown endpoints", async () => {
+  test("named-wildcard catch-all rejects unknown endpoints", async () => {
     const res = await fetch(`${baseURL}/does/not/exist`);
     const body = await res.json();
 
     expect(res.status).toBe(404);
-    expect(body.message).toContain("Invalid endpoint");
+    expect(body.message).toContain(config.invalidEndpointMessage);
     expect(body.code).toBe(404);
   });
 
@@ -113,7 +114,7 @@ describe("Express routing", () => {
   });
 });
 
-describe("Express error handling (405 method-not-allowed)", () => {
+describe("Express method-not-allowed handling", () => {
   test.each(
     [
       "/episodes/rated",
@@ -129,19 +130,19 @@ describe("Express error handling (405 method-not-allowed)", () => {
       routePath.toUpperCase(),
     ]),
   )(
-    "known route hit with the wrong method returns 405 and an Allow header: %s",
+    "known route hit with the wrong method returns an Allow header: %s",
     async (routePath) => {
       const res = await fetch(`${baseURL}${routePath}`, { method: "POST" });
       const body = await res.json();
 
       expect(res.status).toBe(405);
       expect(res.headers.get("allow")).toBe("GET");
-      expect(body.message).toContain("Method not allowed");
+      expect(body.message).toContain(config.invalidMethodMessage);
       expect(body.code).toBe(405);
     },
   );
 
-  test("root path with a disallowed method returns 405", async () => {
+  test("root path rejects a disallowed method", async () => {
     const res = await fetch(`${baseURL}/`, { method: "DELETE" });
 
     expect(res.status).toBe(405);

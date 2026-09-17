@@ -1166,15 +1166,6 @@ const params = {
     },
   },
 
-  only_null_status_items: {
-    query: "?item_type=movie&status=&limit=200",
-    expectedResult: (items) =>
-      items.forEach((item) => {
-        expect(item).toHaveProperty("status");
-        expect(item.status).toBe(null);
-      }),
-  },
-
   cinema_id_should_be_ignored: {
     query: "?cinema_id=undefined&is_active=true,false&limit=200",
     expectedResult: (items) =>
@@ -1211,7 +1202,7 @@ const params = {
   },
 
   return_correct_movie_item_type_on_same_path_id: {
-    query: "/movie/10003?append_to_response",
+    query: "/movie/10003?",
     expectedResult: (item) => {
       expect(item.id).toBe(10003);
       expect(item.item_type).toBe("movie");
@@ -1512,23 +1503,6 @@ const params = {
         expect(
           Math.abs(item.ratings_average - roundedAverage),
         ).toBeLessThanOrEqual(SINGLE_RATING_ALLOWED_DELTA);
-      });
-    },
-  },
-
-  ratings_filters_should_ignore_invalid_and_duplicate_entries: {
-    query: "?ratings_filters=imdb_users,wrong,imdb_users",
-    expectedResult: async (items) => {
-      const response = await axios.get(
-        `${baseURL}?ratings_filters=imdb_users&api_key=${config.internalApiKey}`,
-      );
-      const cleanItems = response.data.results;
-
-      expect(items.length).toEqual(cleanItems.length);
-
-      items.forEach((item, index) => {
-        expect(item.id).toEqual(cleanItems[index].id);
-        expect(item.ratings_average).toEqual(cleanItems[index].ratings_average);
       });
     },
   },

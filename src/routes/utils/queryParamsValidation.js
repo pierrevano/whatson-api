@@ -1,61 +1,117 @@
 const { config } = require("../../config");
 const {
-  invalidItemTypeMessage,
-  isValidItemType,
-} = require("./itemTypeValidation");
-const { isValidISODate } = require("../../utils/parseReleaseDateRange");
-const { sendResponse } = require("../../utils/sendRequest");
-const {
+  invalidQueryValueMessage,
+  resolveValidationMessage,
   validateIntegerListParam,
   validateIntegerParam,
 } = require("./queryValidationMessages");
+const { isValidISODate } = require("../../utils/parseReleaseDateRange");
+const { sendResponse } = require("../../utils/sendRequest");
+
+const validateAllowedValues = (
+  value,
+  allowed,
+  message,
+  { allowMultiple = true, name } = {},
+) => {
+  if (value === undefined) return null;
+
+  const values = value.split(",");
+  const hasDuplicateValue = new Set(values).size !== values.length;
+  const hasInvalidValue = values.some((item) => !allowed.includes(item));
+  const hasMultipleValues = !allowMultiple && values.length > 1;
+  if (!hasDuplicateValue && !hasInvalidValue && !hasMultipleValues) return null;
+
+  return invalidQueryValueMessage(message, value, name);
+};
 
 /**
  * Validates the optional item type query parameter.
  *
- * @param {string|undefined|null} itemTypeQuery
+ * @param {string|undefined} itemTypeQuery
  * @returns {string|null}
  */
-const validateItemTypeQuery = (itemTypeQuery) => {
-  if (isValidItemType(itemTypeQuery)) {
-    return null;
-  }
+const validateItemTypeQuery = (itemTypeQuery) =>
+  validateAllowedValues(
+    itemTypeQuery,
+    config.itemTypes,
+    config.invalidItemTypeMessage,
+  );
 
-  return invalidItemTypeMessage(itemTypeQuery);
-};
+/**
+ * Validates the optional updates cutoff query parameter.
+ *
+ * @param {string|undefined} sinceQuery
+ * @returns {string|null}
+ */
+const validateSinceQuery = (sinceQuery) =>
+  sinceQuery !== undefined && !isValidISODate(sinceQuery)
+    ? invalidQueryValueMessage(config.invalidSinceMessage, sinceQuery)
+    : null;
 
 /**
  * Validates the optional status query parameter.
  *
  * @param {string|undefined} statusQuery
- * @param {typeof import("../../config").config} config
  * @returns {string|null}
  */
-const validateStatusQuery = (statusQuery, config) => {
-  if (!statusQuery) return null;
+const validateStatusQuery = (statusQuery) => {
+  if (statusQuery === undefined) return null;
 
   const allowed = config.allowedTvshowStatuses.map((s) => s.toLowerCase());
   const values = statusQuery.split(",").map((s) => s.trim().toLowerCase());
-  if (values.every((s) => allowed.includes(s))) return null;
+  if (
+    new Set(values).size === values.length &&
+    values.every((s) => allowed.includes(s))
+  ) {
+    return null;
+  }
 
-  const list = allowed.map((s) => `'${s}'`).join(", ");
-  return `Invalid status provided. Please specify one or more of ${list}. Received '${statusQuery}'.`;
+  return invalidQueryValueMessage(config.invalidStatusMessage, statusQuery);
+};
+
+const validateBooleanQueryParams = (query) => {
+  const booleanParams = [
+    "critics_certified",
+    "is_active",
+    "is_adult",
+    "must_see",
+    "users_certified",
+  ];
+  for (const name of booleanParams) {
+    const message = validateAllowedValues(
+      query[name],
+      config.booleanQueryValues,
+      config.invalidBooleanMessage,
+      { name },
+    );
+    if (message) return message;
+  }
+
+  return null;
 };
 
 /**
  * Validates query params shared across endpoints.
  *
  * @param {import("express").Request["query"]} query
- * @param {typeof import("../../config").config} config
  * @returns {string|null}
  */
-const validateSharedQueryParams = (query, config) =>
+const validateSharedQueryParams = (query) =>
   validateIntegerParam(query.limit, "limit", 1, config.maxLimit) ||
   validateIntegerParam(query.page, "page") ||
   validateIntegerListParam(query.filtered_seasons, "filtered_seasons") ||
-  validateStatusQuery(query.status, config);
+  validateStatusQuery(query.status);
 
-const validateFilterQueryParams = (query, allowReleaseDateShortcuts) => {
+const validateFilterQueryParams = (
+  query,
+  {
+    allowedAppendValues = config.appendToResponse.split(","),
+    allowReleaseDateShortcuts = false,
+    invalidAppendMessage = config.invalidAppendToResponseMessage,
+    maximumRating = 10,
+  } = {},
+) => {
   if (query.minimum_ratings !== undefined) {
     const values = query.minimum_ratings
       .split(",")
@@ -66,7 +122,20 @@ const validateFilterQueryParams = (query, allowReleaseDateShortcuts) => {
         !Number.isFinite(Number(value)),
     );
     if (hasInvalidRating) {
-      return config.invalidMinimumRatingsMessage;
+      return invalidQueryValueMessage(
+        config.invalidMinimumRatingsMessage,
+        query.minimum_ratings,
+      );
+    }
+
+    if (
+      values.some((value) => Number(value) < 0 || Number(value) > maximumRating)
+    ) {
+      const message = resolveValidationMessage(
+        config.invalidMinimumRatingsRangeMessage,
+        { maximum: maximumRating },
+      );
+      return invalidQueryValueMessage(message, query.minimum_ratings);
     }
   }
 
@@ -85,17 +154,43 @@ const validateFilterQueryParams = (query, allowReleaseDateShortcuts) => {
       const match = /^(from|to):(\d{4}-\d{2}-\d{2})$/i.exec(value);
       const bound = match?.[1].toLowerCase();
       if (!match || !isValidISODate(match[2]) || bounds.has(bound)) {
-        return "The release_date must use valid from:YYYY-MM-DD or to:YYYY-MM-DD values.";
+        return invalidQueryValueMessage(
+          config.invalidReleaseDateMessage,
+          query.release_date,
+        );
       }
       bounds.add(bound);
     }
   }
 
-  if (query.order !== undefined && !["asc", "desc"].includes(query.order)) {
-    return "The order must be 'asc' or 'desc'.";
-  }
+  const validateSortOrder = (name) =>
+    validateAllowedValues(
+      query[name],
+      config.sortOrders,
+      resolveValidationMessage(config.invalidSortOrderMessage, { name }),
+      { allowMultiple: false },
+    );
 
-  return null;
+  return (
+    validateAllowedValues(
+      query.append_to_response,
+      allowedAppendValues,
+      invalidAppendMessage,
+    ) ||
+    validateAllowedValues(
+      query.ratings_filters,
+      [...config.ratings_filters.split(","), "all"],
+      config.invalidRatingsFiltersMessage,
+    ) ||
+    validateAllowedValues(
+      query.popularity_filters,
+      [...config.popularityFilters, "all", "none"],
+      config.invalidPopularityFiltersMessage,
+    ) ||
+    validateSortOrder("order") ||
+    validateSortOrder("top_ranking_order") ||
+    validateSortOrder("mojo_rank_order")
+  );
 };
 
 const validateQueryParams =
@@ -104,7 +199,7 @@ const validateQueryParams =
       ...config.allowedQueryParams,
       ...config.keysToCheckForSearch,
     ],
-    allowReleaseDateShortcuts = false,
+    options = {},
   ) =>
   (req, res, next) => {
     const invalidParams = Object.keys(req.query).filter(
@@ -112,7 +207,10 @@ const validateQueryParams =
     );
     if (invalidParams.length > 0) {
       return sendResponse(res, 400, {
-        message: `Invalid query parameter(s): ${invalidParams.join(", ")}`,
+        message: invalidQueryValueMessage(
+          config.invalidQueryParamsMessage,
+          invalidParams.join(", "),
+        ),
       });
     }
 
@@ -124,8 +222,9 @@ const validateQueryParams =
     }
 
     const message =
-      validateSharedQueryParams(req.query, config) ||
+      validateSharedQueryParams(req.query) ||
       validateItemTypeQuery(req.query.item_type) ||
+      validateBooleanQueryParams(req.query) ||
       validateIntegerListParam(req.query.runtime, "runtime", 0) ||
       validateIntegerListParam(req.query.seasons_number, "seasons_number") ||
       validateIntegerParam(
@@ -133,7 +232,7 @@ const validateQueryParams =
         "minimum_users_rating_count",
         0,
       ) ||
-      validateFilterQueryParams(req.query, allowReleaseDateShortcuts);
+      validateFilterQueryParams(req.query, options);
     if (message) return sendResponse(res, 400, { message });
 
     next();
@@ -144,4 +243,5 @@ module.exports = {
   validateItemTypeQuery,
   validateQueryParams,
   validateSharedQueryParams,
+  validateSinceQuery,
 };

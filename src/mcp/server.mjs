@@ -444,7 +444,12 @@ export function createMCPServer() {
       const validate = toolValidators.get(name);
       if (validate && !validate(args).valid) {
         return {
-          content: [{ type: "text", text: "Invalid tool arguments." }],
+          content: [
+            {
+              type: "text",
+              text: "Invalid tool arguments provided. Please specify arguments matching the tool schema.",
+            },
+          ],
           isError: true,
         };
       }

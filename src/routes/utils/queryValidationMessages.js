@@ -2,6 +2,15 @@ const { config } = require("../../config");
 
 const INTEGER_PATTERN = /^-?\d+$/;
 
+const invalidQueryValueMessage = (message, value, name) =>
+  `${message} Received '${String(value)}'${name ? ` for '${name}'` : ""}.`;
+
+const resolveValidationMessage = (message, values) =>
+  Object.entries(values).reduce(
+    (result, [name, value]) => result.replace(`{${name}}`, value),
+    message,
+  );
+
 /**
  * Returns the validation message for integer params that only have a minimum.
  *
@@ -10,13 +19,12 @@ const INTEGER_PATTERN = /^-?\d+$/;
  * @returns {string}
  */
 const getMinimumMessage = (name, minimum) => {
-  if (minimum === 1) {
-    return name === "page"
-      ? config.invalidPageMessage
-      : `The ${name} must be an integer greater than 0.`;
-  }
+  if (name === "page" && minimum === 1) return config.invalidPageMessage;
 
-  return `The ${name} must be an integer greater than or equal to ${minimum}.`;
+  return resolveValidationMessage(config.invalidIntegerMinimumMessage, {
+    minimum,
+    name,
+  });
 };
 
 /**
@@ -28,9 +36,11 @@ const getMinimumMessage = (name, minimum) => {
  * @returns {string}
  */
 const getMinimumAndMaximumMessage = (name, minimum, maximum) =>
-  name === "limit" && minimum === 1
-    ? `${config.invalidLimitMessage} and ${maximum}.`
-    : `The ${name} must be an integer between ${minimum} and ${maximum}.`;
+  resolveValidationMessage(config.invalidIntegerRangeMessage, {
+    maximum,
+    minimum,
+    name,
+  });
 
 /**
  * Returns the validation message for comma-separated integer lists.
@@ -40,9 +50,10 @@ const getMinimumAndMaximumMessage = (name, minimum, maximum) =>
  * @returns {string}
  */
 const getCommaSeparatedContainMessage = (name, minimum) =>
-  minimum === 0
-    ? `The ${name} must contain only integers greater than or equal to 0.`
-    : `The ${name} must contain only integers greater than 0.`;
+  resolveValidationMessage(config.invalidIntegerListMinimumMessage, {
+    minimum,
+    name,
+  });
 
 /**
  * Validates a single integer query parameter.
@@ -60,13 +71,12 @@ const validateIntegerParam = (value, name, minimum = 1, maximum) => {
 
   const hasMaximum = typeof maximum === "number";
   const trimmedValue = String(value).trim();
-  const receivedValue = `'${String(value)}'`;
   const message = hasMaximum
     ? getMinimumAndMaximumMessage(name, minimum, maximum)
     : getMinimumMessage(name, minimum);
 
   if (!INTEGER_PATTERN.test(trimmedValue)) {
-    return `${message} Received ${receivedValue}.`;
+    return invalidQueryValueMessage(message, value);
   }
 
   const parsedValue = Number(trimmedValue);
@@ -76,7 +86,7 @@ const validateIntegerParam = (value, name, minimum = 1, maximum) => {
     parsedValue < minimum ||
     (hasMaximum && parsedValue > maximum)
   ) {
-    return `${message} Received ${receivedValue}.`;
+    return invalidQueryValueMessage(message, value);
   }
 
   return null;
@@ -91,21 +101,24 @@ const validateIntegerParam = (value, name, minimum = 1, maximum) => {
  * @returns {string|null}
  */
 const validateIntegerListParam = (value, name, minimum = 1) => {
-  if (typeof value === "undefined" || value === null || value === "") {
+  if (typeof value === "undefined" || value === null) {
     return null;
   }
 
   const values = String(value).split(",");
-  const receivedValue = `'${String(value)}'`;
-
   if (values.some((item) => validateIntegerParam(item, name, minimum))) {
-    return `${getCommaSeparatedContainMessage(name, minimum)} Received ${receivedValue}.`;
+    return invalidQueryValueMessage(
+      getCommaSeparatedContainMessage(name, minimum),
+      value,
+    );
   }
 
   return null;
 };
 
 module.exports = {
+  invalidQueryValueMessage,
+  resolveValidationMessage,
   validateIntegerListParam,
   validateIntegerParam,
 };

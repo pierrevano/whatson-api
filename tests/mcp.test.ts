@@ -233,7 +233,12 @@ describe("MCP server tests", () => {
 
       expect(response.status).toBe(200);
       expect(response.data.result).toEqual({
-        content: [{ type: "text", text: "Invalid tool arguments." }],
+        content: [
+          {
+            type: "text",
+            text: "Invalid tool arguments provided. Please specify arguments matching the tool schema.",
+          },
+        ],
         isError: true,
       });
     },

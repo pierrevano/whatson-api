@@ -1,3 +1,4 @@
+const { config } = require("../config");
 const { sendResponse } = require("../utils/sendRequest");
 
 const allowedEndpoints = [
@@ -39,12 +40,12 @@ const handleInvalidEndpoint = (req, res) => {
   if (matchingRoute && !matchingRoute.methods.includes(req.method)) {
     res.set("Allow", matchingRoute.methods.join(", "));
     return sendResponse(res, 405, {
-      message: `Method not allowed: ${req.method} ${req.path}. Allowed methods: ${matchingRoute.methods.join(", ")}.`,
+      message: `${config.invalidMethodMessage} Allowed methods are: ${matchingRoute.methods.join(", ")}. Received '${req.method} ${req.path}'.`,
     });
   }
 
   return sendResponse(res, 404, {
-    message: `Invalid endpoint: ${req.path}. Allowed endpoints are: ${allowedEndpoints.join(", ")}.`,
+    message: `${config.invalidEndpointMessage} Allowed endpoints are: ${allowedEndpoints.join(", ")}. Received '${req.path}'.`,
   });
 };
 

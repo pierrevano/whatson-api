@@ -71,35 +71,6 @@ const params = {
     },
   },
 
-  should_fallback_to_popularity_when_mojo_rank_order_invalid: {
-    query: `?item_type=movie,tvshow&is_active=true,false&mojo_rank_order=invalid&limit=${maxLimitLargeDocuments}`,
-    expectedResult: (items) => {
-      expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(
-        config.minimumNumberOfItems.softDefault,
-      );
-
-      let previousPopularity = -Infinity;
-      let sawMissingRank = false;
-
-      items.forEach((item) => {
-        const popularity =
-          typeof item.popularity_average === "number"
-            ? item.popularity_average
-            : Number.POSITIVE_INFINITY;
-
-        expect(popularity).toBeGreaterThanOrEqual(previousPopularity);
-        previousPopularity = popularity;
-
-        if (!item.mojo || typeof item.mojo.rank !== "number") {
-          sawMissingRank = true;
-        }
-      });
-
-      expect(sawMissingRank).toBe(true);
-    },
-  },
-
   should_prioritize_imdb_top_ranking_and_mojo_rank_orders: {
     query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&mojo_rank_order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {

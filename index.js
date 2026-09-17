@@ -31,6 +31,12 @@ const getRatedEpisodes = require("./src/routes/getRatedEpisodes");
 const getUpdates = require("./src/routes/getUpdates");
 
 const PORT = config.localPort;
+const itemDetailsQueryParams = [
+  "api_key",
+  "append_to_response",
+  "item_type",
+  "ratings_filters",
+];
 
 /* Configure the shared application-level middleware. */
 applyBaseMiddleware(app, { staticDir: path.join(__dirname, "public") });
@@ -39,7 +45,15 @@ applyBaseMiddleware(app, { staticDir: path.join(__dirname, "public") });
 app.use(validateQueryValues);
 
 /* A route that is used to get the data for all items. */
-app.get("/", limiter, validateQueryParams(undefined, true), getItems);
+app.get(
+  "/",
+  limiter,
+  validateQueryParams(undefined, {
+    allowReleaseDateShortcuts: true,
+    maximumRating: 5,
+  }),
+  getItems,
+);
 
 /* A route that is used to get the rated episodes across all tvshows. */
 app.get("/episodes/rated", limiter, validateQueryParams(), getRatedEpisodes);
@@ -53,16 +67,29 @@ app.get(
 );
 
 /* A route that is used to get the data for a specific movie. */
-app.get("/movie/:id", limiter, validateQueryParams(), getId);
+app.get(
+  "/movie/:id",
+  limiter,
+  validateQueryParams(itemDetailsQueryParams),
+  getId,
+);
 
 /* A route that is used to get the data for a specific tvshow. */
-app.get("/tvshow/:id", limiter, validateQueryParams(), getId);
+app.get(
+  "/tvshow/:id",
+  limiter,
+  validateQueryParams(itemDetailsQueryParams),
+  getId,
+);
 
 /* A route that is used to get all seasons for a specific tvshow. */
 app.get(
   "/tvshow/:id/seasons",
   limiter,
-  validateQueryParams(["api_key", "append_to_response"]),
+  validateQueryParams(["api_key", "append_to_response"], {
+    allowedAppendValues: config.seasonAppendToResponseValues,
+    invalidAppendMessage: config.invalidSeasonAppendToResponseMessage,
+  }),
   getTvShowSeasons,
 );
 

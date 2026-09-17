@@ -22,10 +22,22 @@ describe("What's on? API updates endpoint tests", () => {
     console.log(`Testing on ${baseURL}`);
   }
 
-  test("should return 403 without an API key", async () => {
+  test("should require a sponsor API key", async () => {
     const response = await axios.get(`${baseURL}/updates`, {
       headers: { "CF-Connecting-IP": generateRandomIp() },
       params: { since: VALID_SINCE },
+      validateStatus: () => true,
+    });
+
+    expect(response.status).toBe(403);
+    expect(response.data.code).toBe(403);
+    expect(response.data.message).toMatch(/sponsor/i);
+  });
+
+  test("should authenticate before validating since", async () => {
+    const response = await axios.get(`${baseURL}/updates`, {
+      headers: { "CF-Connecting-IP": generateRandomIp() },
+      params: { since: "not-a-date" },
       validateStatus: () => true,
     });
 
@@ -47,7 +59,7 @@ describe("What's on? API updates endpoint tests", () => {
     }
   });
 
-  test("should return 400 when since is missing", async () => {
+  test("should reject a missing since value", async () => {
     const response = await axios.get(`${baseURL}/updates`, {
       params: { api_key: config.internalApiKey },
       validateStatus: () => true,
@@ -55,10 +67,12 @@ describe("What's on? API updates endpoint tests", () => {
 
     expect(response.status).toBe(400);
     expect(response.data.code).toBe(400);
-    expect(response.data.message).toMatch(/since/i);
+    expect(response.data.message).toBe(
+      `${config.invalidSinceMessage} This parameter is required.`,
+    );
   });
 
-  test("should return 400 when since is not a valid date", async () => {
+  test("should reject an invalid since value", async () => {
     const response = await axios.get(`${baseURL}/updates`, {
       params: { api_key: config.internalApiKey, since: "not-a-date" },
       validateStatus: () => true,
@@ -66,10 +80,12 @@ describe("What's on? API updates endpoint tests", () => {
 
     expect(response.status).toBe(400);
     expect(response.data.code).toBe(400);
-    expect(response.data.message).toMatch(/ISO 8601/i);
+    expect(response.data.message).toBe(
+      `${config.invalidSinceMessage} Received 'not-a-date'.`,
+    );
   });
 
-  test("should return 400 when item_type is invalid", async () => {
+  test("should reject an invalid item_type", async () => {
     const response = await axios.get(`${baseURL}/updates`, {
       params: {
         api_key: config.internalApiKey,
@@ -81,7 +97,9 @@ describe("What's on? API updates endpoint tests", () => {
 
     expect(response.status).toBe(400);
     expect(response.data.code).toBe(400);
-    expect(response.data.message).toContain(config.invalidItemTypeMessage);
+    expect(response.data.message).toBe(
+      `${config.invalidItemTypeMessage} Received 'person'.`,
+    );
   });
 
   test.each(["api_key", "API_KEY"])(

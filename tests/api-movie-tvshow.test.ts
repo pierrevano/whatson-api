@@ -5,6 +5,7 @@ const axios = require("axios");
 const { checkRatings } = require("./utils/checkRatings");
 const { checkTypes } = require("./utils/checkTypes");
 const { config } = require("../src/config");
+const { countLines } = require("./utils/countLines");
 const { countNullValues } = require("./utils/countNullValues");
 const { expectRatingKeys } = require("./utils/expectRatingKeys");
 const { formatDate } = require("../src/utils/formatDate");
@@ -17,9 +18,33 @@ const removeLogs = process.env.REMOVE_LOGS === "true";
 
 /**
  * Request cases and their expected results.
- * @type {Record<string, { query: string, expectedResult: (items: any, response: any) => void | Promise<void> }>}
+ * @type {Record<string, { query: string, skipRemote?: boolean, expectedResult: (items: any, response: any) => void | Promise<void> }>}
  */
 const params = {
+  higher_total_results_than_results: {
+    query: `?item_type=movie,tvshow&is_active=true,false&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items, response) => {
+      expect(response.data).toHaveProperty("page");
+      expect(response.data.page).toBe(1);
+      expect(response.data.total_results).toBeGreaterThan(items.length);
+    },
+  },
+
+  same_files_line_number_as_remote: {
+    query: "?item_type=movie,tvshow&is_active=true,false",
+    skipRemote: true,
+    expectedResult: (_items, response) => {
+      if (config.checkItemsNumber) {
+        const filmsLines = countLines(config.filmsIdsFilePath);
+        const seriesLines = countLines(config.seriesIdsFilePath);
+
+        expect(filmsLines + seriesLines + config.margin).toBeGreaterThanOrEqual(
+          response.data.total_results,
+        );
+      }
+    },
+  },
+
   query_parameter_names_accept_mixed_casing: {
     query: "?PAGE=2&Limit=1&ITEM_TYPE=movie",
     expectedResult: (items, response) => {
@@ -575,35 +600,6 @@ const params = {
     },
   },
 
-  should_fallback_to_popularity_when_top_ranking_order_invalid: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&top_ranking_order=invalid&limit=${maxLimitLargeDocuments}`,
-    expectedResult: (items) => {
-      expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(
-        config.minimumNumberOfItems.softDefault,
-      );
-
-      let previousPopularity = -Infinity;
-      let sawMissingTopRanking = false;
-
-      items.forEach((item) => {
-        const popularity =
-          typeof item.popularity_average === "number"
-            ? item.popularity_average
-            : Number.POSITIVE_INFINITY;
-
-        expect(popularity).toBeGreaterThanOrEqual(previousPopularity);
-        previousPopularity = popularity;
-
-        if (!item.imdb || typeof item.imdb.top_ranking !== "number") {
-          sawMissingTopRanking = true;
-        }
-      });
-
-      expect(sawMissingTopRanking).toBe(true);
-    },
-  },
-
   order_and_minimum_users_rating_count_should_not_influence_movie_tvshow_results:
     {
       query:
@@ -645,67 +641,37 @@ describe("What's on? API tests", () => {
     console.log(`Testing on ${baseURL}`);
   }
 
-  Object.entries(params).forEach(([name, { query, expectedResult }]) => {
-    async function fetchItemsData() {
-      const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
-
-      if (!removeLogs) {
-        console.log("Test name:", name);
-        console.log(`Calling: ${apiCall}`);
-
-        console.time("axiosCallInTest");
-      }
-
-      const response = await axios.get(apiCall, {
-        validateStatus: (status) => status < 500,
-      });
-      console.timeEnd("axiosCallInTest");
-
-      const data = response.data;
-      const items = query.startsWith("/") ? data : data.results;
-
-      await expectedResult(items, response);
-    }
-
-    test(
-      name,
-      async () => {
-        await fetchItemsData();
-      },
-      config.timeout,
-    );
-  });
-
-  test(
-    "single_item_routes_ignore_valid_pages",
-    async () => {
-      for (const query of ["/movie/550", "/tvshow/1396"]) {
-        const apiCall = `${baseURL}${query}?api_key=${config.internalApiKey}`;
+  Object.entries(params).forEach(
+    ([name, { query, expectedResult, skipRemote }]) => {
+      async function fetchItemsData() {
+        const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
 
         if (!removeLogs) {
+          console.log("Test name:", name);
           console.log(`Calling: ${apiCall}`);
+
+          console.time("axiosCallInTest");
         }
 
         const response = await axios.get(apiCall, {
           validateStatus: (status) => status < 500,
         });
-        const item = response.data;
-        const [, itemType, id] = query.split("/");
-        expect(response.status).toBe(200);
-        expect(item).toEqual(
-          expect.objectContaining({ id: Number(id), item_type: itemType }),
-        );
+        console.timeEnd("axiosCallInTest");
 
-        const withPage = await axios.get(apiCall, {
-          params: { page: 2 },
-          validateStatus: (status) => status < 500,
-        });
+        const data = response.data;
+        const items = query.startsWith("/") ? data : data.results;
 
-        expect(withPage.status).toBe(200);
-        expect(withPage.data).toEqual(item);
+        await expectedResult(items, response);
       }
+
+      (isRemoteSource && skipRemote ? test.skip : test)(
+        name,
+        async () => {
+          await fetchItemsData();
+        },
+        config.timeout,
+      );
     },
-    config.timeout,
   );
 
   test(

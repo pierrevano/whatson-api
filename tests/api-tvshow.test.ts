@@ -932,9 +932,19 @@ function checkSingleItemId(items, expectedId) {
 
 /**
  * An object containing various query parameters and their expected results.
- * @type {Record<string, { query: string, expectedResult: (items: any) => void }>}
+ * @type {Record<string, { query: string, expectedResult: (items: any, response: any) => void }>}
  */
 const params = {
+  page_2_with_20_items: {
+    query: "?item_type=tvshow&seasons_number=1,2&page=2&limit=20",
+    expectedResult: (items, response) => {
+      expect(response.data).toHaveProperty("page");
+      expect(response.data).toHaveProperty("total_pages");
+      expect(response.data.page).toBe(2);
+      expect(items).toHaveLength(20);
+    },
+  },
+
   only_tvshows: {
     query: "?item_type=tvshow",
     expectedResult: (items) =>
@@ -1098,14 +1108,13 @@ const params = {
     },
   },
 
-  should_not_return_an_error_if_append_to_response_is_empty_and_filtered_seasons_is_added_on_search:
-    {
-      query: "?imdbid=tt0903747&append_to_response=&filtered_seasons=1",
-      expectedResult: (items) => {
-        checkSingleItemId(items, 1396);
-        expect(items[0]).not.toHaveProperty("episodes_details");
-      },
+  filtered_seasons_without_append_to_response_does_not_return_episodes: {
+    query: "?imdbid=tt0903747&filtered_seasons=1",
+    expectedResult: (items) => {
+      checkSingleItemId(items, 1396);
+      expect(items[0]).not.toHaveProperty("episodes_details");
     },
+  },
 
   only_ongoing_tvshows: {
     query: "?item_type=tvshow&status=ongoing",
@@ -1163,7 +1172,7 @@ const params = {
   },
 
   return_correct_tvshow_item_type_on_same_path_id: {
-    query: "/tvshow/10003?append_to_response",
+    query: "/tvshow/10003?",
     expectedResult: (item) => {
       expect(item.id).toBe(10003);
       expect(item.item_type).toBe("tvshow");
@@ -1171,7 +1180,7 @@ const params = {
   },
 
   correct_tmdb_id_returned_on_path: {
-    query: "/tvshow/249042?append_to_response",
+    query: "/tvshow/249042?",
     expectedResult: (item) => {
       expect(item.id).toBe(249042);
       expect(item.allocine).not.toHaveProperty("critics_rating_details");
@@ -1184,6 +1193,92 @@ const params = {
       expect(item).not.toHaveProperty("production_companies");
     },
   },
+
+  correct_tmdb_id_returned: {
+    query:
+      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details,episodes_details,highest_episode,last_episode,lowest_episode,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
+    expectedResult: (item) => {
+      expect(typeof item).toBe("object");
+      expect(item.id).toBe(249042);
+      expect(item.ratings_average).toBeGreaterThan(0);
+
+      expect(Array.isArray(item.allocine.critics_rating_details)).toBeTruthy();
+      expect(Array.isArray(item.episodes_details)).toBeTruthy();
+      expect(typeof item.last_episode).toBe("object");
+      expect(typeof item.highest_episode).toBe("object");
+      expect(typeof item.lowest_episode).toBe("object");
+      expect(Array.isArray(item.production_companies)).toBeTruthy();
+      expect(Array.isArray(item.platforms_links)).toBeTruthy();
+      expect(typeof item.title).toBe("string");
+      expect(typeof item.title_variants).toBe("object");
+      expect(item.title_variants).toHaveProperty("fr");
+      expect(typeof item.image_variants).toBe("object");
+      expect(item.image_variants).toHaveProperty("fr");
+      expect(typeof item.certification_variants).toBe("object");
+      expect(item.certification_variants).toHaveProperty("fr");
+      expect(typeof item.parents_guide).toBe("object");
+      expect(typeof item.parents_guide.url).toBe("string");
+      expect(Array.isArray(item.parents_guide.categories)).toBeTruthy();
+    },
+  },
+
+  correct_tmdb_id_returned_without_critics_rating_details: {
+    query:
+      "/tvshow/249042?ratings_filters=all&append_to_response=episodes_details",
+    expectedResult: (item) => {
+      expect(typeof item).toBe("object");
+      expect(item.id).toBe(249042);
+      expect(item.ratings_average).toBeGreaterThan(0);
+
+      expect(
+        Array.isArray(item.allocine.critics_rating_details),
+      ).not.toBeTruthy();
+      expect(Array.isArray(item.episodes_details)).toBeTruthy();
+    },
+  },
+
+  correct_tmdb_id_returned_without_episodes_details: {
+    query:
+      "/tvshow/249042?ratings_filters=all&append_to_response=critics_rating_details",
+    expectedResult: (item) => {
+      expect(typeof item).toBe("object");
+      expect(item.id).toBe(249042);
+      expect(item.ratings_average).toBeGreaterThan(0);
+
+      expect(Array.isArray(item.allocine.critics_rating_details)).toBeTruthy();
+      expect(Array.isArray(item.episodes_details)).not.toBeTruthy();
+    },
+  },
+
+  correct_tmdb_id_returned_without_critics_rating_details_and_episodes_details:
+    {
+      query: "/tvshow/249042?ratings_filters=all",
+      expectedResult: (item) => {
+        expect(typeof item).toBe("object");
+        expect(Object.keys(item).length).toEqual(
+          config.keysToCheck.length - 15,
+        );
+        expect(item.id).toBe(249042);
+        expect(item.ratings_average).toBeGreaterThan(0);
+
+        expect(item.allocine).not.toHaveProperty("critics_rating_details");
+        expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("last_episode");
+        expect(item).not.toHaveProperty("next_episode");
+        expect(item).not.toHaveProperty("highest_episode");
+        expect(item).not.toHaveProperty("lowest_episode");
+        expect(item).not.toHaveProperty("directors");
+        expect(item).not.toHaveProperty("genres");
+        expect(item).not.toHaveProperty("networks");
+        expect(item).not.toHaveProperty("platforms_links");
+        expect(item).not.toHaveProperty("production_companies");
+        expect(typeof item.title).toBe("string");
+        expect(item).not.toHaveProperty("title_variants");
+        expect(item).not.toHaveProperty("image_variants");
+        expect(item).not.toHaveProperty("certification_variants");
+        expect(item).not.toHaveProperty("parents_guide");
+      },
+    },
 
   correct_tmdb_id_returned_on_path_with_production_companies: {
     query: "/tvshow/249042?append_to_response=production_companies",
@@ -1474,17 +1569,6 @@ const params = {
 
   correct_none_popularity_order: {
     query: "?item_type=tvshow&popularity_filters=none,imdb_popularity",
-    expectedResult: (items) => {
-      for (let i = 1; i < items.length; i++) {
-        expect(items[i].ratings_average).toBeLessThanOrEqual(
-          items[i - 1].ratings_average,
-        );
-      }
-    },
-  },
-
-  popularity_filters_with_wrong_value: {
-    query: "?item_type=tvshow&popularity_filters=wrong_value",
     expectedResult: (items) => {
       for (let i = 1; i < items.length; i++) {
         expect(items[i].ratings_average).toBeLessThanOrEqual(
@@ -2160,7 +2244,7 @@ describe("What's on? API tests", () => {
       const data = response.data;
       const items = query.startsWith("/") ? data : data.results;
 
-      expectedResult(items, null);
+      expectedResult(items, response);
     }
 
     test(

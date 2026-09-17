@@ -2,10 +2,10 @@ const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const { getApiKey } = require("./utils/getApiKey");
 const { isSponsorApiKey } = require("./utils/isSponsorApiKey");
-const { isValidISODate } = require("../utils/parseReleaseDateRange");
 const { resolveLimit } = require("./utils/resolveLimit");
 const { sendInternalError, sendResponse } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
+const { validateSinceQuery } = require("./utils/queryParamsValidation");
 const getInternalApiKey = require("./getInternalApiKey");
 
 /**
@@ -31,16 +31,15 @@ const getUpdates = async (req, res) => {
     const { since } = req.query;
     if (!since) {
       return sendResponse(res, 400, {
-        message: "The 'since' parameter is required.",
+        message: `${config.invalidSinceMessage} This parameter is required.`,
       });
     }
 
-    if (!isValidISODate(since)) {
-      return sendResponse(res, 400, {
-        message:
-          "The 'since' parameter must be a valid ISO 8601 date string (e.g. 2026-01-01T00:00:00.000Z).",
-      });
+    const validationMessage = validateSinceQuery(since);
+    if (validationMessage) {
+      return sendResponse(res, 400, { message: validationMessage });
     }
+
     const sinceDate = new Date(since);
 
     const requestedTypes = req.query.item_type

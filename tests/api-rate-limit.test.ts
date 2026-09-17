@@ -20,6 +20,7 @@ const axios = require("axios");
 
 const { client, collectionApiKey } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
+const { generateRandomIp } = require("./utils/generateRandomIp");
 const { getRateLimiterKey } = require("../src/routes/utils/getRateLimiterKey");
 const { limiter } = require("../src/routes/utils/rateLimiter");
 const { resolveLimit } = require("../src/routes/utils/resolveLimit");
@@ -62,8 +63,32 @@ describe("What's on? API rate limiting tests", () => {
     console.log(`Testing on ${baseURL}`);
   }
 
+  test("Rate Limiting should apply headers on successful requests", async () => {
+    // Send 1 request without API key
+    const responses = await Promise.all(
+      Array.from({ length: 1 }).map(() =>
+        axios.get(baseURL, {
+          headers: {
+            "CF-Connecting-IP": generateRandomIp(),
+            "X-Forwarded-For": generateRandomIp(),
+          },
+          validateStatus: (status) => status < 500,
+        }),
+      ),
+    );
+
+    const successfulResponse = responses.find(
+      (response) => response.status === 200,
+    );
+
+    expect(successfulResponse).toBeDefined();
+    expect(successfulResponse.headers).toHaveProperty("x-ratelimit-limit");
+    expect(successfulResponse.headers).toHaveProperty("x-ratelimit-remaining");
+    expect(successfulResponse.headers).not.toHaveProperty("retry-after");
+  });
+
   rateLimitTest(
-    "Rate Limiting should return 429 with Retry-After once the limit is exceeded",
+    "Rate Limiting should include Retry-After once the limit is exceeded",
     async () => {
       const apiCall = `${baseURL}/movie/121`;
       const forwardedFor = `203.0.113.${Math.floor(Math.random() * 254) + 1}`;
@@ -110,7 +135,7 @@ describe("What's on? API rate limiting tests", () => {
   );
 
   rateLimitTest.each([["get", "/movie/121", "192.0.2.42"]])(
-    "Rate Limiting should return 429 once the daily limit is exceeded: %s %s",
+    "Rate Limiting should reject requests once the daily limit is exceeded: %s %s",
     async (method, path, forwardedFor) => {
       const apiCall = `${baseURL}${path}`;
       const counterKey = `rlflx:${forwardedFor}`;
@@ -158,7 +183,7 @@ describe("What's on? API rate limiting tests", () => {
   );
 
   rateLimitTest(
-    "Rate Limiting should return 429 with the sponsor upgrade message for a free API key",
+    "Rate Limiting should include the sponsor upgrade message for a free API key",
     async () => {
       const apiCall = `${baseURL}/movie/121`;
       const batchSize = 100;

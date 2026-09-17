@@ -73,9 +73,7 @@ describe("What's on? API tvshow seasons metadata tests", () => {
     "return_tvshow_seasons_with_metadata",
     async () => {
       await runForEachActiveTvshow(async (tvshowId) => {
-        const item = await fetchPathData(
-          `/tvshow/${tvshowId}/seasons?append_to_response`,
-        );
+        const item = await fetchPathData(`/tvshow/${tvshowId}/seasons`);
 
         checkTypes(item, tvshowSeasonSchema.tvshowSeasonsSchema);
         expect(item).not.toHaveProperty("_id");
@@ -390,7 +388,7 @@ describe("What's on? API tvshow seasons metadata tests", () => {
     async () => {
       await runForEachActiveTvshow(async (tvshowId) => {
         const item = await fetchPathData(
-          `/tvshow/${tvshowId}/seasons/1/episodes?append_to_response`,
+          `/tvshow/${tvshowId}/seasons/1/episodes`,
         );
 
         checkTypes(item, tvshowSeasonSchema.tvshowSeasonEpisodesSchema);
@@ -456,7 +454,7 @@ describe("What's on? API tvshow seasons metadata tests", () => {
     async () => {
       await runForEachActiveTvshow(async (tvshowId) => {
         const seasonEpisodes = await fetchPathData(
-          `/tvshow/${tvshowId}/seasons/1/episodes?append_to_response`,
+          `/tvshow/${tvshowId}/seasons/1/episodes`,
         );
 
         if (
@@ -468,7 +466,7 @@ describe("What's on? API tvshow seasons metadata tests", () => {
 
         const firstEpisode = seasonEpisodes.episodes[0];
         const item = await fetchPathData(
-          `/tvshow/${tvshowId}/seasons/1/episodes/${firstEpisode.episode}?append_to_response`,
+          `/tvshow/${tvshowId}/seasons/1/episodes/${firstEpisode.episode}`,
         );
 
         checkTypes(item, tvshowSeasonSchema.tvshowSeasonEpisodeDetailsSchema);

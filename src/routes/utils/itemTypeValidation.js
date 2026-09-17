@@ -1,10 +1,3 @@
-const { config } = require("../../config");
-
-const isValidItemType = (itemTypeQuery) => {
-  if (!itemTypeQuery) return true;
-  return itemTypeQuery.split(",").every((t) => config.itemTypes.includes(t));
-};
-
 const areQuerySearchKeysMissing = (query, keysToCheckForSearch) => {
   return keysToCheckForSearch.every((key) => {
     return !Object.keys(query).some(
@@ -13,13 +6,4 @@ const areQuerySearchKeysMissing = (query, keysToCheckForSearch) => {
   });
 };
 
-const invalidItemTypeMessage = (itemTypeQuery) =>
-  `${config.invalidItemTypeMessage}${
-    itemTypeQuery ? ` Received '${itemTypeQuery}'.` : ""
-  }`;
-
-module.exports = {
-  areQuerySearchKeysMissing,
-  invalidItemTypeMessage,
-  isValidItemType,
-};
+module.exports = { areQuerySearchKeysMissing };
