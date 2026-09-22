@@ -1781,6 +1781,7 @@ describe("What's on? API tests", () => {
 
   test("Missing request identity is rejected", async () => {
     const res = {
+      locals: {},
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
@@ -1808,7 +1809,11 @@ describe("What's on? API tests", () => {
 
   test("Unexpected errors return a generic response", async () => {
     const error = new Error("private error details");
-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const res = {
+      locals: {},
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
     const next = jest.fn();
     const log = jest.spyOn(console, "error").mockImplementation(() => {});
 

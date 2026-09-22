@@ -3,13 +3,16 @@ const { config } = require("../../config");
 const { getApiKey } = require("./getApiKey");
 const { getRateLimiterKey } = require("./getRateLimiterKey");
 const { getTierMessage } = require("./getTierMessage");
+const {
+  ignoreNewRelicTransaction,
+  sendToNewRelic,
+} = require("../../utils/sendToNewRelic");
 const { isSponsorApiKey } = require("./isSponsorApiKey");
 const {
   RateLimiterMemory,
   RateLimiterMongo,
 } = require("rate-limiter-flexible");
 const { sendResponse } = require("../../utils/sendRequest");
-const { sendToNewRelic } = require("../../utils/sendToNewRelic");
 
 /**
  * Builds a memory-based rate limiter with the shared configuration defaults.
@@ -68,7 +71,10 @@ const limiter = async (req, res, next) => {
     apiKeyDoc = await getApiKey(apiKeyValue);
 
     if (apiKeyDoc) {
-      if (apiKeyDoc.is_internal) return next();
+      if (apiKeyDoc.is_internal) {
+        ignoreNewRelicTransaction();
+        return next();
+      }
 
       if (!keyedLimiters.has(apiKeyValue)) {
         keyedLimiters.set(

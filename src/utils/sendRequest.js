@@ -24,7 +24,7 @@ const sendResponse = (res, statusCode, data, error) => {
       code: statusCode,
     };
 
-    reportError(data, responseWithCode, statusCode, error);
+    reportError(data, responseWithCode, statusCode, error, res);
 
     return res.status(statusCode).json(responseWithCode);
   }

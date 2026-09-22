@@ -2198,6 +2198,29 @@ const params = {
       }),
   },
 
+  no_items_should_have_release_date_more_than_max_days_in_future: {
+    query: `?item_type=tvshow&is_active=true,false&limit=${maxLimit}`,
+    expectedResult: (items) => {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() + config.maxDaysInFuture);
+      cutoff.setHours(23, 59, 59, 999);
+
+      items.forEach((item) => {
+        if (item.release_date !== null) {
+          const releaseDate = new Date(item.release_date);
+          withErrorContext(
+            `item_type: ${item.item_type}, IMDb id: ${item.imdb?.id ?? "unknown"}, release_date: ${item.release_date}`,
+            () => {
+              expect(releaseDate.getTime()).toBeLessThanOrEqual(
+                cutoff.getTime(),
+              );
+            },
+          );
+        }
+      });
+    },
+  },
+
   should_have_all_items_updated_within_max_age: {
     query: `?item_type=tvshow&is_active=true&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {

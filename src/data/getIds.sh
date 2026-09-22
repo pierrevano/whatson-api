@@ -3,6 +3,7 @@ BASE_URL_ASSETS=https://whatson-assets.vercel.app
 BROWSER_PATH="/Applications/Arc.app"
 FILMS_ASSETS_PATH=./src/assets/
 ASSET_FILES=(films_ids.txt series_ids.txt popularity_ids_films.txt popularity_ids_series.txt skip_ids_films.txt skip_ids_series.txt)
+ALLOWED_DUPLICATE_IMDB_IDS=(tt13207736)
 EXCLUDED_IMDB_IDS=(tt13174766)
 FILMS_FIRST_INDEX_NUMBER=1
 FILMS_MAX_NUMBER=15
@@ -166,7 +167,7 @@ if [[ $ERRORS_FOUND -eq 1 ]]; then
   exit 1
 fi
 
-DUPLICATES_LINES_NB=$(cut -d',' -f1 "$FILMS_IDS_FILE_PATH" | uniq -cd && cut -d',' -f2 "$FILMS_IDS_FILE_PATH" | sort | uniq -cd | awk '$1 > 3')
+DUPLICATES_LINES_NB=$(cut -d',' -f1 "$FILMS_IDS_FILE_PATH" | uniq -cd && cut -d',' -f2 "$FILMS_IDS_FILE_PATH" | sort | uniq -cd | awk -v allowed="${ALLOWED_DUPLICATE_IMDB_IDS[*]}" '$1 > 2 && index(" " allowed " ", " " $2 " ") == 0')
 if [[ $DUPLICATES_LINES_NB ]]; then
   echo "DUPLICATES_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
   echo "details:"
@@ -875,8 +876,12 @@ for ID_FILE in films_ids.txt series_ids.txt; do
   rm -f "$REMOTE_TMP"
 
   if [ "$LOCAL_LINES" -lt "$REMOTE_LINES" ]; then
-    echo "Error: $ID_FILE has fewer lines ($LOCAL_LINES) than the remote file ($REMOTE_LINES)"
-    exit 1
+    if [[ $FORCE_ASSETS_DEPLOY != "true" ]]; then
+      echo "Error: $ID_FILE has fewer lines ($LOCAL_LINES) than the remote file ($REMOTE_LINES)"
+      exit 1
+    fi
+
+    echo "Warning: $ID_FILE has fewer lines ($LOCAL_LINES) than the remote file ($REMOTE_LINES); forcing deployment"
   fi
 done
 

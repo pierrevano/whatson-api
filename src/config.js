@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 
 const getEnvInt = (value, fallback) => {
   const parsed = Number.parseInt(value, 10);
@@ -162,7 +162,7 @@ const config = {
   heapLimit: 1500,
   imdbRatingCountTolerancePct: 0.5,
   maxAgeInDays: 3,
-  maxDaysInFuture: 14,
+  maxDaysInFuture: 45,
   maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 100),
   maxFutureReleaseMonths: 3,
   minimumFutureReleaseVoteCount: 600,

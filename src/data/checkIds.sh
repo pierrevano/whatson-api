@@ -1,4 +1,5 @@
 COUNTER=0
+ALLOWED_DUPLICATE_IMDB_IDS=(tt13207736)
 BASE_URL=https://www.allocine.fr
 GET_IDS_FILE_PATH=./src/data/getIds.sh
 MAX_INDEX=350000
@@ -410,7 +411,7 @@ elif [[ $1 == "update" ]]; then
     exit 1
   fi
 
-  DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | sort | uniq -cd | awk '$1 > 3')
+  DUPLICATES_LINES_NB=$(cat $FILMS_IDS_FILE_PATH | cut -d',' -f1 | uniq -cd && cat $FILMS_IDS_FILE_PATH | cut -d',' -f2 | sort | uniq -cd | awk -v allowed="${ALLOWED_DUPLICATE_IMDB_IDS[*]}" '$1 > 2 && index(" " allowed " ", " " $2 " ") == 0')
   if [[ $DUPLICATES_LINES_NB ]]; then
     echo "DUPLICATES_LINES_NB / Something's wrong in the ids file: $FILMS_IDS_FILE_PATH"
     echo "details:"
@@ -429,7 +430,7 @@ elif [[ $1 == "update" ]]; then
 
       COUNT=$(grep -o ",$IMDB_ID," $FILMS_IDS_FILE_PATH | wc -l)
 
-      if [[ $COUNT -gt 3 ]]; then
+      if [[ $COUNT -gt 2 && " ${ALLOWED_DUPLICATE_IMDB_IDS[*]} " != *" $IMDB_ID "* ]]; then
         echo "Count for $IMDB_ID is greater than 2. Exiting."
         exit 1
       fi

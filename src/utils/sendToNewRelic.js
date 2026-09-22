@@ -7,11 +7,20 @@ if (isNewRelicEnabled) {
 }
 
 /**
- * Adds request-specific metadata to New Relic unless the internal API key is used.
+ * Ignores the current transaction.
  *
- * @param {import("express").Request} req - The processed request.
- * @param {string|null} api_key_query - API key provided by the consumer.
- * @param {object|null} internal_api_key - Cached internal API key document.
+ * @returns {void}
+ */
+function ignoreNewRelicTransaction() {
+  if (newrelic) newrelic.getTransaction().ignore();
+}
+
+/**
+ * Adds request metadata and applies reporting rules.
+ *
+ * @param {import("express").Request} req - Express request.
+ * @param {string|null} api_key_query - API key value.
+ * @param {object|null} internal_api_key - API key document.
  * @param {Record<string, string|number>|undefined} customAttributes - Optional attributes to send.
  * @returns {void}
  */
@@ -23,6 +32,12 @@ function sendToNewRelic(
 ) {
   const isInternalApiKeyValid =
     internal_api_key && api_key_query === internal_api_key.value;
+
+  if (isInternalApiKeyValid) {
+    ignoreNewRelicTransaction();
+    return;
+  }
+
   const attributes = customAttributes ?? req.query;
   console.log("New Relic custom attributes:", attributes);
 
@@ -30,25 +45,27 @@ function sendToNewRelic(
     return;
   }
 
-  if (isInternalApiKeyValid) {
-    const transaction = newrelic.getTransaction();
-    transaction.ignore();
-    return;
-  }
-
   newrelic.addCustomAttributes(attributes);
 }
 
 /**
- * Reports handled failures back to New Relic to maintain observability on downstream issues.
+ * Reports response details without duplicates.
  *
- * @param {object|null} data - Original payload, used to derive fallback error messages.
- * @param {object|null} responseWithCode - Response returned to the client.
- * @param {number} statusCode - HTTP status associated with the failure.
- * @param {Error|null} [error] - Captured exception when available.
+ * @param {object|null} data - Source payload.
+ * @param {object|null} responseWithCode - Response payload.
+ * @param {number} statusCode - HTTP status code.
+ * @param {Error|null} [error] - Optional exception.
+ * @param {import("express").Response} [res] - Express response.
  * @returns {void}
  */
-function reportError(data, responseWithCode, statusCode, error) {
+function reportError(data, responseWithCode, statusCode, error, res) {
+  if (statusCode < 400) return;
+
+  if (res) {
+    if (res.locals.newRelicErrorReported) return;
+    res.locals.newRelicErrorReported = true;
+  }
+
   if (!newrelic) {
     return;
   }
@@ -66,11 +83,36 @@ function reportError(data, responseWithCode, statusCode, error) {
 
   newrelic.noticeError(error, {
     statusCode,
-    response: responseWithCode,
+    response: JSON.stringify(responseWithCode),
   });
 }
 
+/**
+ * Reports completed responses when applicable.
+ *
+ * @param {import("express").Request} _req - Express request.
+ * @param {import("express").Response} res - Express response.
+ * @param {import("express").NextFunction} next - Next middleware callback.
+ * @returns {void}
+ */
+function reportErrorResponses(_req, res, next) {
+  res.once("prefinish", () => {
+    const statusCode = res.statusCode;
+    reportError(
+      { message: `HTTP ${statusCode}` },
+      { code: statusCode },
+      statusCode,
+      undefined,
+      res,
+    );
+  });
+
+  next();
+}
+
 module.exports = {
-  sendToNewRelic,
+  ignoreNewRelicTransaction,
   reportError,
+  reportErrorResponses,
+  sendToNewRelic,
 };

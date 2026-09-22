@@ -1,6 +1,7 @@
 const compression = require("compression");
 const cors = require("cors");
 const express = require("express");
+const { reportErrorResponses } = require("../utils/sendToNewRelic");
 
 /**
  * Applies the shared application-level middleware to an Express app.
@@ -13,6 +14,8 @@ const express = require("express");
 const applyBaseMiddleware = (app, { staticDir }) => {
   /* Use the "extended" query string parser. */
   app.set("query parser", "extended");
+
+  app.use(reportErrorResponses);
 
   /* Expose req.query as a writable object. */
   app.use((req, _res, next) => {

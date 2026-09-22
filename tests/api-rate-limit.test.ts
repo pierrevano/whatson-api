@@ -40,6 +40,7 @@ const requestLimit = async (ip, apiKey) => {
       socket: { remoteAddress: ip },
     },
     {
+      locals: {},
       set(headers) {
         for (const [key, value] of Object.entries(headers)) {
           response.headers[key.toLowerCase()] = value;

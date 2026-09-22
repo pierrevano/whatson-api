@@ -1711,7 +1711,7 @@ const params = {
   },
 
   no_items_should_have_release_date_more_than_max_days_in_future: {
-    query: `?is_active=true,false&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=true,false&limit=${maxLimit}`,
     expectedResult: (items) => {
       const cutoff = new Date();
       cutoff.setDate(cutoff.getDate() + config.maxDaysInFuture);

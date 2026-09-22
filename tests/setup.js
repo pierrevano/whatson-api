@@ -1,3 +1,4 @@
+process.env.DOTENV_QUIET = "true";
 require("dotenv").config({ quiet: true });
 
 const axios = require("axios");
