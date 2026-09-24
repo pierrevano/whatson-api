@@ -15,7 +15,7 @@ info:
     Rotten Tomatoes ÷ 20, AlloCiné native, etc.). `minimum_ratings` uses
     the 0–5 scale when filtering movies and TV shows, and the 0–10 scale when filtering episodes.
     Movie and TV show searches by title or ID ignore this filter; episode searches support it.
-  version: 3.40.1
+  version: 3.40.2
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api

@@ -64,29 +64,48 @@ describe("What's on? API rate limiting tests", () => {
     console.log(`Testing on ${baseURL}`);
   }
 
-  test("Rate Limiting should apply headers on successful requests", async () => {
-    // Send 1 request without API key
-    const responses = await Promise.all(
-      Array.from({ length: 1 }).map(() =>
-        axios.get(baseURL, {
-          headers: {
-            "CF-Connecting-IP": generateRandomIp(),
-            "X-Forwarded-For": generateRandomIp(),
-          },
-          validateStatus: (status) => status < 500,
-        }),
-      ),
-    );
+  rateLimitTest(
+    "Rate Limiting should apply headers on successful requests",
+    async () => {
+      // Send 1 request without API key
+      const responses = await Promise.all(
+        Array.from({ length: 1 }).map(() =>
+          axios.get(baseURL, {
+            headers: {
+              "CF-Connecting-IP": generateRandomIp(),
+              "X-Forwarded-For": generateRandomIp(),
+            },
+            validateStatus: (status) => status < 500,
+          }),
+        ),
+      );
 
-    const successfulResponse = responses.find(
-      (response) => response.status === 200,
-    );
+      const successfulResponse = responses.find(
+        (response) => response.status === 200,
+      );
 
-    expect(successfulResponse).toBeDefined();
-    expect(successfulResponse.headers).toHaveProperty("x-ratelimit-limit");
-    expect(successfulResponse.headers).toHaveProperty("x-ratelimit-remaining");
-    expect(successfulResponse.headers).not.toHaveProperty("retry-after");
-  });
+      expect(successfulResponse).toBeDefined();
+      expect(successfulResponse.headers).toHaveProperty("x-ratelimit-limit");
+      expect(successfulResponse.headers).toHaveProperty(
+        "x-ratelimit-remaining",
+      );
+      expect(successfulResponse.headers).not.toHaveProperty("retry-after");
+    },
+  );
+
+  rateLimitTest(
+    "Public edge rejects caller-supplied CF-Connecting-IP",
+    async () => {
+      const response = await axios.get(`${config.baseURLRemote}/movie/550`, {
+        headers: { "CF-Connecting-IP": "8.8.8.8" },
+        validateStatus: () => true,
+      });
+
+      expect(response.status).toBe(403);
+      expect(response.headers).not.toHaveProperty("x-ratelimit-limit");
+    },
+    config.timeout,
+  );
 
   rateLimitTest(
     "Rate Limiting should include Retry-After once the limit is exceeded",

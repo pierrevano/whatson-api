@@ -7,7 +7,7 @@ const { logErrors } = require("../utils/logErrors");
 /**
  * Finds the Box Office Mojo entry for a given IMDb id.
  *
- * @param {Array<{ imdbId: string, rank: number, url: string, lifetimeGross: number|null }>} mojoBoxOfficeArray
+ * @param {Array<{ imdbId: string|null, rank: number, url: string|null, lifetimeGross: number|null }>} mojoBoxOfficeArray
  * @param {string} imdbId
  * @param {string} item_type
  * @returns {Promise<Object|null>}
@@ -43,55 +43,43 @@ async function fetchTableData(offset) {
     tableRows.each((index, row) => {
       if (index === 0) return;
 
-      const rowData = {};
+      const cells = $(row).find("td");
+      const rank = offset + index;
+      const titleCell = cells.eq(1);
+      const grossCell = cells.eq(2);
+      const href = titleCell.find("a").attr("href");
 
-      $(row)
-        .find("td")
-        .each((i, cell) => {
-          const cellText = $(cell).text().trim();
+      if (!href) {
+        console.warn(
+          `Skipping Mojo box office row ${rank}: missing title link.`,
+        );
+        return;
+      }
 
-          rowData.rank = offset + index;
-          if (i === 1) {
-            // Get the complete URL and IMDb ID
-            const anchorTag = $(cell).find("a");
-            const href = anchorTag.attr("href");
+      const rawUrl = `${config.mojo.baseURL}${href}`;
+      let url = null;
 
-            if (!href) {
-              rowData.url = null;
-              rowData.imdbId = null;
-              logErrors(
-                new Error(
-                  "Missing href attribute while parsing Mojo box office data.",
-                ),
-                null,
-                "fetchTableData",
-              );
-            } else {
-              const rawUrl = `${config.mojo.baseURL}${href}`;
+      try {
+        const urlObj = new URL(rawUrl);
+        url = `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
+      } catch (urlError) {
+        logErrors(urlError, null, "fetchTableData");
+      }
 
-              try {
-                const urlObj = new URL(rawUrl);
-                rowData.url = `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
-              } catch (urlError) {
-                logErrors(urlError, null, "fetchTableData");
-              }
+      const imdbMatch = rawUrl.match(/title\/(tt\d+)/);
+      const sanitizedGross = grossCell.text().trim().replace(/\$|,/g, "");
+      const numericGross =
+        sanitizedGross === "" ? null : Number(sanitizedGross);
 
-              const imdbMatch = rawUrl.match(/title\/(tt\d+)/);
-              rowData.imdbId = imdbMatch ? imdbMatch[1] : null;
-            }
-          }
-          if (i === 2) {
-            const sanitizedGross = cellText.replace(/\$|,/g, "");
-            const numericGross =
-              sanitizedGross === "" ? null : Number(sanitizedGross);
-            rowData.lifetimeGross =
-              numericGross !== null && Number.isFinite(numericGross)
-                ? numericGross
-                : null;
-          }
-        });
-
-      tableData.push(rowData);
+      tableData.push({
+        rank,
+        url,
+        imdbId: imdbMatch ? imdbMatch[1] : null,
+        lifetimeGross:
+          numericGross !== null && Number.isFinite(numericGross)
+            ? numericGross
+            : null,
+      });
     });
   } catch (error) {
     logErrors(error, null, "fetchTableData");
