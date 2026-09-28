@@ -292,9 +292,25 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: `?item_type=movie,tvshow&is_active=true&append_to_response=awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true&append_to_response=awards,critics_rating_details,composers,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, itemSchema)),
+  },
+
+  name_lists_are_arrays_of_strings: {
+    query: `?item_type=movie,tvshow&is_active=true&append_to_response=composers,directors,genres,networks,production_companies&limit=${maxLimitLargeDocuments}`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        for (const field of config.arrayOfStringKeys) {
+          expect(item).toHaveProperty(field);
+          if (item[field] !== null) {
+            expect(Array.isArray(item[field])).toBe(true);
+            item[field].forEach((name) => expect(typeof name).toBe("string"));
+          }
+        }
+      });
+    },
   },
 
   ratings_filters_should_keep_every_requested_source: {

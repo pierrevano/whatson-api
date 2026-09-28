@@ -18,6 +18,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
  * and returns both the raw pipeline results and paging metadata used by the HTTP layer.
  *
  * @param {string|undefined} append_to_response - Comma-separated list of extra fields to include.
+ * @param {string|undefined} composers_query - Comma-separated composers filter.
  * @param {string|undefined} directors_query - Comma-separated directors filter.
  * @param {string|undefined} genres_query - Comma-separated genres filter.
  * @param {string|undefined} networks_query - Comma-separated networks filter.
@@ -46,6 +47,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
  */
 const aggregateData = async (
   append_to_response,
+  composers_query,
   directors_query,
   genres_query,
   networks_query,
@@ -75,7 +77,12 @@ const aggregateData = async (
 
   const awards_append = appendIncludes("awards");
   const critics_rating_details = appendIncludes("critics_rating_details");
+  const composers_append = appendIncludes("composers");
   const directors_append = appendIncludes("directors");
+  const composers =
+    typeof composers_query !== "undefined" && composers_query
+      ? composers_query
+      : "";
   const directors =
     typeof directors_query !== "undefined" && directors_query
       ? directors_query
@@ -415,6 +422,7 @@ const aggregateData = async (
   const remove_keys_base = {
     ...(awards_append ? {} : { awards: 0 }),
     ...(critics_rating_details ? {} : { "allocine.critics_rating_details": 0 }),
+    ...(composers_append ? {} : { composers: 0 }),
     ...(directors_append ? {} : { directors: 0 }),
     ...(episodes_details ? {} : { episodes_details: 0 }),
     ...(genres_append ? {} : { genres: 0 }),
@@ -476,6 +484,16 @@ const aggregateData = async (
   }
 
   if (!id) {
+    getPipelineByNames(
+      composers,
+      pipeline,
+      "composers",
+      is_active_item,
+      is_adult_item,
+      is_must_see_item,
+      is_users_certified_item,
+      is_critics_certified_item,
+    );
     getPipelineByNames(
       directors,
       pipeline,

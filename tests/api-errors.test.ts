@@ -572,8 +572,38 @@ const params = {
     },
   },
 
+  should_not_return_composers_values: {
+    query: "?item_type=tvshow&is_active=true,false&composers=wrong_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+    },
+  },
+
   should_not_return_directors_values: {
     query: `?item_type=tvshow&is_active=true,false&directors=wrong_value`,
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+    },
+  },
+
+  should_not_return_genres_values: {
+    query: "?item_type=tvshow&is_active=true,false&genres=wrong_value",
+    expectedResult: (data) => {
+      expect(data).toHaveProperty("message");
+      expect(data).toHaveProperty("code");
+      expect(data.message).toBe(config.noMatchingItemsFoundMessage);
+      expect(data.code).toBe(404);
+    },
+  },
+
+  should_not_return_networks_values: {
+    query: "?item_type=tvshow&is_active=true,false&networks=wrong_value",
     expectedResult: (data) => {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");

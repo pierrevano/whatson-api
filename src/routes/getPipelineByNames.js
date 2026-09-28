@@ -1,6 +1,6 @@
 /**
- * Adds a MongoDB aggregation filter to match documents by names for a specific key,
- * using partial, case-insensitive matching.
+ * Adds a MongoDB aggregation filter for case-insensitive name matching.
+ * Matches partially by default; ^ and $ can anchor a match.
  *
  * @param {string} [names] - Optional comma-separated string of names to filter by (e.g., "Action,Drama").
  * @param {Array<Object>} pipeline - The existing MongoDB aggregation pipeline to be modified.
@@ -28,9 +28,9 @@ const getPipelineByNames = (
     const namesArray = names.split(",").map((s) => s.trim());
     const nameSet = new Set(namesArray.filter(Boolean));
 
-    if (nameSet.has("all") || nameSet.has("allgenres")) return pipeline;
+    if (nameSet.has("all")) return pipeline;
 
-    // Use partial match regex (no ^...$ anchors)
+    // Escape regex operators except for the optional ^ and $ anchors.
     const regexArray = [...nameSet].map(
       (name) => new RegExp(escapeRegExp(name), "i"),
     );

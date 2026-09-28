@@ -115,6 +115,16 @@ const getRatedEpisodes = async (req, res) => {
     );
 
     getPipelineByNames(
+      req.query.composers || "",
+      pipeline,
+      "composers",
+      is_active_item,
+      is_adult_item,
+      is_must_see_item,
+      is_users_certified_item,
+      is_critics_certified_item,
+    );
+    getPipelineByNames(
       req.query.directors || "",
       pipeline,
       "directors",

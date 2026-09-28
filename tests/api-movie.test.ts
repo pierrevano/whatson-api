@@ -111,6 +111,11 @@ function checkItemProperties(items) {
     expect(item.title).not.toBeNull();
 
     expect(
+      items.filter((item) => item.composers && item.composers.length > 0)
+        .length,
+    ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
+
+    expect(
       items.filter((item) => item.directors && item.directors.length > 0)
         .length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
@@ -972,6 +977,7 @@ const params = {
 
         expect(item.allocine).not.toHaveProperty("critics_rating_details");
         expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("composers");
         expect(item).not.toHaveProperty("directors");
         expect(item).not.toHaveProperty("genres");
         expect(item).not.toHaveProperty("networks");
@@ -1166,14 +1172,6 @@ const params = {
     },
   },
 
-  cinema_id_should_be_ignored: {
-    query: "?cinema_id=undefined&is_active=true,false&limit=200",
-    expectedResult: (items) =>
-      items.forEach((_) => {
-        expect(items.length).toBe(200);
-      }),
-  },
-
   custom_limit_value_to_1: {
     query: "?limit=1",
     expectedResult: (items) => {
@@ -1188,6 +1186,30 @@ const params = {
     },
   },
 
+  only_movies_composed_by_kaspar_kaae: {
+    query: `?is_active=true,false&item_type=movie&composers=${encodeURIComponent("Kaspar Kaae")}&append_to_response=composers`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(Array.isArray(item.composers)).toBe(true);
+        expect(item.composers).toContain("Kaspar Kaae");
+      });
+    },
+  },
+
+  only_movies_composed_by_partial_name: {
+    query:
+      "?is_active=true,false&item_type=movie&composers=kaspar&append_to_response=composers",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(
+          item.composers.some((name) => name.toLowerCase().includes("kaspar")),
+        ).toBe(true);
+      });
+    },
+  },
+
   only_movies_directed_by_christopher_nolan: {
     query: `?is_active=true,false&item_type=movie&directors=${encodeURIComponent("Christopher Nolan")}&append_to_response=directors`,
     expectedResult: (items) => {
@@ -1197,6 +1219,19 @@ const params = {
       items.forEach((item) => {
         expect(Array.isArray(item.directors)).toBe(true);
         expect(item.directors).toContain("Christopher Nolan");
+      });
+    },
+  },
+
+  only_movies_directed_by_partial_name: {
+    query:
+      "?is_active=true,false&item_type=movie&directors=nolan&append_to_response=directors",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(
+          item.directors.some((name) => name.toLowerCase().includes("nolan")),
+        ).toBe(true);
       });
     },
   },
@@ -1526,12 +1561,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=false&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 

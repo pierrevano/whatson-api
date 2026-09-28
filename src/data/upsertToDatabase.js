@@ -3,12 +3,12 @@ const { logErrors } = require("../utils/logErrors");
 const { logResetValues } = require("../utils/logResetValues");
 
 /**
- * Upserts the given data to the database collection.
+ * Upserts data unless it would reset a stored value.
  * @param {string} allocineHomepage - Allocine homepage URL used for the _id.
  * @param {object} collectionData - The collection to upsert the data to.
  * @param {object} data - The data to upsert to the database.
  * @param {boolean} isEqual - Whether the remote and local payloads already match.
- * @returns {Promise<void>} Resolves when the upsert completes.
+ * @returns {Promise<boolean>} Whether the item was upserted.
  */
 const upsertToDatabase = async (
   allocineHomepage,
@@ -28,12 +28,18 @@ const upsertToDatabase = async (
       projection: { _id: 0 },
     });
 
-    logResetValues(data, storedData);
+    if (logResetValues(data, storedData, allocineHomepage)) {
+      console.log(
+        `Skipping update for ${allocineHomepage} because a value would be reset.`,
+      );
+      return false;
+    }
 
     const updateDoc = { $set: data };
     const options = { upsert: true };
 
     await collectionData.updateOne(filter, updateDoc, options);
+    return true;
   } catch (error) {
     logErrors(error, allocineHomepage, "upsertToDatabase");
   }

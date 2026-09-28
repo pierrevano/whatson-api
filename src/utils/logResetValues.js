@@ -1,51 +1,46 @@
+const { config } = require("../config");
 const { logAndAppendTempErrorLog } = require("./logErrors");
-
-const keysToReset = [
-  "episodes_details",
-  "highest_episode",
-  "last_episode",
-  "lowest_episode",
-  "mojo",
-  "next_episode",
-  "platforms_links",
-  "popularity",
-  "popularity_average",
-  "ratings_average",
-];
 
 const isObject = (value) =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 /**
- * Logs when the refreshed payload resets a key that currently holds a value.
+ * Logs and reports values that would be cleared by an update.
  * Nested keys are walked the same way, except for the keys allowed to be reset.
  * The script is aborted after logging when ABORT_ON_VALUE_RESET is enabled.
  *
  * @param {Object} data - The refreshed payload.
  * @param {Object} storedData - The payload currently stored.
+ * @param {string} allocineHomepage - URL identifying the item.
  * @param {string} [path] - The path of the key being walked.
- * @returns {void}
+ * @returns {boolean} Whether a value would be reset.
  */
-const logResetValues = (data, storedData, path = "") => {
-  if (!isObject(data) || !isObject(storedData)) return;
+const logResetValues = (data, storedData, allocineHomepage, path = "") => {
+  if (!isObject(data) || !isObject(storedData)) return false;
 
-  Object.entries(storedData).forEach(([key, storedValue]) => {
-    if (keysToReset.includes(key) || storedValue == null) return;
+  let hasReset = false;
+  for (const [key, storedValue] of Object.entries(storedData)) {
+    if (config.keysToReset.includes(key) || storedValue == null) continue;
 
     const keyPath = path ? `${path}.${key}` : key;
 
     if (data[key] == null) {
       logAndAppendTempErrorLog(
-        `${keyPath} is reset (stored=${JSON.stringify(storedValue)}).`,
+        `${allocineHomepage} - ${keyPath} would be reset (stored=${JSON.stringify(storedValue)}).`,
       );
 
       if (process.env.ABORT_ON_VALUE_RESET === "true") process.exit(1);
 
-      return;
+      hasReset = true;
+      continue;
     }
 
-    logResetValues(data[key], storedValue, keyPath);
-  });
+    if (logResetValues(data[key], storedValue, allocineHomepage, keyPath)) {
+      hasReset = true;
+    }
+  }
+
+  return hasReset;
 };
 
 module.exports = { logResetValues };

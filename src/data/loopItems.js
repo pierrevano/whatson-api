@@ -25,6 +25,7 @@ const generateURLs = require("./generateURLs");
  * 3. The IMDb release date or vote count check fails.
  * 4. All ratings on the built payload are null or undefined.
  * 5. A homepage status error is thrown and SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR is enabled.
+ * 6. The refreshed payload would reset a stored value.
  *
  * @param {Object} collectionData - The collection data object.
  * @param {Object} config - The configuration object.
@@ -34,7 +35,7 @@ const generateURLs = require("./generateURLs");
  * @param {Array} jsonArray - The array of JSON objects to loop through.
  * @param {Array} mojoBoxOfficeArray - The array of Mojo Box Office data to be included in the operations.
  * @param {number|null} max_index - Optional index (1-based) at which to stop processing.
- * @returns {Promise<{ newOrUpdatedItems: number }>} Number of items rebuilt from scratch, excluding reused payloads.
+ * @returns {Promise<{ newOrUpdatedItems: number }>} Number of rebuilt items that were upserted.
  */
 const loopItems = async (
   collectionData,
@@ -153,7 +154,6 @@ const loopItems = async (
           continue;
         }
 
-        createJsonCounter++;
         data = await createJSON(
           allocineCriticsDetails,
           allocineURL,
@@ -199,8 +199,15 @@ const loopItems = async (
         continue;
       }
 
-      await upsertToDatabase(allocineHomepage, collectionData, data, isEqual);
+      const wasUpserted = await upsertToDatabase(
+        allocineHomepage,
+        collectionData,
+        data,
+        isEqual,
+      );
+      if (!wasUpserted) continue;
 
+      if (!useExistingData) createJsonCounter++;
       itemCounter++;
 
       if (

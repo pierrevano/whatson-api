@@ -24,6 +24,7 @@ const getItems = async (req, res) => {
 
     const {
       append_to_response,
+      composers: composers_query,
       critics_certified: is_critics_certified_query,
       directors: directors_query,
       filtered_seasons: filtered_seasons_query,
@@ -88,6 +89,7 @@ const getItems = async (req, res) => {
 
     const { items, limit, page, is_active_item } = await aggregateData(
       append_to_response,
+      composers_query,
       directors_query,
       genres_query,
       networks_query,

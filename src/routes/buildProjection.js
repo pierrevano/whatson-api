@@ -17,6 +17,10 @@ function buildProjection(appendToResponse) {
     projection["allocine.critics_rating_details"] = 0;
   }
 
+  if (!includes("composers")) {
+    projection["composers"] = 0;
+  }
+
   if (!includes("directors")) {
     projection["directors"] = 0;
   }

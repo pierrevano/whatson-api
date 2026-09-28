@@ -185,6 +185,10 @@ function checkItemProperties(items) {
       expect(item.status).not.toBeNull();
     }
 
+    if (item.item_type === "tvshow") {
+      expect(item.composers).toBeNull();
+    }
+
     if (item.metacritic) {
       expect(item.metacritic.must_see).not.toBeNull();
     }
@@ -1186,6 +1190,7 @@ const params = {
       expect(item.allocine).not.toHaveProperty("critics_rating_details");
       expect(item).not.toHaveProperty("awards");
       expect(item).not.toHaveProperty("episodes_details");
+      expect(item).not.toHaveProperty("composers");
       expect(item).not.toHaveProperty("directors");
       expect(item).not.toHaveProperty("genres");
       expect(item).not.toHaveProperty("networks");
@@ -1256,7 +1261,7 @@ const params = {
       expectedResult: (item) => {
         expect(typeof item).toBe("object");
         expect(Object.keys(item).length).toEqual(
-          config.keysToCheck.length - 15,
+          config.keysToCheck.length - 16,
         );
         expect(item.id).toBe(249042);
         expect(item.ratings_average).toBeGreaterThan(0);
@@ -1267,6 +1272,7 @@ const params = {
         expect(item).not.toHaveProperty("next_episode");
         expect(item).not.toHaveProperty("highest_episode");
         expect(item).not.toHaveProperty("lowest_episode");
+        expect(item).not.toHaveProperty("composers");
         expect(item).not.toHaveProperty("directors");
         expect(item).not.toHaveProperty("genres");
         expect(item).not.toHaveProperty("networks");
@@ -1286,6 +1292,7 @@ const params = {
       expect(item.id).toBe(249042);
       expect(item.allocine).not.toHaveProperty("critics_rating_details");
       expect(item).not.toHaveProperty("episodes_details");
+      expect(item).not.toHaveProperty("composers");
       expect(item).not.toHaveProperty("directors");
       expect(item).not.toHaveProperty("genres");
       expect(item).not.toHaveProperty("networks");
@@ -1301,6 +1308,7 @@ const params = {
       expect(item.id).toBe(249042);
       expect(item.allocine).toHaveProperty("critics_rating_details");
       expect(item).not.toHaveProperty("episodes_details");
+      expect(item).not.toHaveProperty("composers");
       expect(item).not.toHaveProperty("directors");
       expect(item).not.toHaveProperty("genres");
       expect(item).not.toHaveProperty("networks");
@@ -1315,6 +1323,7 @@ const params = {
       expect(item.id).toBe(249042);
       expect(item.allocine).not.toHaveProperty("critics_rating_details");
       expect(item).toHaveProperty("episodes_details");
+      expect(item).not.toHaveProperty("composers");
       expect(item).not.toHaveProperty("directors");
       expect(item).not.toHaveProperty("genres");
       expect(item).not.toHaveProperty("networks");
@@ -1330,6 +1339,7 @@ const params = {
 
       expect(item.allocine).not.toHaveProperty("critics_rating_details");
       expect(item).not.toHaveProperty("episodes_details");
+      expect(item).not.toHaveProperty("composers");
       expect(item).not.toHaveProperty("directors");
       expect(item).not.toHaveProperty("genres");
       expect(item).not.toHaveProperty("networks");
@@ -1385,6 +1395,7 @@ const params = {
       expect(items[0].id).toBe(249042);
       expect(items[0].allocine).not.toHaveProperty("critics_rating_details");
       expect(items[0]).not.toHaveProperty("episodes_details");
+      expect(items[0]).not.toHaveProperty("composers");
       expect(items[0]).not.toHaveProperty("directors");
       expect(items[0]).not.toHaveProperty("genres");
       expect(items[0]).not.toHaveProperty("networks");
@@ -1395,12 +1406,13 @@ const params = {
 
   correct_tmdb_id_returned_on_search_with_append_to_response: {
     query:
-      "?tmdbid=249042&append_to_response=critics_rating_details,episodes_details,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide",
+      "?tmdbid=249042&append_to_response=critics_rating_details,episodes_details,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide",
     expectedResult: (items) => {
       expect(items.length).toBe(1);
       expect(items[0].id).toBe(249042);
       expect(items[0].allocine).toHaveProperty("critics_rating_details");
       expect(items[0]).toHaveProperty("episodes_details");
+      expect(items[0]).toHaveProperty("composers");
       expect(items[0]).toHaveProperty("directors");
       expect(items[0]).toHaveProperty("genres");
       expect(items[0]).toHaveProperty("networks");
@@ -1429,6 +1441,7 @@ const params = {
         expect(items[0].id).toBe(249042);
         expect(items[0].allocine).not.toHaveProperty("critics_rating_details");
         expect(items[0]).toHaveProperty("episodes_details");
+        expect(items[0]).not.toHaveProperty("composers");
         expect(items[0]).not.toHaveProperty("directors");
         expect(items[0]).not.toHaveProperty("genres");
         expect(items[0]).not.toHaveProperty("networks");
@@ -1596,12 +1609,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=false&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
     expectedResult: checkItemProperties,
   },
 
@@ -1662,8 +1675,25 @@ const params = {
     },
   },
 
+  should_return_all_directors: {
+    query:
+      "?item_type=tvshow&is_active=true,false&directors=all,wrong_value&limit=250",
+    expectedResult: (items) => {
+      expect(items.length).toBe(250);
+    },
+  },
+
   should_return_all_genres: {
-    query: `?item_type=tvshow&is_active=true,false&genres=${encodeURIComponent("allgenres,Drama")}&limit=250`,
+    query:
+      "?item_type=tvshow&is_active=true,false&genres=all,wrong_value&limit=250",
+    expectedResult: (items) => {
+      expect(items.length).toBe(250);
+    },
+  },
+
+  should_return_all_networks: {
+    query:
+      "?item_type=tvshow&is_active=true,false&networks=all,wrong_value&limit=250",
     expectedResult: (items) => {
       expect(items.length).toBe(250);
     },
@@ -1681,12 +1711,24 @@ const params = {
   },
 
   only_genres_drama: {
-    query: `?item_type=tvshow&genres=${encodeURIComponent("allgenresWrong,Drama")}&append_to_response=genres&limit=250`,
+    query: `?item_type=tvshow&genres=${encodeURIComponent("wrong_value,Drama")}&append_to_response=genres&limit=250`,
     expectedResult: (items) => {
       items.forEach((item) => {
         expect(item).toHaveProperty("genres");
         expect(item.genres).not.toBeNull();
         expect(item.genres.some((genre) => genre === "Drama")).toBeTruthy();
+      });
+    },
+  },
+
+  only_genres_by_partial_name: {
+    query: "?item_type=tvshow&genres=drama&append_to_response=genres",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(
+          item.genres.some((name) => name.toLowerCase().includes("drama")),
+        ).toBe(true);
       });
     },
   },

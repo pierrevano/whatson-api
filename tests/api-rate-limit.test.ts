@@ -94,15 +94,17 @@ describe("What's on? API rate limiting tests", () => {
   );
 
   rateLimitTest(
-    "Public edge rejects caller-supplied CF-Connecting-IP",
+    "Public edge rejects caller-supplied CF-Connecting-IP values",
     async () => {
-      const response = await axios.get(`${config.baseURLRemote}/movie/550`, {
-        headers: { "CF-Connecting-IP": "8.8.8.8" },
-        validateStatus: () => true,
-      });
+      for (const ip of ["8.8.8.8", "8.8.4.4"]) {
+        const response = await axios.get(`${config.baseURLRemote}/movie/550`, {
+          headers: { "CF-Connecting-IP": ip },
+          validateStatus: () => true,
+        });
 
-      expect(response.status).toBe(403);
-      expect(response.headers).not.toHaveProperty("x-ratelimit-limit");
+        expect(response.status).toBe(403);
+        expect(response.headers).not.toHaveProperty("x-ratelimit-limit");
+      }
     },
     config.timeout,
   );

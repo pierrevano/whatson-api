@@ -15,7 +15,7 @@ info:
     Rotten Tomatoes ÷ 20, AlloCiné native, etc.). `minimum_ratings` uses
     the 0–5 scale when filtering movies and TV shows, and the 0–10 scale when filtering episodes.
     Movie and TV show searches by title or ID ignore this filter; episode searches support it.
-  version: 3.40.2
+  version: 3.41.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -48,7 +48,7 @@ components:
       in: query
       description: |
         Comma-separated list of optional fields to include in the response.
-        Available values: `awards`, `critics_rating_details`, `directors`, `episodes_details`,
+        Available values: `awards`, `critics_rating_details`, `composers`, `directors`, `episodes_details`,
         `genres`, `highest_episode`, `last_episode`, `lowest_episode`, `networks`,
         `next_episode`, `platforms_links`, `production_companies`,
         `certification_variants`, `image_variants`, `title_variants`, `parents_guide`.
@@ -109,7 +109,7 @@ components:
     genres:
       name: genres
       in: query
-      description: Comma-separated genres to filter by (case-insensitive partial match). Pass `all` to skip this filter.
+      description: Comma-separated genres (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
       schema:
         type: string
         example: "Action,Drama"
@@ -117,7 +117,7 @@ components:
     platforms:
       name: platforms
       in: query
-      description: Comma-separated streaming platform names (case-insensitive partial match). Pass `all` to skip this filter.
+      description: Comma-separated streaming platform names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
       schema:
         type: string
         example: "Netflix,Disney+"
@@ -125,7 +125,7 @@ components:
     networks:
       name: networks
       in: query
-      description: Comma-separated TV network names (case-insensitive partial match). Pass `all` to skip this filter.
+      description: Comma-separated TV network names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
       schema:
         type: string
         example: "HBO,AMC"
@@ -288,6 +288,11 @@ components:
           items:
             type: string
           description: Genre names. Included when `genres` is in `append_to_response`.
+        composers:
+          type: ["array", "null"]
+          items:
+            type: string
+          description: Composer names. Included when `composers` is in `append_to_response`.
         directors:
           type: ["array", "null"]
           items:
@@ -892,14 +897,19 @@ paths:
           schema:
             type: string
             example: "true"
+        - name: composers
+          in: query
+          description: Comma-separated composer names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
+          schema:
+            type: string
         - name: directors
           in: query
-          description: Comma-separated director names (partial match). Pass `all` to skip this filter.
+          description: Comma-separated director names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
           schema:
             type: string
         - name: production_companies
           in: query
-          description: Comma-separated production company names (partial match). Pass `all` to skip this filter.
+          description: Comma-separated production company names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
           schema:
             type: string
         - name: runtime
@@ -1376,12 +1386,12 @@ paths:
             example: "true"
         - name: directors
           in: query
-          description: Comma-separated director names (partial match). Pass `all` to skip this filter.
+          description: Comma-separated director names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
           schema:
             type: string
         - name: production_companies
           in: query
-          description: Comma-separated production company names (partial match). Pass `all` to skip this filter.
+          description: Comma-separated production company names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
           schema:
             type: string
         - name: status

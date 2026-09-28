@@ -14,7 +14,7 @@ const getDirectors = async (allocineHomepage, data) => {
   try {
     const directors =
       data?.credits?.crew
-        ?.filter((crewMember) => crewMember.department === "Directing")
+        ?.filter((crewMember) => crewMember.job === "Director")
         .map((director) => {
           const directorName = director.name;
           directorsCount[directorName] =

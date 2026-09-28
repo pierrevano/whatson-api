@@ -27,6 +27,10 @@ const itemSchema = {
   },
   countries_of_origin: "object", // Countries of origin
   /*
+   * To include this key in the response, add `composers` to the `append_to_response` query parameter.
+   */
+  composers: "object", // Composers' names
+  /*
    * To include this key in the response, add `directors` to the `append_to_response` query parameter.
    */
   directors: "object", // Directors' names

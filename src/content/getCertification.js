@@ -1,5 +1,6 @@
 const { config } = require("../config");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { httpClient } = require("../utils/httpClient");
 const { logErrors } = require("../utils/logErrors");
 
 /**
@@ -30,20 +31,11 @@ const getNextData = async (imdbHomepage, origin) => {
 };
 
 /**
- * @param {object|null} nextData - Parsed IMDb NEXT_DATA payload.
- * @returns {Array<object>} Certificate edges from the IMDb payload.
- */
-const getCertificateEdges = (nextData) =>
-  nextData?.props?.pageProps?.contentData?.data?.title?.certificates?.edges ||
-  [];
-
-/**
- * @param {object|null} nextData - Parsed IMDb NEXT_DATA payload.
+ * @param {Array<object>} certificateEdges - Certificate entries to search.
  * @param {string} countryId - Country id to match in the certificates list.
  * @returns {string|null} Trimmed certification rating for the requested country.
  */
-const getCertificationRating = (nextData, countryId) => {
-  const certificateEdges = getCertificateEdges(nextData);
+const getCertificationRating = (certificateEdges, countryId) => {
   const certificate = certificateEdges.find(
     (edge) => edge?.node?.country?.id === countryId,
   );
@@ -60,12 +52,38 @@ const getCertificationRating = (nextData, countryId) => {
  */
 const getCertification = async (imdbHomepage) => {
   const nextData = await getNextData(imdbHomepage, "getCertification");
+  const certificates =
+    nextData?.props?.pageProps?.contentData?.data?.title?.certificates;
+  const certificateEdges = certificates?.edges || [];
+  let certification = getCertificationRating(certificateEdges, "US");
+  let fr = getCertificationRating(certificateEdges, "FR");
+  const imdbId = imdbHomepage.match(/\/title\/(tt\d+)\/$/)?.[1];
+
+  if (
+    imdbId &&
+    (!nextData ||
+      (certificates?.total > certificateEdges.length &&
+        (!certification || !fr)))
+  ) {
+    const query = `{
+      title(id: "${imdbId}") {
+        certificates(first: ${certificates?.total ?? 1000}) {
+          edges { node { country { id } rating } }
+        }
+      }
+    }`;
+    const url = `${config.baseURLImdbGraphql}?query=${encodeURIComponent(query)}`;
+    const response = await httpClient.get(url, {
+      headers: { Referer: `${imdbHomepage}${config.imdbParentalGuidePath}` },
+    });
+    const fullEdges = response.data?.data?.title?.certificates?.edges || [];
+    certification ||= getCertificationRating(fullEdges, "US");
+    fr ||= getCertificationRating(fullEdges, "FR");
+  }
 
   return {
-    certification: getCertificationRating(nextData, "US"),
-    certificationVariants: {
-      fr: getCertificationRating(nextData, "FR"),
-    },
+    certification,
+    certificationVariants: { fr },
   };
 };
 

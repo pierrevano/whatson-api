@@ -367,6 +367,7 @@ const createJSON = async (
 
     awards,
     countries_of_origin: countriesOfOrigin,
+    composers: allocineFirstInfo?.composers,
     directors,
     genres,
     image,

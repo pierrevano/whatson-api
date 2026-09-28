@@ -66,11 +66,11 @@ const config = {
   countryIs: "https://api.country.is/",
   webhooksURL: process.env.WEBHOOKS_URL,
   appendToResponse:
-    "awards,critics_rating_details,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
+    "awards,critics_rating_details,composers,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
   booleanQueryValues: ["false", "true"],
   itemTypes: ["movie", "tvshow"],
   invalidAppendToResponseMessage:
-    "Invalid append_to_response provided. Please specify one or more of 'awards', 'critics_rating_details', 'directors', 'episodes_details', 'genres', 'highest_episode', 'last_episode', 'lowest_episode', 'networks', 'next_episode', 'platforms_links', 'production_companies', 'certification_variants', 'image_variants', 'title_variants', 'parents_guide'.",
+    "Invalid append_to_response provided. Please specify one or more of 'awards', 'critics_rating_details', 'composers', 'directors', 'episodes_details', 'genres', 'highest_episode', 'last_episode', 'lowest_episode', 'networks', 'next_episode', 'platforms_links', 'production_companies', 'certification_variants', 'image_variants', 'title_variants', 'parents_guide'.",
   invalidBooleanMessage:
     "Invalid boolean value provided. Please specify 'true', 'false', or a combination like 'true,false' or 'false,true'.",
   invalidEndpointMessage:
@@ -161,6 +161,18 @@ const config = {
   apiKeyCacheMaxEntries: 5000,
   heapLimit: 1500,
   imdbRatingCountTolerancePct: 0.5,
+  keysToReset: [
+    "episodes_details",
+    "highest_episode",
+    "last_episode",
+    "lowest_episode",
+    "mojo",
+    "next_episode",
+    "platforms_links",
+    "popularity",
+    "popularity_average",
+    "ratings_average",
+  ],
   maxAgeInDays: 3,
   maxDaysInFuture: 45,
   maxErrorLogLines: getEnvInt(process.env.MAX_ERROR_LOG_LINES, 100),
@@ -182,6 +194,14 @@ const config = {
   maxLimitLargeDocuments: 100,
   queryMaxTimeMS: 10000,
   checkItemsNumber: true,
+  arrayOfStringKeys: [
+    "composers",
+    "countries_of_origin",
+    "directors",
+    "genres",
+    "networks",
+    "production_companies",
+  ],
   keysToCheck: [
     "_id",
     "allocine",
@@ -189,6 +209,7 @@ const config = {
     "betaseries",
     "certification",
     "certification_variants",
+    "composers",
     "countries_of_origin",
     "parents_guide",
     "directors",
@@ -243,7 +264,7 @@ const config = {
   allowedQueryParams: [
     "api_key",
     "append_to_response",
-    "cinema_id",
+    "composers",
     "critics_certified",
     "directors",
     "filtered_seasons",
@@ -291,7 +312,7 @@ const config = {
     softDefault: 5,
     mojo: 15,
     mustSee: 3,
-    directors: 15,
+    directors: 5,
     nextEpisodes: 10,
     platformsLinksMovies: 5,
     popularity: 10,

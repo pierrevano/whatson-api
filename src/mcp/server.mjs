@@ -72,17 +72,17 @@ const TOOLS = [
         genres: {
           type: "string",
           description:
-            'Comma-separated genres, e.g. "Action,Drama". Pass `all` to skip this filter.',
+            'Comma-separated genres, e.g. "Action,Drama". Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.',
         },
         platforms: {
           type: "string",
           description:
-            'Comma-separated streaming platforms, e.g. "Netflix,Disney+". Pass `all` to skip this filter.',
+            'Comma-separated streaming platforms, e.g. "Netflix,Disney+". Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.',
         },
         networks: {
           type: "string",
           description:
-            'Comma-separated TV networks, e.g. "HBO,AMC". Pass `all` to skip this filter.',
+            'Comma-separated TV networks, e.g. "HBO,AMC". Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.',
         },
         status: {
           type: "string",
@@ -134,15 +134,20 @@ const TOOLS = [
           description:
             '"true" returns only Rotten Tomatoes "Certified Fresh" titles, "false" returns only non-certified titles, "true,false" returns both.',
         },
+        composers: {
+          type: "string",
+          description:
+            "Comma-separated composer names. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
+        },
         directors: {
           type: "string",
           description:
-            "Comma-separated director names (partial match). Pass `all` to skip this filter.",
+            "Comma-separated director names. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
         },
         production_companies: {
           type: "string",
           description:
-            "Comma-separated production company names (partial match). Pass `all` to skip this filter.",
+            "Comma-separated production company names. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
         },
         runtime: {
           type: "string",
@@ -157,7 +162,7 @@ const TOOLS = [
         append_to_response: {
           type: "string",
           description:
-            "Comma-separated optional fields to include in results. Available: awards, genres, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
+            "Comma-separated optional fields to include in results. Available: awards, genres, composers, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
         },
         filtered_seasons: {
           type: "string",
@@ -231,7 +236,7 @@ const TOOLS = [
   {
     name: "get_title",
     description:
-      "Get full details for a specific movie or TV show by its TMDB numeric ID. Returns metadata and ratings from all aggregated sources. Use append_to_response to request optional fields such as genres, platforms_links, directors, or episode highlights.",
+      "Get full details for a specific movie or TV show by its TMDB numeric ID. Returns metadata and ratings from all aggregated sources. Use append_to_response to request optional fields such as genres, platforms_links, composers, directors, or episode highlights.",
     inputSchema: {
       type: "object",
       required: ["id", "item_type"],
@@ -248,7 +253,7 @@ const TOOLS = [
         append_to_response: {
           type: "string",
           description:
-            "Comma-separated optional fields to include. Available: awards, genres, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
+            "Comma-separated optional fields to include. Available: awards, genres, composers, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
         },
         ratings_filters: {
           type: "string",
@@ -321,17 +326,17 @@ const TOOLS = [
         genres: {
           type: "string",
           description:
-            "Comma-separated genres to filter the parent TV show. Pass `all` to skip this filter.",
+            "Comma-separated genres to filter the parent TV show. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
         },
         platforms: {
           type: "string",
           description:
-            "Comma-separated streaming platforms. Pass `all` to skip this filter.",
+            "Comma-separated streaming platforms. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
         },
         networks: {
           type: "string",
           description:
-            "Comma-separated TV networks. Pass `all` to skip this filter.",
+            "Comma-separated TV networks. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
         },
         is_active: {
           type: "string",
@@ -361,12 +366,12 @@ const TOOLS = [
         directors: {
           type: "string",
           description:
-            "Comma-separated director names (partial match). Pass `all` to skip this filter.",
+            "Comma-separated director names. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
         },
         production_companies: {
           type: "string",
           description:
-            "Comma-separated production company names (partial match). Pass `all` to skip this filter.",
+            "Comma-separated production company names. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
         },
         status: {
           type: "string",

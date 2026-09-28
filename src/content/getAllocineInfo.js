@@ -3,6 +3,7 @@ const {
   convertFrenchDateToISOString,
 } = require("../utils/convertFrenchDateToISOString");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getContentUrl } = require("../utils/getContentUrl");
 const {
   getHomepageResponseWithRateLimitRetry,
 } = require("../utils/getHomepageResponseWithRateLimitRetry");
@@ -20,6 +21,7 @@ const { logErrors } = require("../utils/logErrors");
  *   image: string|null,
  *   allocineUsersRating: number|null,
  *   allocineUsersRatingCount: number|null,
+ *   composers: string[]|null,
  *   status: string|null,
  *   releaseDate: string|null
  * }|null|{ error: Error }} AlloCiné metadata when resolved, null when data is
@@ -53,28 +55,19 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
 
     const image = $('meta[property="og:image"]').attr("content") || null;
 
-    let allocineUsersRating = parseFloat(
-      $(".stareval-note").eq(1).text().replace(",", "."),
-    );
-    if (isNaN(allocineUsersRating))
-      allocineUsersRating = parseFloat(
-        $(".stareval-note").eq(0).text().replace(",", "."),
-      );
-    if (isNaN(allocineUsersRating)) allocineUsersRating = null;
-
-    const extractRating = (index) => {
-      const text = $(".stareval-review").eq(index).text();
-      const match = text ? text.match(/\d+/) : null;
-      return match ? parseInt(match[0], 10) : NaN;
-    };
-
-    let allocineUsersRatingCount = extractRating(1);
-    if (isNaN(allocineUsersRatingCount)) {
-      allocineUsersRatingCount = extractRating(0);
-    }
-    if (isNaN(allocineUsersRatingCount)) {
-      allocineUsersRatingCount = null;
-    }
+    const metadata = getContentUrl($, false, allocineHomepage);
+    const aggregateRating = metadata?.aggregateRating;
+    const musicBy = metadata?.musicBy;
+    const composerNames = (Array.isArray(musicBy) ? musicBy : [musicBy])
+      .map((person) => person?.name)
+      .filter((name) => typeof name === "string" && name.trim());
+    const composers = composerNames.length ? composerNames : null;
+    const usersRating = parseFloat(aggregateRating?.ratingValue);
+    const allocineUsersRating = isNaN(usersRating) ? null : usersRating;
+    const usersRatingCount = parseInt(aggregateRating?.ratingCount, 10);
+    const allocineUsersRatingCount = isNaN(usersRatingCount)
+      ? null
+      : usersRatingCount;
 
     const status = !compare
       ? await getStatus(allocineHomepage, $(".thumbnail .label-status").text())
@@ -94,6 +87,7 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
       image,
       allocineUsersRating,
       allocineUsersRatingCount,
+      composers,
       status,
       releaseDate,
     };
