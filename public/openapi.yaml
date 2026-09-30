@@ -15,7 +15,7 @@ info:
     Rotten Tomatoes ÷ 20, AlloCiné native, etc.). `minimum_ratings` uses
     the 0–5 scale when filtering movies and TV shows, and the 0–10 scale when filtering episodes.
     Movie and TV show searches by title or ID ignore this filter; episode searches support it.
-  version: 3.41.0
+  version: 3.42.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -201,8 +201,8 @@ components:
           example: "TV-MA"
         release_date:
           type: string
-          format: date
-          example: "2008-01-20"
+          format: date-time
+          example: "2008-01-20T00:00:00.000Z"
         runtime:
           type: integer
           description: Runtime in seconds.
@@ -218,7 +218,7 @@ components:
         trailer:
           type: string
           format: uri
-          description: URL to the trailer (Dailymotion).
+          description: URL to the trailer.
         seasons_number:
           type: integer
           description: Number of seasons (TV shows only).
@@ -235,8 +235,8 @@ components:
           description: Average popularity rank across all included sources (lower is more popular).
         ratings_average:
           type: number
-          description: Normalised average rating across all included sources (0–5 scale).
-          example: 4.37
+          description: Normalised average rating across all included sources.
+          example: 4.4
         allocine:
           $ref: "#/components/schemas/AllocineRatings"
         betaseries:
@@ -369,7 +369,7 @@ components:
           $ref: "#/components/schemas/RatedEpisode"
         episodes_details:
           type: ["array", "null"]
-          description: All episodes with IMDb ratings. Included when `episodes_details` is in `append_to_response`. TV shows only.
+          description: All episodes, including IMDb ratings when available. Included when `episodes_details` is in `append_to_response`. TV shows only.
           items:
             $ref: "#/components/schemas/RatedEpisode"
 
@@ -438,7 +438,7 @@ components:
           type: number
         top_ranking:
           type: ["integer", "null"]
-          description: Position in the IMDb Top 250. Null when the title is not ranked.
+          description: Position in the IMDb top charts. Null when the title is not ranked.
 
     MetacriticRatings:
       type: object
@@ -561,7 +561,7 @@ components:
           format: uri
         release_date:
           type: ["string", "null"]
-          format: date
+          format: date-time
         users_rating:
           type: ["number", "null"]
           description: IMDb user rating 0–10.
@@ -942,19 +942,15 @@ paths:
           schema:
             type: string
             example: "1,2"
-        - name: top_ranking_order
+        - name: sort_by
           in: query
-          description: |
-            Sort by IMDb top ranking. Only titles that appear in the IMDb top
-            charts are returned. `asc` shows #1 first, `desc` shows #1 last.
+          description: Sort by average ratings, average popularity, IMDb top ranking, or Box Office Mojo rank. Chart sorts return only titles with the selected rank. `sort_by=popularity` cannot be combined with `popularity_filters=none`.
           schema:
             type: string
-            enum: [asc, desc]
-        - name: mojo_rank_order
+            enum: [ratings, popularity, top_ranking, mojo_rank]
+        - name: order
           in: query
-          description: |
-            Sort by Box Office Mojo rank. Only titles with a Mojo rank are
-            returned. `asc` shows #1 first, `desc` shows #1 last.
+          description: Direction for `sort_by` (`asc` puts rank #1 first). Without `order`, ratings sort descending and popularity or chart ranks sort ascending. With `order` alone, sort by popularity when `popularity_filters` is supplied (other than `none`) and `ratings_filters` is absent, or by ratings otherwise. Without either parameter, use the default popularity, ratings, and title ordering.
           schema:
             type: string
             enum: [asc, desc]
@@ -1384,6 +1380,11 @@ paths:
           schema:
             type: string
             example: "true"
+        - name: composers
+          in: query
+          description: Comma-separated composer names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
+          schema:
+            type: string
         - name: directors
           in: query
           description: Comma-separated director names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.

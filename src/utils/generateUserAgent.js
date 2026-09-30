@@ -1,6 +1,6 @@
 /**
  * This module provides functionality to generate random User-Agent strings.
- * It includes predefined User-Agent strings for the latest versions of Chrome,
+ * It includes predefined User-Agent strings for configured versions of Chrome,
  * Firefox, and Safari.
  *
  * Functions:

@@ -10,7 +10,7 @@ const { logExecutionTime } = require("./logExecutionTime");
  * Makes an API call to The Movie Database (TMDB) to retrieve information about a movie or tvshow.
  * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow.
  * @param {number} tmdbId - The ID of the movie or tvshow on TMDB.
- * @returns {Promise<{ data: object, status: number } | undefined>} The TMDB response payload and status code, or undefined if the request fails.
+ * @returns {Promise<{ data: object, status: number }>} The TMDB response payload and status code. Request failures are passed to logErrors.
  */
 const getTMDBResponse = async (allocineHomepage, tmdbId) => {
   try {

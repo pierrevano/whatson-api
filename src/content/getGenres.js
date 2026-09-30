@@ -7,7 +7,7 @@ const genresCount = {};
  * Retrieves the genre names for a movie or tvshow from The Movie Database (TMDB) API.
  * @param {string} allocineHomepage - The homepage of the movie or tv show on AlloCiné.
  * @param {object} data - The TMDB API response data for the item.
- * @returns {Promise<string[]|null>} - A promise that resolves with an array of genre names or null if there was an error.
+ * @returns {Promise<string[]|null>} Genre names, or null when genre data is unavailable. Errors are passed to logErrors.
  */
 const getGenres = async (allocineHomepage, data) => {
   let genreNames = null;

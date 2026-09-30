@@ -209,46 +209,80 @@ const params = {
     },
   },
 
-  top_ranking_order_has_multiple_values: {
-    query: "?top_ranking_order=asc,desc",
+  top_ranking_sort_order_has_multiple_values: {
+    query: "?sort_by=top_ranking&order=asc,desc",
     expectedResult: (data, response) => {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: getInvalidSortOrderMessage("top_ranking_order", "asc,desc"),
+        message: getInvalidSortOrderMessage("order", "asc,desc"),
       });
     },
   },
 
-  top_ranking_order_is_invalid: {
-    query: "?top_ranking_order=invalid",
+  top_ranking_sort_order_is_invalid: {
+    query: "?sort_by=top_ranking&order=invalid",
     expectedResult: (data, response) => {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: getInvalidSortOrderMessage("top_ranking_order", "invalid"),
+        message: getInvalidSortOrderMessage("order", "invalid"),
       });
     },
   },
 
-  mojo_rank_order_has_multiple_values: {
-    query: "?mojo_rank_order=asc,desc",
+  mojo_rank_sort_order_has_multiple_values: {
+    query: "?sort_by=mojo_rank&order=asc,desc",
     expectedResult: (data, response) => {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: getInvalidSortOrderMessage("mojo_rank_order", "asc,desc"),
+        message: getInvalidSortOrderMessage("order", "asc,desc"),
       });
     },
   },
 
-  mojo_rank_order_is_invalid: {
-    query: "?mojo_rank_order=invalid",
+  mojo_rank_sort_order_is_invalid: {
+    query: "?sort_by=mojo_rank&order=invalid",
     expectedResult: (data, response) => {
       expect(response.status).toBe(400);
       expect(data).toEqual({
         code: 400,
-        message: getInvalidSortOrderMessage("mojo_rank_order", "invalid"),
+        message: getInvalidSortOrderMessage("order", "invalid"),
+      });
+    },
+  },
+
+  sort_by_has_multiple_values: {
+    query: "?sort_by=top_ranking,mojo_rank",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidSortByMessage} Received 'top_ranking,mojo_rank'.`,
+      });
+    },
+  },
+
+  sort_by_is_invalid: {
+    query: "?sort_by=invalid",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidSortByMessage} Received 'invalid'.`,
+      });
+    },
+  },
+
+  sort_by_popularity_requires_popularity_filters: {
+    query: "?sort_by=popularity&popularity_filters=none",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message:
+          "sort_by=popularity requires popularity filters. Received 'none'.",
       });
     },
   },

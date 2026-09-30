@@ -9,8 +9,8 @@ const { logErrors } = require("../utils/logErrors");
  * The data is extracted from the embedded JSON-LD structure within the SensCritique page.
  *
  * @param {string} sensCritiqueHomepage - The URL of the item's page on senscritique.com
- * @param {string} sensCritiqueId - The SensCritique ID for the movie or TV show
- * @returns {{ id: string, url: string, usersRating: number|null, usersRatingCount: number|null }|null} An object containing the SensCritique rating information, or null if not available
+ * @param {number} sensCritiqueId - The SensCritique ID for the movie or TV show
+ * @returns {Promise<{ id: number, url: string, usersRating: number|null, usersRatingCount: number|null }|null>} An object containing the SensCritique rating information, or null if not available
  */
 const getSensCritiqueRating = async (sensCritiqueHomepage, sensCritiqueId) => {
   let sensCritiqueObj = null;

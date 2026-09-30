@@ -12,8 +12,8 @@ const { logErrors } = require("../utils/logErrors");
  *
  * @param {string} allocineHomepage - The URL of the item's page on allocine.fr
  * @param {string} traktHomepage - The URL of the item's page on trakt.tv
- * @param {string} traktId - The Trakt ID for the movie or TV show
- * @returns {{ id: string, url: string, usersRating: number|null, usersRatingCount: number|null, tagline: string|null }|null} An object containing the Trakt rating information, or null if not available
+ * @param {number|string} traktId - The Trakt ID or slug for the movie or TV show
+ * @returns {Promise<{ id: number|string, url: string, usersRating: number|null, usersRatingCount: number|null, tagline: string|null }|null>} An object containing the Trakt rating information, or null if not available
  */
 const getTraktRating = async (allocineHomepage, traktHomepage, traktId) => {
   let traktObj = null;

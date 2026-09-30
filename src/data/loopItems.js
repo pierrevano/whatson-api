@@ -25,7 +25,7 @@ const generateURLs = require("./generateURLs");
  * 3. The IMDb release date or vote count check fails.
  * 4. All ratings on the built payload are null or undefined.
  * 5. A homepage status error is thrown and SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR is enabled.
- * 6. The refreshed payload would reset a stored value.
+ * 6. The refreshed payload would reset a stored value or decrease a protected numeric *_count field.
  *
  * @param {Object} collectionData - The collection data object.
  * @param {Object} config - The configuration object.
@@ -204,6 +204,7 @@ const loopItems = async (
         collectionData,
         data,
         isEqual,
+        allocineURL,
       );
       if (!wasUpserted) continue;
 

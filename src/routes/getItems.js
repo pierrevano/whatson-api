@@ -36,13 +36,13 @@ const getItems = async (req, res) => {
       minimum_ratings: minimum_ratings_query,
       must_see: is_must_see_query,
       networks: networks_query,
+      order: order_query,
       platforms: platforms_query,
       popularity_filters: popularity_filters_query,
       production_companies: production_companies_query,
       ratings_filters: ratings_filters_query,
       release_date: release_date_query,
-      top_ranking_order: top_ranking_order_query,
-      mojo_rank_order: mojo_rank_order_query,
+      sort_by: sort_by_query,
       seasons_number: seasons_number_query,
       status: status_query,
       users_certified: is_users_certified_query,
@@ -112,8 +112,8 @@ const getItems = async (req, res) => {
       seasons_number_query,
       filtered_seasons_query,
       status_query,
-      top_ranking_order_query,
-      mojo_rank_order_query,
+      order_query,
+      sort_by_query,
     );
     const results = items && items.length > 0 ? items[0].results : [];
     const total_results =

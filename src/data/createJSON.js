@@ -26,7 +26,7 @@ const { getTrailer } = require("../content/getTrailer");
 const { getTraktPopularity } = require("../content/getTraktPopularity");
 
 /**
- * Asynchronously creates a JSON object with various movie details from different sources.
+ * Asynchronously creates a JSON object with movie or TV show details from different sources.
  * @param {string} allocineCriticsDetails - URL for the AlloCiné critics details page
  * @param {string} allocineURL - The AlloCiné URL
  * @param {string} allocineHomepage - The AlloCiné homepage URL
@@ -53,7 +53,7 @@ const { getTraktPopularity } = require("../content/getTraktPopularity");
  * @param {object|null} imdbData - IMDb data.
  * @param {string} theTvdbHomepage - TheTVDB homepage URL
  * @param {number} theTvdbId - TheTVDB ID
- * @returns {Promise<object>} A Promise which resolves to a JSON object containing movie details
+ * @returns {Promise<object>} A JSON object containing movie or TV show details.
  */
 const createJSON = async (
   allocineCriticsDetails,

@@ -109,6 +109,8 @@ const config = {
     "Invalid since provided. Please specify a valid ISO 8601 date string such as '2026-01-01T00:00:00.000Z'.",
   invalidSortOrderMessage:
     "Invalid {name} provided. Please specify one of 'asc', 'desc'.",
+  invalidSortByMessage:
+    "Invalid sort_by provided. Please specify one of 'ratings', 'popularity', 'top_ranking', 'mojo_rank'.",
   invalidStatusMessage:
     "Invalid status provided. Please specify one or more of 'canceled', 'ended', 'ongoing', 'pilot', 'unknown'.",
   noMatchingItemsFoundMessage: "No matching items found.",
@@ -129,6 +131,7 @@ const config = {
     "rating_distribution_episodes",
   ],
   sortOrders: ["asc", "desc"],
+  sortByValues: ["ratings", "popularity", "top_ranking", "mojo_rank"],
 
   imdbEpisodesPaginationOperation: "TitleEpisodesSubPagePagination",
 
@@ -161,17 +164,12 @@ const config = {
   apiKeyCacheMaxEntries: 5000,
   heapLimit: 1500,
   imdbRatingCountTolerancePct: 0.5,
-  keysToReset: [
-    "episodes_details",
+  keysToReset: ["mojo", "next_episode", "platforms_links", "popularity"],
+  keysToAllowCountDecrease: [
     "highest_episode",
     "last_episode",
     "lowest_episode",
-    "mojo",
     "next_episode",
-    "platforms_links",
-    "popularity",
-    "popularity_average",
-    "ratings_average",
   ],
   maxAgeInDays: 3,
   maxDaysInFuture: 45,
@@ -261,7 +259,7 @@ const config = {
     "tmdb",
     "trakt",
   ],
-  allowedQueryParams: [
+  commonQueryParams: [
     "api_key",
     "append_to_response",
     "composers",
@@ -288,8 +286,6 @@ const config = {
     "seasons_number",
     "status",
     "title",
-    "top_ranking_order",
-    "mojo_rank_order",
     "users_certified",
   ],
   allowedTvshowStatuses: ["Canceled", "Ended", "Ongoing", "Pilot", "Unknown"],

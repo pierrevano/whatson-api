@@ -11,8 +11,7 @@ const { logErrors } = require("./logErrors");
  * @param {string} itemTypeApi - The type of item for the API (movie or tvshow).
  * @param {number} tmdbId - The TMDB ID to query.
  * @param {string} [appendToResponse] - Optional comma-separated fields (e.g., `episodes_details`) to append to the response.
- * @returns {Promise<Object|undefined>} Resolves with the axios response,
- *     or `undefined` when the request fails before a response is returned.
+ * @returns {Promise<import("axios").AxiosResponse>} The axios response for status 200 or 404. Other statuses exit the process; request failures are passed to logErrors.
  */
 const getWhatsonResponse = async (itemTypeApi, tmdbId, appendToResponse) => {
   try {

@@ -14,8 +14,23 @@ const removeLogs = process.env.REMOVE_LOGS === "true";
  * @type {Record<string, { query: string, expectedResult: (items: any) => void }>}
  */
 const params = {
+  should_default_to_ascending_mojo_rank: {
+    query: "?item_type=movie,tvshow&sort_by=mojo_rank&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      items.forEach((item) => {
+        expect(typeof item.mojo?.rank).toBe("number");
+      });
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].mojo.rank).toBeGreaterThanOrEqual(
+          items[index - 1].mojo.rank,
+        );
+      }
+    },
+  },
+
   should_sort_by_mojo_rank_ascending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&mojo_rank_order=asc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&sort_by=mojo_rank&order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(
@@ -55,10 +70,11 @@ const params = {
   },
 
   should_sort_by_mojo_rank_descending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&mojo_rank_order=desc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&sort_by=mojo_rank&order=desc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       const itemsWithMojo = items.filter((item) => item.mojo);
 
+      expect(itemsWithMojo).toHaveLength(items.length);
       expect(itemsWithMojo.length).toBeGreaterThan(
         config.minimumNumberOfItems.softDefault,
       );
@@ -68,40 +84,6 @@ const params = {
           itemsWithMojo[i - 1].mojo.rank,
         );
       }
-    },
-  },
-
-  should_prioritize_imdb_top_ranking_and_mojo_rank_orders: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity&top_ranking_order=asc&mojo_rank_order=asc&limit=${maxLimitLargeDocuments}`,
-    expectedResult: (items) => {
-      expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(
-        config.minimumNumberOfItems.softDefault,
-      );
-
-      items.forEach((item) => {
-        expect(item.imdb).toBeDefined();
-        expect(typeof item.imdb.top_ranking).toBe("number");
-        expect(item.mojo).toBeDefined();
-        expect(typeof item.mojo.rank).toBe("number");
-      });
-
-      const comparator = (a, b) => {
-        if (a.imdb.top_ranking !== b.imdb.top_ranking) {
-          return a.imdb.top_ranking - b.imdb.top_ranking;
-        }
-        if (a.mojo.rank !== b.mojo.rank) {
-          return a.mojo.rank - b.mojo.rank;
-        }
-      };
-
-      const expectedOrder = items
-        .slice()
-        .sort(comparator)
-        .map((item) => item.id);
-      const actualOrder = items.map((item) => item.id);
-
-      expect(actualOrder).toEqual(expectedOrder);
     },
   },
 };

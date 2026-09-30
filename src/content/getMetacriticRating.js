@@ -11,7 +11,7 @@ const { reportError } = require("../utils/sendToNewRelic");
  *
  * @param {string} metacriticHomepage - The Metacritic homepage URL
  * @param {string} metacriticId - The Metacritic ID for the movie or tvshow
- * @returns {{
+ * @returns {Promise<{
  *   id: string,
  *   url: string,
  *   usersRating: number|null,
@@ -19,8 +19,7 @@ const { reportError } = require("../utils/sendToNewRelic");
  *   criticsRating: number|null,
  *   criticsRatingCount: number|null,
  *   mustSee: boolean
- * }|null|{ error: Error }} Metacritic rating data when available, null when
- * nothing can be retrieved, or an error wrapper when the scrape fails
+ * }|null>} Metacritic rating data when available. Scrape failures are passed to logErrors.
  */
 const getMetacriticRating = async (metacriticHomepage, metacriticId) => {
   let metacriticObj = null;

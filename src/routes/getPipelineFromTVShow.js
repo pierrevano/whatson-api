@@ -12,7 +12,7 @@ function capitalize(word) {
  * @param {Object} is_critics_certified_item - MongoDB condition to match critics-certified items.
  * @param {string|undefined} item_type - Expected to be `"tvshow"` when the caller targets TV content; treated as optional.
  * @param {Array<Object>} pipeline - Aggregation pipeline to append conditions to.
- * @param {string|undefined} seasons_number - Optional comma-separated list of season numbers to filter.
+ * @param {string} seasons_number - Comma-separated season counts to filter; use an empty string to skip.
  * @param {string|undefined} status - Optional comma-separated list of statuses to filter (e.g., "ongoing,ended").
  * @returns {Array<Object>} - The updated aggregation pipeline.
  */

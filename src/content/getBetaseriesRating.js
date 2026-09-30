@@ -14,7 +14,7 @@ const { logExecutionTime } = require("../utils/logExecutionTime");
  * @param {string} allocineHomepage - The URL of the item's page on allocine.fr
  * @param {string} betaseriesHomepage - The URL of the item's page on betaseries.com
  * @param {string} betaseriesId - Optional item identifier
- * @returns {{ usersRating: number|null, usersRatingCount: number|null }} An object containing the rating information, or null values if not available
+ * @returns {Promise<{ usersRating: number|null, usersRatingCount: number|null }>} An object containing the rating information, or null values if not available
  */
 const getBetaseriesRating = async (
   allocineHomepage,

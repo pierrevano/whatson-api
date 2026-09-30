@@ -40,7 +40,7 @@ const getBooleanMatch = (value, fallbackValue, key) => {
  *
  * @param {import("express").Request} req - Express request with filters and pagination.
  * @param {import("express").Response} res - Express response.
- * @returns {Promise<void>} Resolves after the response is sent.
+ * @returns {Promise<import("express").Response>} Resolves after the response is sent.
  */
 const getRatedEpisodes = async (req, res) => {
   try {

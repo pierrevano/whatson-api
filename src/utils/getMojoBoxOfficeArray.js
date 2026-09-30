@@ -6,7 +6,7 @@ const { logErrors } = require("./logErrors");
 /**
  * Get a Mojo box office array for the given item type, optionally reusing a cache file.
  * @param {string} item_type
- * @param {string} skip_mojo - "skip_mojo" to skip, "reuse_mojo" to read cache when available.
+ * @param {string} skip_mojo - "skip_mojo" to skip, "reuse_mojo" to require an existing cache file.
  * @returns {Promise<Array>} Array of box office entries (empty if skipped or unsupported).
  */
 const getMojoBoxOfficeArray = async (item_type, skip_mojo) => {

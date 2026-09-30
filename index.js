@@ -31,12 +31,28 @@ const getRatedEpisodes = require("./src/routes/getRatedEpisodes");
 const getUpdates = require("./src/routes/getUpdates");
 
 const PORT = config.localPort;
-const itemDetailsQueryParams = [
-  "api_key",
-  "append_to_response",
-  "item_type",
-  "ratings_filters",
+const apiKeyAndAppendToResponseQueryParams = ["api_key", "append_to_response"];
+const listingQueryParams = [
+  ...config.commonQueryParams,
+  ...config.keysToCheckForSearch,
 ];
+const routeAllowlist = {
+  items: [...listingQueryParams, "sort_by"],
+  ratedEpisodes: listingQueryParams,
+  updates: ["api_key", "since", "item_type", "page", "limit"],
+  itemDetails: [
+    ...apiKeyAndAppendToResponseQueryParams,
+    "item_type",
+    "ratings_filters",
+  ],
+  tvshowSeasons: apiKeyAndAppendToResponseQueryParams,
+  tvshowSeasonEpisodes: [
+    ...apiKeyAndAppendToResponseQueryParams,
+    "minimum_ratings",
+    "release_date",
+  ],
+  tvshowSeasonEpisode: apiKeyAndAppendToResponseQueryParams,
+};
 
 /* Configure the shared application-level middleware. */
 applyBaseMiddleware(app, { staticDir: path.join(__dirname, "public") });
@@ -48,7 +64,7 @@ app.use(validateQueryValues);
 app.get(
   "/",
   limiter,
-  validateQueryParams(undefined, {
+  validateQueryParams(routeAllowlist.items, {
     allowReleaseDateShortcuts: true,
     maximumRating: 5,
   }),
@@ -56,13 +72,18 @@ app.get(
 );
 
 /* A route that is used to get the rated episodes across all tvshows. */
-app.get("/episodes/rated", limiter, validateQueryParams(), getRatedEpisodes);
+app.get(
+  "/episodes/rated",
+  limiter,
+  validateQueryParams(routeAllowlist.ratedEpisodes),
+  getRatedEpisodes,
+);
 
 /* A route that is used to get items added or updated since a given timestamp. */
 app.get(
   "/updates",
   limiter,
-  validateQueryParams(["api_key", "since", "item_type", "page", "limit"]),
+  validateQueryParams(routeAllowlist.updates),
   getUpdates,
 );
 
@@ -70,7 +91,7 @@ app.get(
 app.get(
   "/movie/:id",
   limiter,
-  validateQueryParams(itemDetailsQueryParams),
+  validateQueryParams(routeAllowlist.itemDetails),
   getId,
 );
 
@@ -78,7 +99,7 @@ app.get(
 app.get(
   "/tvshow/:id",
   limiter,
-  validateQueryParams(itemDetailsQueryParams),
+  validateQueryParams(routeAllowlist.itemDetails),
   getId,
 );
 
@@ -86,7 +107,7 @@ app.get(
 app.get(
   "/tvshow/:id/seasons",
   limiter,
-  validateQueryParams(["api_key", "append_to_response"], {
+  validateQueryParams(routeAllowlist.tvshowSeasons, {
     allowedAppendValues: config.seasonAppendToResponseValues,
     invalidAppendMessage: config.invalidSeasonAppendToResponseMessage,
   }),
@@ -97,12 +118,7 @@ app.get(
 app.get(
   "/tvshow/:id/seasons/:season_number/episodes",
   limiter,
-  validateQueryParams([
-    "api_key",
-    "append_to_response",
-    "minimum_ratings",
-    "release_date",
-  ]),
+  validateQueryParams(routeAllowlist.tvshowSeasonEpisodes),
   getTvShowSeasonEpisodes,
 );
 
@@ -110,7 +126,7 @@ app.get(
 app.get(
   "/tvshow/:id/seasons/:season_number/episodes/:episode_number",
   limiter,
-  validateQueryParams(["api_key", "append_to_response"]),
+  validateQueryParams(routeAllowlist.tvshowSeasonEpisode),
   getTvShowSeasonEpisodeDetails,
 );
 

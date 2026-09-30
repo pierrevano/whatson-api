@@ -5,7 +5,7 @@ const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
  * Returns the English equivalent of the given French status string for a specific AlloCiné page.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {string} status - The French status string to convert.
- * @returns {Promise<string | null | undefined>} The English status, null when it cannot be mapped, or undefined on error.
+ * @returns {Promise<string|null>} The English status, or null for movies or unrecognized statuses. Errors are passed to logErrors.
  */
 const getStatus = async (allocineHomepage, status) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;

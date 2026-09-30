@@ -8,7 +8,7 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} allocineURL - The AlloCiné URL used to fetch AlloCiné popularity.
  * @param {string} item_type - Type of item ("movie" or "tvshow").
  * @param {object|null} [imdbData] - IMDb data.
- * @returns {Promise<{ popularity: number | null } | undefined>} The IMDb popularity information, or undefined if the lookup fails.
+ * @returns {Promise<{ popularity: number | null }>} The IMDb popularity information.
  */
 const getImdbPopularity = async (
   imdbHomepage,

@@ -9,7 +9,7 @@ const { logErrors } = require("../utils/logErrors");
 /**
  * Retrieves TheTVDB slug for a given movie or tvshow.
  * @param {string} allocineHomepage - AlloCiné homepage URL.
- * @param {string} theTvdbId - TheTVDB ID for the tvshow or movie.
+ * @param {number} theTvdbId - TheTVDB ID for the tvshow or movie.
  * @returns {Promise<string|null>} The TheTVDB slug, or null if it cannot be retrieved.
  */
 const getTheTvdbSlug = async (allocineHomepage, theTvdbId) => {

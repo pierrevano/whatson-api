@@ -184,7 +184,7 @@ const itemSchema = {
         critic_rating: "number", // Average rating given by the critic
       },
     ],
-    popularity: "number", // Popularity score on AlloCiné
+    popularity: "number", // Popularity rank on AlloCiné
   },
   betaseries: {
     /* Information related to BetaSeries platform */
@@ -199,7 +199,7 @@ const itemSchema = {
     url: "string", // URL to the IMDb page
     users_rating: "number", // Average rating given by IMDb users
     users_rating_count: "number", // Total number of ratings submitted by IMDb users
-    popularity: "number", // Popularity score on IMDb
+    popularity: "number", // Popularity rank on IMDb
     top_ranking: "number", // Position of the title in IMDb top charts
   },
   letterboxd: {
@@ -247,7 +247,7 @@ const itemSchema = {
     url: "string", // URL to the TMDB page
     users_rating: "number", // Average rating given by TMDB users
     users_rating_count: "number", // Total number of ratings submitted by TMDB users
-    popularity: "number", // Popularity score on TMDB
+    popularity: "number", // Popularity rank on TMDB
   },
   trakt: {
     /* Information related to Trakt platform */
@@ -255,7 +255,7 @@ const itemSchema = {
     url: "string", // URL to the Trakt page
     users_rating: "number", // Average rating given by Trakt users
     users_rating_count: "number", // Total number of ratings submitted by Trakt users
-    popularity: "number", // Popularity score
+    popularity: "number", // Popularity rank on Trakt
   },
   thetvdb: {
     /* Information related to TheTVDB platform */

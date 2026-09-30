@@ -59,10 +59,8 @@ By default, when no `title` or external ID parameter is provided, the results ar
 2. Sort by Ratings: Among items with the same popularity, sorting is then based on their average ratings, with higher ratings appearing first.
 3. Sort by Title: If items have the same popularity and ratings, they are further sorted alphabetically by their title in ascending order.
 
-- _If you want to sort by ratings only, you must set the popularity parameter to `none`._
-- _You must have at least one popularity or one rating parameter to obtain results._
-
-To prioritise chart data, add the `top_ranking_order` or `mojo_rank_order` parameters. `top_ranking_order=asc` surfaces the lowest IMDb ranking numbers first (e.g., #1 at the top). `mojo_rank_order=asc` keeps the same behaviour on `mojo.rank`. When these parameters are present, items missing the requested metrics are filtered out. If you provide both sort options together, the precedence is `imdb.top_ranking`, then `mojo.rank`, before falling back to the default popularity, ratings, and title ordering.
+- _Set `sort_by` to `ratings`, `popularity`, `top_ranking`, or `mojo_rank` to choose a sort. Use `order=asc|desc` to change its direction; ratings default to descending, all others to ascending. Chart sorts return only ranked items and use the default popularity, ratings, and title ordering to break ties._
+- _Without `sort_by`, `order` sorts by ratings, or by popularity if `popularity_filters` is set (other than `none`) and `ratings_filters` is omitted. `popularity_filters=none` excludes popularity from the default sort and cannot be used with `sort_by=popularity`._
 
 #### Active items
 
@@ -74,7 +72,7 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,critics_rating_details,composers,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&top_ranking_order=<asc_or_desc>&mojo_rank_order=<asc_or_desc>&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,critics_rating_details,composers,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&sort_by=<ratings_or_popularity_or_top_ranking_or_mojo_rank>&order=<asc_or_desc>&page=<integer>&limit=<integer>
 > ```
 
 | Parameter            | Value                                                                                                                                                                                                                                               | Description                                                                                                                                                                                                              |
@@ -89,7 +87,7 @@ Active items are fetched from 2 different links:
 | critics_certified    | true,false                                                                                                                                                                                                                                          | Has the item received the Rotten Tomatoes "Certified Fresh" status from critics (_true_, _false_ or both)                                                                                                                |
 | minimum_ratings      | _number_                                                                                                                                                                                                                                            | Minimum ratings to return                                                                                                                                                                                                |
 | release_date         | new,everything,from:yyyy-mm-dd,to:yyyy-mm-dd                                                                                                                                                                                                        | Use `new` for releases from 6 months ago onward with `item_type=movie`, or 18 months ago onward otherwise, `everything` alone for no release-date filter, or `from:`/`to:` with `yyyy-mm-dd` for an inclusive date range |
-| runtime              | _integer_,_integer_                                                                                                                                                                                                                                 | Filter items by runtime in seconds (one value for exact match or two values for an inclusive range)                                                                                                                      |
+| runtime              | _integer_,_integer_                                                                                                                                                                                                                                 | Filter items by runtime in seconds (one value for exact match or two or more values for an inclusive min–max range)                                                                                                      |
 | seasons_number       | 1,2,3,4,5                                                                                                                                                                                                                                           | Number of seasons (5 means 5+) (only valid for tvshows)                                                                                                                                                                  |
 | status               | canceled,ended,ongoing,pilot,unknown                                                                                                                                                                                                                | TV show's status (only valid for tvshows)                                                                                                                                                                                |
 | composers            | _string_                                                                                                                                                                                                                                            | Composers (or `all` for every value)                                                                                                                                                                                     |
@@ -100,8 +98,8 @@ Active items are fetched from 2 different links:
 | production_companies | _string_                                                                                                                                                                                                                                            | Production companies (or `all` for every value)                                                                                                                                                                          |
 | append_to_response   | awards,critics_rating_details,composers,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide | Should we return specific keys in the response                                                                                                                                                                           |
 | filtered_seasons     | _integer_,_integer_                                                                                                                                                                                                                                 | Filter episodes by one or more seasons                                                                                                                                                                                   |
-| top_ranking_order    | asc or desc                                                                                                                                                                                                                                         | Sort by IMDb top ranking (`asc` shows #1 first, `desc` shows #1 last; only ranked items)                                                                                                                                 |
-| mojo_rank_order      | asc or desc                                                                                                                                                                                                                                         | Sort by Box Office Mojo rank (`asc` shows #1 first, `desc` shows #1 last; only ranked items)                                                                                                                             |
+| sort_by              | ratings, popularity, top_ranking, mojo_rank                                                                                                                                                                                                         | Choose one sort field; chart sorts return only ranked items                                                                                                                                                              |
+| order                | asc or desc                                                                                                                                                                                                                                         | Direction for `sort_by`; without `sort_by`, sorts by ratings unless `popularity_filters` is supplied without `none` and `ratings_filters` is omitted                                                                     |
 | page                 | _integer_                                                                                                                                                                                                                                           | Page number                                                                                                                                                                                                              |
 | limit                | _integer_                                                                                                                                                                                                                                           | Page items limit (20 results by default). Specify `limit` explicitly to request more.                                                                                                                                    |
 
@@ -113,7 +111,7 @@ _Composer, director, genre, platform, network, and production-company filters us
 
 The query parameters provided below are for title or ID searches. Provide one title or ID parameter; an ID can match multiple items.
 
-Alongside these parameters, `item_type` and `is_adult` (default `false`) are supported. Other filters and sorting options are ignored.
+Alongside these parameters, `item_type`, `page`, `limit`, and `is_adult` (default `false`) are supported. Other filters and sorting options are ignored.
 
 > ```
 > https://whatson-api.onrender.com/?title=<string>&append_to_response=awards,critics_rating_details,composers,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&filtered_seasons=<integer>,<integer>
@@ -156,7 +154,7 @@ Returns the highest or lowest rated episodes across all tvshows combined.
 You can also see it live at https://whatson-top-episodes.vercel.app.
 
 > ```
-> https://whatson-api.onrender.com/episodes/rated?order=<asc_or_desc>&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<integer>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<integer>,<integer>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&title=<string>&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/episodes/rated?order=<asc_or_desc>&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<integer>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<integer>,<integer>&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&title=<string>&page=<integer>&limit=<integer>
 > ```
 
 | Parameter                  | Value                                | Description                                                                                    |
@@ -171,6 +169,7 @@ You can also see it live at https://whatson-top-episodes.vercel.app.
 | minimum_users_rating_count | _integer_                            | Minimum number of IMDb users ratings required for each episode. Defaults to `100` when omitted |
 | release_date               | from:yyyy-mm-dd,to:yyyy-mm-dd        | Use `from:`/`to:` with `yyyy-mm-dd` to set an inclusive date range                             |
 | filtered_seasons           | _integer_,_integer_                  | Filter episodes by one or more seasons                                                         |
+| composers                  | _string_                             | Filter tvshows by composers, or use `all` for every value                                      |
 | directors                  | _string_                             | Filter tvshows by directors, or use `all` for every value                                      |
 | genres                     | _string_                             | Filter tvshows by genres, or use `all` for every value                                         |
 | platforms                  | _string_                             | Filter tvshows by streaming platforms, or use `all` for every value                            |
@@ -479,7 +478,7 @@ Example of an item returned:
         "critic_rating": "number", // Average rating given by the critic
       },
     ],
-    "popularity": "number", // Popularity score on AlloCiné
+    "popularity": "number", // Popularity rank on AlloCiné
   },
   "betaseries": {
     /* Information related to BetaSeries platform */
@@ -494,7 +493,7 @@ Example of an item returned:
     "url": "string", // URL to the IMDb page
     "users_rating": "number", // Average rating given by IMDb users
     "users_rating_count": "number", // Total number of ratings submitted by IMDb users
-    "popularity": "number", // Popularity score on IMDb
+    "popularity": "number", // Popularity rank on IMDb
     "top_ranking": "number", // Position of the title in IMDb top charts
   },
   "letterboxd": {
@@ -542,7 +541,7 @@ Example of an item returned:
     "url": "string", // URL to the TMDB page
     "users_rating": "number", // Average rating given by TMDB users
     "users_rating_count": "number", // Total number of ratings submitted by TMDB users
-    "popularity": "number", // Popularity score on TMDB
+    "popularity": "number", // Popularity rank on TMDB
   },
   "trakt": {
     /* Information related to Trakt platform */
@@ -550,7 +549,7 @@ Example of an item returned:
     "url": "string", // URL to the Trakt page
     "users_rating": "number", // Average rating given by Trakt users
     "users_rating_count": "number", // Total number of ratings submitted by Trakt users
-    "popularity": "number", // Popularity score
+    "popularity": "number", // Popularity rank on Trakt
   },
   "thetvdb": {
     /* Information related to TheTVDB platform */

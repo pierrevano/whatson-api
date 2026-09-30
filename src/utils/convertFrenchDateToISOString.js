@@ -80,7 +80,7 @@ function convertFrenchDateToISOString(frenchDateStr, isTVShow = false) {
  * to an ISO 8601 date string.
  *
  * @param {{ year: number, month?: number, day?: number }} releaseDate - The release date object.
- * @returns {string|null} - The ISO 8601 date string or null if input is missing or invalid.
+ * @returns {string|null} - The ISO 8601 date string or null when the year is missing.
  */
 function convertImdbDateToISOString(releaseDate) {
   if (!releaseDate?.year) return null;

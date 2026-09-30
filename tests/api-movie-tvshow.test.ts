@@ -526,7 +526,7 @@ const params = {
   },
 
   should_sort_by_imdb_top_ranking_ascending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&top_ranking_order=asc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&sort_by=top_ranking&order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(
@@ -555,7 +555,7 @@ const params = {
   },
 
   should_sort_by_imdb_top_ranking_descending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&top_ranking_order=desc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&sort_by=top_ranking&order=desc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(
@@ -584,7 +584,7 @@ const params = {
   },
 
   should_keep_popularity_order_when_top_ranking_ties: {
-    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&top_ranking_order=asc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&sort_by=top_ranking&order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(
@@ -616,36 +616,142 @@ const params = {
     },
   },
 
-  order_and_minimum_users_rating_count_should_not_influence_movie_tvshow_results:
-    {
-      query:
-        "?item_type=movie,tvshow&is_active=true,false&append_to_response=episodes_details&limit=20&order=asc&minimum_users_rating_count=5000",
-      expectedResult: (items) => {
-        const tvshowItems = items.filter((item) => item.item_type === "tvshow");
-        const episodeUsersRatingCounts = tvshowItems.flatMap((item) =>
-          Array.isArray(item.episodes_details)
-            ? item.episodes_details
-                .map((episode) => episode?.users_rating_count)
-                .filter((count) => typeof count === "number")
-            : [],
+  should_sort_by_average_rating_with_order_only: {
+    query: "?item_type=movie,tvshow&order=asc&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].ratings_average).toBeGreaterThanOrEqual(
+          items[index - 1].ratings_average,
         );
-        const isAscending = episodeUsersRatingCounts.every(
-          (count, index) =>
-            index === 0 || count >= episodeUsersRatingCounts[index - 1],
-        );
-
-        expect(tvshowItems.length).toBeGreaterThanOrEqual(
-          config.minimumNumberOfItems.softDefault,
-        );
-        expect(episodeUsersRatingCounts.length).toBeGreaterThan(
-          config.minimumNumberOfItems.softDefault,
-        );
-        expect(
-          episodeUsersRatingCounts.some((count) => count < 5000),
-        ).toBeTruthy();
-        expect(isAscending).toBeFalsy();
-      },
+      }
     },
+  },
+
+  should_sort_by_average_popularity_with_order_only: {
+    query: "?item_type=movie,tvshow&popularity_filters=all&order=desc&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].popularity_average).toBeLessThanOrEqual(
+          items[index - 1].popularity_average,
+        );
+      }
+    },
+  },
+
+  should_sort_by_average_rating_ascending: {
+    query: "?item_type=movie,tvshow&sort_by=ratings&order=asc&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].ratings_average).toBeGreaterThanOrEqual(
+          items[index - 1].ratings_average,
+        );
+      }
+    },
+  },
+
+  should_sort_by_average_rating_descending: {
+    query: "?item_type=movie,tvshow&sort_by=ratings&order=desc&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].ratings_average).toBeLessThanOrEqual(
+          items[index - 1].ratings_average,
+        );
+      }
+    },
+  },
+
+  should_sort_by_average_popularity_ascending: {
+    query:
+      "?item_type=movie,tvshow&popularity_filters=all&sort_by=popularity&order=asc&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      expect(typeof items[0].popularity_average).toBe("number");
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].popularity_average).toBeGreaterThanOrEqual(
+          items[index - 1].popularity_average,
+        );
+      }
+    },
+  },
+
+  should_sort_by_average_popularity_descending: {
+    query:
+      "?item_type=movie,tvshow&popularity_filters=all&sort_by=popularity&order=desc&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      expect(typeof items[0].popularity_average).toBe("number");
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].popularity_average).toBeLessThanOrEqual(
+          items[index - 1].popularity_average,
+        );
+      }
+    },
+  },
+
+  should_default_to_descending_average_rating: {
+    query: "?item_type=movie,tvshow&sort_by=ratings&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].ratings_average).toBeLessThanOrEqual(
+          items[index - 1].ratings_average,
+        );
+      }
+    },
+  },
+
+  should_default_to_ascending_average_popularity: {
+    query: "?item_type=movie,tvshow&sort_by=popularity&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].popularity_average).toBeGreaterThanOrEqual(
+          items[index - 1].popularity_average,
+        );
+      }
+    },
+  },
+
+  should_default_to_ascending_top_ranking: {
+    query: "?item_type=movie,tvshow&sort_by=top_ranking&limit=20",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(1);
+      for (let index = 1; index < items.length; index++) {
+        expect(items[index].imdb.top_ranking).toBeGreaterThanOrEqual(
+          items[index - 1].imdb.top_ranking,
+        );
+      }
+    },
+  },
+
+  minimum_users_rating_count_should_not_influence_movie_tvshow_results: {
+    query:
+      "?item_type=movie,tvshow&is_active=true,false&append_to_response=episodes_details&limit=20&minimum_users_rating_count=5000",
+    expectedResult: (items) => {
+      const tvshowItems = items.filter((item) => item.item_type === "tvshow");
+      const episodeUsersRatingCounts = tvshowItems.flatMap((item) =>
+        Array.isArray(item.episodes_details)
+          ? item.episodes_details
+              .map((episode) => episode?.users_rating_count)
+              .filter((count) => typeof count === "number")
+          : [],
+      );
+
+      expect(tvshowItems.length).toBeGreaterThanOrEqual(
+        config.minimumNumberOfItems.softDefault,
+      );
+      expect(episodeUsersRatingCounts.length).toBeGreaterThan(
+        config.minimumNumberOfItems.softDefault,
+      );
+      expect(
+        episodeUsersRatingCounts.some((count) => count < 5000),
+      ).toBeTruthy();
+    },
+  },
 };
 
 /**

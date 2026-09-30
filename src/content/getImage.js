@@ -4,7 +4,7 @@ const { logErrors } = require("../utils/logErrors");
  * Retrieves the full image URL for a movie or tvshow from The Movie Database (TMDB) API.
  * @param {string} allocineHomepage - The homepage of the movie or tvshow on AlloCiné.
  * @param {object} data - The TMDB API response data for the item.
- * @returns {Promise<string|null>} - A promise that resolves with the full image URL or null if there was an error.
+ * @returns {Promise<string|null>} The full image URL, or null when no image path is available. Errors are passed to logErrors.
  */
 const getImage = async (allocineHomepage, data) => {
   let image = null;

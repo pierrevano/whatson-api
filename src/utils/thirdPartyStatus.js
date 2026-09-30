@@ -7,7 +7,7 @@ const { logErrors } = require("./logErrors");
  * Checks the availability of a third-party service with automatic retries.
  *
  * @param {string} service - Absolute URL of the status endpoint to probe.
- * @returns {Promise<{success: boolean, data: any}>} Resolves with the HTTP payload when reachable, otherwise flags failure.
+ * @returns {Promise<{success: boolean, data: any}>} The service status and HTTP payload. Request failures are passed to logErrors.
  */
 const isThirdPartyServiceOK = async (service) => {
   try {

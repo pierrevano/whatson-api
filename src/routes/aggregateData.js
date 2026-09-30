@@ -14,7 +14,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
 
 /**
  * Builds and executes the Mongo aggregation pipeline that powers the public listing endpoints.
- * It normalises query parameters, constructs dynamic `$match` stages, attaches optional lookups,
+ * It normalises query parameters, constructs dynamic `$match` stages, projects optional fields,
  * and returns both the raw pipeline results and paging metadata used by the HTTP layer.
  *
  * @param {string|undefined} append_to_response - Comma-separated list of extra fields to include.
@@ -23,7 +23,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
  * @param {string|undefined} genres_query - Comma-separated genres filter.
  * @param {string|undefined} networks_query - Comma-separated networks filter.
  * @param {string|undefined} production_companies_query - Comma-separated production companies filter.
- * @param {number|undefined} id_path - Numeric AlloCiné/TMDB identifier when fetching a single item.
+ * @param {number|undefined} id_path - Numeric TMDB identifier when fetching a single item.
  * @param {string|boolean|undefined} is_active_query - Flag indicating which activity states to include.
  * @param {string|boolean|undefined} is_adult_query - Flag indicating which adult content states to include.
  * @param {string|undefined} is_must_see_query - Filter for `must_see` items.
@@ -31,7 +31,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
  * @param {string|undefined} is_critics_certified_query - Filter for critics certified badge.
  * @param {string|undefined} item_type_query - Item type filters (e.g., "movie", "tvshow", "movie,tvshow").
  * @param {number|undefined} limit_query - Requested page size.
- * @param {string|undefined} minimum_ratings_query - Minimum ratings thresholds per source.
+ * @param {string|undefined} minimum_ratings_query - Minimum average rating; the lowest value is used when several are provided.
  * @param {number|undefined} page_query - Requested page number.
  * @param {string|undefined} platforms_query - Platform names used for SVOD filtering.
  * @param {string|undefined} popularity_filters_query - Popularity filters requested by the client.
@@ -41,8 +41,8 @@ const { resolveLimit } = require("./utils/resolveLimit");
  * @param {string|undefined} seasons_number_query - Seasons count filter for tvshows.
  * @param {string|number|undefined} filtered_seasons_query - Seasons to keep when trimming episode lists.
  * @param {string|undefined} status_query - Comma-separated list of show statuses to include.
- * @param {string|undefined} top_ranking_order_query - Desired ordering for IMDb top ranking (`asc` or `desc`).
- * @param {string|undefined} mojo_rank_order_query - Desired ordering for Box Office Mojo rank (`asc` or `desc`).
+ * @param {string|undefined} order_query - Sort direction (`asc` or `desc`).
+ * @param {string|undefined} sort_by_query - Field to sort by.
  * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: ({ is_active: boolean } | { $or: Array<object> }) }>} Aggregated items along with paging info and the resolved activity flag.
  */
 const aggregateData = async (
@@ -70,8 +70,8 @@ const aggregateData = async (
   seasons_number_query,
   filtered_seasons_query,
   status_query,
-  top_ranking_order_query,
-  mojo_rank_order_query,
+  order_query,
+  sort_by_query,
 ) => {
   const appendIncludes = buildAppendIncludes(append_to_response);
 
@@ -156,6 +156,13 @@ const aggregateData = async (
   const popularity_filters = await getPopularityFilters(
     popularity_filters_query_value,
   );
+  const sortByPopularity = Boolean(
+    sort_by_query === "popularity" ||
+    (!sort_by_query &&
+      popularity_filters_query &&
+      !ratings_filters_query &&
+      popularity_filters.length > 0),
+  );
   const ratings_filters_query_value =
     typeof ratings_filters_query !== "undefined" && ratings_filters_query
       ? String(ratings_filters_query)
@@ -179,23 +186,10 @@ const aggregateData = async (
   const status =
     typeof status_query !== "undefined" && status_query ? status_query : "";
 
-  const parseSortOrder = (value) => {
-    if (typeof value === "undefined" || value === null) {
-      return null;
-    }
-    const normalized = String(value).toLowerCase();
-    return normalized === "asc" || normalized === "desc" ? normalized : null;
-  };
-
-  const top_ranking_order = parseSortOrder(top_ranking_order_query);
-  const has_top_ranking_order = top_ranking_order !== null;
-  const top_ranking_direction =
-    has_top_ranking_order && top_ranking_order === "desc" ? -1 : 1;
-
-  const mojo_rank_order = parseSortOrder(mojo_rank_order_query);
-  const has_mojo_rank_order = mojo_rank_order !== null;
-  const mojo_rank_direction =
-    has_mojo_rank_order && mojo_rank_order === "desc" ? -1 : 1;
+  const rankField = {
+    top_ranking: "imdb.top_ranking",
+    mojo_rank: "mojo.rank",
+  }[sort_by_query];
 
   const addFields_popularity_and_ratings = {
     $addFields: {
@@ -214,7 +208,7 @@ const aggregateData = async (
       sortAvgField: {
         $cond: [
           { $eq: [{ $avg: popularity_filters }, null] },
-          Infinity,
+          sortByPopularity && order_query === "desc" ? -Infinity : Infinity,
           { $avg: popularity_filters },
         ],
       },
@@ -377,14 +371,8 @@ const aggregateData = async (
     }
   }
 
-  if (has_top_ranking_order) {
-    matchConditions.push({ "imdb.top_ranking": { $type: "number" } });
-    matchConditions.push({ "imdb.top_ranking": { $gt: 0 } });
-  }
-
-  if (has_mojo_rank_order) {
-    matchConditions.push({ "mojo.rank": { $type: "number" } });
-    matchConditions.push({ "mojo.rank": { $gt: 0 } });
+  if (rankField) {
+    matchConditions.push({ [rankField]: { $type: "number", $gt: 0 } });
   }
 
   const match_min_ratings_and_release_date = {
@@ -395,22 +383,35 @@ const aggregateData = async (
 
   const limit_results = { $limit: limit };
   const skip_results = { $skip: (page - 1) * limit };
-  const additionalSort = {};
+  const additionalSort = rankField
+    ? { [rankField]: order_query === "desc" ? -1 : 1 }
+    : {};
 
-  if (has_top_ranking_order) {
-    additionalSort["imdb.top_ranking"] = top_ranking_direction;
-  }
-
-  if (has_mojo_rank_order) {
-    additionalSort["mojo.rank"] = mojo_rank_direction;
-  }
-
-  const baseSort = {
+  let baseSort = {
     sortAvgField: 1,
     popularity_average: 1,
     ratings_average: -1,
     title: 1,
   };
+
+  if (
+    sort_by_query === "ratings" ||
+    sort_by_query === "popularity" ||
+    (!sort_by_query && order_query)
+  ) {
+    const direction =
+      order_query === "asc" || (sortByPopularity && !order_query) ? 1 : -1;
+    if (sortByPopularity) {
+      baseSort.sortAvgField = direction;
+    } else {
+      baseSort = {
+        ratings_average: direction,
+        sortAvgField: 1,
+        popularity_average: 1,
+        title: 1,
+      };
+    }
+  }
 
   const sort_stage = {
     $sort: {

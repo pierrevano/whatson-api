@@ -14,7 +14,7 @@ const getInternalApiKey = require("./getInternalApiKey");
  *
  * @param {import("express").Request} req - Express request with since, item_type, page, and limit query params.
  * @param {import("express").Response} res - Express response.
- * @returns {Promise<void>}
+ * @returns {Promise<import("express").Response>}
  */
 const getUpdates = async (req, res) => {
   try {

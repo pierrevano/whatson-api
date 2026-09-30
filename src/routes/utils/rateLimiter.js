@@ -58,7 +58,7 @@ const keyedLimiters = new Map();
  * @param {import("express").Request} req - Express request.
  * @param {import("express").Response} res - Express response.
  * @param {import("express").NextFunction} next - Next middleware callback.
- * @returns {Promise<void>}
+ * @returns {Promise<import("express").Response|void>}
  */
 const limiter = async (req, res, next) => {
   const apiKeyValue = req.query.api_key;

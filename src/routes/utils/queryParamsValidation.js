@@ -187,56 +187,58 @@ const validateFilterQueryParams = (
       [...config.popularityFilters, "all", "none"],
       config.invalidPopularityFiltersMessage,
     ) ||
-    validateSortOrder("order") ||
-    validateSortOrder("top_ranking_order") ||
-    validateSortOrder("mojo_rank_order")
+    validateAllowedValues(
+      query.sort_by,
+      config.sortByValues,
+      config.invalidSortByMessage,
+      { allowMultiple: false },
+    ) ||
+    (query.sort_by === "popularity" &&
+      query.popularity_filters?.split(",").includes("none") &&
+      invalidQueryValueMessage(
+        "sort_by=popularity requires popularity filters.",
+        query.popularity_filters,
+      )) ||
+    validateSortOrder("order")
   );
 };
 
-const validateQueryParams =
-  (
-    allowedParams = [
-      ...config.allowedQueryParams,
-      ...config.keysToCheckForSearch,
-    ],
-    options = {},
-  ) =>
-  (req, res, next) => {
-    const invalidParams = Object.keys(req.query).filter(
-      (key) => !allowedParams.includes(key),
-    );
-    if (invalidParams.length > 0) {
-      return sendResponse(res, 400, {
-        message: invalidQueryValueMessage(
-          config.invalidQueryParamsMessage,
-          invalidParams.join(", "),
-        ),
-      });
+const validateQueryParams = (allowedParams, options) => (req, res, next) => {
+  const invalidParams = Object.keys(req.query).filter(
+    (key) => !allowedParams.includes(key),
+  );
+  if (invalidParams.length > 0) {
+    return sendResponse(res, 400, {
+      message: invalidQueryValueMessage(
+        config.invalidQueryParamsMessage,
+        invalidParams.join(", "),
+      ),
+    });
+  }
+
+  for (const [name, value] of Object.entries(req.query)) {
+    if (config.numericIdKeys.includes(name)) {
+      const message = validateIntegerParam(value, name);
+      if (message) return sendResponse(res, 400, { message });
     }
+  }
 
-    for (const [name, value] of Object.entries(req.query)) {
-      if (config.numericIdKeys.includes(name)) {
-        const message = validateIntegerParam(value, name);
-        if (message) return sendResponse(res, 400, { message });
-      }
-    }
+  const message =
+    validateSharedQueryParams(req.query) ||
+    validateItemTypeQuery(req.query.item_type) ||
+    validateBooleanQueryParams(req.query) ||
+    validateIntegerListParam(req.query.runtime, "runtime", 0) ||
+    validateIntegerListParam(req.query.seasons_number, "seasons_number") ||
+    validateIntegerParam(
+      req.query.minimum_users_rating_count,
+      "minimum_users_rating_count",
+      0,
+    ) ||
+    validateFilterQueryParams(req.query, options);
+  if (message) return sendResponse(res, 400, { message });
 
-    const message =
-      validateSharedQueryParams(req.query) ||
-      validateItemTypeQuery(req.query.item_type) ||
-      validateBooleanQueryParams(req.query) ||
-      validateIntegerListParam(req.query.runtime, "runtime", 0) ||
-      validateIntegerListParam(req.query.seasons_number, "seasons_number") ||
-      validateIntegerParam(
-        req.query.minimum_users_rating_count,
-        "minimum_users_rating_count",
-        0,
-      ) ||
-      validateFilterQueryParams(req.query, options);
-    if (message) return sendResponse(res, 400, { message });
-
-    next();
-  };
+  next();
+};
 
 module.exports = {
   validateFilterQueryParams,

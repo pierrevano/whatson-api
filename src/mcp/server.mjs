@@ -107,7 +107,7 @@ const TOOLS = [
         popularity_filters: {
           type: "string",
           description:
-            'Which popularity sources to sort by. Use "all", "none", or a comma-separated subset: allocine_popularity, imdb_popularity, tmdb_popularity, trakt_popularity.',
+            'Which popularity sources to include in the average. Use "all", "none", or a comma-separated subset: allocine_popularity, imdb_popularity, tmdb_popularity, trakt_popularity.',
         },
         is_active: {
           type: "string",
@@ -209,17 +209,17 @@ const TOOLS = [
           type: "string",
           description: "Trakt ID or slug.",
         },
-        top_ranking_order: {
+        sort_by: {
           type: "string",
-          enum: ["asc", "desc"],
+          enum: ["ratings", "popularity", "top_ranking", "mojo_rank"],
           description:
-            "Sort by IMDb top chart position. asc shows #1 first, desc shows #1 last. Only titles with an IMDb top ranking are returned.",
+            "Sort by average ratings, average popularity, IMDb top ranking, or Box Office Mojo rank. Chart sorts return only ranked titles. Popularity cannot be combined with popularity_filters=none.",
         },
-        mojo_rank_order: {
+        order: {
           type: "string",
           enum: ["asc", "desc"],
           description:
-            "Sort by Box Office Mojo worldwide gross rank. asc shows #1 first, desc shows #1 last. Only titles with a Mojo rank are returned.",
+            "Sort direction (ratings default to desc; others to asc). Without sort_by, order uses popularity when popularity_filters is set (not none) without ratings_filters; otherwise ratings.",
         },
         page: {
           type: "integer",

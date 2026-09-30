@@ -10,14 +10,14 @@ const { logErrors } = require("../utils/logErrors");
  * It scrapes individual critic entries and computes the average rating, total count, and rating breakdown.
  *
  * @param {string} allocineCriticsDetails - The URL of the page containing the critics' ratings on allocine.fr
- * @returns {{
+ * @returns {Promise<{
  *   criticsRating: number|null,
  *   criticsRatingCount: number|null,
  *   criticsRatingDetails: Array<{
  *     critic_name: string,
  *     critic_rating: number
  *   }> | null
- * }|null} An object with the average rating, count of critics, and detailed ratings per critic, or null if not available
+ * }|null>} An object with the average rating, count of critics, and detailed ratings per critic, or null if not available
  */
 const getAllocineCriticsRating = async (allocineCriticsDetails) => {
   let allocineCriticInfo = null;

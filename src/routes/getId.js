@@ -15,7 +15,7 @@ const getInternalApiKey = require("./getInternalApiKey");
  *
  * @param {import("express").Request} req - Express request carrying path params and optional filters.
  * @param {import("express").Response} res - Express response instance used to emit the result or error.
- * @returns {Promise<void>} Resolves once the response has been dispatched.
+ * @returns {Promise<import("express").Response|void>} Resolves once the response has been dispatched.
  */
 const getId = async (req, res) => {
   try {

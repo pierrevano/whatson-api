@@ -6,7 +6,7 @@ const directorsCount = {};
  * Retrieves the director names for a movie or tvshow from The Movie Database (TMDB) API.
  * @param {string} allocineHomepage - The homepage of the movie or tvshow on AlloCiné.
  * @param {object} data - The TMDB API response data for the item.
- * @returns {Promise<string[]|null>} - A promise that resolves with an array of director names or null if there was an error.
+ * @returns {Promise<string[]|null>} Director names, or null when none are available. Errors are passed to logErrors.
  */
 const getDirectors = async (allocineHomepage, data) => {
   let directorNames = null;

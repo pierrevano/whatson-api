@@ -12,11 +12,11 @@ const { logErrors } = require("../utils/logErrors");
 
 /**
  * It takes an allocineHomepage as an argument, and returns various metadata about the movie or tvshow.
- * It fetches and parses the AlloCiné page content unless in compare mode.
+ * Compare mode skips status parsing and uses the TV show release-year parser.
  *
  * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow
- * @param {boolean} compare - Whether to skip heavy metadata parsing (used for performance comparisons)
- * @returns {{
+ * @param {boolean} compare - Whether to use compare mode.
+ * @returns {Promise<{
  *   allocineTitle: string|null,
  *   image: string|null,
  *   allocineUsersRating: number|null,
@@ -24,8 +24,7 @@ const { logErrors } = require("../utils/logErrors");
  *   composers: string[]|null,
  *   status: string|null,
  *   releaseDate: string|null
- * }|null|{ error: Error }} AlloCiné metadata when resolved, null when data is
- * unavailable, or an error wrapper when the scrape fails
+ * }|null>} AlloCiné metadata when available. Scrape failures are passed to logErrors.
  */
 const getAllocineInfo = async (allocineHomepage, compare) => {
   let allocineFirstInfo = null;

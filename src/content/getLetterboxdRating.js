@@ -13,7 +13,7 @@ const { logErrors } = require("../utils/logErrors");
  *
  * @param {string} letterboxdHomepage - The URL of the item's page on letterboxd.com
  * @param {string} letterboxdId - Optional item identifier
- * @returns {{ id: string, url: string, usersRating: number|null, usersRatingCount: number|null }|null} An object containing the rating information, or null if not available
+ * @returns {Promise<{ id: string, url: string, usersRating: number|null, usersRatingCount: number|null }|null>} An object containing the rating information, or null if not available
  */
 const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {
   const maxAttempts = config.retries;

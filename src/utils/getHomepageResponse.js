@@ -3,7 +3,8 @@ const axios = require("axios");
 const homepageStatusErrorCode = "homepageStatusError";
 
 /**
- * Fetches a homepage URL and exits the process when the response status is not allowed.
+ * Fetches a homepage URL and throws when the response status is not allowed.
+ * Exits instead when SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR is set to "false".
  *
  * @param {string} homepageUrl - The absolute homepage URL to call.
  * @param {{

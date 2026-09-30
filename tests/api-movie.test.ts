@@ -1210,6 +1210,16 @@ const params = {
     },
   },
 
+  only_movies_composed_by_one_of_multiple_names: {
+    query: `?is_active=true,false&item_type=movie&composers=${encodeURIComponent("wrong_value,Kaspar Kaae")}&append_to_response=composers`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.composers).toContain("Kaspar Kaae");
+      });
+    },
+  },
+
   only_movies_directed_by_christopher_nolan: {
     query: `?is_active=true,false&item_type=movie&directors=${encodeURIComponent("Christopher Nolan")}&append_to_response=directors`,
     expectedResult: (items) => {
@@ -1232,6 +1242,16 @@ const params = {
         expect(
           item.directors.some((name) => name.toLowerCase().includes("nolan")),
         ).toBe(true);
+      });
+    },
+  },
+
+  only_movies_directed_by_one_of_multiple_names: {
+    query: `?is_active=true,false&item_type=movie&directors=${encodeURIComponent("wrong_value,Christopher Nolan")}&append_to_response=directors`,
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.directors).toContain("Christopher Nolan");
       });
     },
   },

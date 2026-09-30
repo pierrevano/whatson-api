@@ -40,7 +40,7 @@ const buildConfig = (configOverrides) => {
  *   handleConsent?: boolean,
  *   reuseSharedPage?: boolean,
  * }} [browserFallbackOptions] - Browser-specific options used only if the HTTP request is blocked.
- * @returns {Promise<import("cheerio").CheerioAPI | { error: Error }>} The Cheerio instance or an error payload when the request fails.
+ * @returns {Promise<import("cheerio").CheerioAPI>} The Cheerio instance. Exhausted retries are passed to logErrors.
  */
 const getCheerioContent = async (
   url,

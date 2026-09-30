@@ -43,7 +43,7 @@ const fetchMediaScorecardJson = async (url, options) => {
  *
  * @param {string} rottenTomatoesHomepage - The URL of the item's page on rottentomatoes.com
  * @param {string} rottenTomatoesId - Optional item identifier
- * @returns {{
+ * @returns {Promise<{
  *   id: string,
  *   url: string,
  *   usersRating: number|null,
@@ -56,7 +56,7 @@ const fetchMediaScorecardJson = async (url, options) => {
  *   criticsRatingLikedCount: number|null,
  *   criticsRatingNotLikedCount: number|null,
  *   criticsCertified: boolean|null
- * }|null} An object containing the rating information, or null if not available
+ * }|null>} An object containing the rating information, or null if not available
  */
 const getRottenTomatoesRating = async (
   rottenTomatoesHomepage,

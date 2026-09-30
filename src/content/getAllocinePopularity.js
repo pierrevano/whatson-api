@@ -39,7 +39,7 @@ const extractIdFromRemotePopularityFile = async (allocineURL, item_type) => {
  * Retrieves the popularity rank of a movie or tvshow from AlloCiné's remote popularity file.
  * @param {string} allocineURL - The URL of the movie or tvshow on AlloCiné's website.
  * @param {string} item_type - Type of item to inspect ("movie" or "tvshow").
- * @returns {Promise<{ popularity: number | null } | undefined>} The popularity information, or undefined if the lookup fails.
+ * @returns {Promise<{ popularity: number | null }>} The popularity information.
  */
 const getAllocinePopularity = async (allocineURL, item_type) => {
   try {

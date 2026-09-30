@@ -11,7 +11,7 @@ const { logErrors } = require("../utils/logErrors");
  *
  * @param {Array<Object>} jsonArrayFromCSV - Local dataset rows parsed from the CSV import.
  * @param {import("mongodb").Collection} collectionData - Mongo collection containing the remote items.
- * @returns {Promise<void>} Resolves after logging the comparison result or writing the diff file.
+ * @returns {Promise<void>} Resolves after scheduling the diff file write. The process exits when IDs are synced or the file is written successfully.
  */
 const checkDbIds = async (jsonArrayFromCSV, collectionData) => {
   let idsFromFile = [];

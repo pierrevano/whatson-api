@@ -2,14 +2,13 @@ const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * It takes a tmdbHomepage and allocineHomepage as arguments, and returns the usersRating and usersRatingCount of the item.
- * It only attempts to fetch and parse the content if a valid tmdbId is provided.
- * The data is extracted from TheMovieDB API response, using the item's TMDB ID.
+ * Extracts the usersRating and usersRatingCount from the provided TMDB response.
+ * Requires a valid tmdbId and a nonzero vote count.
  *
  * @param {string} tmdbHomepage - The URL of the item's page on themoviedb.org
  * @param {number} tmdbId - TMDB ID for the movie or tvshow
  * @param {object} data - The TMDB API response data for the item.
- * @returns {{ id: number, url: string, usersRating: number|null, usersRatingCount: number|null }|null} An object containing the TMDB rating information, or null if not available
+ * @returns {Promise<{ id: number, url: string, usersRating: number|null, usersRatingCount: number|null }|null>} An object containing the TMDB rating information, or null if not available
  */
 const getTmdbRating = async (tmdbHomepage, tmdbId, data) => {
   let tmdbObj = null;

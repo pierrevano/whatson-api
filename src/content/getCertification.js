@@ -6,7 +6,7 @@ const { logErrors } = require("../utils/logErrors");
 /**
  * @param {string} imdbHomepage - The IMDb homepage URL.
  * @param {string} origin - Caller name used for request logging.
- * @returns {object|null} Parsed NEXT_DATA payload, or null when unavailable.
+ * @returns {Promise<object|null>} Parsed NEXT_DATA payload, or null when unavailable.
  */
 const getNextData = async (imdbHomepage, origin) => {
   const parentalGuideUrl = `${imdbHomepage}${config.imdbParentalGuidePath}`;
