@@ -3,7 +3,9 @@ const {
   convertFrenchDateToISOString,
 } = require("../utils/convertFrenchDateToISOString");
 const { getCheerioContent } = require("../utils/getCheerioContent");
+const { getComposers } = require("./getComposers");
 const { getContentUrl } = require("../utils/getContentUrl");
+const { getDirectors } = require("./getDirectors");
 const {
   getHomepageResponseWithRateLimitRetry,
 } = require("../utils/getHomepageResponseWithRateLimitRetry");
@@ -22,6 +24,7 @@ const { logErrors } = require("../utils/logErrors");
  *   allocineUsersRating: number|null,
  *   allocineUsersRatingCount: number|null,
  *   composers: string[]|null,
+ *   directors: string[]|null,
  *   status: string|null,
  *   releaseDate: string|null
  * }|null>} AlloCiné metadata when available. Scrape failures are passed to logErrors.
@@ -56,11 +59,8 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
 
     const metadata = getContentUrl($, false, allocineHomepage);
     const aggregateRating = metadata?.aggregateRating;
-    const musicBy = metadata?.musicBy;
-    const composerNames = (Array.isArray(musicBy) ? musicBy : [musicBy])
-      .map((person) => person?.name)
-      .filter((name) => typeof name === "string" && name.trim());
-    const composers = composerNames.length ? composerNames : null;
+    const composers = getComposers(metadata);
+    const directors = await getDirectors(allocineHomepage, metadata);
     const usersRating = parseFloat(aggregateRating?.ratingValue);
     const allocineUsersRating = isNaN(usersRating) ? null : usersRating;
     const usersRatingCount = parseInt(aggregateRating?.ratingCount, 10);
@@ -87,6 +87,7 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
       allocineUsersRating,
       allocineUsersRatingCount,
       composers,
+      directors,
       status,
       releaseDate,
     };

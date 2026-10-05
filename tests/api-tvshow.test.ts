@@ -111,9 +111,14 @@ function checkItemProperties(items) {
 
     if (item.is_active === true) {
       expect(
+        items.filter((item) => item.composers && item.composers.length > 0)
+          .length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.softDefault);
+
+      expect(
         items.filter((item) => item.directors && item.directors.length > 0)
           .length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.directors);
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     }
 
     expect(
@@ -183,10 +188,6 @@ function checkItemProperties(items) {
       expect(item.seasons_number).not.toBeNull();
       expect(item.seasons_number).toBeGreaterThan(0);
       expect(item.status).not.toBeNull();
-    }
-
-    if (item.item_type === "tvshow") {
-      expect(item.composers).toBeNull();
     }
 
     if (item.metacritic) {

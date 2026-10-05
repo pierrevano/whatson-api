@@ -36,10 +36,6 @@ const getTitleVariants = async (allocineHomepage, allocineFirstInfo) => {
   } catch (error) {
     logErrors(error, allocineHomepage, "getTitleVariants");
   }
-
-  return {
-    fr: null,
-  };
 };
 
 module.exports = { getTitle, getTitleVariants };

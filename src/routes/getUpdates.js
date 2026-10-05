@@ -42,9 +42,7 @@ const getUpdates = async (req, res) => {
 
     const sinceDate = new Date(since);
 
-    const requestedTypes = req.query.item_type
-      ? req.query.item_type.split(",")
-      : undefined;
+    const requestedTypes = req.query.item_type?.split(",");
     const itemTypes = config.itemTypes.filter(
       (t) => !requestedTypes || requestedTypes.includes(t),
     );

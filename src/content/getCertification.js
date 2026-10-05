@@ -25,8 +25,6 @@ const getNextData = async (imdbHomepage, origin) => {
     return jsonText ? JSON.parse(jsonText) : null;
   } catch (error) {
     logErrors(error, parentalGuideUrl, origin);
-
-    return null;
   }
 };
 

@@ -6,7 +6,7 @@ const { logErrors } = require("./logErrors");
 /**
  * Get a Mojo box office array for the given item type, optionally reusing a cache file.
  * @param {string} item_type
- * @param {string} skip_mojo - "skip_mojo" to skip, "reuse_mojo" to require an existing cache file.
+ * @param {string} skip_mojo - "skip_mojo" to skip, "reuse_mojo" to use a cache file when available.
  * @returns {Promise<Array>} Array of box office entries (empty if skipped or unsupported).
  */
 const getMojoBoxOfficeArray = async (item_type, skip_mojo) => {
@@ -14,14 +14,7 @@ const getMojoBoxOfficeArray = async (item_type, skip_mojo) => {
   let mojoBoxOfficeArray = [];
 
   if (item_type === "movie" && skip_mojo !== "skip_mojo") {
-    if (skip_mojo === "reuse_mojo") {
-      if (!existsSync(mojoBoxOfficeCachePath)) {
-        console.error(
-          `Mojo cache file not found at ${mojoBoxOfficeCachePath}. Run without reuse_mojo to generate it.`,
-        );
-        process.exit(1);
-      }
-
+    if (skip_mojo === "reuse_mojo" && existsSync(mojoBoxOfficeCachePath)) {
       try {
         mojoBoxOfficeArray = JSON.parse(
           readFileSync(mojoBoxOfficeCachePath, "utf-8"),

@@ -3,6 +3,7 @@ const {
 } = require("../routes/utils/itemTypeValidation");
 const { config } = require("../config");
 const { isMongoMemoryLimitError } = require("./mongoMemoryLimitError");
+const { recordRequests } = require("./recordRequests");
 const { reportError } = require("./sendToNewRelic");
 
 /**
@@ -17,6 +18,16 @@ const { reportError } = require("./sendToNewRelic");
  */
 const sendResponse = (res, statusCode, data, error) => {
   if (statusCode === 200) {
+    if (
+      res.req.method === "GET" &&
+      /^\/(?:$|movie\/|tvshow\/|episodes\/rated$)/.test(res.req.path)
+    ) {
+      res.set(
+        "Cache-Control",
+        `private, max-age=${config.responseCacheMaxAgeSeconds}`,
+      );
+    }
+    recordRequests(res.req, data);
     return res.status(statusCode).json(data);
   } else {
     const responseWithCode = {

@@ -143,7 +143,12 @@ describe("What's on? API updates endpoint tests", () => {
         },
       ]),
     });
-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const res = {
+      req: { method: "GET", path: "/updates" },
+      locals: {},
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
 
     try {
       await getUpdates(
@@ -274,7 +279,12 @@ describe("What's on? API updates endpoint tests", () => {
     const findApiKey = jest
       .spyOn(collectionApiKey, "findOne")
       .mockResolvedValue({ is_internal: true, value: "cutoff-test-key" });
-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const res = {
+      req: { method: "GET", path: "/updates" },
+      locals: {},
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
 
     try {
       await getUpdates(

@@ -1,9 +1,10 @@
 const { b64Encode } = require("../utils/b64EncodeAndDecode");
+const { config } = require("../config");
 const { logErrors } = require("../utils/logErrors");
 const { logResetValues } = require("../utils/logResetValues");
 
 /**
- * Upserts data unless it would reset a stored value or decrease a protected count.
+ * Upserts data when it passes the validation checks.
  * @param {string} allocineHomepage - Allocine homepage URL used for the _id.
  * @param {object} collectionData - The collection to upsert the data to.
  * @param {object} data - The data to upsert to the database.
@@ -25,6 +26,18 @@ const upsertToDatabase = async (
     }
     console.log();
 
+    const releaseDateCutoff = new Date();
+    releaseDateCutoff.setDate(
+      releaseDateCutoff.getDate() + config.maxDaysInFuture,
+    );
+    releaseDateCutoff.setHours(23, 59, 59, 999);
+    if (new Date(data.release_date) > releaseDateCutoff) {
+      console.log(
+        `Skipping update for ${allocineHomepage} because its release date exceeds the cutoff.`,
+      );
+      return false;
+    }
+
     const filter = { _id: b64Encode(allocineHomepage) };
     const storedData = await collectionData.findOne(filter, {
       projection: { _id: 0 },
@@ -32,7 +45,7 @@ const upsertToDatabase = async (
 
     if (logResetValues(data, storedData, allocineURL)) {
       console.log(
-        `Skipping update for ${allocineHomepage} because a value would be reset or a count would decrease.`,
+        `Skipping update for ${allocineHomepage} because a value would be reset.`,
       );
       return false;
     }

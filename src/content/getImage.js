@@ -38,10 +38,6 @@ const getImageVariants = async (allocineHomepage, allocineFirstInfo) => {
   } catch (error) {
     logErrors(error, allocineHomepage, "getImageVariants");
   }
-
-  return {
-    fr: null,
-  };
 };
 
 module.exports = { getImage, getImageVariants };

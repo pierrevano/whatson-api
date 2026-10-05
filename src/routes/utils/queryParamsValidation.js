@@ -163,14 +163,6 @@ const validateFilterQueryParams = (
     }
   }
 
-  const validateSortOrder = (name) =>
-    validateAllowedValues(
-      query[name],
-      config.sortOrders,
-      resolveValidationMessage(config.invalidSortOrderMessage, { name }),
-      { allowMultiple: false },
-    );
-
   return (
     validateAllowedValues(
       query.append_to_response,
@@ -199,7 +191,14 @@ const validateFilterQueryParams = (
         "sort_by=popularity requires popularity filters.",
         query.popularity_filters,
       )) ||
-    validateSortOrder("order")
+    validateAllowedValues(
+      query.order,
+      config.sortOrders,
+      resolveValidationMessage(config.invalidSortOrderMessage, {
+        name: "order",
+      }),
+      { allowMultiple: false },
+    )
   );
 };
 

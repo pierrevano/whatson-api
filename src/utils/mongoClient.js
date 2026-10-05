@@ -15,10 +15,12 @@ const db = client.db(config.dbName);
 const collectionApiKey = db.collection(config.collectionNameApiKey);
 const collectionData = db.collection(config.collectionName);
 const collectionPreferences = db.collection(config.collectionNamePreferences);
+const collectionRequests = db.collection(config.collectionNameRequests);
 
 module.exports = {
   client,
   collectionApiKey,
   collectionData,
   collectionPreferences,
+  collectionRequests,
 };

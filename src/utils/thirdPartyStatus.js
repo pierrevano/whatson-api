@@ -40,11 +40,6 @@ const isThirdPartyServiceOK = async (service) => {
     };
   } catch (error) {
     logErrors(error, service, "thirdPartyStatus");
-
-    return {
-      success: false,
-      data: null,
-    };
   }
 };
 

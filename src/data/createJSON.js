@@ -1,11 +1,13 @@
 const { config } = require("../config");
 const { getAllocinePopularity } = require("../content/getAllocinePopularity");
 const { getCertification } = require("../content/getCertification");
+const { getComposers } = require("../content/getComposers");
 const { getDirectors } = require("../content/getDirectors");
 const { getEpisodesDetails } = require("../content/getEpisodesDetails");
 const { getGenres } = require("../content/getGenres");
 const { getHighestRatedEpisode } = require("../content/getHighestRatedEpisode");
 const { getImage, getImageVariants } = require("../content/getImage");
+const { getImdbCredits } = require("../content/getImdbCredits");
 const { getImdbPopularity } = require("../content/getImdbPopularity");
 const { getLastEpisode } = require("../content/getLastEpisode");
 const { getLowestRatedEpisode } = require("../content/getLowestRatedEpisode");
@@ -153,7 +155,18 @@ const createJSON = async (
     allocineHomepage,
     imdbId,
   );
-  const directors = await getDirectors(allocineHomepage, tmdbData);
+  const imdbCredits = await getImdbCredits(
+    imdbHomepage,
+    imdbData,
+    allocineFirstInfo,
+  );
+  const composers = getComposers(allocineFirstInfo, tmdbData, imdbCredits);
+  const directors = await getDirectors(
+    allocineHomepage,
+    allocineFirstInfo,
+    tmdbData,
+    imdbCredits,
+  );
   const genres = await getGenres(allocineHomepage, tmdbData);
   const networks = await getNetworks(allocineHomepage, tmdbData);
   const productionCompanies = await getProductionCompanies(
@@ -367,7 +380,7 @@ const createJSON = async (
 
     awards,
     countries_of_origin: countriesOfOrigin,
-    composers: allocineFirstInfo?.composers,
+    composers,
     directors,
     genres,
     image,

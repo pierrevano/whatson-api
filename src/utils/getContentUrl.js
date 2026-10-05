@@ -25,7 +25,6 @@ function getContentUrl($, backup, allocineHomepage) {
     return contentParsed;
   } catch (error) {
     logErrors(error, allocineHomepage, "getContentUrl");
-    return null;
   }
 }
 

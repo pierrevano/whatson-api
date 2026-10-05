@@ -85,7 +85,7 @@ fi
 
 # Check if What's on? API is up
 while true; do
-  response_headers=$(curl -o /dev/null -s -D - -w "%{http_code}" -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$WHATSON_API_URL")
+  response_headers=$(curl --compressed -o /dev/null -s -D - -w "%{http_code}" -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$WHATSON_API_URL")
   status_code=$(printf '%s\n' "$response_headers" | tail -n 1)
 
   if [[ "$status_code" -eq 200 ]]; then
@@ -544,7 +544,7 @@ do
           QUERY_WHATSON_API="$WHATSON_API_URL/$TYPE/$THEMOVIEDB_CHECK?ratings_filters=all&api_key=$INTERNAL_API_KEY"
           echo "Querying: $QUERY_WHATSON_API"
 
-          ITEM=$(curl -s -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$QUERY_WHATSON_API")
+          ITEM=$(curl --compressed -s -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$QUERY_WHATSON_API")
 
           if [[ -z $ITEM ]]; then
             echo $SEPARATOR

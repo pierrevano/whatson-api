@@ -51,6 +51,7 @@ const config = {
   collectionNameApiKey: "apikey",
   collectionNamePreferences: "preferences",
   collectionNameRateLimit: "ratelimit",
+  collectionNameRequests: "requests",
 
   /* Rate limit settings */
   pointsAnonymous: 50,
@@ -164,12 +165,15 @@ const config = {
   apiKeyCacheMaxEntries: 5000,
   heapLimit: 1500,
   imdbRatingCountTolerancePct: 0.5,
-  keysToReset: ["mojo", "next_episode", "platforms_links", "popularity"],
-  keysToAllowCountDecrease: [
-    "highest_episode",
-    "last_episode",
-    "lowest_episode",
+  keysToReset: [
+    "highest_episode.description",
+    "last_episode.description",
+    "last_episode.episode_type",
+    "lowest_episode.description",
+    "mojo",
     "next_episode",
+    "platforms_links",
+    "popularity",
   ],
   maxAgeInDays: 3,
   maxDaysInFuture: 45,
@@ -178,6 +182,7 @@ const config = {
   minimumFutureReleaseVoteCount: 600,
   ratingsDelayMs: 500,
   recentUpdateHours: 18,
+  responseCacheMaxAgeSeconds: 12 * 60 * 60,
   thirdPartyStatusTimeoutMs: 480000,
 
   /* CircleCI settings */
@@ -350,7 +355,10 @@ const config = {
     { name: "AlloCiné", url: baseURL.allocine },
     { name: "BetaSeries", url: baseURL.betaseries },
     { name: "IMDb", url: baseURL.imdb },
-    { name: "TMDB", url: baseURL.tmdb },
+    {
+      name: "TMDB",
+      url: `${baseURL.tmdbAPI}/configuration?api_key=${process.env.THEMOVIEDB_API_KEY}`,
+    },
     { name: "Metacritic", url: baseURL.metacritic },
     { name: "Rotten Tomatoes", url: baseURL.rottenTomatoes },
     { name: "Letterboxd", url: baseURL.letterboxd },
