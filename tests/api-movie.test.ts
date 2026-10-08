@@ -8,7 +8,6 @@ const {
   expectPositiveInteger,
   expectImdbId,
   expectSlugLikeId,
-  expectPersistentId,
   expectNumericIdOrNumericString,
   expectIdRatingConsistency,
 } = require("./utils/idExpectations");
@@ -100,8 +99,7 @@ function checkItemProperties(items) {
       config.maximumIsActiveItems,
     );
 
-    expect(item._id).not.toBeNull();
-    expectPersistentId(item._id);
+    expect(item).not.toHaveProperty("_id");
 
     expect(item.id).not.toBeNull();
     expectPositiveInteger(item.id);
@@ -977,6 +975,12 @@ const params = {
 
         expect(item.allocine).not.toHaveProperty("critics_rating_details");
         expect(item).not.toHaveProperty("episodes_details");
+        expect(item).not.toHaveProperty("_id");
+        expect(item).not.toHaveProperty("countries_of_origin");
+        expect(item).not.toHaveProperty("mojo");
+        expect(item).not.toHaveProperty("original_title");
+        expect(item).not.toHaveProperty("tagline");
+        expect(item).not.toHaveProperty("trailer");
         expect(item).not.toHaveProperty("composers");
         expect(item).not.toHaveProperty("directors");
         expect(item).not.toHaveProperty("genres");
@@ -1581,12 +1585,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_movie: {
-    query: `?item_type=movie&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=true&append_to_response=${config.appendToResponse}&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_movie: {
-    query: `?item_type=movie&is_active=false&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimit}`,
+    query: `?item_type=movie&is_active=false&append_to_response=${config.appendToResponse}&limit=${maxLimit}`,
     expectedResult: checkItemProperties,
   },
 

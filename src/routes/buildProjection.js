@@ -3,10 +3,10 @@ const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
 /**
  * Builds a MongoDB projection object based on the append_to_response query param.
  * @param {string} [appendToResponse] - Optional comma-separated list of fields to include.
- * @returns {object} MongoDB projection object with fields excluded if not included in the list.
+ * @returns {object} MongoDB projection object.
  */
 function buildProjection(appendToResponse) {
-  const projection = {};
+  const projection = { _id: 0 };
   const includes = buildAppendIncludes(appendToResponse);
 
   if (!includes("awards")) {
@@ -19,6 +19,10 @@ function buildProjection(appendToResponse) {
 
   if (!includes("composers")) {
     projection["composers"] = 0;
+  }
+
+  if (!includes("countries_of_origin")) {
+    projection["countries_of_origin"] = 0;
   }
 
   if (!includes("directors")) {
@@ -45,6 +49,14 @@ function buildProjection(appendToResponse) {
     projection["lowest_episode"] = 0;
   }
 
+  if (!includes("mojo")) {
+    projection["mojo"] = 0;
+  }
+
+  if (!includes("original_title")) {
+    projection["original_title"] = 0;
+  }
+
   if (!includes("platforms_links")) {
     projection["platforms_links"] = 0;
   }
@@ -53,8 +65,16 @@ function buildProjection(appendToResponse) {
     projection["production_companies"] = 0;
   }
 
+  if (!includes("tagline")) {
+    projection["tagline"] = 0;
+  }
+
   if (!includes("title_variants")) {
     projection["title_variants"] = 0;
+  }
+
+  if (!includes("trailer")) {
+    projection["trailer"] = 0;
   }
 
   if (!includes("image_variants")) {

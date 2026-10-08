@@ -162,7 +162,7 @@ const TOOLS = [
         append_to_response: {
           type: "string",
           description:
-            "Comma-separated optional fields to include in results. Available: awards, genres, composers, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
+            "Comma-separated optional fields to include in results. Available: awards, certification_variants, composers, countries_of_origin, critics_rating_details, directors, episodes_details, genres, highest_episode, image_variants, last_episode, lowest_episode, mojo, networks, next_episode, original_title, parents_guide, platforms_links, production_companies, tagline, title_variants, trailer. Episode-related fields only apply to TV show results.",
         },
         filtered_seasons: {
           type: "string",
@@ -253,7 +253,7 @@ const TOOLS = [
         append_to_response: {
           type: "string",
           description:
-            "Comma-separated optional fields to include. Available: awards, genres, composers, directors, networks, platforms_links, production_companies, title_variants, image_variants, certification_variants, parents_guide, last_episode, next_episode, highest_episode, lowest_episode, episodes_details, critics_rating_details. Episode-related fields only apply to TV show results.",
+            "Comma-separated optional fields to include. Available: awards, certification_variants, composers, countries_of_origin, critics_rating_details, directors, episodes_details, genres, highest_episode, image_variants, last_episode, lowest_episode, mojo, networks, next_episode, original_title, parents_guide, platforms_links, production_companies, tagline, title_variants, trailer. Episode-related fields only apply to TV show results.",
         },
         ratings_filters: {
           type: "string",

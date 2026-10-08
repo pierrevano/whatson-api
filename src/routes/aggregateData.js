@@ -424,6 +424,9 @@ const aggregateData = async (
     ...(awards_append ? {} : { awards: 0 }),
     ...(critics_rating_details ? {} : { "allocine.critics_rating_details": 0 }),
     ...(composers_append ? {} : { composers: 0 }),
+    ...(appendIncludes("countries_of_origin")
+      ? {}
+      : { countries_of_origin: 0 }),
     ...(directors_append ? {} : { directors: 0 }),
     ...(episodes_details ? {} : { episodes_details: 0 }),
     ...(genres_append ? {} : { genres: 0 }),
@@ -432,12 +435,15 @@ const aggregateData = async (
     ...(lowest_episode ? {} : { lowest_episode: 0 }),
     ...(networks_append ? {} : { networks: 0 }),
     ...(next_episode ? {} : { next_episode: 0 }),
+    ...(appendIncludes("original_title") ? {} : { original_title: 0 }),
     ...(platforms_links_append ? {} : { platforms_links: 0 }),
     ...(production_companies_details ? {} : { production_companies: 0 }),
     ...(title_variants_append ? {} : { title_variants: 0 }),
     ...(image_variants_append ? {} : { image_variants: 0 }),
     ...(certification_variants_append ? {} : { certification_variants: 0 }),
     ...(parents_guide_append ? {} : { parents_guide: 0 }),
+    ...(appendIncludes("tagline") ? {} : { tagline: 0 }),
+    ...(appendIncludes("trailer") ? {} : { trailer: 0 }),
   };
 
   const prune_keys_before_sort = Object.keys(remove_keys_base).length
@@ -450,8 +456,10 @@ const aggregateData = async (
   // Dynamically build the remove_keys object based on query parameters
   const remove_keys = {
     $project: {
+      ...(id ? {} : { _id: 0 }),
       releaseDateAsDate: 0,
       sortAvgField: 0,
+      ...(appendIncludes("mojo") ? {} : { mojo: 0 }),
       ...Object.fromEntries(Object.entries(remove_keys_base).filter(is_kept)),
       ...ratings_projection,
     },

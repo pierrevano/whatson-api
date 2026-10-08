@@ -1,6 +1,6 @@
 {
   "name": "whatson-api",
-  "version": "3.43.0",
+  "version": "3.43.1",
   "description": "What's on? API to retrieve movies and tvshows",
   "main": "index.js",
   "scripts": {
@@ -80,13 +80,13 @@
     "compression": "^1.8.2",
     "cors": "^2.8.6",
     "csvtojson": "^2.0.14",
-    "dotenv": "^18.0.5",
+    "dotenv": "^18.0.6",
     "express": "^5.2.1",
     "he": "^2.0.0",
     "jshashes": "^1.0.8",
     "mongodb": "^7.7.0",
     "newrelic": "14.1.2",
-    "playwright": "^1.63.0",
+    "playwright": "^1.64.0",
     "prettier": "^3.9.9",
     "rate-limiter-flexible": "^11.2.1",
     "shelljs": "^0.10.0",

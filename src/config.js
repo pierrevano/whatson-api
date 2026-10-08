@@ -67,11 +67,11 @@ const config = {
   countryIs: "https://api.country.is/",
   webhooksURL: process.env.WEBHOOKS_URL,
   appendToResponse:
-    "awards,critics_rating_details,composers,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide",
+    "awards,certification_variants,composers,countries_of_origin,critics_rating_details,directors,episodes_details,genres,highest_episode,image_variants,last_episode,lowest_episode,mojo,networks,next_episode,original_title,parents_guide,platforms_links,production_companies,tagline,title_variants,trailer",
   booleanQueryValues: ["false", "true"],
   itemTypes: ["movie", "tvshow"],
   invalidAppendToResponseMessage:
-    "Invalid append_to_response provided. Please specify one or more of 'awards', 'critics_rating_details', 'composers', 'directors', 'episodes_details', 'genres', 'highest_episode', 'last_episode', 'lowest_episode', 'networks', 'next_episode', 'platforms_links', 'production_companies', 'certification_variants', 'image_variants', 'title_variants', 'parents_guide'.",
+    "Invalid append_to_response provided. Please specify one or more of 'awards', 'certification_variants', 'composers', 'countries_of_origin', 'critics_rating_details', 'directors', 'episodes_details', 'genres', 'highest_episode', 'image_variants', 'last_episode', 'lowest_episode', 'mojo', 'networks', 'next_episode', 'original_title', 'parents_guide', 'platforms_links', 'production_companies', 'tagline', 'title_variants', 'trailer'.",
   invalidBooleanMessage:
     "Invalid boolean value provided. Please specify 'true', 'false', or a combination like 'true,false' or 'false,true'.",
   invalidEndpointMessage:
@@ -206,7 +206,6 @@ const config = {
     "production_companies",
   ],
   keysToCheck: [
-    "_id",
     "allocine",
     "awards",
     "betaseries",

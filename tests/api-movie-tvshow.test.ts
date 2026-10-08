@@ -9,18 +9,71 @@ const { countLines } = require("./utils/countLines");
 const { countNullValues } = require("./utils/countNullValues");
 const { expectRatingKeys } = require("./utils/expectRatingKeys");
 const { formatDate } = require("../src/utils/formatDate");
+const { generateRandomIp } = require("./utils/generateRandomIp");
 const { itemSchema } = require("../src/schema");
 
 const isRemoteSource = process.env.SOURCE === "remote";
 const baseURL = isRemoteSource ? config.baseURLRemote : config.baseURLLocal;
 const maxLimitLargeDocuments = config.maxLimitLargeDocuments;
 const removeLogs = process.env.REMOVE_LOGS === "true";
+const localHeaders = isRemoteSource
+  ? undefined
+  : { "CF-Connecting-IP": generateRandomIp() };
 
 /**
  * Request cases and their expected results.
  * @type {Record<string, { query: string, skipRemote?: boolean, expectedResult: (items: any, response: any) => void | Promise<void> }>}
  */
 const params = {
+  internal_id_is_hidden_on_listing: {
+    query: "?limit=1",
+    expectedResult: async (items) => {
+      expect(items).toHaveLength(1);
+      expect(items[0]).not.toHaveProperty("_id");
+      expect(config.testApiKey).toBeTruthy();
+      for (const api_key of [undefined, config.testApiKey]) {
+        const { data } = await axios.get(baseURL, {
+          headers: localHeaders,
+          params: { api_key, limit: 1 },
+        });
+        expect(data.results).toHaveLength(1);
+        expect(data.results[0]).not.toHaveProperty("_id");
+      }
+    },
+  },
+
+  movie_internal_id_requires_internal_api_key: {
+    query: "/movie/550?",
+    expectedResult: async (item) => {
+      expect(item).toHaveProperty("_id", expect.any(String));
+      expect(config.testApiKey).toBeTruthy();
+      for (const api_key of [undefined, config.testApiKey]) {
+        const { data } = await axios.get(`${baseURL}/movie/550`, {
+          headers: localHeaders,
+          params: { api_key },
+        });
+        expect(data.id).toBe(item.id);
+        expect(data).not.toHaveProperty("_id");
+      }
+    },
+  },
+
+  tvshow_internal_id_requires_internal_api_key: {
+    query: "/tvshow/249042?",
+    expectedResult: async (item) => {
+      expect(item).toHaveProperty("_id", expect.any(String));
+      expect(config.testApiKey).toBeTruthy();
+      for (const api_key of [undefined, config.testApiKey]) {
+        const { data } = await axios.get(`${baseURL}/tvshow/249042`, {
+          headers: localHeaders,
+          params: { api_key },
+        });
+        expect(data.id).toBe(item.id);
+        expect(data).not.toHaveProperty("_id");
+      }
+    },
+  },
+
   higher_total_results_than_results: {
     query: `?item_type=movie,tvshow&is_active=true,false&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items, response) => {
@@ -65,7 +118,8 @@ const params = {
   },
 
   title_parameter_name_accepts_mixed_casing: {
-    query: "?TITLE=wolf&item_type=movie&append_to_response=title_variants",
+    query:
+      "?TITLE=wolf&item_type=movie&append_to_response=original_title,title_variants",
     expectedResult: (items) => {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
@@ -101,9 +155,9 @@ const params = {
       expect(nextPage.data.results).toHaveLength(
         Math.min(config.limit, response.data.total_results - config.limit),
       );
-      const firstPageIds = items.map((item) => item._id);
+      const firstPageIds = items.map((item) => `${item.item_type}:${item.id}`);
       nextPage.data.results.forEach((item) => {
-        expect(firstPageIds).not.toContain(item._id);
+        expect(firstPageIds).not.toContain(`${item.item_type}:${item.id}`);
       });
     },
   },
@@ -292,13 +346,13 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: `?item_type=movie,tvshow&is_active=true&append_to_response=awards,critics_rating_details,composers,directors,episodes_details,genres,highest_episode,last_episode,lowest_episode,networks,next_episode,platforms_links,production_companies,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, itemSchema)),
   },
 
   name_lists_are_arrays_of_strings: {
-    query: `?item_type=movie,tvshow&is_active=true&append_to_response=composers,directors,genres,networks,production_companies&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true&append_to_response=composers,countries_of_origin,directors,genres,networks,production_companies&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {

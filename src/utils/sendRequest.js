@@ -138,7 +138,10 @@ const sendPreferencesRequest = async (
     }
   } else {
     try {
-      const preferences = await collectionNamePreferences.findOne({ email });
+      const preferences = await collectionNamePreferences.findOne(
+        { email },
+        { projection: { _id: 0 } },
+      );
 
       if (!preferences) {
         return sendResponse(res, 404, {

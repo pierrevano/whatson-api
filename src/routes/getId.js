@@ -72,6 +72,7 @@ const getId = async (req, res) => {
     const item = (items[0]?.results || []).find(
       (result) => result.item_type === item_type,
     );
+    if (item && api_key_query !== internal_api_key?.value) delete item._id;
     await sendRequest(req, res, item, config);
   } catch (error) {
     await sendInternalError(res, error);

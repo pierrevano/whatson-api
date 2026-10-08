@@ -7,7 +7,6 @@ const {
   expectIdRatingConsistency,
   expectImdbId,
   expectNumericIdOrNumericString,
-  expectPersistentId,
   expectPositiveInteger,
   expectSlugLikeId,
 } = require("./utils/idExpectations");
@@ -99,8 +98,7 @@ function checkItemProperties(items) {
       config.maximumIsActiveItems,
     );
 
-    expect(item._id).not.toBeNull();
-    expectPersistentId(item._id);
+    expect(item).not.toHaveProperty("_id");
 
     expect(item.id).not.toBeNull();
     expectPositiveInteger(item.id);
@@ -1262,7 +1260,7 @@ const params = {
       expectedResult: (item) => {
         expect(typeof item).toBe("object");
         expect(Object.keys(item).length).toEqual(
-          config.keysToCheck.length - 16,
+          config.keysToCheck.length - 20,
         );
         expect(item.id).toBe(249042);
         expect(item.ratings_average).toBeGreaterThan(0);
@@ -1610,12 +1608,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&append_to_response=awards,critics_rating_details,episodes_details,last_episode,next_episode,highest_episode,lowest_episode,production_companies,composers,directors,genres,networks,platforms_links,certification_variants,image_variants,title_variants,parents_guide&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=false&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}`,
     expectedResult: checkItemProperties,
   },
 

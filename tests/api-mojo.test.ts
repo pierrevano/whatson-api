@@ -15,7 +15,8 @@ const removeLogs = process.env.REMOVE_LOGS === "true";
  */
 const params = {
   should_default_to_ascending_mojo_rank: {
-    query: "?item_type=movie,tvshow&sort_by=mojo_rank&limit=20",
+    query:
+      "?item_type=movie,tvshow&append_to_response=mojo&sort_by=mojo_rank&limit=20",
     expectedResult: (items) => {
       expect(items.length).toBeGreaterThan(1);
       items.forEach((item) => {
@@ -30,7 +31,7 @@ const params = {
   },
 
   should_sort_by_mojo_rank_ascending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&sort_by=mojo_rank&order=asc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=mojo&sort_by=mojo_rank&order=asc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       expect(Array.isArray(items)).toBe(true);
       expect(items.length).toBeGreaterThan(
@@ -70,7 +71,7 @@ const params = {
   },
 
   should_sort_by_mojo_rank_descending: {
-    query: `?item_type=movie,tvshow&is_active=true,false&sort_by=mojo_rank&order=desc&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true,false&append_to_response=mojo&sort_by=mojo_rank&order=desc&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
       const itemsWithMojo = items.filter((item) => item.mojo);
 

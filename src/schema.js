@@ -1,7 +1,5 @@
 /* Item Schema */
 const itemSchema = {
-  _id: "string", // Unique MongoDB identifier for the item
-
   id: "number", // General identifier (The Movie Database ID)
   item_type: "string", // Type of the item (e.g., movie or tvshow)
   is_active: "boolean", // Indicates if the item is currently active
@@ -12,6 +10,9 @@ const itemSchema = {
   title_variants: {
     fr: "string", // French title variant
   },
+  /*
+   * To include this key in the response, add `original_title` to the `append_to_response` query parameter.
+   */
   original_title: "string", // Original title of the item
 
   /*
@@ -25,6 +26,9 @@ const itemSchema = {
     }, // Top award (e.g. "Oscar")
     total: { wins: "number", nominations: "number" }, // All-award totals
   },
+  /*
+   * To include this key in the response, add `countries_of_origin` to the `append_to_response` query parameter.
+   */
   countries_of_origin: "object", // Countries of origin
   /*
    * To include this key in the response, add `composers` to the `append_to_response` query parameter.
@@ -84,7 +88,13 @@ const itemSchema = {
   production_companies: "object", // Production Companies' names
   release_date: "string", // Release date of the item
   runtime: "number", // Runtime duration expressed in seconds
+  /*
+   * To include this key in the response, add `tagline` to the `append_to_response` query parameter.
+   */
   tagline: "string", // Tagline of the item
+  /*
+   * To include this key in the response, add `trailer` to the `append_to_response` query parameter.
+   */
   trailer: "string", // URL to the item's trailer
 
   episodes_details: [
@@ -264,6 +274,9 @@ const itemSchema = {
     url: "string", // URL to TheTVDB page
   },
 
+  /*
+   * To include this key in the response, add `mojo` to the `append_to_response` query parameter.
+   */
   mojo: {
     /* Information related to Box Office Mojo platform */
     rank: "number", // Ranking according to Box Office Mojo

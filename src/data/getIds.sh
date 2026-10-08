@@ -439,6 +439,8 @@ do
   FILMS_INDEX_NUMBER=$FILMS_FIRST_INDEX_NUMBER
   while [[ $FILMS_INDEX_NUMBER -le $FILMS_NUMBER ]]
   do
+    SKIP=0
+
     # Get AlloCiné film url
     if [[ $PROMPT == "allocine" ]]; then
       echo "Enter the AlloCiné URL:"
@@ -604,22 +606,6 @@ do
           echo "Status: $STATUS"
         fi
 
-        USERS_RATINGS_FOUND=$(curl -s https://www.allocine.fr$URL | grep "\"stareval-review" | wc -l | awk '{print $1}')
-        if [[ $USERS_RATINGS_FOUND -ne 0 ]]; then
-          USERS_RATINGS_FOUND=2
-        else
-          echo "No users ratings."
-        fi
-
-        if [[ $PROMPT == "stop" ]]; then
-          if [[ $USERS_RATINGS_FOUND -eq 1 ]]; then
-            USERS_RATINGS_FOUND=2
-          fi
-          if [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
-            echo "No users ratings."
-          fi
-        fi
-
         WIKI_URL=$(curl -s --max-time 10 https://query.wikidata.org/sparql\?query\=SELECT%20%3Fitem%20%3FitemLabel%20WHERE%20%7B%0A%20%20%3Fitem%20wdt%3A$PROPERTY%20%22$FILM_ID%22%0A%7D | grep "uri" | cut -d'>' -f2 | cut -d'<' -f1 | sed 's/http/https/' | sed 's/entity/wiki/')
         if [[ -z $WIKI_URL ]]; then
           if [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; then
@@ -659,7 +645,7 @@ do
             IMDB_ID=$(curl -s $WIKI_URL | grep -B50 "https://wikidata-externalid-url.toolforge.org/?p=345" | grep -A50 "wikibase-statementview-rankselector" | grep -Eo ">tt[0-9]+<" | cut -d'<' -f1 | cut -d'>' -f2 | head -1)
           fi
 
-          if [[ -z $IMDB_ID ]] || [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
+          if [[ -z $IMDB_ID ]] || [[ $STATUS == "À venir" ]]; then
             IMDB_ID=null
           fi
           echo "IMDb ID: $IMDB_ID"
@@ -674,7 +660,6 @@ do
           fi
         fi
 
-        KIDS_MOVIE=$(curl -s https://www.allocine.fr$URL | grep -E ">à partir de 3 ans<|>à partir de 6 ans<" | wc -l | awk '{print $1}')
         if [[ $IMDB_ID == "null" ]] && [[ $PROMPT == "stop" ]] && [[ $PROMPT_SERVICE_NAME == "imdb" ]]; then
           sed -i '' "/TRUE,TRUE,TRUE,/d" $SKIP_IDS_FILE_PATH
 
@@ -688,20 +673,13 @@ do
           fi
 
           if [[ $SKIP -eq 0 ]]; then
-            if [[ $KIDS_MOVIE -eq 1 ]]; then
-              echo "This is a kids movie."
-
-              echo "Skipping: https://www.allocine.fr$URL"
-              IMDB_ID="skip"
+            if [[ $STATUS == "À venir" ]]; then
+              IMDB_ID=null
             else
-              if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
-                IMDB_ID=null
-              else
-                open -a $BROWSER_PATH "https://www.allocine.fr$URL"
-                open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
-                echo "Enter the IMDb ID:"
-                read IMDB_ID
-              fi
+              open -a $BROWSER_PATH "https://www.allocine.fr$URL"
+              open -a $BROWSER_PATH "https://www.imdb.com/search/title/?title=$TITLE_URL_ENCODED&title_type=$TITLE_TYPE"
+              echo "Enter the IMDb ID:"
+              read IMDB_ID
             fi
 
             if [[ $IMDB_ID == "skip" ]]; then
@@ -718,10 +696,10 @@ do
           fi
         fi
 
-        if { [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; } || { { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; } && [[ $KIDS_MOVIE -eq 1 ]] && [[ -z $MIN_RATING ]]; }; then
+        if [[ $IMDB_ID == "null" ]] && [[ -z $PROMPT ]]; then
           data_not_found
         else
-          if [[ $STATUS == "À venir" ]] || [[ $USERS_RATINGS_FOUND -lt 2 ]]; then
+          if [[ $STATUS == "À venir" ]]; then
             IMDB_ID=null
           elif { [[ $IMDB_ID == "null" ]] || [[ -z $IMDB_ID ]]; } && { [[ $PROMPT == "recheck" ]] || [[ $PROMPT == "allocine" ]]; }; then
             open -a $BROWSER_PATH "https://www.allocine.fr$URL"
@@ -907,8 +885,9 @@ if [[ -n $FILMS_ASSETS_PATH ]] && [[ $(wc -l < $FILMS_IDS_FILE_PATH | awk '{prin
     fi
   done
 
-  # Require every file to be present and non-empty
+  # Validate required assets
   for ASSET in "${ASSET_FILES[@]}"; do
+    [[ $ASSET == skip_ids_* ]] && continue
     if [[ ! -s "$FILMS_ASSETS_PATH/$ASSET" ]]; then
       echo "Error: $ASSET is missing or empty - aborting to avoid publishing a broken set"
       exit 1

@@ -15,7 +15,7 @@ info:
     Rotten Tomatoes ÷ 20, AlloCiné native, etc.). `minimum_ratings` uses
     the 0–5 scale when filtering movies and TV shows, and the 0–10 scale when filtering episodes.
     Movie and TV show searches by title or ID ignore this filter; episode searches support it.
-  version: 3.43.0
+  version: 3.43.1
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -48,10 +48,11 @@ components:
       in: query
       description: |
         Comma-separated list of optional fields to include in the response.
-        Available values: `awards`, `critics_rating_details`, `composers`, `directors`, `episodes_details`,
-        `genres`, `highest_episode`, `last_episode`, `lowest_episode`, `networks`,
-        `next_episode`, `platforms_links`, `production_companies`,
-        `certification_variants`, `image_variants`, `title_variants`, `parents_guide`.
+        Available values: `awards`, `certification_variants`, `composers`, `countries_of_origin`,
+        `critics_rating_details`, `directors`, `episodes_details`, `genres`, `highest_episode`,
+        `image_variants`, `last_episode`, `lowest_episode`, `mojo`, `networks`, `next_episode`,
+        `original_title`, `parents_guide`, `platforms_links`, `production_companies`,
+        `tagline`, `title_variants`, `trailer`.
 
         Episode-related fields (`episodes_details`, `highest_episode`, `lowest_episode`,
         `last_episode`, `next_episode`) only apply to TV show results and are ignored for movies.
@@ -169,9 +170,6 @@ components:
     Item:
       type: object
       properties:
-        _id:
-          type: string
-          description: Internal MongoDB identifier.
         id:
           type: integer
           description: TMDB numeric identifier (canonical).
@@ -187,6 +185,7 @@ components:
           example: "Breaking Bad"
         original_title:
           type: string
+          description: Original title. Included when `original_title` is in `append_to_response`.
           example: "Breaking Bad"
         image:
           type: string
@@ -209,16 +208,17 @@ components:
           example: 2940
         countries_of_origin:
           type: ["array", "null"]
-          description: Countries of origin.
+          description: Countries of origin. Included when `countries_of_origin` is in `append_to_response`.
           items:
             type: string
           example: ["United States"]
         tagline:
           type: string
+          description: Tagline. Included when `tagline` is in `append_to_response`.
         trailer:
           type: string
           format: uri
-          description: URL to the trailer.
+          description: URL to the trailer. Included when `trailer` is in `append_to_response`.
         seasons_number:
           type: integer
           description: Number of seasons (TV shows only).
@@ -258,6 +258,7 @@ components:
         thetvdb:
           $ref: "#/components/schemas/TheTvdbInfo"
         mojo:
+          description: Box office information. Included when `mojo` is in `append_to_response`.
           $ref: "#/components/schemas/MojoInfo"
         # Optional fields (returned when requested via append_to_response)
         awards:

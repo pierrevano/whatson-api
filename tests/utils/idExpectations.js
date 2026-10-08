@@ -1,6 +1,5 @@
 const IMDB_TITLE_ID_REGEX = /^tt\d{7,}$/;
 const ALPHANUMERIC_ID_REGEX = /^[A-Za-z0-9_\-!+:]+$/;
-const PERSISTENT_ID_REGEX = /^[A-Za-z0-9_\-!+]+={0,2}$/;
 
 function expectPositiveInteger(value) {
   expect(typeof value).toBe("number");
@@ -17,6 +16,7 @@ function expectSlugLikeId(value) {
   const isString = typeof value === "string";
   const isNumber = typeof value === "number";
   expect(isString || isNumber).toBe(true);
+  if (isNumber) expectPositiveInteger(value);
   const stringValue = isNumber ? String(value) : value;
   const trimmedValue = stringValue.trim();
   expect(trimmedValue.length).toBeGreaterThan(0);
@@ -24,19 +24,13 @@ function expectSlugLikeId(value) {
   expect(ALPHANUMERIC_ID_REGEX.test(stringValue)).toBe(true);
 }
 
-function expectPersistentId(value) {
-  expect(typeof value).toBe("string");
-  const trimmedValue = value.trim();
-  expect(trimmedValue.length).toBeGreaterThan(0);
-  expect(value).toBe(trimmedValue);
-  expect(PERSISTENT_ID_REGEX.test(value)).toBe(true);
-}
-
 function expectNumericIdOrNumericString(value) {
   if (typeof value === "string") {
     const trimmedValue = value.trim();
     expect(trimmedValue.length).toBeGreaterThan(0);
+    expect(value).toBe(trimmedValue);
     expect(/^[0-9]+$/.test(trimmedValue)).toBe(true);
+    expectPositiveInteger(Number(value));
   } else {
     expectPositiveInteger(value);
   }
@@ -62,7 +56,6 @@ module.exports = {
   expectPositiveInteger,
   expectImdbId,
   expectSlugLikeId,
-  expectPersistentId,
   expectNumericIdOrNumericString,
   expectIdRatingConsistency,
 };
