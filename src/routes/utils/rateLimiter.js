@@ -7,7 +7,6 @@ const {
   ignoreNewRelicTransaction,
   sendToNewRelic,
 } = require("../../utils/sendToNewRelic");
-const { isSponsorApiKey } = require("./isSponsorApiKey");
 const {
   RateLimiterMemory,
   RateLimiterMongo,
@@ -17,14 +16,13 @@ const { sendResponse } = require("../../utils/sendRequest");
 /**
  * Builds a memory-based rate limiter with the shared configuration defaults.
  *
- * @param {number} points - Maximum number of requests allowed per window.
  * @returns {RateLimiterMemory} Configured rate limiter instance.
  */
-const createRateLimiter = (points) =>
+const createRateLimiter = () =>
   new RateLimiterMemory({
-    points, // maximum number of requests
+    points: config.pointsPerMinute, // maximum number of requests
     duration: config.duration, // window duration in seconds
-    blockDuration: config.blockDuration, // block duration in seconds if rate limit is exceeded
+    blockDuration: config.duration, // block duration in seconds if rate limit is exceeded
   });
 
 /**
@@ -42,12 +40,12 @@ const createDailyLimiter = (points) =>
     duration: config.dailyDuration, // window duration in seconds
   });
 
-const createLimiters = (points) => [
-  createRateLimiter(points),
-  createDailyLimiter(points * config.dailyMultiplier),
+const createLimiters = (points = config.pointsAnonymous) => [
+  createRateLimiter(),
+  createDailyLimiter(points),
 ];
 
-const defaultLimiters = createLimiters(config.pointsAnonymous);
+const defaultLimiters = createLimiters();
 
 // Persistent limiter instances per API key to preserve counters across requests.
 const keyedLimiters = new Map();
@@ -93,13 +91,11 @@ const limiter = async (req, res, next) => {
     });
   }
 
-  let rateLimitWindow = "hourly";
+  let rateLimitWindow = "minute";
   try {
     const result = await rateLimiter.consume(key);
-    if (!isSponsorApiKey(apiKeyDoc)) {
-      rateLimitWindow = "daily";
-      await dailyLimiter.consume(key);
-    }
+    rateLimitWindow = "daily";
+    await dailyLimiter.consume(key);
     const rateLimitHeaders = {
       "X-RateLimit-Limit": result.remainingPoints + result.consumedPoints,
       "X-RateLimit-Remaining": result.remainingPoints,
@@ -133,7 +129,9 @@ const limiter = async (req, res, next) => {
           ? "invalid_key"
           : "anonymous",
     });
-    sendResponse(res, 429, { message: getTierMessage(apiKeyDoc) });
+    sendResponse(res, 429, {
+      message: getTierMessage(apiKeyDoc, rateLimitWindow),
+    });
   }
 };
 

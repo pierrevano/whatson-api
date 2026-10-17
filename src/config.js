@@ -54,13 +54,12 @@ const config = {
   collectionNameRequests: "requests",
 
   /* Rate limit settings */
-  pointsAnonymous: 50,
-  pointsFree: 500,
-  pointsSponsor: 5000,
+  pointsAnonymous: 200,
+  pointsFree: 1200,
+  pointsPerMinute: 200,
+  pointsSponsor: 12000,
   contactURL: "https://pierrevano.github.io",
-  duration: 60 * 60, // 1 hour in seconds
-  blockDuration: 60 * 60, // 1 hour in seconds
-  dailyMultiplier: 4, // multiple of the hourly limit
+  duration: 60, // 1 minute in seconds
   dailyDuration: 24 * 60 * 60, // 1 day in seconds
 
   /* Global settings */
@@ -68,6 +67,15 @@ const config = {
   webhooksURL: process.env.WEBHOOKS_URL,
   appendToResponse:
     "awards,certification_variants,composers,countries_of_origin,critics_rating_details,directors,episodes_details,genres,highest_episode,image_variants,last_episode,lowest_episode,mojo,networks,next_episode,original_title,parents_guide,platforms_links,production_companies,tagline,title_variants,trailer",
+  booleanQueryFields: [
+    "rotten_tomatoes.critics_certified",
+    "is_active",
+    "is_adult",
+    "allocine.le_club",
+    "allocine.les_indes",
+    "metacritic.must_see",
+    "rotten_tomatoes.users_certified",
+  ],
   booleanQueryValues: ["false", "true"],
   itemTypes: ["movie", "tvshow"],
   invalidAppendToResponseMessage:
@@ -123,6 +131,8 @@ const config = {
   ],
   queryMemoryLimitMessage:
     "Something went wrong. Please reduce the number of pages requested or lower the limit and try again.",
+  sponsorApiKeyRequiredMessage:
+    "This endpoint requires a sponsor API key. For access, become a $1/month sponsor:",
   seasonAppendToResponseValues: [
     "highest_episode",
     "last_episode",
@@ -267,18 +277,13 @@ const config = {
     "api_key",
     "append_to_response",
     "composers",
-    "critics_certified",
     "directors",
     "filtered_seasons",
-    "runtime",
     "genres",
-    "is_active",
-    "is_adult",
     "item_type",
     "limit",
     "minimum_ratings",
     "minimum_users_rating_count",
-    "must_see",
     "networks",
     "order",
     "page",
@@ -287,10 +292,10 @@ const config = {
     "production_companies",
     "ratings_filters",
     "release_date",
+    "runtime",
     "seasons_number",
     "status",
     "title",
-    "users_certified",
   ],
   allowedTvshowStatuses: ["Canceled", "Ended", "Ongoing", "Pilot", "Unknown"],
   specialItems: [

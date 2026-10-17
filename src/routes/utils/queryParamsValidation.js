@@ -71,13 +71,9 @@ const validateStatusQuery = (statusQuery) => {
 };
 
 const validateBooleanQueryParams = (query) => {
-  const booleanParams = [
-    "critics_certified",
-    "is_active",
-    "is_adult",
-    "must_see",
-    "users_certified",
-  ];
+  const booleanParams = config.booleanQueryFields.map((field) =>
+    field.split(".").pop(),
+  );
   for (const name of booleanParams) {
     const message = validateAllowedValues(
       query[name],

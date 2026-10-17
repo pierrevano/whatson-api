@@ -1,5 +1,6 @@
 const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
+const { getBooleanFilters } = require("./utils/getBooleanFilters");
 const { getEpisodeSortFields } = require("../utils/getEpisodeSortFields");
 const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
@@ -9,31 +10,6 @@ const { resolveLimit } = require("./utils/resolveLimit");
 const { sendInternalError, sendRequest } = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
 const getInternalApiKey = require("./getInternalApiKey");
-
-/**
- * Builds a Mongo boolean match condition from a query value.
- *
- * @param {string|boolean|{ $or: Array<object> }|null|undefined} value - Query value.
- * @param {string|boolean} fallbackValue - Fallback when the query value is missing.
- * @param {string} key - Field to match.
- * @returns {object} Mongo match condition.
- */
-const getBooleanMatch = (value, fallbackValue, key) => {
-  const resolvedValue =
-    typeof value !== "undefined" && value !== null && value !== ""
-      ? value
-      : fallbackValue;
-
-  if (
-    resolvedValue === "true,false" ||
-    resolvedValue === "false,true" ||
-    Array.isArray(resolvedValue?.$or)
-  ) {
-    return { $or: [{ [key]: true }, { [key]: false }] };
-  }
-
-  return { [key]: resolvedValue === "true" || resolvedValue === true };
-};
 
 /**
  * Returns paginated rated episodes that match the requested show, title search, rating, season, and release-date filters.
@@ -66,31 +42,8 @@ const getRatedEpisodes = async (req, res) => {
       .filter((season) => !Number.isNaN(season));
     const titleQuery = String(req.query.title || "").trim();
 
-    const is_active_item = getBooleanMatch(
-      req.query.is_active,
-      "true,false",
-      "is_active",
-    );
-    const is_adult_item = getBooleanMatch(
-      req.query.is_adult,
-      false,
-      "is_adult",
-    );
-    const is_must_see_item = getBooleanMatch(
-      req.query.must_see,
-      "true,false",
-      "metacritic.must_see",
-    );
-    const is_users_certified_item = getBooleanMatch(
-      req.query.users_certified,
-      "true,false",
-      "rotten_tomatoes.users_certified",
-    );
-    const is_critics_certified_item = getBooleanMatch(
-      req.query.critics_certified,
-      "true,false",
-      "rotten_tomatoes.critics_certified",
-    );
+    const booleanFilters = getBooleanFilters(req.query);
+    const is_active_item = booleanFilters.is_active;
 
     const internal_api_key = await getInternalApiKey();
 
@@ -99,80 +52,25 @@ const getRatedEpisodes = async (req, res) => {
       new_relic_route: "getRatedEpisodes",
     });
 
-    const pipeline = [];
+    const pipeline = [{ $match: { $and: Object.values(booleanFilters) } }];
 
     getPipelineFromTVShow(
       config,
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
       "tvshow",
       pipeline,
       "",
       req.query.status || "",
     );
 
-    getPipelineByNames(
-      req.query.composers || "",
-      pipeline,
-      "composers",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      req.query.directors || "",
-      pipeline,
-      "directors",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      req.query.genres || "",
-      pipeline,
-      "genres",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      req.query.platforms || "",
-      pipeline,
-      "platforms_links",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      req.query.networks || "",
-      pipeline,
-      "networks",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
+    getPipelineByNames(req.query.composers || "", pipeline, "composers");
+    getPipelineByNames(req.query.directors || "", pipeline, "directors");
+    getPipelineByNames(req.query.genres || "", pipeline, "genres");
+    getPipelineByNames(req.query.platforms || "", pipeline, "platforms_links");
+    getPipelineByNames(req.query.networks || "", pipeline, "networks");
     getPipelineByNames(
       req.query.production_companies || "",
       pipeline,
       "production_companies",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
     );
 
     pipeline.push({

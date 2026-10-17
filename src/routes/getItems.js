@@ -25,16 +25,12 @@ const getItems = async (req, res) => {
     const {
       append_to_response,
       composers: composers_query,
-      critics_certified: is_critics_certified_query,
       directors: directors_query,
       filtered_seasons: filtered_seasons_query,
       genres: genres_query,
       runtime: runtime_query,
-      is_active: is_active_query,
-      is_adult: is_adult_query,
       item_type: item_type_query,
       minimum_ratings: minimum_ratings_query,
-      must_see: is_must_see_query,
       networks: networks_query,
       order: order_query,
       platforms: platforms_query,
@@ -45,8 +41,13 @@ const getItems = async (req, res) => {
       sort_by: sort_by_query,
       seasons_number: seasons_number_query,
       status: status_query,
-      users_certified: is_users_certified_query,
     } = req.query;
+
+    const boolean_query = Object.fromEntries(
+      config.booleanQueryFields
+        .map((field) => field.split(".").pop())
+        .map((name) => [name, req.query[name]]),
+    );
 
     const parsed_limit = Number(limit_raw);
     const limit_query = limit_provided ? parsed_limit : undefined;
@@ -95,11 +96,7 @@ const getItems = async (req, res) => {
       networks_query,
       production_companies_query,
       id_path,
-      is_active_query,
-      is_adult_query,
-      is_must_see_query,
-      is_users_certified_query,
-      is_critics_certified_query,
+      boolean_query,
       item_type_query,
       limit_query,
       minimum_ratings_query,

@@ -144,12 +144,12 @@ const loopItems = async (
       if (!data) {
         useExistingData = false;
 
-        const { shouldCreate } =
+        const { shouldCreate, reason } =
           await shouldCreateFromImdbReleaseDate(imdbData);
 
         if (!shouldCreate) {
           console.log(
-            `Skipping item at index ${index} because the IMDb release date or vote count check failed.`,
+            `Skipping item at index ${index} (${allocineURL}) because the IMDb release date or vote count check failed: ${reason}.`,
           );
           continue;
         }

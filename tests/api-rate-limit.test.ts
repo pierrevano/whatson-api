@@ -17,6 +17,10 @@ jest.mock("rate-limiter-flexible", () => {
 });
 
 const axios = require("axios");
+const {
+  RateLimiterMemory,
+  RateLimiterMongo,
+} = require("rate-limiter-flexible");
 
 const { client, collectionApiKey } = require("../src/utils/mongoClient");
 const { config } = require("../src/config");
@@ -113,18 +117,18 @@ describe("What's on? API rate limiting tests", () => {
     "Rate Limiting should include Retry-After once the limit is exceeded",
     async () => {
       const apiCall = `${baseURL}/movie/121`;
-      const forwardedFor = `203.0.113.${Math.floor(Math.random() * 254) + 1}`;
+      const forwardedFor = generateRandomIp();
       const batchSize = 100;
       let rateLimitedResponse = null;
 
       for (
         let requestCount = 0;
-        requestCount < config.pointsAnonymous + 1 && !rateLimitedResponse;
+        requestCount < config.pointsPerMinute + 1 && !rateLimitedResponse;
         requestCount += batchSize
       ) {
         const currentBatchSize = Math.min(
           batchSize,
-          config.pointsAnonymous + 1 - requestCount,
+          config.pointsPerMinute + 1 - requestCount,
         );
         const responses = await Promise.all(
           Array.from({ length: currentBatchSize }).map(() =>
@@ -146,7 +150,7 @@ describe("What's on? API rate limiting tests", () => {
       expect(rateLimitedResponse.status).toBe(429);
       expect(rateLimitedResponse.data).toEqual({
         code: 429,
-        message: `Too many requests (${config.pointsAnonymous} req/h, ${config.pointsAnonymous * config.dailyMultiplier} req/day limit). Request a free API key for a higher limit: ${config.contactURL}`,
+        message: `Too many requests (${config.pointsPerMinute} req/min limit).`,
       });
       expect(rateLimitedResponse.headers).toHaveProperty("retry-after");
       expect(
@@ -171,7 +175,7 @@ describe("What's on? API rate limiting tests", () => {
         {
           $set: {
             key: counterKey,
-            points: config.pointsAnonymous * config.dailyMultiplier,
+            points: config.pointsAnonymous,
             expire: new Date(Date.now() + config.dailyDuration * 1000),
           },
         },
@@ -192,7 +196,7 @@ describe("What's on? API rate limiting tests", () => {
         expect(response.status).toBe(429);
         expect(response.data).toEqual({
           code: 429,
-          message: `Too many requests (${config.pointsAnonymous} req/h, ${config.pointsAnonymous * config.dailyMultiplier} req/day limit). Request a free API key for a higher limit: ${config.contactURL}`,
+          message: `Too many requests (${config.pointsAnonymous} req/day limit). Request a free API key for a higher limit: ${config.contactURL}`,
         });
         expect(Number(response.headers["retry-after"])).toBeGreaterThan(
           config.duration,
@@ -208,44 +212,141 @@ describe("What's on? API rate limiting tests", () => {
     "Rate Limiting should include the sponsor upgrade message for a free API key",
     async () => {
       const apiCall = `${baseURL}/movie/121`;
-      const batchSize = 100;
-      let rateLimitedResponse = null;
+      const counterKey = `rlflx:${config.testApiKey}`;
+      const rateLimitCollection = client
+        .db(config.dbName)
+        .collection(config.collectionNameRateLimit);
 
-      for (
-        let requestCount = 0;
-        requestCount < config.pointsFree + 1 && !rateLimitedResponse;
-        requestCount += batchSize
-      ) {
-        const currentBatchSize = Math.min(
-          batchSize,
-          config.pointsFree + 1 - requestCount,
-        );
-        const responses = await Promise.all(
-          Array.from({ length: currentBatchSize }).map(() =>
-            axios.get(apiCall, {
-              params: { api_key: config.testApiKey },
-              validateStatus: (status) => status <= 500,
-            }),
-          ),
-        );
+      await rateLimitCollection.updateOne(
+        { key: counterKey },
+        {
+          $set: {
+            key: counterKey,
+            points: config.pointsFree,
+            expire: new Date(Date.now() + config.dailyDuration * 1000),
+          },
+        },
+        { upsert: true },
+      );
 
-        rateLimitedResponse =
-          responses.find((response) => response.status === 429) || null;
+      try {
+        const response = await axios.get(apiCall, {
+          params: { api_key: config.testApiKey },
+          validateStatus: (status) => status <= 500,
+        });
+
+        expect(response.status).toBe(429);
+        expect(response.data).toEqual({
+          code: 429,
+          message: `Too many requests (${config.pointsFree} req/day limit). Become a $1/month sponsor for a higher limit: ${config.contactURL}`,
+        });
+        expect(response.headers).toHaveProperty("retry-after");
+        expect(Number(response.headers["retry-after"])).toBeGreaterThan(
+          config.duration,
+        );
+      } finally {
+        await rateLimitCollection.deleteOne({ key: counterKey });
       }
-
-      expect(rateLimitedResponse).toBeDefined();
-      expect(rateLimitedResponse.status).toBe(429);
-      expect(rateLimitedResponse.data).toEqual({
-        code: 429,
-        message: `Too many requests (${config.pointsFree} req/h, ${config.pointsFree * config.dailyMultiplier} req/day limit). Become a sponsor for a higher limit: ${config.contactURL}`,
-      });
-      expect(rateLimitedResponse.headers).toHaveProperty("retry-after");
-      expect(
-        Number(rateLimitedResponse.headers["retry-after"]),
-      ).toBeGreaterThan(0);
     },
     120000,
   );
+
+  describe.each([
+    [
+      "anonymous",
+      undefined,
+      200,
+      `Request a free API key for a higher limit: ${config.contactURL}`,
+    ],
+    [
+      "free",
+      1200,
+      1200,
+      `Become a $1/month sponsor for a higher limit: ${config.contactURL}`,
+    ],
+    [
+      "$1/month sponsor",
+      12000,
+      12000,
+      `Contact me for a custom limit: ${config.contactURL}`,
+    ],
+    [
+      "custom sponsor",
+      40000,
+      40000,
+      `Contact me to adjust your custom limit: ${config.contactURL}`,
+    ],
+  ])("%s tier", (tier, points, dailyLimit, upgradeMessage) => {
+    const apiKey = tier === "anonymous" ? undefined : `rate-limit-${points}`;
+
+    beforeEach(() => {
+      jest.spyOn(collectionApiKey, "findOne").mockResolvedValue({
+        value: apiKey,
+        is_active: true,
+        is_internal: false,
+        rate_limit_points: points,
+      });
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    test("applies the shared minute limit and daily allowance", async () => {
+      const consumeMinute = jest.spyOn(RateLimiterMemory.prototype, "consume");
+      const consumeDaily = jest
+        .spyOn(RateLimiterMongo.prototype, "consume")
+        .mockResolvedValue({});
+
+      const response = await requestLimit(generateRandomIp(), apiKey);
+
+      expect(response.status).toBe(200);
+      expect(response.next).toHaveBeenCalledTimes(1);
+      expect(response.headers["x-ratelimit-limit"]).toBe(200);
+      expect(consumeMinute.mock.contexts[0].duration).toBe(60);
+      expect(consumeMinute.mock.contexts[0].blockDuration).toBe(60);
+      expect(consumeDaily).toHaveBeenCalledTimes(1);
+      expect(consumeDaily.mock.contexts[0].points).toBe(dailyLimit);
+    });
+
+    test("rejects requests beyond the minute limit", async () => {
+      jest.spyOn(RateLimiterMemory.prototype, "consume").mockRejectedValue({
+        msBeforeNext: 60000,
+      });
+      const consumeDaily = jest
+        .spyOn(RateLimiterMongo.prototype, "consume")
+        .mockResolvedValue({});
+
+      const response = await requestLimit(generateRandomIp(), apiKey);
+
+      expect(response.status).toBe(429);
+      expect(response.data).toEqual({
+        code: 429,
+        message: "Too many requests (200 req/min limit).",
+      });
+      expect(response.headers["retry-after"]).toBe(60);
+      expect(response.next).not.toHaveBeenCalled();
+      expect(consumeDaily).not.toHaveBeenCalled();
+    });
+
+    test("rejects requests beyond the daily allowance", async () => {
+      const consumeDaily = jest
+        .spyOn(RateLimiterMongo.prototype, "consume")
+        .mockRejectedValue({ msBeforeNext: config.dailyDuration * 1000 });
+
+      const response = await requestLimit(generateRandomIp(), apiKey);
+
+      expect(response.status).toBe(429);
+      expect(response.data).toEqual({
+        code: 429,
+        message: `Too many requests (${dailyLimit} req/day limit). ${upgradeMessage}`,
+      });
+      expect(response.headers["retry-after"]).toBe(config.dailyDuration);
+      expect(response.next).not.toHaveBeenCalled();
+      expect(consumeDaily).toHaveBeenCalledTimes(1);
+      expect(consumeDaily.mock.contexts[0].points).toBe(dailyLimit);
+    });
+  });
 
   describe("Rate limiter key resolution", () => {
     beforeEach(() => {

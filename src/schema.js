@@ -194,6 +194,8 @@ const itemSchema = {
         critic_rating: "number", // Average rating given by the critic
       },
     ],
+    le_club: "boolean", // AlloCiné Le Club label
+    les_indes: "boolean", // AlloCiné Les Indés label
     popularity: "number", // Popularity rank on AlloCiné
   },
   betaseries: {

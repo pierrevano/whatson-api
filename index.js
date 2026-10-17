@@ -33,6 +33,7 @@ const getUpdates = require("./src/routes/getUpdates");
 const PORT = config.localPort;
 const apiKeyAndAppendToResponseQueryParams = ["api_key", "append_to_response"];
 const listingQueryParams = [
+  ...config.booleanQueryFields.map((field) => field.split(".").pop()),
   ...config.commonQueryParams,
   ...config.keysToCheckForSearch,
 ];

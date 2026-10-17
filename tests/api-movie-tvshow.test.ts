@@ -221,7 +221,7 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeTruthy();
+        expect(item.is_adult).toBe(true);
       }),
   },
 
@@ -230,7 +230,7 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
   },
 
@@ -550,7 +550,7 @@ const params = {
             let lastSeasonNumber = null;
             let lastEpisodeNumber = null;
             item.episodes_details.forEach((episode) => {
-              if (episode?.season && episode?.episode) {
+              if (episode.season && episode.episode) {
                 const currentSeasonNumber = Number(episode.season);
                 const currentEpisodeNumber = Number(episode.episode);
 
@@ -790,7 +790,7 @@ const params = {
       const episodeUsersRatingCounts = tvshowItems.flatMap((item) =>
         Array.isArray(item.episodes_details)
           ? item.episodes_details
-              .map((episode) => episode?.users_rating_count)
+              .map((episode) => episode.users_rating_count)
               .filter((count) => typeof count === "number")
           : [],
       );

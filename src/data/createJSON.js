@@ -239,6 +239,8 @@ const createJSON = async (
     critics_rating: allocineCriticInfo?.criticsRating,
     critics_rating_count: allocineCriticInfo?.criticsRatingCount,
     critics_rating_details: allocineCriticInfo?.criticsRatingDetails,
+    le_club: allocineFirstInfo?.leClub,
+    les_indes: allocineFirstInfo?.lesIndes,
     popularity: allocinePopularity?.popularity,
   };
 

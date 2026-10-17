@@ -106,7 +106,7 @@ const filterByCheckId = async ({
   }
 
   writeFileSync(
-    `./temp_mojo_box_office_${getNodeVarsValues.item_type}.json`,
+    `./temp_filtered_items_${getNodeVarsValues.item_type}.json`,
     JSON.stringify(filteredItems),
     "utf-8",
   );

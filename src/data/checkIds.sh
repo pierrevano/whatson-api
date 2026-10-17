@@ -269,7 +269,7 @@ if [[ $1 == "check" ]]; then
   fi
 
   if [[ $3 == "all_ids" ]]; then
-    SOURCE_ARRAY_FILE=${4:-./temp_mojo_box_office_${2}.json}
+    SOURCE_ARRAY_FILE=${4:-./temp_filtered_items_${2}.json}
     TEMP_IMDB_IDS_FILE=./temp_imdb_ids_${2}.txt
 
     if [[ ! -f $SOURCE_ARRAY_FILE ]]; then
@@ -566,7 +566,7 @@ elif [[ $1 == "check_imdb" ]]; then
   fi
 
   if [[ $3 == "all_ids" ]]; then
-    SOURCE_ARRAY_FILE=${4:-./temp_mojo_box_office_${2}.json}
+    SOURCE_ARRAY_FILE=${4:-./temp_filtered_items_${2}.json}
     TEMP_IMDB_IDS_FILE=./temp_imdb_ids_${2}.txt
 
     if [[ ! -f $SOURCE_ARRAY_FILE ]]; then

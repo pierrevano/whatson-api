@@ -223,7 +223,7 @@ function checkItemProperties(items) {
 
     if (Array.isArray(item.episodes_details)) {
       item.episodes_details.forEach((episode) => {
-        if (episode?.id) {
+        if (episode.id) {
           expectImdbId(episode.id);
         }
         expectIdRatingConsistency(episode, ["users_rating"]);
@@ -333,10 +333,10 @@ function checkItemProperties(items) {
       expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.allocine,
       );
-      if (item.allocine?.users_rating) {
+      if (item.allocine.users_rating) {
         expectIdRatingConsistency(item.allocine, ["users_rating"]);
       }
-      if (item.allocine?.critics_rating) {
+      if (item.allocine.critics_rating) {
         expectIdRatingConsistency(item.allocine, ["critics_rating"]);
       }
     }
@@ -492,8 +492,8 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.betaseries?.users_rating &&
-          typeof item.betaseries?.users_rating_count !== "undefined"
+          item.betaseries.users_rating &&
+          typeof item.betaseries.users_rating_count !== "undefined"
         ) {
           expect(item.betaseries.users_rating_count).toBeGreaterThan(0);
         }
@@ -534,14 +534,14 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.metacritic?.users_rating &&
-          typeof item.metacritic?.users_rating_count !== "undefined"
+          item.metacritic.users_rating &&
+          typeof item.metacritic.users_rating_count !== "undefined"
         ) {
           expect(item.metacritic.users_rating_count).toBeGreaterThan(0);
         }
         if (
-          item.metacritic?.critics_rating &&
-          typeof item.metacritic?.critics_rating_count !== "undefined"
+          item.metacritic.critics_rating &&
+          typeof item.metacritic.critics_rating_count !== "undefined"
         ) {
           expect(item.metacritic.critics_rating_count).toBeGreaterThan(0);
         }
@@ -585,8 +585,8 @@ function checkItemProperties(items) {
         "critics_rating",
       ]);
       if (
-        typeof item.rotten_tomatoes?.users_rating_liked_count === "number" ||
-        typeof item.rotten_tomatoes?.users_rating_not_liked_count === "number"
+        typeof item.rotten_tomatoes.users_rating_liked_count === "number" ||
+        typeof item.rotten_tomatoes.users_rating_not_liked_count === "number"
       ) {
         expect(typeof item.rotten_tomatoes.users_rating_liked_count).toBe(
           "number",
@@ -595,7 +595,7 @@ function checkItemProperties(items) {
           "number",
         );
       }
-      if (item.rotten_tomatoes?.users_rating_count) {
+      if (item.rotten_tomatoes.users_rating_count) {
         expect(item.rotten_tomatoes.users_rating_count).toBeGreaterThan(0);
         expect(item.rotten_tomatoes.users_rating_count).toBe(
           item.rotten_tomatoes.users_rating_liked_count +
@@ -630,8 +630,8 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.rotten_tomatoes?.critics_rating &&
-          typeof item.rotten_tomatoes?.critics_rating_count !== "undefined"
+          item.rotten_tomatoes.critics_rating &&
+          typeof item.rotten_tomatoes.critics_rating_count !== "undefined"
         ) {
           expect(item.rotten_tomatoes.critics_rating_count).toBeGreaterThan(0);
         }
@@ -736,8 +736,8 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.letterboxd?.users_rating &&
-          typeof item.letterboxd?.users_rating_count !== "undefined"
+          item.letterboxd.users_rating &&
+          typeof item.letterboxd.users_rating_count !== "undefined"
         ) {
           expect(item.letterboxd.users_rating_count).toBeGreaterThan(0);
         }
@@ -773,8 +773,8 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.senscritique?.users_rating &&
-          typeof item.senscritique?.users_rating_count !== "undefined"
+          item.senscritique.users_rating &&
+          typeof item.senscritique.users_rating_count !== "undefined"
         ) {
           expect(item.senscritique.users_rating_count).toBeGreaterThan(0);
         }
@@ -807,8 +807,8 @@ function checkItemProperties(items) {
           items.filter((item) => item.tmdb && !item.tmdb?.users_rating).length,
         ).toBe(0);
         if (
-          item.tmdb?.users_rating &&
-          typeof item.tmdb?.users_rating_count !== "undefined"
+          item.tmdb.users_rating &&
+          typeof item.tmdb.users_rating_count !== "undefined"
         ) {
           expect(item.tmdb.users_rating_count).toBeGreaterThan(0);
         }
@@ -841,8 +841,8 @@ function checkItemProperties(items) {
             .length,
         ).toBe(0);
         if (
-          item.trakt?.users_rating &&
-          typeof item.trakt?.users_rating_count !== "undefined"
+          item.trakt.users_rating &&
+          typeof item.trakt.users_rating_count !== "undefined"
         ) {
           expect(item.trakt.users_rating_count).toBeGreaterThan(0);
         }
@@ -960,8 +960,173 @@ const params = {
           : null;
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
+  },
+
+  only_adult_tvshows: {
+    query: "?item_type=tvshow&is_adult=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.is_adult).toBe(true);
+      });
+    },
+  },
+
+  only_non_adult_tvshows: {
+    query: "?item_type=tvshow&is_adult=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.is_adult).toBe(false);
+      });
+    },
+  },
+
+  both_adult_and_non_adult_tvshows: {
+    query: "?item_type=tvshow&is_adult=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect([true, false]).toContain(item.is_adult);
+      });
+    },
+  },
+
+  only_must_see_tvshows: {
+    query: "?item_type=tvshow&must_see=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.metacritic.must_see).toBe(true);
+      });
+    },
+  },
+
+  only_non_must_see_tvshows: {
+    query: "?item_type=tvshow&must_see=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.metacritic.must_see).toBe(false);
+      });
+    },
+  },
+
+  both_must_see_values_tvshows: {
+    query: "?item_type=tvshow&must_see=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect([true, false]).toContain(item.metacritic.must_see);
+      });
+    },
+  },
+
+  only_non_users_certified_tvshows: {
+    query: "?item_type=tvshow&users_certified=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.rotten_tomatoes.users_certified).toBe(false);
+      });
+    },
+  },
+
+  both_users_certified_values_tvshows: {
+    query: "?item_type=tvshow&users_certified=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect([true, false]).toContain(item.rotten_tomatoes.users_certified);
+      });
+    },
+  },
+
+  only_non_critics_certified_tvshows: {
+    query: "?item_type=tvshow&critics_certified=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.rotten_tomatoes.critics_certified).toBe(false);
+      });
+    },
+  },
+
+  both_critics_certified_values_tvshows: {
+    query: "?item_type=tvshow&critics_certified=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect([true, false]).toContain(item.rotten_tomatoes.critics_certified);
+      });
+    },
+  },
+
+  tvshows_with_le_club_label: {
+    query: "?item_type=tvshow&le_club=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.allocine.le_club).toBe(true);
+      });
+    },
+  },
+
+  tvshows_without_le_club_label: {
+    query: "?item_type=tvshow&le_club=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.allocine.le_club).toBe(false);
+      });
+    },
+  },
+
+  both_le_club_values_tvshows: {
+    query: "?item_type=tvshow&le_club=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect([true, false]).toContain(item.allocine.le_club);
+      });
+    },
+  },
+
+  tvshows_without_les_indes_label: {
+    query: "?item_type=tvshow&les_indes=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect(item.allocine.les_indes).toBe(false);
+      });
+    },
+  },
+
+  both_les_indes_values_tvshows: {
+    query: "?item_type=tvshow&les_indes=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("tvshow");
+        expect([true, false]).toContain(item.allocine.les_indes);
+      });
+    },
   },
 
   tvshows_with_runtime_between_30_and_60_minutes: {
@@ -1874,10 +2039,10 @@ const params = {
         if (item.episodes_details && item.last_episode) {
           const pastEpisodes = item.episodes_details.filter(
             (ep) =>
-              ep?.release_date &&
+              ep.release_date &&
               formatDate(ep.release_date) < formatDate(new Date()) &&
-              ep?.users_rating &&
-              ep?.users_rating_count,
+              ep.users_rating &&
+              ep.users_rating_count,
           );
 
           const lastAired = pastEpisodes[pastEpisodes.length - 1];
@@ -1931,7 +2096,7 @@ const params = {
               item.episodes_details[lastEpisodeIndex + 1] ?? null;
 
             expect(expectedNextEpisode).not.toBeNull();
-            expect(expectedNextEpisode?.id).toBe(item.next_episode.id);
+            expect(expectedNextEpisode.id).toBe(item.next_episode.id);
 
             const lastReleaseDate = formatDate(item.last_episode.release_date);
             const nextReleaseDate = formatDate(item.next_episode.release_date);
@@ -2026,7 +2191,7 @@ const params = {
       items.forEach((item) => {
         if (Array.isArray(item.episodes_details)) {
           item.episodes_details.forEach((episode) => {
-            if (episode?.url) {
+            if (episode.url) {
               expect(typeof episode.url).toBe("string");
               expect(
                 /^https:\/\/www\.imdb\.com\/title\/tt\d+\/$/.test(episode.url),
@@ -2063,9 +2228,9 @@ const params = {
           const sorted = all
             .filter(
               (ep) =>
-                ep?.users_rating != null &&
-                ep?.users_rating_count != null &&
-                ep?.release_date,
+                ep.users_rating != null &&
+                ep.users_rating_count != null &&
+                ep.release_date,
             )
             .sort((a, b) => {
               if (b.users_rating !== a.users_rating) {
@@ -2104,9 +2269,9 @@ const params = {
           const sorted = all
             .filter(
               (ep) =>
-                ep?.users_rating != null &&
-                ep?.users_rating_count != null &&
-                ep?.release_date,
+                ep.users_rating != null &&
+                ep.users_rating_count != null &&
+                ep.release_date,
             )
             .sort((a, b) => {
               if (a.users_rating !== b.users_rating) {

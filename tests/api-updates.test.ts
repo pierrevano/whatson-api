@@ -31,7 +31,9 @@ describe("What's on? API updates endpoint tests", () => {
 
     expect(response.status).toBe(403);
     expect(response.data.code).toBe(403);
-    expect(response.data.message).toMatch(/sponsor/i);
+    expect(response.data.message).toBe(
+      `${config.sponsorApiKeyRequiredMessage} ${config.contactURL}`,
+    );
   });
 
   test("should authenticate before validating since", async () => {
@@ -43,7 +45,9 @@ describe("What's on? API updates endpoint tests", () => {
 
     expect(response.status).toBe(403);
     expect(response.data.code).toBe(403);
-    expect(response.data.message).toMatch(/sponsor/i);
+    expect(response.data.message).toBe(
+      `${config.sponsorApiKeyRequiredMessage} ${config.contactURL}`,
+    );
   });
 
   test("should deny access with a non-sponsor API key", async () => {
@@ -55,7 +59,9 @@ describe("What's on? API updates endpoint tests", () => {
     expect([403, 429]).toContain(response.status);
     if (response.status === 403) {
       expect(response.data.code).toBe(403);
-      expect(response.data.message).toMatch(/sponsor/i);
+      expect(response.data.message).toBe(
+        `${config.sponsorApiKeyRequiredMessage} ${config.contactURL}`,
+      );
     }
   });
 
@@ -120,58 +126,66 @@ describe("What's on? API updates endpoint tests", () => {
     },
   );
 
-  test("should return valid response structure with a sponsor API key", async () => {
-    const apiKey = {
-      value: "updates-sponsor-test-key",
-      is_active: true,
-      is_internal: false,
-      rate_limit_points: config.pointsSponsor,
-    };
-    const findApiKey = jest
-      .spyOn(collectionApiKey, "findOne")
-      .mockImplementation(async (query) =>
-        query.value === apiKey.value ? apiKey : null,
-      );
-    const aggregate = jest.spyOn(collectionData, "aggregate").mockReturnValue({
-      toArray: jest.fn().mockResolvedValue([
-        {
-          results: [
-            { id: 550, item_type: "movie" },
-            { id: 1396, item_type: "tvshow" },
-          ],
-          total_count: [{ count: 2 }],
-        },
-      ]),
-    });
-    const res = {
-      req: { method: "GET", path: "/updates" },
-      locals: {},
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-
-    try {
-      await getUpdates(
-        { query: { api_key: apiKey.value, since: VALID_SINCE, limit: "2" } },
-        res,
-      );
-
-      expect(findApiKey).toHaveBeenCalledWith({
-        value: apiKey.value,
+  test.each([
+    ["$1/month", config.pointsSponsor],
+    ["custom", config.pointsSponsor * 2],
+  ])(
+    "should return valid response structure with a %s sponsor API key",
+    async (_tier, points) => {
+      const apiKey = {
+        value: `updates-sponsor-test-key-${points}`,
         is_active: true,
-      });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        page: 1,
-        total_pages: 1,
-        total_results: 2,
-        updated: { movie: [550], tvshow: [1396] },
-      });
-    } finally {
-      aggregate.mockRestore();
-      findApiKey.mockRestore();
-    }
-  });
+        is_internal: false,
+        rate_limit_points: points,
+      };
+      const findApiKey = jest
+        .spyOn(collectionApiKey, "findOne")
+        .mockImplementation(async (query) =>
+          query.value === apiKey.value ? apiKey : null,
+        );
+      const aggregate = jest
+        .spyOn(collectionData, "aggregate")
+        .mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([
+            {
+              results: [
+                { id: 550, item_type: "movie" },
+                { id: 1396, item_type: "tvshow" },
+              ],
+              total_count: [{ count: 2 }],
+            },
+          ]),
+        });
+      const res = {
+        req: { method: "GET", path: "/updates" },
+        locals: {},
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+
+      try {
+        await getUpdates(
+          { query: { api_key: apiKey.value, since: VALID_SINCE, limit: "2" } },
+          res,
+        );
+
+        expect(findApiKey).toHaveBeenCalledWith({
+          value: apiKey.value,
+          is_active: true,
+        });
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+          page: 1,
+          total_pages: 1,
+          total_results: 2,
+          updated: { movie: [550], tvshow: [1396] },
+        });
+      } finally {
+        aggregate.mockRestore();
+        findApiKey.mockRestore();
+      }
+    },
+  );
 
   test("should return ids as numbers grouped by item_type", async () => {
     const response = await axios.get(`${baseURL}/updates`, {

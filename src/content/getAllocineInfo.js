@@ -25,6 +25,8 @@ const { logErrors } = require("../utils/logErrors");
  *   allocineUsersRatingCount: number|null,
  *   composers: string[]|null,
  *   directors: string[]|null,
+ *   leClub: boolean,
+ *   lesIndes: boolean,
  *   status: string|null,
  *   releaseDate: string|null
  * }|null>} AlloCiné metadata when available. Scrape failures are passed to logErrors.
@@ -61,6 +63,8 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
     const aggregateRating = metadata?.aggregateRating;
     const composers = getComposers(metadata);
     const directors = await getDirectors(allocineHomepage, metadata);
+    const leClub = $(".button-club-300").length > 0;
+    const lesIndes = $(".button-les-indes").length > 0;
     const usersRating = parseFloat(aggregateRating?.ratingValue);
     const allocineUsersRating = isNaN(usersRating) ? null : usersRating;
     const usersRatingCount = parseInt(aggregateRating?.ratingCount, 10);
@@ -88,6 +92,8 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
       allocineUsersRatingCount,
       composers,
       directors,
+      leClub,
+      lesIndes,
       status,
       releaseDate,
     };

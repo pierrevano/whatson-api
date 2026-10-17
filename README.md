@@ -18,7 +18,16 @@ Use of the API and any returned data is subject to [API_TERMS.md](./API_TERMS.md
 
 ⚠️ This API is currently running on Render's free tier. If you'd like to help keep it active at all times, please consider supporting the project via GitHub Sponsors, Patreon, or Buy Me a Coffee. For any additional feedback, you can also join the Discord server: https://discord.gg/SpKw8Zg5vT.
 
-Note: Rate limits are in place to prevent abuse. Anonymous requests allow up to `50` req/h and `200` req/day, free API keys up to `500` req/h and `2000` req/day, and sponsor API keys up to `5000` req/h with no daily cap. A custom limit is also available for higher-tier supporters. When a limit is exceeded, the API returns a `429` response with a `Retry-After` header. Request a free API key by contacting me at https://pierrevano.github.io.
+### Rate limits
+
+| Tier                     |                           Requests per day |
+| ------------------------ | -----------------------------------------: |
+| Anonymous (no API key)   |                                        200 |
+| Free API key             |                                      1,200 |
+| $1/month sponsor API key |                                     12,000 |
+| Custom sponsor API key   | [Contact me](https://pierrevano.github.io) |
+
+All tiers are also limited to 200 requests per minute. When a limit is exceeded, the API returns a `429` response with a `Retry-After` header. Request a free API key or discuss sponsorship and custom limits by contacting me at https://pierrevano.github.io.
 
 ---
 
@@ -72,7 +81,7 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,certification_variants,composers,countries_of_origin,critics_rating_details,directors,episodes_details,genres,highest_episode,image_variants,last_episode,lowest_episode,mojo,networks,next_episode,original_title,parents_guide,platforms_links,production_companies,tagline,title_variants,trailer&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&sort_by=<ratings_or_popularity_or_top_ranking_or_mojo_rank>&order=<asc_or_desc>&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,certification_variants,composers,countries_of_origin,critics_rating_details,directors,episodes_details,genres,highest_episode,image_variants,last_episode,lowest_episode,mojo,networks,next_episode,original_title,parents_guide,platforms_links,production_companies,tagline,title_variants,trailer&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&sort_by=<ratings_or_popularity_or_top_ranking_or_mojo_rank>&order=<asc_or_desc>&page=<integer>&limit=<integer>&le_club=true,false&les_indes=true,false
 > ```
 
 | Parameter            | Value                                                                                                                                                                                                                                                                                                       | Description                                                                                                                                                                                                              |
@@ -82,6 +91,8 @@ Active items are fetched from 2 different links:
 | item_type            | movie,tvshow                                                                                                                                                                                                                                                                                                | The type of the item (_movie_, _tvshow_ or both)                                                                                                                                                                         |
 | is_active            | true,false                                                                                                                                                                                                                                                                                                  | Is the item currently on screens (_true_, _false_ or both)                                                                                                                                                               |
 | is_adult             | true,false                                                                                                                                                                                                                                                                                                  | Is the item marked as adult content (_true_, _false_ or both)                                                                                                                                                            |
+| le_club              | true,false                                                                                                                                                                                                                                                                                                  | Has the item received the AlloCiné Le Club label (_true_, _false_ or both)                                                                                                                                               |
+| les_indes            | true,false                                                                                                                                                                                                                                                                                                  | Has the item received the AlloCiné Les Indés label (_true_, _false_ or both)                                                                                                                                             |
 | must_see             | true,false                                                                                                                                                                                                                                                                                                  | Is the item a Metacritic must see (_true_, _false_ or both)                                                                                                                                                              |
 | users_certified      | true,false                                                                                                                                                                                                                                                                                                  | Has the item received the Rotten Tomatoes "Verified Audience" certification (_true_, _false_ or both)                                                                                                                    |
 | critics_certified    | true,false                                                                                                                                                                                                                                                                                                  | Has the item received the Rotten Tomatoes "Certified Fresh" status from critics (_true_, _false_ or both)                                                                                                                |
@@ -154,7 +165,7 @@ Returns the highest or lowest rated episodes across all tvshows combined.
 You can also see it live at https://whatson-top-episodes.vercel.app.
 
 > ```
-> https://whatson-api.onrender.com/episodes/rated?order=<asc_or_desc>&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<integer>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<integer>,<integer>&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&title=<string>&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/episodes/rated?order=<asc_or_desc>&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<integer>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<integer>,<integer>&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&title=<string>&page=<integer>&limit=<integer>&le_club=true,false&les_indes=true,false
 > ```
 
 | Parameter                  | Value                                | Description                                                                                    |
@@ -162,6 +173,8 @@ You can also see it live at https://whatson-top-episodes.vercel.app.
 | order                      | asc or desc                          | `desc` returns top rated episodes, `asc` returns lowest rated episodes                         |
 | is_active                  | true,false                           | Is the tvshow currently active (`true`, `false` or both)                                       |
 | is_adult                   | true,false                           | Is the tvshow marked as adult content (`true`, `false` or both)                                |
+| le_club                    | true,false                           | Has the tvshow received the AlloCiné Le Club label (`true`, `false` or both)                   |
+| les_indes                  | true,false                           | Has the tvshow received the AlloCiné Les Indés label (`true`, `false` or both)                 |
 | must_see                   | true,false                           | Is the tvshow a Metacritic must see (`true`, `false` or both)                                  |
 | users_certified            | true,false                           | Has the tvshow received Rotten Tomatoes user certification                                     |
 | critics_certified          | true,false                           | Has the tvshow received Rotten Tomatoes critics certification                                  |
@@ -229,11 +242,12 @@ Example of a rated episodes response returned:
 Returns the TMDB IDs of items added or updated since a given date, grouped by item type. Requires a sponsor API key.
 
 > ```
-> https://whatson-api.onrender.com/updates?since=<ISO 8601 date>&item_type=movie,tvshow&page=<integer>&limit=<integer>
+> https://whatson-api.onrender.com/updates?api_key=<api_key>&since=<ISO 8601 date>&item_type=movie,tvshow&page=<integer>&limit=<integer>
 > ```
 
 | Parameter | Value           | Description                                                                                                                 |
 | --------- | --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| api_key   | _string_        | Required sponsor API key                                                                                                    |
 | since     | _ISO 8601 date_ | Return items added or updated since this date (`YYYY-MM-DD`) or timestamp with a timezone (e.g. `2026-01-01T00:00:00.000Z`) |
 | item_type | movie,tvshow    | The type of the item (_movie_, _tvshow_ or both)                                                                            |
 | page      | _integer_       | Page number                                                                                                                 |
@@ -488,6 +502,8 @@ Example of an item returned:
         "critic_rating": "number", // Average rating given by the critic
       },
     ],
+    "le_club": "boolean", // AlloCiné Le Club label
+    "les_indes": "boolean", // AlloCiné Les Indés label
     "popularity": "number", // Popularity rank on AlloCiné
   },
   "betaseries": {

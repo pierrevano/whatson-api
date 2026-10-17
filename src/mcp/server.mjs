@@ -52,6 +52,22 @@ const buildParams = (args = {}) => {
 // Tool definitions
 // ---------------------------------------------------------------------------
 
+const { config } = await import("../config.js");
+
+const booleanQueryProperties = Object.fromEntries(
+  config.booleanQueryFields
+    .map((field) => field.split(".").pop())
+    .map((name) => [
+      name,
+      {
+        type: "string",
+        description:
+          'Filter by "true", "false", or "true,false".' +
+          (name === "is_adult" ? ' Defaults to "false".' : ""),
+      },
+    ]),
+);
+
 const TOOLS = [
   {
     name: "search_titles",
@@ -109,31 +125,7 @@ const TOOLS = [
           description:
             'Which popularity sources to include in the average. Use "all", "none", or a comma-separated subset: allocine_popularity, imdb_popularity, tmdb_popularity, trakt_popularity.',
         },
-        is_active: {
-          type: "string",
-          description:
-            '"true" returns only active titles, "false" returns only inactive titles, "true,false" (or omitting this parameter) returns both.',
-        },
-        is_adult: {
-          type: "string",
-          description:
-            '"false" (default) returns only non-adult titles, "true" returns only adult-flagged titles, "true,false" returns both.',
-        },
-        must_see: {
-          type: "string",
-          description:
-            '"true" returns only Metacritic "Must-See" titles, "false" returns only titles without that badge, "true,false" returns both.',
-        },
-        users_certified: {
-          type: "string",
-          description:
-            '"true" returns only Rotten Tomatoes "Verified Audience" certified titles, "false" returns only uncertified titles, "true,false" returns both.',
-        },
-        critics_certified: {
-          type: "string",
-          description:
-            '"true" returns only Rotten Tomatoes "Certified Fresh" titles, "false" returns only non-certified titles, "true,false" returns both.',
-        },
+        ...booleanQueryProperties,
         composers: {
           type: "string",
           description:
@@ -314,7 +306,7 @@ const TOOLS = [
   {
     name: "get_rated_episodes",
     description:
-      "Get the highest or lowest rated IMDb episodes across all TV shows. Supports filtering by show title, genre, platform, network, director, production company, status, season, minimum rating, vote count, release date, and content flags (active, adult, must-see, certified).",
+      "Get the highest or lowest rated IMDb episodes across all TV shows. Supports filtering by show title, genre, platform, network, director, production company, status, season, minimum rating, vote count, release date, and boolean filters.",
     inputSchema: {
       type: "object",
       properties: {
@@ -338,31 +330,7 @@ const TOOLS = [
           description:
             "Comma-separated TV networks. Case-insensitive partial match by default; use `^name$` for an exact match. Pass `all` to skip this filter.",
         },
-        is_active: {
-          type: "string",
-          description:
-            '"true" returns only active TV shows, "false" returns only inactive TV shows, "true,false" (or omitting this parameter) returns both.',
-        },
-        is_adult: {
-          type: "string",
-          description:
-            '"false" (default) returns only non-adult TV shows, "true" returns only adult-flagged TV shows, "true,false" returns both.',
-        },
-        must_see: {
-          type: "string",
-          description:
-            '"true" returns only TV shows with Metacritic "Must-See" badge, "false" returns only those without it, "true,false" returns both.',
-        },
-        users_certified: {
-          type: "string",
-          description:
-            '"true" returns only TV shows with Rotten Tomatoes "Verified Audience" certification, "false" returns only uncertified shows, "true,false" returns both.',
-        },
-        critics_certified: {
-          type: "string",
-          description:
-            '"true" returns only TV shows with Rotten Tomatoes "Certified Fresh" status, "false" returns only non-certified shows, "true,false" returns both.',
-        },
+        ...booleanQueryProperties,
         directors: {
           type: "string",
           description:

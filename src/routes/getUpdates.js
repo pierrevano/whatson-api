@@ -24,7 +24,7 @@ const getUpdates = async (req, res) => {
     const apiKeyDoc = await getApiKey(api_key_query);
     if (!isSponsorApiKey(apiKeyDoc)) {
       return sendResponse(res, 403, {
-        message: `This endpoint requires a sponsor API key. Become a sponsor for access: ${config.contactURL}`,
+        message: `${config.sponsorApiKeyRequiredMessage} ${config.contactURL}`,
       });
     }
 

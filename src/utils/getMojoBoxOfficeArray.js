@@ -10,7 +10,7 @@ const { logErrors } = require("./logErrors");
  * @returns {Promise<Array>} Array of box office entries (empty if skipped or unsupported).
  */
 const getMojoBoxOfficeArray = async (item_type, skip_mojo) => {
-  const mojoBoxOfficeCachePath = `./temp_mojo_box_office_${item_type || "unknown"}.json`;
+  const mojoBoxOfficeCachePath = `./temp_mojo_cache_${item_type || "unknown"}.json`;
   let mojoBoxOfficeArray = [];
 
   if (item_type === "movie" && skip_mojo !== "skip_mojo") {

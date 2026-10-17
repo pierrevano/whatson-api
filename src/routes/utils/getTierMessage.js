@@ -4,18 +4,23 @@ const { config } = require("../../config");
  * Returns the rate limit exceeded message for the given API key.
  *
  * @param {object|null} apiKeyDoc - API key document, or null if no key was provided.
- * @param {number} apiKeyDoc.rate_limit_points - Allowed requests per hour for this key.
+ * @param {number} apiKeyDoc.rate_limit_points - Allowed requests per day for this key.
+ * @param {"minute"|"daily"} rateLimitWindow - The exceeded rate limit window.
  * @returns {string} Message to include in the 429 response.
  */
-const getTierMessage = (apiKeyDoc) => {
+const getTierMessage = (apiKeyDoc, rateLimitWindow) => {
+  if (rateLimitWindow === "minute")
+    return `Too many requests (${config.pointsPerMinute} req/min limit).`;
+
+  const points = apiKeyDoc?.rate_limit_points ?? config.pointsAnonymous;
+  const limitMessage = `Too many requests (${points} req/day limit).`;
   if (!apiKeyDoc)
-    return `Too many requests (${config.pointsAnonymous} req/h, ${config.pointsAnonymous * config.dailyMultiplier} req/day limit). Request a free API key for a higher limit: ${config.contactURL}`;
-  const points = apiKeyDoc.rate_limit_points;
+    return `${limitMessage} Request a free API key for a higher limit: ${config.contactURL}`;
   if (points === config.pointsFree)
-    return `Too many requests (${config.pointsFree} req/h, ${config.pointsFree * config.dailyMultiplier} req/day limit). Become a sponsor for a higher limit: ${config.contactURL}`;
+    return `${limitMessage} Become a $1/month sponsor for a higher limit: ${config.contactURL}`;
   if (points === config.pointsSponsor)
-    return `Too many requests (${config.pointsSponsor} req/h limit). Contact me for a custom limit: ${config.contactURL}`;
-  return `Too many requests. Contact me to adjust your custom limit: ${config.contactURL}`;
+    return `${limitMessage} Contact me for a custom limit: ${config.contactURL}`;
+  return `${limitMessage} Contact me to adjust your custom limit: ${config.contactURL}`;
 };
 
 module.exports = { getTierMessage };

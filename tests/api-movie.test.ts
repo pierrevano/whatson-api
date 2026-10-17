@@ -222,7 +222,7 @@ function checkItemProperties(items) {
 
     if (Array.isArray(item.episodes_details)) {
       item.episodes_details.forEach((episode) => {
-        if (episode?.id) {
+        if (episode.id) {
           expectImdbId(episode.id);
         }
         expectIdRatingConsistency(episode, ["users_rating"]);
@@ -332,12 +332,20 @@ function checkItemProperties(items) {
       expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.allocine,
       );
-      if (item.allocine?.users_rating) {
+      if (item.allocine.users_rating) {
         expectIdRatingConsistency(item.allocine, ["users_rating"]);
       }
-      if (item.allocine?.critics_rating) {
+      if (item.allocine.critics_rating) {
         expectIdRatingConsistency(item.allocine, ["critics_rating"]);
       }
+    }
+    if (item.is_active === true) {
+      expect(
+        items.filter((item) => item.allocine?.le_club === true).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.softDefault);
+      expect(
+        items.filter((item) => item.allocine?.les_indes === true).length,
+      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.softDefault);
     }
     expect(
       items.filter((item) => typeof item.allocine?.users_rating === "number")
@@ -487,8 +495,8 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.betaseries?.users_rating &&
-          typeof item.betaseries?.users_rating_count !== "undefined"
+          item.betaseries.users_rating &&
+          typeof item.betaseries.users_rating_count !== "undefined"
         ) {
           expect(item.betaseries.users_rating_count).toBeGreaterThan(0);
         }
@@ -529,14 +537,14 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.metacritic?.users_rating &&
-          typeof item.metacritic?.users_rating_count !== "undefined"
+          item.metacritic.users_rating &&
+          typeof item.metacritic.users_rating_count !== "undefined"
         ) {
           expect(item.metacritic.users_rating_count).toBeGreaterThan(0);
         }
         if (
-          item.metacritic?.critics_rating &&
-          typeof item.metacritic?.critics_rating_count !== "undefined"
+          item.metacritic.critics_rating &&
+          typeof item.metacritic.critics_rating_count !== "undefined"
         ) {
           expect(item.metacritic.critics_rating_count).toBeGreaterThan(0);
         }
@@ -580,8 +588,8 @@ function checkItemProperties(items) {
         "critics_rating",
       ]);
       if (
-        typeof item.rotten_tomatoes?.users_rating_liked_count === "number" ||
-        typeof item.rotten_tomatoes?.users_rating_not_liked_count === "number"
+        typeof item.rotten_tomatoes.users_rating_liked_count === "number" ||
+        typeof item.rotten_tomatoes.users_rating_not_liked_count === "number"
       ) {
         expect(typeof item.rotten_tomatoes.users_rating_liked_count).toBe(
           "number",
@@ -590,7 +598,7 @@ function checkItemProperties(items) {
           "number",
         );
       }
-      if (item.rotten_tomatoes?.users_rating_count) {
+      if (item.rotten_tomatoes.users_rating_count) {
         expect(item.rotten_tomatoes.users_rating_count).toBeGreaterThan(0);
         expect(item.rotten_tomatoes.users_rating_count).toBe(
           item.rotten_tomatoes.users_rating_liked_count +
@@ -625,8 +633,8 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.rotten_tomatoes?.critics_rating &&
-          typeof item.rotten_tomatoes?.critics_rating_count !== "undefined"
+          item.rotten_tomatoes.critics_rating &&
+          typeof item.rotten_tomatoes.critics_rating_count !== "undefined"
         ) {
           expect(item.rotten_tomatoes.critics_rating_count).toBeGreaterThan(0);
         }
@@ -731,8 +739,8 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.letterboxd?.users_rating &&
-          typeof item.letterboxd?.users_rating_count !== "undefined"
+          item.letterboxd.users_rating &&
+          typeof item.letterboxd.users_rating_count !== "undefined"
         ) {
           expect(item.letterboxd.users_rating_count).toBeGreaterThan(0);
         }
@@ -768,8 +776,8 @@ function checkItemProperties(items) {
           ).length,
         ).toBe(0);
         if (
-          item.senscritique?.users_rating &&
-          typeof item.senscritique?.users_rating_count !== "undefined"
+          item.senscritique.users_rating &&
+          typeof item.senscritique.users_rating_count !== "undefined"
         ) {
           expect(item.senscritique.users_rating_count).toBeGreaterThan(0);
         }
@@ -802,8 +810,8 @@ function checkItemProperties(items) {
           items.filter((item) => item.tmdb && !item.tmdb?.users_rating).length,
         ).toBe(0);
         if (
-          item.tmdb?.users_rating &&
-          typeof item.tmdb?.users_rating_count !== "undefined"
+          item.tmdb.users_rating &&
+          typeof item.tmdb.users_rating_count !== "undefined"
         ) {
           expect(item.tmdb.users_rating_count).toBeGreaterThan(0);
         }
@@ -836,8 +844,8 @@ function checkItemProperties(items) {
             .length,
         ).toBe(0);
         if (
-          item.trakt?.users_rating &&
-          typeof item.trakt?.users_rating_count !== "undefined"
+          item.trakt.users_rating &&
+          typeof item.trakt.users_rating_count !== "undefined"
         ) {
           expect(item.trakt.users_rating_count).toBeGreaterThan(0);
         }
@@ -992,7 +1000,7 @@ const params = {
           : null;
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
   },
 
@@ -1008,8 +1016,206 @@ const params = {
           : null;
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
+  },
+
+  only_adult_movies: {
+    query: "?item_type=movie&is_adult=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.is_adult).toBe(true);
+      });
+    },
+  },
+
+  only_non_adult_movies: {
+    query: "?item_type=movie&is_adult=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.is_adult).toBe(false);
+      });
+    },
+  },
+
+  both_adult_and_non_adult_movies: {
+    query: "?item_type=movie&is_adult=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect([true, false]).toContain(item.is_adult);
+      });
+    },
+  },
+
+  only_must_see_movies: {
+    query: "?item_type=movie&must_see=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.metacritic.must_see).toBe(true);
+      });
+    },
+  },
+
+  only_non_must_see_movies: {
+    query: "?item_type=movie&must_see=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.metacritic.must_see).toBe(false);
+      });
+    },
+  },
+
+  both_must_see_values_movies: {
+    query: "?item_type=movie&must_see=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect([true, false]).toContain(item.metacritic.must_see);
+      });
+    },
+  },
+
+  only_users_certified_movies: {
+    query: "?item_type=movie&users_certified=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.rotten_tomatoes.users_certified).toBe(true);
+      });
+    },
+  },
+
+  only_non_users_certified_movies: {
+    query: "?item_type=movie&users_certified=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.rotten_tomatoes.users_certified).toBe(false);
+      });
+    },
+  },
+
+  both_users_certified_values_movies: {
+    query: "?item_type=movie&users_certified=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect([true, false]).toContain(item.rotten_tomatoes.users_certified);
+      });
+    },
+  },
+
+  only_critics_certified_movies: {
+    query: "?item_type=movie&critics_certified=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.rotten_tomatoes.critics_certified).toBe(true);
+      });
+    },
+  },
+
+  only_non_critics_certified_movies: {
+    query: "?item_type=movie&critics_certified=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.rotten_tomatoes.critics_certified).toBe(false);
+      });
+    },
+  },
+
+  both_critics_certified_values_movies: {
+    query: "?item_type=movie&critics_certified=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect([true, false]).toContain(item.rotten_tomatoes.critics_certified);
+      });
+    },
+  },
+
+  movies_with_le_club_label: {
+    query: "?item_type=movie&le_club=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.allocine.le_club).toBe(true);
+      });
+    },
+  },
+
+  movies_without_le_club_label: {
+    query: "?item_type=movie&le_club=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.allocine.le_club).toBe(false);
+      });
+    },
+  },
+
+  both_le_club_values_movies: {
+    query: "?item_type=movie&le_club=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect([true, false]).toContain(item.allocine.le_club);
+      });
+    },
+  },
+
+  movies_with_les_indes_label: {
+    query: "?item_type=movie&les_indes=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.allocine.les_indes).toBe(true);
+      });
+    },
+  },
+
+  movies_without_les_indes_label: {
+    query: "?item_type=movie&les_indes=false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.allocine.les_indes).toBe(false);
+      });
+    },
+  },
+
+  both_les_indes_values_movies: {
+    query: "?item_type=movie&les_indes=true,false",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect([true, false]).toContain(item.allocine.les_indes);
+      });
+    },
   },
 
   only_active_items: {
@@ -1017,10 +1223,10 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("is_active");
-        expect(item.is_active).toBeTruthy();
+        expect(item.is_active).toBe(true);
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
   },
 
@@ -1029,10 +1235,10 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item).toHaveProperty("is_active");
-        expect(item.is_active).toBeFalsy();
+        expect(item.is_active).toBe(false);
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
   },
 
@@ -1041,10 +1247,10 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item.metacritic).toHaveProperty("must_see");
-        expect(item.metacritic.must_see).toBeTruthy();
+        expect(item.metacritic.must_see).toBe(true);
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
   },
 
@@ -1053,10 +1259,10 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item.metacritic).toHaveProperty("must_see");
-        expect(item.metacritic.must_see).toBeFalsy();
+        expect(item.metacritic.must_see).toBe(false);
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
   },
 
@@ -1065,10 +1271,10 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item.rotten_tomatoes).toHaveProperty("users_certified");
-        expect(item.rotten_tomatoes.users_certified).toBeTruthy();
+        expect(item.rotten_tomatoes.users_certified).toBe(true);
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
   },
 
@@ -1077,11 +1283,23 @@ const params = {
     expectedResult: (items) =>
       items.forEach((item) => {
         expect(item.rotten_tomatoes).toHaveProperty("critics_certified");
-        expect(item.rotten_tomatoes.critics_certified).toBeTruthy();
+        expect(item.rotten_tomatoes.critics_certified).toBe(true);
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
+  },
+
+  movies_with_both_allocine_labels: {
+    query: "?item_type=movie&le_club=true&les_indes=true",
+    expectedResult: (items) => {
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach((item) => {
+        expect(item.item_type).toBe("movie");
+        expect(item.allocine.le_club).toBe(true);
+        expect(item.allocine.les_indes).toBe(true);
+      });
+    },
   },
 
   both_active_and_non_active_items: {
@@ -1094,7 +1312,7 @@ const params = {
         ).toBeTruthy();
 
         expect(item).toHaveProperty("is_adult");
-        expect(item.is_adult).toBeFalsy();
+        expect(item.is_adult).toBe(false);
       }),
   },
 
@@ -1440,28 +1658,28 @@ const params = {
   allocine_critics_rating_present: {
     query: "?ratings_filters=allocine_critics",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.allocine?.critics_rating,
+      getRating: (item) => item.allocine.critics_rating,
     }),
   },
 
   allocine_users_rating_present: {
     query: "?ratings_filters=allocine_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.allocine?.users_rating,
+      getRating: (item) => item.allocine.users_rating,
     }),
   },
 
   betaseries_users_rating_present: {
     query: "?ratings_filters=betaseries_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.betaseries?.users_rating,
+      getRating: (item) => item.betaseries.users_rating,
     }),
   },
 
   imdb_users_rating_present: {
     query: "?ratings_filters=imdb_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.imdb?.users_rating,
+      getRating: (item) => item.imdb.users_rating,
       divisor: 2,
     }),
   },
@@ -1469,7 +1687,7 @@ const params = {
   metacritic_critics_rating_present: {
     query: "?ratings_filters=metacritic_critics",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.metacritic?.critics_rating,
+      getRating: (item) => item.metacritic.critics_rating,
       divisor: 20,
     }),
   },
@@ -1477,7 +1695,7 @@ const params = {
   metacritic_users_rating_present: {
     query: "?ratings_filters=metacritic_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.metacritic?.users_rating,
+      getRating: (item) => item.metacritic.users_rating,
       divisor: 2,
     }),
   },
@@ -1485,7 +1703,7 @@ const params = {
   rottentomatoes_critics_rating_present: {
     query: "?ratings_filters=rottentomatoes_critics",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.rotten_tomatoes?.critics_rating,
+      getRating: (item) => item.rotten_tomatoes.critics_rating,
       divisor: 20,
     }),
   },
@@ -1493,7 +1711,7 @@ const params = {
   rottentomatoes_users_rating_present: {
     query: "?ratings_filters=rottentomatoes_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.rotten_tomatoes?.users_rating,
+      getRating: (item) => item.rotten_tomatoes.users_rating,
       divisor: 20,
     }),
   },
@@ -1501,14 +1719,14 @@ const params = {
   letterboxd_users_rating_present: {
     query: "?ratings_filters=letterboxd_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.letterboxd?.users_rating,
+      getRating: (item) => item.letterboxd.users_rating,
     }),
   },
 
   senscritique_users_rating_present: {
     query: "?ratings_filters=senscritique_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.senscritique?.users_rating,
+      getRating: (item) => item.senscritique.users_rating,
       divisor: 2,
     }),
   },
@@ -1516,7 +1734,7 @@ const params = {
   tmdb_users_rating_present: {
     query: "?ratings_filters=tmdb_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.tmdb?.users_rating,
+      getRating: (item) => item.tmdb.users_rating,
       divisor: 2,
     }),
   },
@@ -1524,7 +1742,7 @@ const params = {
   trakt_users_rating_present: {
     query: "?ratings_filters=trakt_users",
     expectedResult: createSingleRatingsFilterExpectation({
-      getRating: (item) => item.trakt?.users_rating,
+      getRating: (item) => item.trakt.users_rating,
       divisor: 20,
     }),
   },

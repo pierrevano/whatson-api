@@ -20,7 +20,7 @@ const params = {
     expectedResult: (items) => {
       expect(items.length).toBeGreaterThan(1);
       items.forEach((item) => {
-        expect(typeof item.mojo?.rank).toBe("number");
+        expect(typeof item.mojo.rank).toBe("number");
       });
       for (let index = 1; index < items.length; index++) {
         expect(items[index].mojo.rank).toBeGreaterThanOrEqual(

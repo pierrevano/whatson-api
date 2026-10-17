@@ -2,6 +2,7 @@ const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
 const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
+const { getBooleanFilters } = require("./utils/getBooleanFilters");
 const { getPipelineByNames } = require("./getPipelineByNames");
 const { getPipelineFromTVShow } = require("./getPipelineFromTVShow");
 const { getPopularityFilters } = require("./getPopularityFilters");
@@ -24,11 +25,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
  * @param {string|undefined} networks_query - Comma-separated networks filter.
  * @param {string|undefined} production_companies_query - Comma-separated production companies filter.
  * @param {number|undefined} id_path - Numeric TMDB identifier when fetching a single item.
- * @param {string|boolean|undefined} is_active_query - Flag indicating which activity states to include.
- * @param {string|boolean|undefined} is_adult_query - Flag indicating which adult content states to include.
- * @param {string|undefined} is_must_see_query - Filter for `must_see` items.
- * @param {string|undefined} is_users_certified_query - Filter for user certified badge.
- * @param {string|undefined} is_critics_certified_query - Filter for critics certified badge.
+ * @param {Record<string, string|undefined>} [boolean_query] - Boolean query parameter values (e.g., is_active, is_adult).
  * @param {string|undefined} item_type_query - Item type filters (e.g., "movie", "tvshow", "movie,tvshow").
  * @param {number|undefined} limit_query - Requested page size.
  * @param {string|undefined} minimum_ratings_query - Minimum average rating; the lowest value is used when several are provided.
@@ -53,11 +50,7 @@ const aggregateData = async (
   networks_query,
   production_companies_query,
   id_path,
-  is_active_query,
-  is_adult_query,
-  is_must_see_query,
-  is_users_certified_query,
-  is_critics_certified_query,
+  boolean_query,
   item_type_query,
   limit_query,
   minimum_ratings_query,
@@ -110,27 +103,8 @@ const aggregateData = async (
       ? production_companies_query
       : "";
   const id = isNaN(id_path) ? "" : id_path;
-  const is_active =
-    typeof is_active_query !== "undefined" && is_active_query
-      ? is_active_query
-      : "true,false";
-  const is_adult =
-    typeof is_adult_query !== "undefined" && is_adult_query
-      ? is_adult_query
-      : false; // By default, we exclude items containing adult content.
-  const is_must_see =
-    typeof is_must_see_query !== "undefined" && is_must_see_query
-      ? is_must_see_query
-      : "true,false";
-  const is_users_certified =
-    typeof is_users_certified_query !== "undefined" && is_users_certified_query
-      ? is_users_certified_query
-      : "true,false";
-  const is_critics_certified =
-    typeof is_critics_certified_query !== "undefined" &&
-    is_critics_certified_query
-      ? is_critics_certified_query
-      : "true,false";
+  const booleanFilters = getBooleanFilters(boolean_query);
+  const is_active_item = booleanFilters.is_active;
   const item_type =
     typeof item_type_query !== "undefined" && item_type_query
       ? item_type_query
@@ -215,51 +189,6 @@ const aggregateData = async (
     },
   };
 
-  let is_active_item = {
-    is_active: is_active === "true" || is_active === true,
-  };
-  const is_active_all = { $or: [{ is_active: true }, { is_active: false }] };
-  is_active_item =
-    is_active === "true,false" || is_active === "false,true"
-      ? is_active_all
-      : is_active_item;
-
-  let is_adult_item = {
-    is_adult: is_adult === "true" || is_adult === true,
-  };
-  const is_adult_all = { $or: [{ is_adult: true }, { is_adult: false }] };
-  is_adult_item =
-    is_adult === "true,false" || is_adult === "false,true"
-      ? is_adult_all
-      : is_adult_item;
-
-  let is_must_see_item = {
-    "metacritic.must_see": is_must_see === "true" || is_must_see === true,
-  };
-  is_must_see_item =
-    is_must_see === "true,false" || is_must_see === "false,true"
-      ? is_active_all
-      : is_must_see_item;
-
-  let is_users_certified_item = {
-    "rotten_tomatoes.users_certified":
-      is_users_certified === "true" || is_users_certified === true,
-  };
-  is_users_certified_item =
-    is_users_certified === "true,false" || is_users_certified === "false,true"
-      ? is_active_all
-      : is_users_certified_item;
-
-  let is_critics_certified_item = {
-    "rotten_tomatoes.critics_certified":
-      is_critics_certified === "true" || is_critics_certified === true,
-  };
-  is_critics_certified_item =
-    is_critics_certified === "true,false" ||
-    is_critics_certified === "false,true"
-      ? is_active_all
-      : is_critics_certified_item;
-
   let item_type_default = { item_type: item_type };
   const item_type_all = {
     $or: [{ item_type: "movie" }, { item_type: "tvshow" }],
@@ -272,14 +201,7 @@ const aggregateData = async (
   const match_id = { $match: { id: id } };
   const match_item_type = {
     $match: {
-      $and: [
-        item_type_default,
-        is_active_item,
-        is_adult_item,
-        is_must_see_item,
-        is_users_certified_item,
-        is_critics_certified_item,
-      ],
+      $and: [item_type_default, ...Object.values(booleanFilters)],
     },
   };
 
@@ -478,81 +400,16 @@ const aggregateData = async (
     pipeline.push(match_id);
   } else {
     pipeline.push(match_item_type);
-    getPipelineFromTVShow(
-      config,
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-      "",
-      pipeline,
-      seasons_number,
-      status,
-    );
+    getPipelineFromTVShow(config, "", pipeline, seasons_number, status);
   }
 
   if (!id) {
-    getPipelineByNames(
-      composers,
-      pipeline,
-      "composers",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      directors,
-      pipeline,
-      "directors",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      genres,
-      pipeline,
-      "genres",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      platforms,
-      pipeline,
-      "platforms_links",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      networks,
-      pipeline,
-      "networks",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
-    getPipelineByNames(
-      production_companies,
-      pipeline,
-      "production_companies",
-      is_active_item,
-      is_adult_item,
-      is_must_see_item,
-      is_users_certified_item,
-      is_critics_certified_item,
-    );
+    getPipelineByNames(composers, pipeline, "composers");
+    getPipelineByNames(directors, pipeline, "directors");
+    getPipelineByNames(genres, pipeline, "genres");
+    getPipelineByNames(platforms, pipeline, "platforms_links");
+    getPipelineByNames(networks, pipeline, "networks");
+    getPipelineByNames(production_companies, pipeline, "production_companies");
   }
 
   if (prune_keys_before_sort) {
