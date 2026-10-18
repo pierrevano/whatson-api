@@ -16,13 +16,18 @@ const { sendResponse } = require("../../utils/sendRequest");
 /**
  * Builds a memory-based rate limiter with the shared configuration defaults.
  *
+ * @param {number} [points] - Maximum number of requests allowed per window.
+ * @param {number} [duration] - Window duration in seconds.
  * @returns {RateLimiterMemory} Configured rate limiter instance.
  */
-const createRateLimiter = () =>
+const createRateLimiter = (
+  points = config.pointsPerMinute,
+  duration = config.duration,
+) =>
   new RateLimiterMemory({
-    points: config.pointsPerMinute, // maximum number of requests
-    duration: config.duration, // window duration in seconds
-    blockDuration: config.duration, // block duration in seconds if rate limit is exceeded
+    points, // maximum number of requests
+    duration, // window duration in seconds
+    blockDuration: duration, // block duration in seconds if rate limit is exceeded
   });
 
 /**
@@ -38,10 +43,15 @@ const createDailyLimiter = (points) =>
     tableName: config.collectionNameRateLimit,
     points, // maximum number of requests
     duration: config.dailyDuration, // window duration in seconds
+    inMemoryBlockOnConsumed: points,
   });
 
-const createLimiters = (points = config.pointsAnonymous) => [
+const createLimiters = (
+  points = config.pointsAnonymous,
+  hourlyPoints = config.pointsAnonymousPerHour,
+) => [
   createRateLimiter(),
+  hourlyPoints ? createRateLimiter(hourlyPoints, config.hourlyDuration) : null,
   createDailyLimiter(points),
 ];
 
@@ -63,7 +73,7 @@ const limiter = async (req, res, next) => {
 
   let apiKeyDoc = null;
   let key = getRateLimiterKey(req);
-  let [rateLimiter, dailyLimiter] = defaultLimiters;
+  let [rateLimiter, hourlyLimiter, dailyLimiter] = defaultLimiters;
 
   if (apiKeyValue) {
     apiKeyDoc = await getApiKey(apiKeyValue);
@@ -77,13 +87,37 @@ const limiter = async (req, res, next) => {
       if (!keyedLimiters.has(apiKeyValue)) {
         keyedLimiters.set(
           apiKeyValue,
-          createLimiters(apiKeyDoc.rate_limit_points),
+          createLimiters(
+            apiKeyDoc.rate_limit_points,
+            apiKeyDoc.rate_limit_points === config.pointsFree
+              ? config.pointsFreePerHour
+              : null,
+          ),
         );
       }
-      [rateLimiter, dailyLimiter] = keyedLimiters.get(apiKeyValue);
+      [rateLimiter, hourlyLimiter, dailyLimiter] =
+        keyedLimiters.get(apiKeyValue);
       key = apiKeyValue;
     }
   }
+
+  let apiKeyTier = "anonymous";
+  if (apiKeyDoc) {
+    apiKeyTier = "custom";
+    if (apiKeyDoc.rate_limit_points === config.pointsFree) apiKeyTier = "free";
+    else if (apiKeyDoc.rate_limit_points === config.pointsSponsor)
+      apiKeyTier = "sponsor";
+  }
+  sendToNewRelic(req, null, null, {
+    api_key_id: apiKeyDoc?._id?.toString(),
+    api_key_name: apiKeyDoc?.name || "unnamed",
+    api_key_tier: apiKeyTier,
+    auth_category: apiKeyDoc
+      ? "valid_key"
+      : apiKeyValue
+        ? "invalid_key"
+        : "anonymous",
+  });
 
   if (!key) {
     return sendResponse(res, 503, {
@@ -94,6 +128,10 @@ const limiter = async (req, res, next) => {
   let rateLimitWindow = "minute";
   try {
     const result = await rateLimiter.consume(key);
+    if (hourlyLimiter) {
+      rateLimitWindow = "hourly";
+      await hourlyLimiter.consume(key);
+    }
     rateLimitWindow = "daily";
     await dailyLimiter.consume(key);
     const rateLimitHeaders = {
@@ -123,11 +161,6 @@ const limiter = async (req, res, next) => {
     sendToNewRelic(req, null, null, {
       ...rateLimitHeaders,
       rate_limit_window: rateLimitWindow,
-      auth_category: apiKeyDoc
-        ? "valid_key"
-        : apiKeyValue
-          ? "invalid_key"
-          : "anonymous",
     });
     sendResponse(res, 429, {
       message: getTierMessage(apiKeyDoc, rateLimitWindow),

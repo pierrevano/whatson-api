@@ -8,12 +8,12 @@ info:
 
     **Rate limiting**
 
-    | Tier | Requests per day |
-    | --- | ---: |
-    | Anonymous (no API key) | 200 |
-    | Free API key | 1,200 |
-    | $1/month sponsor API key | 12,000 |
-    | Custom sponsor API key | [Contact me](https://pierrevano.github.io) |
+    | Tier | Requests per hour | Requests per day |
+    | --- | ---: | ---: |
+    | Anonymous (no API key) | 40 | 200 |
+    | Free API key | 200 | 1,000 |
+    | $1/month sponsor API key | No hourly limit | 10,000 |
+    | Custom sponsor API key | No hourly limit | [Contact me](https://pierrevano.github.io) |
 
     All tiers are also limited to 200 requests per minute.
     The `Retry-After` header is set when a limit is reached (HTTP 429).
@@ -23,7 +23,7 @@ info:
     Rotten Tomatoes ÷ 20, AlloCiné native, etc.). `minimum_ratings` uses
     the 0–5 scale when filtering movies and TV shows, and the 0–10 scale when filtering episodes.
     Movie and TV show searches by title or ID ignore this filter; episode searches support it.
-  version: 3.44.0
+  version: 3.45.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -902,6 +902,8 @@ paths:
             type: string
             default: "false"
             example: "true"
+        - $ref: "#/components/parameters/leClub"
+        - $ref: "#/components/parameters/lesIndes"
         - name: must_see
           in: query
           description: |
@@ -926,8 +928,6 @@ paths:
           schema:
             type: string
             example: "true"
-        - $ref: "#/components/parameters/leClub"
-        - $ref: "#/components/parameters/lesIndes"
         - name: composers
           in: query
           description: Comma-separated composer names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.
@@ -1387,6 +1387,8 @@ paths:
             type: string
             default: "false"
             example: "true"
+        - $ref: "#/components/parameters/leClub"
+        - $ref: "#/components/parameters/lesIndes"
         - name: must_see
           in: query
           description: |
@@ -1411,8 +1413,6 @@ paths:
           schema:
             type: string
             example: "true"
-        - $ref: "#/components/parameters/leClub"
-        - $ref: "#/components/parameters/lesIndes"
         - name: composers
           in: query
           description: Comma-separated composer names (case-insensitive partial match by default; use `^name$` for an exact match). Pass `all` to skip this filter.

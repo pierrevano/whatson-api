@@ -21,7 +21,7 @@ function ignoreNewRelicTransaction() {
  * @param {import("express").Request} req - Express request.
  * @param {string|null} api_key_query - API key value.
  * @param {object|null} internal_api_key - API key document.
- * @param {Record<string, string|number>|undefined} customAttributes - Optional attributes to send.
+ * @param {Record<string, string|number|undefined>|undefined} customAttributes - Optional attributes to send.
  * @returns {void}
  */
 function sendToNewRelic(
@@ -88,16 +88,44 @@ function reportError(data, responseWithCode, statusCode, error, res) {
 }
 
 /**
- * Reports completed responses when applicable.
+ * Reports completed response details.
  *
- * @param {import("express").Request} _req - Express request.
+ * @param {import("express").Request} req - Express request.
  * @param {import("express").Response} res - Express response.
  * @param {import("express").NextFunction} next - Next middleware callback.
  * @returns {void}
  */
-function reportErrorResponses(_req, res, next) {
+function reportErrorResponses(req, res, next) {
+  let responseBytes = 0;
+
+  if (newrelic) {
+    // Register before compression to count the encoded response body.
+    for (const method of ["write", "end"]) {
+      const original = res[method];
+      res[method] = function (chunk, encoding, ...args) {
+        if (chunk && typeof chunk !== "function") {
+          responseBytes += Buffer.byteLength(
+            chunk,
+            typeof encoding === "string" ? encoding : undefined,
+          );
+        }
+        return original.call(this, chunk, encoding, ...args);
+      };
+    }
+  }
+
   res.once("prefinish", () => {
     const statusCode = res.statusCode;
+    if (newrelic) {
+      if (req.method === "HEAD" || statusCode === 204 || statusCode === 304) {
+        responseBytes = 0;
+      }
+      newrelic.addCustomAttributes({
+        response_bytes: responseBytes,
+        response_encoding: res.getHeader("Content-Encoding") || "identity",
+      });
+      newrelic.recordMetric("ResponseBytes", responseBytes);
+    }
     reportError(
       { message: `HTTP ${statusCode}` },
       { code: statusCode },

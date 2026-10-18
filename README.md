@@ -20,12 +20,12 @@ Use of the API and any returned data is subject to [API_TERMS.md](./API_TERMS.md
 
 ### Rate limits
 
-| Tier                     |                           Requests per day |
-| ------------------------ | -----------------------------------------: |
-| Anonymous (no API key)   |                                        200 |
-| Free API key             |                                      1,200 |
-| $1/month sponsor API key |                                     12,000 |
-| Custom sponsor API key   | [Contact me](https://pierrevano.github.io) |
+| Tier                     | Requests per hour |                           Requests per day |
+| ------------------------ | ----------------: | -----------------------------------------: |
+| Anonymous (no API key)   |                40 |                                        200 |
+| Free API key             |               200 |                                      1,000 |
+| $1/month sponsor API key |   No hourly limit |                                     10,000 |
+| Custom sponsor API key   |   No hourly limit | [Contact me](https://pierrevano.github.io) |
 
 All tiers are also limited to 200 requests per minute. When a limit is exceeded, the API returns a `429` response with a `Retry-After` header. Request a free API key or discuss sponsorship and custom limits by contacting me at https://pierrevano.github.io.
 
@@ -81,7 +81,7 @@ Active items are fetched from 2 different links:
 - _These 2 links are also used to fetch the AlloCiné popularity of each item._
 
 > ```
-> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,certification_variants,composers,countries_of_origin,critics_rating_details,directors,episodes_details,genres,highest_episode,image_variants,last_episode,lowest_episode,mojo,networks,next_episode,original_title,parents_guide,platforms_links,production_companies,tagline,title_variants,trailer&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&sort_by=<ratings_or_popularity_or_top_ranking_or_mojo_rank>&order=<asc_or_desc>&page=<integer>&limit=<integer>&le_club=true,false&les_indes=true,false
+> https://whatson-api.onrender.com/?ratings_filters=allocine_critics,allocine_users,betaseries_users,imdb_users,metacritic_critics,metacritic_users,rottentomatoes_critics,rottentomatoes_users,letterboxd_users,senscritique_users,tmdb_users,trakt_users&popularity_filters=allocine_popularity,imdb_popularity,tmdb_popularity,trakt_popularity&item_type=movie,tvshow&is_active=true,false&is_adult=true,false&le_club=true,false&les_indes=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&release_date=new&seasons_number=1,2,3,4,5&status=canceled,ended,ongoing,pilot,unknown&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&append_to_response=awards,certification_variants,composers,countries_of_origin,critics_rating_details,directors,episodes_details,genres,highest_episode,image_variants,last_episode,lowest_episode,mojo,networks,next_episode,original_title,parents_guide,platforms_links,production_companies,tagline,title_variants,trailer&filtered_seasons=<integer>,<integer>&runtime=<integer>,<integer>&sort_by=<ratings_or_popularity_or_top_ranking_or_mojo_rank>&order=<asc_or_desc>&page=<integer>&limit=<integer>
 > ```
 
 | Parameter            | Value                                                                                                                                                                                                                                                                                                       | Description                                                                                                                                                                                                              |
@@ -165,7 +165,7 @@ Returns the highest or lowest rated episodes across all tvshows combined.
 You can also see it live at https://whatson-top-episodes.vercel.app.
 
 > ```
-> https://whatson-api.onrender.com/episodes/rated?order=<asc_or_desc>&is_active=true,false&is_adult=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<integer>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<integer>,<integer>&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&title=<string>&page=<integer>&limit=<integer>&le_club=true,false&les_indes=true,false
+> https://whatson-api.onrender.com/episodes/rated?order=<asc_or_desc>&is_active=true,false&is_adult=true,false&le_club=true,false&les_indes=true,false&must_see=true,false&users_certified=true,false&critics_certified=true,false&minimum_ratings=<number>&minimum_users_rating_count=<integer>&release_date=from:<yyyy-mm-dd>,to:<yyyy-mm-dd>&filtered_seasons=<integer>,<integer>&composers=<string>&directors=<string>&genres=<string>&platforms=<string>&networks=<string>&production_companies=<string>&status=canceled,ended,ongoing,pilot,unknown&title=<string>&page=<integer>&limit=<integer>
 > ```
 
 | Parameter                  | Value                                | Description                                                                                    |

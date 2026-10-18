@@ -55,12 +55,15 @@ const config = {
 
   /* Rate limit settings */
   pointsAnonymous: 200,
-  pointsFree: 1200,
+  pointsAnonymousPerHour: 40,
+  pointsFree: 1000,
+  pointsFreePerHour: 200,
   pointsPerMinute: 200,
-  pointsSponsor: 12000,
+  pointsSponsor: 10000,
   contactURL: "https://pierrevano.github.io",
   duration: 60, // 1 minute in seconds
   dailyDuration: 24 * 60 * 60, // 1 day in seconds
+  hourlyDuration: 60 * 60, // 1 hour in seconds
 
   /* Global settings */
   countryIs: "https://api.country.is/",
@@ -171,7 +174,7 @@ const config = {
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/606.1.15",
   userAgentSafariAlt:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5449.179 Safari/538.36",
-  cacheTtlMs: 60 * 1000,
+  cacheTtlMs: 15 * 1000,
   apiKeyCacheMaxEntries: 5000,
   heapLimit: 1500,
   imdbRatingCountTolerancePct: 0.5,

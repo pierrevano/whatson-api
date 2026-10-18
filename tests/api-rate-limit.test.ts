@@ -113,49 +113,82 @@ describe("What's on? API rate limiting tests", () => {
     config.timeout,
   );
 
-  rateLimitTest(
-    "Rate Limiting should include Retry-After once the limit is exceeded",
-    async () => {
+  rateLimitTest.each([
+    [
+      "anonymous hourly",
+      undefined,
+      config.pointsAnonymousPerHour,
+      `Too many requests (${config.pointsAnonymousPerHour} req/hour limit). Request a free API key for a higher limit: ${config.contactURL}`,
+    ],
+    [
+      "sponsor minute",
+      config.pointsSponsor,
+      config.pointsPerMinute,
+      `Too many requests (${config.pointsPerMinute} req/min limit).`,
+    ],
+  ])(
+    "Rate Limiting should include Retry-After once the %s limit is exceeded",
+    async (_tier, points, limit, message) => {
       const apiCall = `${baseURL}/movie/121`;
+      const apiKey = points ? `rate-limit-${generateRandomIp()}` : undefined;
       const forwardedFor = generateRandomIp();
+      const rateLimitCollection = client
+        .db(config.dbName)
+        .collection(config.collectionNameRateLimit);
       const batchSize = 100;
       let rateLimitedResponse = null;
 
-      for (
-        let requestCount = 0;
-        requestCount < config.pointsPerMinute + 1 && !rateLimitedResponse;
-        requestCount += batchSize
-      ) {
-        const currentBatchSize = Math.min(
-          batchSize,
-          config.pointsPerMinute + 1 - requestCount,
-        );
-        const responses = await Promise.all(
-          Array.from({ length: currentBatchSize }).map(() =>
-            axios.get(apiCall, {
-              headers: {
-                "CF-Connecting-IP": forwardedFor,
-                "X-Forwarded-For": forwardedFor,
-              },
-              validateStatus: (status) => status <= 500,
-            }),
-          ),
-        );
+      try {
+        if (apiKey) {
+          await collectionApiKey.insertOne({
+            value: apiKey,
+            name: null,
+            description: null,
+            is_active: true,
+            is_internal: false,
+            rate_limit_points: points,
+          });
+        }
 
-        rateLimitedResponse =
-          responses.find((response) => response.status === 429) || null;
+        for (
+          let requestCount = 0;
+          requestCount < limit + 1 && !rateLimitedResponse;
+          requestCount += batchSize
+        ) {
+          const currentBatchSize = Math.min(
+            batchSize,
+            limit + 1 - requestCount,
+          );
+          const responses = await Promise.all(
+            Array.from({ length: currentBatchSize }).map(() =>
+              axios.get(apiCall, {
+                params: { api_key: apiKey },
+                headers: {
+                  "CF-Connecting-IP": forwardedFor,
+                  "X-Forwarded-For": forwardedFor,
+                },
+                validateStatus: (status) => status <= 500,
+              }),
+            ),
+          );
+
+          rateLimitedResponse =
+            responses.find((response) => response.status === 429) || null;
+        }
+
+        expect(rateLimitedResponse).toBeDefined();
+        expect(rateLimitedResponse.status).toBe(429);
+        expect(rateLimitedResponse.data).toEqual({ code: 429, message });
+        expect(rateLimitedResponse.headers).toHaveProperty("retry-after");
+        expect(
+          Number(rateLimitedResponse.headers["retry-after"]),
+        ).toBeGreaterThan(0);
+      } finally {
+        await rateLimitCollection.deleteOne({
+          key: `rlflx:${apiKey || forwardedFor}`,
+        });
+        if (apiKey) await collectionApiKey.deleteOne({ value: apiKey });
       }
-
-      expect(rateLimitedResponse).toBeDefined();
-      expect(rateLimitedResponse.status).toBe(429);
-      expect(rateLimitedResponse.data).toEqual({
-        code: 429,
-        message: `Too many requests (${config.pointsPerMinute} req/min limit).`,
-      });
-      expect(rateLimitedResponse.headers).toHaveProperty("retry-after");
-      expect(
-        Number(rateLimitedResponse.headers["retry-after"]),
-      ).toBeGreaterThan(0);
     },
     120000,
   );
@@ -212,26 +245,35 @@ describe("What's on? API rate limiting tests", () => {
     "Rate Limiting should include the sponsor upgrade message for a free API key",
     async () => {
       const apiCall = `${baseURL}/movie/121`;
-      const counterKey = `rlflx:${config.testApiKey}`;
+      const apiKey = `rate-limit-free-${generateRandomIp()}`;
+      const counterKey = `rlflx:${apiKey}`;
       const rateLimitCollection = client
         .db(config.dbName)
         .collection(config.collectionNameRateLimit);
 
-      await rateLimitCollection.updateOne(
-        { key: counterKey },
-        {
-          $set: {
-            key: counterKey,
-            points: config.pointsFree,
-            expire: new Date(Date.now() + config.dailyDuration * 1000),
-          },
-        },
-        { upsert: true },
-      );
-
       try {
+        await collectionApiKey.insertOne({
+          value: apiKey,
+          name: null,
+          description: null,
+          is_active: true,
+          is_internal: false,
+          rate_limit_points: config.pointsFree,
+        });
+        await rateLimitCollection.updateOne(
+          { key: counterKey },
+          {
+            $set: {
+              key: counterKey,
+              points: config.pointsFree,
+              expire: new Date(Date.now() + config.dailyDuration * 1000),
+            },
+          },
+          { upsert: true },
+        );
+
         const response = await axios.get(apiCall, {
-          params: { api_key: config.testApiKey },
+          params: { api_key: apiKey },
           validateStatus: (status) => status <= 500,
         });
 
@@ -246,6 +288,7 @@ describe("What's on? API rate limiting tests", () => {
         );
       } finally {
         await rateLimitCollection.deleteOne({ key: counterKey });
+        await collectionApiKey.deleteOne({ value: apiKey });
       }
     },
     120000,
@@ -256,27 +299,31 @@ describe("What's on? API rate limiting tests", () => {
       "anonymous",
       undefined,
       200,
+      40,
       `Request a free API key for a higher limit: ${config.contactURL}`,
     ],
     [
       "free",
-      1200,
-      1200,
+      1000,
+      1000,
+      200,
       `Become a $1/month sponsor for a higher limit: ${config.contactURL}`,
     ],
     [
       "$1/month sponsor",
-      12000,
-      12000,
+      10000,
+      10000,
+      null,
       `Contact me for a custom limit: ${config.contactURL}`,
     ],
     [
       "custom sponsor",
       40000,
       40000,
+      null,
       `Contact me to adjust your custom limit: ${config.contactURL}`,
     ],
-  ])("%s tier", (tier, points, dailyLimit, upgradeMessage) => {
+  ])("%s tier", (tier, points, dailyLimit, hourlyLimit, upgradeMessage) => {
     const apiKey = tier === "anonymous" ? undefined : `rate-limit-${points}`;
 
     beforeEach(() => {
@@ -292,8 +339,8 @@ describe("What's on? API rate limiting tests", () => {
       jest.restoreAllMocks();
     });
 
-    test("applies the shared minute limit and daily allowance", async () => {
-      const consumeMinute = jest.spyOn(RateLimiterMemory.prototype, "consume");
+    test("applies the configured limits", async () => {
+      const consumeMemory = jest.spyOn(RateLimiterMemory.prototype, "consume");
       const consumeDaily = jest
         .spyOn(RateLimiterMongo.prototype, "consume")
         .mockResolvedValue({});
@@ -303,31 +350,51 @@ describe("What's on? API rate limiting tests", () => {
       expect(response.status).toBe(200);
       expect(response.next).toHaveBeenCalledTimes(1);
       expect(response.headers["x-ratelimit-limit"]).toBe(200);
-      expect(consumeMinute.mock.contexts[0].duration).toBe(60);
-      expect(consumeMinute.mock.contexts[0].blockDuration).toBe(60);
+      expect(consumeMemory.mock.contexts[0].points).toBe(200);
+      expect(consumeMemory.mock.contexts[0].duration).toBe(60);
+      expect(consumeMemory.mock.contexts[0].blockDuration).toBe(60);
+      expect(consumeMemory).toHaveBeenCalledTimes(hourlyLimit === null ? 1 : 2);
+      if (hourlyLimit !== null) {
+        expect(consumeMemory.mock.contexts[1].points).toBe(hourlyLimit);
+        expect(consumeMemory.mock.contexts[1].duration).toBe(3600);
+        expect(consumeMemory.mock.contexts[1].blockDuration).toBe(3600);
+      }
       expect(consumeDaily).toHaveBeenCalledTimes(1);
       expect(consumeDaily.mock.contexts[0].points).toBe(dailyLimit);
+      expect(consumeDaily.mock.contexts[0].inMemoryBlockOnConsumed).toBe(
+        dailyLimit,
+      );
     });
 
-    test("rejects requests beyond the minute limit", async () => {
-      jest.spyOn(RateLimiterMemory.prototype, "consume").mockRejectedValue({
-        msBeforeNext: 60000,
-      });
-      const consumeDaily = jest
-        .spyOn(RateLimiterMongo.prototype, "consume")
-        .mockResolvedValue({});
+    test.each(hourlyLimit === null ? ["minute"] : ["minute", "hourly"])(
+      "rejects requests beyond the %s limit",
+      async (window) => {
+        const duration = window === "minute" ? 60 : 3600;
+        const consumeMemory = jest
+          .spyOn(RateLimiterMemory.prototype, "consume")
+          .mockRejectedValue({
+            msBeforeNext: duration * 1000,
+          });
+        if (window === "hourly") consumeMemory.mockResolvedValueOnce({});
+        const consumeDaily = jest
+          .spyOn(RateLimiterMongo.prototype, "consume")
+          .mockResolvedValue({});
 
-      const response = await requestLimit(generateRandomIp(), apiKey);
+        const response = await requestLimit(generateRandomIp(), apiKey);
 
-      expect(response.status).toBe(429);
-      expect(response.data).toEqual({
-        code: 429,
-        message: "Too many requests (200 req/min limit).",
-      });
-      expect(response.headers["retry-after"]).toBe(60);
-      expect(response.next).not.toHaveBeenCalled();
-      expect(consumeDaily).not.toHaveBeenCalled();
-    });
+        expect(response.status).toBe(429);
+        expect(response.data).toEqual({
+          code: 429,
+          message:
+            window === "minute"
+              ? "Too many requests (200 req/min limit)."
+              : `Too many requests (${hourlyLimit} req/hour limit). ${upgradeMessage}`,
+        });
+        expect(response.headers["retry-after"]).toBe(duration);
+        expect(response.next).not.toHaveBeenCalled();
+        expect(consumeDaily).not.toHaveBeenCalled();
+      },
+    );
 
     test("rejects requests beyond the daily allowance", async () => {
       const consumeDaily = jest
