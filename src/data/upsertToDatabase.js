@@ -43,7 +43,10 @@ const upsertToDatabase = async (
       projection: { _id: 0 },
     });
 
-    if (logResetValues(data, storedData, allocineURL)) {
+    if (
+      process.env.ALLOW_VALUE_RESET !== "true" &&
+      logResetValues(data, storedData, allocineURL)
+    ) {
       console.log(
         `Skipping update for ${allocineHomepage} because a value would be reset.`,
       );

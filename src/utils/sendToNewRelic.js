@@ -59,7 +59,7 @@ function sendToNewRelic(
  * @returns {void}
  */
 function reportError(data, responseWithCode, statusCode, error, res) {
-  if (statusCode < 400) return;
+  if (statusCode < 400 || (statusCode === 429 && res)) return;
 
   if (res) {
     if (res.locals.newRelicErrorReported) return;
@@ -121,6 +121,8 @@ function reportErrorResponses(req, res, next) {
         responseBytes = 0;
       }
       newrelic.addCustomAttributes({
+        deployment_commit: process.env.RENDER_GIT_COMMIT || "unknown",
+        render_service_id: process.env.RENDER_SERVICE_ID || "unknown",
         response_bytes: responseBytes,
         response_encoding: res.getHeader("Content-Encoding") || "identity",
       });

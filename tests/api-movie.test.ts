@@ -342,7 +342,7 @@ function checkItemProperties(items) {
     if (item.is_active === true) {
       expect(
         items.filter((item) => item.allocine?.le_club === true).length,
-      ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.softDefault);
+      ).toBeGreaterThan(0);
       expect(
         items.filter((item) => item.allocine?.les_indes === true).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.softDefault);

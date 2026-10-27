@@ -84,16 +84,17 @@ const limiter = async (req, res, next) => {
         return next();
       }
 
-      if (!keyedLimiters.has(apiKeyValue)) {
-        keyedLimiters.set(
-          apiKeyValue,
-          createLimiters(
-            apiKeyDoc.rate_limit_points,
-            apiKeyDoc.rate_limit_points === config.pointsFree
-              ? config.pointsFreePerHour
-              : null,
-          ),
+      const points = apiKeyDoc.rate_limit_points ?? config.pointsAnonymous;
+      const cachedLimiters = keyedLimiters.get(apiKeyValue);
+      if (!cachedLimiters || cachedLimiters[2].points !== points) {
+        const updatedLimiters = createLimiters(
+          points,
+          apiKeyDoc.rate_limit_points === config.pointsFree
+            ? config.pointsFreePerHour
+            : null,
         );
+        if (cachedLimiters) updatedLimiters[0] = cachedLimiters[0];
+        keyedLimiters.set(apiKeyValue, updatedLimiters);
       }
       [rateLimiter, hourlyLimiter, dailyLimiter] =
         keyedLimiters.get(apiKeyValue);

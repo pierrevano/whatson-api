@@ -821,6 +821,8 @@ do
   done
 done
 
+ITEMS_NOT_ADDED=$(grep -c ',noTheMovieDBId,' "$FILMS_IDS_FILE_PATH")
+
 if [[ $SOURCE == "circleci" ]]; then
   echo "Skipping IMDb popularity flags update on CircleCI."
 else
@@ -901,7 +903,12 @@ else
   echo "The file either doesn't exist, is empty, or has fewer than 6000 lines."
 fi
 
-# Add ending message with duration
+# Print the run summary
+TOTAL_ITEMS=${INDEX_POPULARITY:-0}
+FAILURE_PERCENTAGE=$(awk -v failed="$ITEMS_NOT_ADDED" -v total="$TOTAL_ITEMS" 'BEGIN { printf "%.2f", total > 0 ? failed * 100 / total : 0 }')
+echo "Total items processed for $FILMS_FILE_NAME: $TOTAL_ITEMS"
+echo "Items added or already present: $((TOTAL_ITEMS - ITEMS_NOT_ADDED))"
+echo "Items not added to $FILMS_FILE_NAME: $ITEMS_NOT_ADDED ($FAILURE_PERCENTAGE%)"
 DATA_DURATION=$SECONDS
 echo "Complete in $(($DATA_DURATION / 60)) minutes and $(($DATA_DURATION % 60)) seconds ✅"
 echo $SEPARATOR
