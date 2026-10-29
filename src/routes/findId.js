@@ -19,7 +19,7 @@ const normalizeString = (str) =>
  * @param {Object} json - Input object with a supported key (e.g. `imdbid`, `tmdbid`, `title`, etc.).
  * @param {string} [append_to_response] - Additional fields to include in the projection.
  * @param {string} [filtered_seasons] - Seasons numbers to filter episodes by (if applicable).
- * @returns {Promise<{ limit: number, page: number, results: Object[], total_results: number }>} Results and pagination details.
+ * @returns {Promise<{ limit: number, page: number, results: Object[], total_results: number } | { error: string }>} Results and pagination details, or a validation error.
  */
 const findId = async (json, append_to_response, filtered_seasons) => {
   if (!json || typeof json !== "object" || Object.keys(json).length === 0) {
@@ -161,7 +161,10 @@ const findId = async (json, append_to_response, filtered_seasons) => {
   }
 
   // Step 2: Build the projection object
-  const projection = buildProjection(append_to_response);
+  const projection = buildProjection(
+    append_to_response,
+    json.episodes_append_to_response,
+  );
 
   const executeQuery = async (operation, callback) => {
     const startedAt = performance.now();
@@ -177,6 +180,17 @@ const findId = async (json, append_to_response, filtered_seasons) => {
       throw error;
     }
   };
+
+  if (lookupType !== "title" && json.item_type === undefined) {
+    const matchingTypes = await executeQuery("distinct", () =>
+      collectionData.distinct("item_type", query, {
+        maxTimeMS: config.queryMaxTimeMS,
+      }),
+    );
+    if (matchingTypes.length > 1) {
+      return { error: config.requiredItemTypeMessage };
+    }
+  }
 
   // Step 3: Execute query with projection
   let results = await executeQuery("find", () =>

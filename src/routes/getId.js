@@ -32,6 +32,7 @@ const getId = async (req, res) => {
     const ratings_filters_query = req.query.ratings_filters;
     const item_type = req.route.path.split("/")[1];
     const append_to_response = req.query.append_to_response;
+    const episodes_append_to_response = req.query.episodes_append_to_response;
 
     const internal_api_key = await getInternalApiKey();
 
@@ -50,6 +51,7 @@ const getId = async (req, res) => {
 
     const { items } = await aggregateData(
       append_to_response,
+      episodes_append_to_response,
       undefined,
       undefined,
       undefined,

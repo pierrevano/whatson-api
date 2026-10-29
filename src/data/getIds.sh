@@ -905,7 +905,7 @@ fi
 
 # Print the run summary
 TOTAL_ITEMS=${INDEX_POPULARITY:-0}
-FAILURE_PERCENTAGE=$(awk -v failed="$ITEMS_NOT_ADDED" -v total="$TOTAL_ITEMS" 'BEGIN { printf "%.2f", total > 0 ? failed * 100 / total : 0 }')
+FAILURE_PERCENTAGE=$(awk -v failed="$ITEMS_NOT_ADDED" -v total="$TOTAL_ITEMS" 'BEGIN { printf "%.2f", (total > 0 ? failed * 100 / total : 0) }')
 echo "Total items processed for $FILMS_FILE_NAME: $TOTAL_ITEMS"
 echo "Items added or already present: $((TOTAL_ITEMS - ITEMS_NOT_ADDED))"
 echo "Items not added to $FILMS_FILE_NAME: $ITEMS_NOT_ADDED ($FAILURE_PERCENTAGE%)"

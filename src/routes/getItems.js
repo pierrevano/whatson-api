@@ -1,6 +1,10 @@
 const { aggregateData } = require("./aggregateData");
 const { config } = require("../config");
-const { sendInternalError, sendRequest } = require("../utils/sendRequest");
+const {
+  sendInternalError,
+  sendRequest,
+  sendResponse,
+} = require("../utils/sendRequest");
 const { sendToNewRelic } = require("../utils/sendToNewRelic");
 const findId = require("./findId");
 const getInternalApiKey = require("./getInternalApiKey");
@@ -26,6 +30,7 @@ const getItems = async (req, res) => {
       append_to_response,
       composers: composers_query,
       directors: directors_query,
+      episodes_append_to_response,
       filtered_seasons: filtered_seasons_query,
       genres: genres_query,
       runtime: runtime_query,
@@ -70,11 +75,14 @@ const getItems = async (req, res) => {
     if (
       config.keysToCheckForSearch.some((key) => Object.hasOwn(req.query, key))
     ) {
-      const { limit, page, results, total_results } = await findId(
+      const { error, limit, page, results, total_results } = await findId(
         req.query,
         append_to_response,
         filtered_seasons_query,
       );
+      if (error) {
+        return sendResponse(res, 400, { message: error });
+      }
       return sendRequest(
         req,
         res,
@@ -90,6 +98,7 @@ const getItems = async (req, res) => {
 
     const { items, limit, page, is_active_item } = await aggregateData(
       append_to_response,
+      episodes_append_to_response,
       composers_query,
       directors_query,
       genres_query,

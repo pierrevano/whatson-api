@@ -24,7 +24,7 @@ const getUpdates = async (req, res) => {
     const apiKeyDoc = await getApiKey(api_key_query);
     if (!isSponsorApiKey(apiKeyDoc)) {
       return sendResponse(res, 403, {
-        message: `${config.sponsorApiKeyRequiredMessage} ${config.contactURL}`,
+        message: config.requiredSponsorApiKeyMessage,
       });
     }
 

@@ -1,12 +1,17 @@
 const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
+const { buildEpisodesProjection } = require("./buildEpisodesProjection");
 
 /**
  * Builds a MongoDB projection object based on the append_to_response query param.
  * @param {string} [appendToResponse] - Optional comma-separated list of fields to include.
+ * @param {string} [episodesAppendToResponse] - Optional episode fields to include.
  * @returns {object} MongoDB projection object.
  */
-function buildProjection(appendToResponse) {
-  const projection = { _id: 0 };
+function buildProjection(appendToResponse, episodesAppendToResponse) {
+  const projection = {
+    _id: 0,
+    ...buildEpisodesProjection(appendToResponse, episodesAppendToResponse),
+  };
   const includes = buildAppendIncludes(appendToResponse);
 
   if (!includes("awards")) {
@@ -27,10 +32,6 @@ function buildProjection(appendToResponse) {
 
   if (!includes("directors")) {
     projection["directors"] = 0;
-  }
-
-  if (!includes("episodes_details")) {
-    projection["episodes_details"] = 0;
   }
 
   if (!includes("genres")) {

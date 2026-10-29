@@ -31,9 +31,7 @@ describe("What's on? API updates endpoint tests", () => {
 
     expect(response.status).toBe(403);
     expect(response.data.code).toBe(403);
-    expect(response.data.message).toBe(
-      `${config.sponsorApiKeyRequiredMessage} ${config.contactURL}`,
-    );
+    expect(response.data.message).toBe(config.requiredSponsorApiKeyMessage);
   });
 
   test("should authenticate before validating since", async () => {
@@ -45,9 +43,7 @@ describe("What's on? API updates endpoint tests", () => {
 
     expect(response.status).toBe(403);
     expect(response.data.code).toBe(403);
-    expect(response.data.message).toBe(
-      `${config.sponsorApiKeyRequiredMessage} ${config.contactURL}`,
-    );
+    expect(response.data.message).toBe(config.requiredSponsorApiKeyMessage);
   });
 
   test("should deny access with a non-sponsor API key", async () => {
@@ -59,9 +55,7 @@ describe("What's on? API updates endpoint tests", () => {
     expect([403, 429]).toContain(response.status);
     if (response.status === 403) {
       expect(response.data.code).toBe(403);
-      expect(response.data.message).toBe(
-        `${config.sponsorApiKeyRequiredMessage} ${config.contactURL}`,
-      );
+      expect(response.data.message).toBe(config.requiredSponsorApiKeyMessage);
     }
   });
 

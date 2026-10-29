@@ -38,11 +38,12 @@ const listingQueryParams = [
   ...config.keysToCheckForSearch,
 ];
 const routeAllowlist = {
-  items: [...listingQueryParams, "sort_by"],
+  items: [...listingQueryParams, "episodes_append_to_response", "sort_by"],
   ratedEpisodes: listingQueryParams,
   updates: ["api_key", "since", "item_type", "page", "limit"],
   itemDetails: [
     ...apiKeyAndAppendToResponseQueryParams,
+    "episodes_append_to_response",
     "item_type",
     "ratings_filters",
   ],

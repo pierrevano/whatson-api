@@ -101,6 +101,7 @@ const itemSchema = {
     /*
      * To include this key in the response, add `episodes_details` to the `append_to_response` query parameter.
      * To filter episodes by one or more seasons, add the `filtered_seasons` query parameter with the desired seasons numbers.
+     * `episodes_append_to_response`: Optional fields to add inside `episodes_details`, individually or comma-separated; requires `episodes_details` in `append_to_response`.
      */
     {
       season: "number", // Season number of the episode

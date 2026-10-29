@@ -52,6 +52,39 @@ const params = {
     },
   },
 
+  id_lookup_requires_item_type_for_multiple_types: {
+    query: "?tmdbid=95",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: config.requiredItemTypeMessage,
+      });
+      expect(data.message).toContain("item_type=tvshow");
+      expect(data.message).toContain("item_type=movie,tvshow");
+    },
+  },
+
+  id_lookup_requires_item_type_before_pagination: {
+    query: "?tmdbId=95&append_to_response=episodes_details&limit=1&page=2",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: config.requiredItemTypeMessage,
+      });
+    },
+  },
+
+  id_lookup_preserves_not_found_response: {
+    query: "?tmdbid=2147483647",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(404);
+      expect(data.code).toBe(404);
+      expect(data.message).toContain(config.noMatchingItemsFoundMessage);
+    },
+  },
+
   duplicate_api_key_parameter_names: {
     query: "?API_KEY=invalid",
     expectedResult: (data, response) => {
@@ -169,6 +202,51 @@ const params = {
       expect(data).toEqual({
         code: 400,
         message: `${config.invalidPopularityFiltersMessage} Received 'wrong_value'.`,
+      });
+    },
+  },
+
+  episodes_append_to_response_requires_append_to_response: {
+    query: "?tmdbid=249042&item_type=tvshow&episodes_append_to_response=title",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: config.requiredEpisodesDetailsMessage,
+      });
+    },
+  },
+
+  episodes_append_to_response_requires_episodes_details_value: {
+    query:
+      "/tvshow/249042?append_to_response=genres&episodes_append_to_response=title",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: config.requiredEpisodesDetailsMessage,
+      });
+    },
+  },
+
+  episodes_append_to_response_has_unsupported_field: {
+    query: "?episodes_append_to_response=title,invalid",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidEpisodesAppendToResponseMessage} Received 'title,invalid'.`,
+      });
+    },
+  },
+
+  episodes_append_to_response_has_duplicate_fields: {
+    query: "/tvshow/1396?episodes_append_to_response=title,title",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(400);
+      expect(data).toEqual({
+        code: 400,
+        message: `${config.invalidEpisodesAppendToResponseMessage} Received 'title,title'.`,
       });
     },
   },

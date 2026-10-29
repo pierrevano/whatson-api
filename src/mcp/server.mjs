@@ -72,7 +72,7 @@ const TOOLS = [
   {
     name: "search_titles",
     description:
-      "Search movies and TV shows with paginated results and ratings from multiple sources. Without title or an external ID, combine the available filters and sorting options. Title or ID searches support item_type, page, limit, append_to_response, filtered_seasons, and is_adult (default false). Other filters and sorting options are ignored. Provide one title or ID parameter; an ID can match multiple items.",
+      "Search movies and TV shows with paginated results and ratings from multiple sources. Without title or an external ID, combine the available filters and sorting options. Title or ID searches support item_type, page, limit, append_to_response, episodes_append_to_response, filtered_seasons, and is_adult (default false). Other filters and sorting options are ignored. Provide one title or ID parameter; an ID can match multiple items. ID lookups return 400 if item_type is omitted and the ID matches both a movie and a TV show. Use movie or tvshow to select one type, or movie,tvshow to explicitly request both.",
     inputSchema: {
       type: "object",
       properties: {
@@ -83,7 +83,7 @@ const TOOLS = [
         item_type: {
           type: "string",
           description:
-            'Filter by content type: "movie", "tvshow", or "movie,tvshow" to return both (equivalent to omitting this parameter).',
+            'Filter by content type: "movie", "tvshow", or "movie,tvshow" to return both. ID lookups matching both a movie and a TV show require an explicit value. Other searches default to both.',
         },
         genres: {
           type: "string",
@@ -156,6 +156,12 @@ const TOOLS = [
           description:
             "Comma-separated optional fields to include in results. Available: awards, certification_variants, composers, countries_of_origin, critics_rating_details, directors, episodes_details, genres, highest_episode, image_variants, last_episode, lowest_episode, mojo, networks, next_episode, original_title, parents_guide, platforms_links, production_companies, tagline, title_variants, trailer. Episode-related fields only apply to TV show results.",
         },
+        episodes_append_to_response: {
+          type: "string",
+          description:
+            "Optional fields to add inside `episodes_details`, individually or comma-separated; requires `episodes_details` in `append_to_response`.",
+          examples: ["title,description,url,release_date"],
+        },
         filtered_seasons: {
           type: "string",
           description:
@@ -220,7 +226,7 @@ const TOOLS = [
         limit: {
           type: "integer",
           description:
-            "Page items limit (20 results by default). Specify `limit` explicitly to request more.",
+            "Page size is 20 by default. Values above 20 require a sponsor API key to help cover bandwidth and processing costs.",
         },
       },
     },
@@ -246,6 +252,12 @@ const TOOLS = [
           type: "string",
           description:
             "Comma-separated optional fields to include. Available: awards, certification_variants, composers, countries_of_origin, critics_rating_details, directors, episodes_details, genres, highest_episode, image_variants, last_episode, lowest_episode, mojo, networks, next_episode, original_title, parents_guide, platforms_links, production_companies, tagline, title_variants, trailer. Episode-related fields only apply to TV show results.",
+        },
+        episodes_append_to_response: {
+          type: "string",
+          description:
+            "Optional fields to add inside `episodes_details`, individually or comma-separated; requires `episodes_details` in `append_to_response`.",
+          examples: ["title,description,url,release_date"],
         },
         ratings_filters: {
           type: "string",
@@ -378,7 +390,7 @@ const TOOLS = [
         limit: {
           type: "integer",
           description:
-            "Page items limit (20 results by default). Specify `limit` explicitly to request more.",
+            "Page size is 20 by default. Values above 20 require a sponsor API key to help cover bandwidth and processing costs.",
         },
       },
     },

@@ -117,6 +117,32 @@ const params = {
     },
   },
 
+  id_lookup_with_episodes_accepts_explicit_tvshow_type: {
+    query: "?tmdbid=95&item_type=tvshow&append_to_response=episodes_details",
+    expectedResult: (items, response) => {
+      expect(response.status).toBe(200);
+      expect(items).toHaveLength(1);
+      expect(items[0]).toMatchObject({ id: 95, item_type: "tvshow" });
+      expect(items[0].episodes_details.length).toBeGreaterThan(0);
+    },
+  },
+
+  id_lookup_with_episodes_accepts_both_types_explicitly: {
+    query:
+      "?tmdbid=95&item_type=movie,tvshow&append_to_response=episodes_details",
+    expectedResult: (items, response) => {
+      expect(response.status).toBe(200);
+      expect(response.data.total_results).toBe(2);
+      expect(items.map((item) => item.item_type).sort()).toEqual([
+        "movie",
+        "tvshow",
+      ]);
+      items.forEach((item) => expect(item.id).toBe(95));
+      const tvshow = items.find((item) => item.item_type === "tvshow");
+      expect(tvshow.episodes_details.length).toBeGreaterThan(0);
+    },
+  },
+
   title_parameter_name_accepts_mixed_casing: {
     query:
       "?TITLE=wolf&item_type=movie&append_to_response=original_title,title_variants",
@@ -346,7 +372,7 @@ const params = {
   },
 
   all_keys_type_check: {
-    query: `?item_type=movie,tvshow&is_active=true&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&is_active=true&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}&episodes_append_to_response=title,description,url,release_date`,
     expectedResult: (items) =>
       items.forEach((item) => checkTypes(item, itemSchema)),
   },
@@ -540,7 +566,7 @@ const params = {
   },
 
   should_return_correct_episodes_details_values: {
-    query: `?item_type=movie,tvshow&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=movie,tvshow&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}&episodes_append_to_response=release_date`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details) {

@@ -30,7 +30,9 @@ const baseURL = {
   whatsonAPICircleCI: "https://whatson-api-circleci.onrender.com",
 };
 
+const contactURL = "https://pierrevano.github.io";
 const localPort = getEnvInt(process.env.PORT, 8081);
+const requiredSponsorApiKeyMessage = `A sponsor API key is required. Please use a sponsor API key or become a $1/month sponsor for access: ${contactURL}`;
 
 const config = {
   /* Credentials */
@@ -60,7 +62,7 @@ const config = {
   pointsFreePerHour: 200,
   pointsPerMinute: 200,
   pointsSponsor: 10000,
-  contactURL: "https://pierrevano.github.io",
+  contactURL,
   duration: 60, // 1 minute in seconds
   dailyDuration: 24 * 60 * 60, // 1 day in seconds
   hourlyDuration: 60 * 60, // 1 hour in seconds
@@ -70,6 +72,12 @@ const config = {
   webhooksURL: process.env.WEBHOOKS_URL,
   appendToResponse:
     "awards,certification_variants,composers,countries_of_origin,critics_rating_details,directors,episodes_details,genres,highest_episode,image_variants,last_episode,lowest_episode,mojo,networks,next_episode,original_title,parents_guide,platforms_links,production_companies,tagline,title_variants,trailer",
+  episodesAppendToResponseValues: [
+    "title",
+    "description",
+    "url",
+    "release_date",
+  ],
   booleanQueryFields: [
     "rotten_tomatoes.critics_certified",
     "is_active",
@@ -87,6 +95,8 @@ const config = {
     "Invalid boolean value provided. Please specify 'true', 'false', or a combination like 'true,false' or 'false,true'.",
   invalidEndpointMessage:
     "Invalid endpoint provided. Please specify one of the allowed endpoints.",
+  invalidEpisodesAppendToResponseMessage:
+    "Invalid episodes_append_to_response provided. Please specify one or more of 'title', 'description', 'url', 'release_date'.",
   invalidIntegerListMinimumMessage:
     "Invalid {name} provided. Please specify only integers greater than or equal to {minimum}.",
   invalidIntegerMinimumMessage:
@@ -119,10 +129,10 @@ const config = {
     "Invalid append_to_response provided. Please specify one or more of 'highest_episode', 'last_episode', 'lowest_episode', 'next_episode', 'rating_distribution', 'rating_distribution_episodes'.",
   invalidSinceMessage:
     "Invalid since provided. Please specify a valid ISO 8601 date string such as '2026-01-01T00:00:00.000Z'.",
-  invalidSortOrderMessage:
-    "Invalid {name} provided. Please specify one of 'asc', 'desc'.",
   invalidSortByMessage:
     "Invalid sort_by provided. Please specify one of 'ratings', 'popularity', 'top_ranking', 'mojo_rank'.",
+  invalidSortOrderMessage:
+    "Invalid {name} provided. Please specify one of 'asc', 'desc'.",
   invalidStatusMessage:
     "Invalid status provided. Please specify one or more of 'canceled', 'ended', 'ongoing', 'pilot', 'unknown'.",
   noMatchingItemsFoundMessage: "No matching items found.",
@@ -134,8 +144,12 @@ const config = {
   ],
   queryMemoryLimitMessage:
     "Something went wrong. Please reduce the number of pages requested or lower the limit and try again.",
-  sponsorApiKeyRequiredMessage:
-    "This endpoint requires a sponsor API key. For access, become a $1/month sponsor:",
+  requiredEpisodesDetailsMessage:
+    "The episodes_details value is required in append_to_response when episodes_append_to_response is provided. Please add episodes_details to append_to_response.",
+  requiredItemTypeMessage:
+    "The item_type parameter is required when the ID matches multiple item types. Please specify item_type=movie, item_type=tvshow, or item_type=movie,tvshow.",
+  requiredSponsorApiKeyForLimitMessage: `Larger pages increase bandwidth and processing costs. Please set limit={limit} or lower. ${requiredSponsorApiKeyMessage}`,
+  requiredSponsorApiKeyMessage,
   seasonAppendToResponseValues: [
     "highest_episode",
     "last_episode",

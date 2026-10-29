@@ -1276,6 +1276,47 @@ const params = {
     },
   },
 
+  episodes_details_lookup_accepts_all_optional_fields: {
+    query:
+      "?tmdbid=249042&item_type=tvshow&append_to_response=episodes_details&episodes_append_to_response=title,description,url,release_date&filtered_seasons=1",
+    expectedResult: (items) => {
+      expect(items).toHaveLength(1);
+      expect(items[0].episodes_details.length).toBeGreaterThan(0);
+      items[0].episodes_details.forEach((episode) => {
+        expect(episode.season).toBe(1);
+        expect(Object.keys(episode).sort()).toEqual([
+          "description",
+          "episode",
+          "id",
+          "release_date",
+          "season",
+          "title",
+          "url",
+          "users_rating",
+          "users_rating_count",
+        ]);
+      });
+    },
+  },
+
+  episodes_details_path_includes_only_requested_optional_fields: {
+    query:
+      "/tvshow/249042?append_to_response=episodes_details&episodes_append_to_response=title",
+    expectedResult: (item) => {
+      expect(item.episodes_details.length).toBeGreaterThan(0);
+      item.episodes_details.forEach((episode) => {
+        expect(Object.keys(episode).sort()).toEqual([
+          "episode",
+          "id",
+          "season",
+          "title",
+          "users_rating",
+          "users_rating_count",
+        ]);
+      });
+    },
+  },
+
   filtered_seasons_without_append_to_response_does_not_return_episodes: {
     query: "?imdbid=tt0903747&filtered_seasons=1",
     expectedResult: (items) => {
@@ -1487,6 +1528,16 @@ const params = {
       expect(item.id).toBe(249042);
       expect(item.allocine).not.toHaveProperty("critics_rating_details");
       expect(item).toHaveProperty("episodes_details");
+      expect(item.episodes_details.length).toBeGreaterThan(0);
+      item.episodes_details.forEach((episode) => {
+        expect(Object.keys(episode).sort()).toEqual([
+          "episode",
+          "id",
+          "season",
+          "users_rating",
+          "users_rating_count",
+        ]);
+      });
       expect(item).not.toHaveProperty("composers");
       expect(item).not.toHaveProperty("directors");
       expect(item).not.toHaveProperty("genres");
@@ -1529,7 +1580,8 @@ const params = {
   },
 
   tvshow_with_many_episodes_should_have_values_after_pagination: {
-    query: "/tvshow/46260?append_to_response=episodes_details",
+    query:
+      "/tvshow/46260?append_to_response=episodes_details&episodes_append_to_response=title,description",
     expectedResult: (item) => {
       expect(item.id).toBe(46260);
       expect(Array.isArray(item.episodes_details)).toBe(true);
@@ -1543,11 +1595,13 @@ const params = {
 
       expect(paginatedEpisodes.length).toBeGreaterThan(50);
       expect(
-        paginatedEpisodes.filter((episode) => episode.title !== null).length,
+        paginatedEpisodes.filter((episode) => typeof episode.title === "string")
+          .length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
       expect(
-        paginatedEpisodes.filter((episode) => episode.description !== null)
-          .length,
+        paginatedEpisodes.filter(
+          (episode) => typeof episode.description === "string",
+        ).length,
       ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     },
   },
@@ -1605,6 +1659,16 @@ const params = {
         expect(items[0].id).toBe(249042);
         expect(items[0].allocine).not.toHaveProperty("critics_rating_details");
         expect(items[0]).toHaveProperty("episodes_details");
+        expect(items[0].episodes_details.length).toBeGreaterThan(0);
+        items[0].episodes_details.forEach((episode) => {
+          expect(Object.keys(episode).sort()).toEqual([
+            "episode",
+            "id",
+            "season",
+            "users_rating",
+            "users_rating_count",
+          ]);
+        });
         expect(items[0]).not.toHaveProperty("composers");
         expect(items[0]).not.toHaveProperty("directors");
         expect(items[0]).not.toHaveProperty("genres");
@@ -1773,12 +1837,12 @@ const params = {
   },
 
   items_with_all_required_keys_active_tvshow: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}&episodes_append_to_response=title,description,url,release_date`,
     expectedResult: checkItemProperties,
   },
 
   items_with_all_required_keys_inactive_tvshow: {
-    query: `?item_type=tvshow&is_active=false&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=false&append_to_response=${config.appendToResponse}&limit=${maxLimitLargeDocuments}&episodes_append_to_response=title,description,url,release_date`,
     expectedResult: checkItemProperties,
   },
 
@@ -2033,7 +2097,7 @@ const params = {
   },
 
   should_match_last_episode_details: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details,last_episode&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details,last_episode&limit=${maxLimitLargeDocuments}&episodes_append_to_response=title,url,release_date`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (item.episodes_details && item.last_episode) {
@@ -2110,7 +2174,7 @@ const params = {
   },
 
   should_have_increasing_episode_order_if_release_dates_differ: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}&episodes_append_to_response=release_date`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (Array.isArray(item.episodes_details)) {
@@ -2186,7 +2250,7 @@ const params = {
   },
 
   should_only_have_valid_imdb_episode_urls: {
-    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}&episodes_append_to_response=url`,
     expectedResult: (items) => {
       items.forEach((item) => {
         if (Array.isArray(item.episodes_details)) {
@@ -2204,13 +2268,20 @@ const params = {
   },
 
   should_not_have_season_and_episode_to_null: {
-    query: `?item_type=tvshow&is_active=true,false&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}`,
     expectedResult: (items) => {
+      expect(
+        items.some(
+          (item) =>
+            Array.isArray(item.episodes_details) &&
+            item.episodes_details.length > 0,
+        ),
+      ).toBe(true);
       items.forEach((item) => {
         if (Array.isArray(item.episodes_details)) {
           item.episodes_details.forEach((episode) => {
-            expect(episode.season).not.toBeNull();
-            expect(episode.episode).not.toBeNull();
+            expect(typeof episode.season).toBe("number");
+            expect(typeof episode.episode).toBe("number");
           });
         }
       });
@@ -2218,7 +2289,7 @@ const params = {
   },
 
   should_have_highest_rated_episode_above_second_best: {
-    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details,highest_episode&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details,highest_episode&limit=${maxLimitLargeDocuments}&episodes_append_to_response=release_date`,
     expectedResult: (items) => {
       items.forEach((item) => {
         const all = item.episodes_details;
@@ -2259,7 +2330,7 @@ const params = {
   },
 
   should_have_lowest_rated_episode_below_second_worst: {
-    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details,last_episode,next_episode,highest_episode,lowest_episode&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true,false&append_to_response=episodes_details,last_episode,next_episode,highest_episode,lowest_episode&limit=${maxLimitLargeDocuments}&episodes_append_to_response=release_date`,
     expectedResult: (items) => {
       items.forEach((item) => {
         const all = item.episodes_details;
@@ -2300,7 +2371,7 @@ const params = {
   },
 
   should_have_limited_null_release_dates: {
-    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}`,
+    query: `?item_type=tvshow&is_active=true&append_to_response=episodes_details&limit=${maxLimitLargeDocuments}&episodes_append_to_response=release_date`,
     expectedResult: (items) => {
       let nullReleaseDateCount = 0;
 

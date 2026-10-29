@@ -1,10 +1,12 @@
 const { config } = require("../../config");
+const { getApiKey } = require("./getApiKey");
 const {
   invalidQueryValueMessage,
   resolveValidationMessage,
   validateIntegerListParam,
   validateIntegerParam,
 } = require("./queryValidationMessages");
+const { isSponsorApiKey } = require("./isSponsorApiKey");
 const { isValidISODate } = require("../../utils/parseReleaseDateRange");
 const { sendResponse } = require("../../utils/sendRequest");
 
@@ -166,6 +168,14 @@ const validateFilterQueryParams = (
       invalidAppendMessage,
     ) ||
     validateAllowedValues(
+      query.episodes_append_to_response,
+      config.episodesAppendToResponseValues,
+      config.invalidEpisodesAppendToResponseMessage,
+    ) ||
+    (query.episodes_append_to_response !== undefined &&
+      !query.append_to_response?.split(",").includes("episodes_details") &&
+      config.requiredEpisodesDetailsMessage) ||
+    validateAllowedValues(
       query.ratings_filters,
       [...config.ratings_filters.split(","), "all"],
       config.invalidRatingsFiltersMessage,
@@ -198,42 +208,57 @@ const validateFilterQueryParams = (
   );
 };
 
-const validateQueryParams = (allowedParams, options) => (req, res, next) => {
-  const invalidParams = Object.keys(req.query).filter(
-    (key) => !allowedParams.includes(key),
-  );
-  if (invalidParams.length > 0) {
-    return sendResponse(res, 400, {
-      message: invalidQueryValueMessage(
-        config.invalidQueryParamsMessage,
-        invalidParams.join(", "),
-      ),
-    });
-  }
-
-  for (const [name, value] of Object.entries(req.query)) {
-    if (config.numericIdKeys.includes(name)) {
-      const message = validateIntegerParam(value, name);
-      if (message) return sendResponse(res, 400, { message });
+const validateQueryParams =
+  (allowedParams, options) => async (req, res, next) => {
+    const invalidParams = Object.keys(req.query).filter(
+      (key) => !allowedParams.includes(key),
+    );
+    if (invalidParams.length > 0) {
+      return sendResponse(res, 400, {
+        message: invalidQueryValueMessage(
+          config.invalidQueryParamsMessage,
+          invalidParams.join(", "),
+        ),
+      });
     }
-  }
 
-  const message =
-    validateSharedQueryParams(req.query) ||
-    validateItemTypeQuery(req.query.item_type) ||
-    validateBooleanQueryParams(req.query) ||
-    validateIntegerListParam(req.query.runtime, "runtime", 0) ||
-    validateIntegerListParam(req.query.seasons_number, "seasons_number") ||
-    validateIntegerParam(
-      req.query.minimum_users_rating_count,
-      "minimum_users_rating_count",
-      0,
-    ) ||
-    validateFilterQueryParams(req.query, options);
-  if (message) return sendResponse(res, 400, { message });
+    for (const [name, value] of Object.entries(req.query)) {
+      if (config.numericIdKeys.includes(name)) {
+        const message = validateIntegerParam(value, name);
+        if (message) return sendResponse(res, 400, { message });
+      }
+    }
 
-  next();
-};
+    const message =
+      validateSharedQueryParams(req.query) ||
+      validateItemTypeQuery(req.query.item_type) ||
+      validateBooleanQueryParams(req.query) ||
+      validateIntegerListParam(req.query.runtime, "runtime", 0) ||
+      validateIntegerListParam(req.query.seasons_number, "seasons_number") ||
+      validateIntegerParam(
+        req.query.minimum_users_rating_count,
+        "minimum_users_rating_count",
+        0,
+      ) ||
+      validateFilterQueryParams(req.query, options);
+    if (message) return sendResponse(res, 400, { message });
+
+    if (
+      Number(req.query.limit) > config.limit &&
+      !isSponsorApiKey(await getApiKey(req.query.api_key))
+    ) {
+      return sendResponse(res, 403, {
+        message: resolveValidationMessage(
+          config.requiredSponsorApiKeyForLimitMessage,
+          {
+            limit: config.limit,
+          },
+        ),
+      });
+    }
+
+    next();
+  };
 
 module.exports = {
   validateFilterQueryParams,

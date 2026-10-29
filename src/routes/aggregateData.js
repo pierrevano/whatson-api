@@ -1,4 +1,5 @@
 const { buildAppendIncludes } = require("../utils/buildAppendIncludes");
+const { buildEpisodesProjection } = require("./buildEpisodesProjection");
 const { collectionData } = require("../utils/mongoClient");
 const { config } = require("../config");
 const { filterEpisodesBySeason } = require("./filterEpisodesBySeason");
@@ -19,6 +20,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
  * and returns both the raw pipeline results and paging metadata used by the HTTP layer.
  *
  * @param {string|undefined} append_to_response - Comma-separated list of extra fields to include.
+ * @param {string|undefined} episodes_append_to_response - Optional fields to include in episodes_details.
  * @param {string|undefined} composers_query - Comma-separated composers filter.
  * @param {string|undefined} directors_query - Comma-separated directors filter.
  * @param {string|undefined} genres_query - Comma-separated genres filter.
@@ -44,6 +46,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
  */
 const aggregateData = async (
   append_to_response,
+  episodes_append_to_response,
   composers_query,
   directors_query,
   genres_query,
@@ -80,7 +83,6 @@ const aggregateData = async (
     typeof directors_query !== "undefined" && directors_query
       ? directors_query
       : "";
-  const episodes_details = appendIncludes("episodes_details");
   const production_companies_details = appendIncludes("production_companies");
   const genres_append = appendIncludes("genres");
   const genres =
@@ -350,7 +352,7 @@ const aggregateData = async (
       ? {}
       : { countries_of_origin: 0 }),
     ...(directors_append ? {} : { directors: 0 }),
-    ...(episodes_details ? {} : { episodes_details: 0 }),
+    ...buildEpisodesProjection(append_to_response, episodes_append_to_response),
     ...(genres_append ? {} : { genres: 0 }),
     ...(highest_episode ? {} : { highest_episode: 0 }),
     ...(last_episode ? {} : { last_episode: 0 }),
