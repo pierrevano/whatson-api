@@ -46,6 +46,7 @@ if [[ $TYPE == "movie" ]]; then
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_films.txt
   TRAKT_PATH=".[0].movie.ids."
   IMDB_CHART_URL="https://www.imdb.com/chart/moviemeter/"
+  MAX_FAILURE_PERCENTAGE=15
 elif [[ $TYPE == "tvshow" ]]; then
   BASE_URL=https://www.allocine.fr/series/top/
   FILMS_IDS_FILE_PATH=./src/assets/series_ids.txt
@@ -63,6 +64,7 @@ elif [[ $TYPE == "tvshow" ]]; then
   SKIP_IDS_FILE_PATH=./src/assets/skip_ids_series.txt
   TRAKT_PATH=".[0].show.ids."
   IMDB_CHART_URL="https://www.imdb.com/chart/tvmeter/"
+  MAX_FAILURE_PERCENTAGE=10
 else
   echo "Item type should be either `movie` or `tvshow`"
   exit 1
@@ -186,7 +188,7 @@ remove_files () {
   sort_ids
 
   for TEMP_FILE in ./temp_*; do
-    [[ $TEMP_FILE == "./temp_error.log" || $TEMP_FILE == "./temp_run_summary.json" ]] && continue
+    [[ $TEMP_FILE == "./temp_error.log" || $TEMP_FILE == "./temp_run_summary.json" || $TEMP_FILE == "./temp_browser_state.json" ]] && continue
     rm -f "$TEMP_FILE"
   done
   rm -f src/assets/.!*!films_ids.txt
@@ -823,6 +825,18 @@ done
 
 ITEMS_NOT_ADDED=$(grep -c ',noTheMovieDBId,' "$FILMS_IDS_FILE_PATH")
 
+# Print the run summary
+TOTAL_ITEMS=${INDEX_POPULARITY:-0}
+FAILURE_PERCENTAGE=$(awk -v failed="$ITEMS_NOT_ADDED" -v total="$TOTAL_ITEMS" 'BEGIN { printf "%.2f", (total > 0 ? failed * 100 / total : 0) }')
+echo "Total items processed for $FILMS_FILE_NAME: $TOTAL_ITEMS"
+echo "Items added or already present: $((TOTAL_ITEMS - ITEMS_NOT_ADDED))"
+echo "Items not added to $FILMS_FILE_NAME: $ITEMS_NOT_ADDED ($FAILURE_PERCENTAGE%)"
+
+if (( TOTAL_ITEMS > 0 && ITEMS_NOT_ADDED * 100 > TOTAL_ITEMS * MAX_FAILURE_PERCENTAGE )); then
+  echo "Error: Failure rate exceeds $MAX_FAILURE_PERCENTAGE% ($ITEMS_NOT_ADDED of $TOTAL_ITEMS items). Aborting."
+  exit 1
+fi
+
 if [[ $SOURCE == "circleci" ]]; then
   echo "Skipping IMDb popularity flags update on CircleCI."
 else
@@ -903,12 +917,6 @@ else
   echo "The file either doesn't exist, is empty, or has fewer than 6000 lines."
 fi
 
-# Print the run summary
-TOTAL_ITEMS=${INDEX_POPULARITY:-0}
-FAILURE_PERCENTAGE=$(awk -v failed="$ITEMS_NOT_ADDED" -v total="$TOTAL_ITEMS" 'BEGIN { printf "%.2f", (total > 0 ? failed * 100 / total : 0) }')
-echo "Total items processed for $FILMS_FILE_NAME: $TOTAL_ITEMS"
-echo "Items added or already present: $((TOTAL_ITEMS - ITEMS_NOT_ADDED))"
-echo "Items not added to $FILMS_FILE_NAME: $ITEMS_NOT_ADDED ($FAILURE_PERCENTAGE%)"
 DATA_DURATION=$SECONDS
 echo "Complete in $(($DATA_DURATION / 60)) minutes and $(($DATA_DURATION % 60)) seconds ✅"
 echo $SEPARATOR

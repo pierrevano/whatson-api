@@ -7,10 +7,10 @@ const { logErrors } = require("../utils/logErrors");
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Fetches the Rotten Tomatoes media scorecard JSON, and retrying when missing.
+ * Fetches embedded rating data, retrying when it is missing.
  *
- * @param {string} url - The Rotten Tomatoes page URL we need to scrape.
- * @param {import("axios").AxiosRequestConfig} [options] - Axios-compatible options used by getCheerioContent.
+ * @param {string} url - The provider page URL.
+ * @param {import("axios").AxiosRequestConfig} [options] - Request options.
  * @returns {Promise<string>} The raw JSON payload embedded in the page.
  */
 const fetchMediaScorecardJson = async (url, options) => {
@@ -38,25 +38,21 @@ const fetchMediaScorecardJson = async (url, options) => {
 };
 
 /**
- * It takes a rottenTomatoesHomepage as an argument, and returns user and critic rating details.
- * It only attempts to fetch and parse the content if a valid rottenTomatoesId is provided.
+ * Retrieves audience and critic rating details from a provider page.
  *
- * @param {string} rottenTomatoesHomepage - The URL of the item's page on rottentomatoes.com
- * @param {string} rottenTomatoesId - Optional item identifier
+ * @param {string} rottenTomatoesHomepage - The provider page URL.
+ * @param {string|null} rottenTomatoesId - The provider identifier.
  * @returns {Promise<{
  *   id: string,
  *   url: string,
  *   usersRating: number|null,
  *   criticsRating: number|null,
- *   usersRatingCount: number|null,
- *   usersRatingLikedCount: number|null,
- *   usersRatingNotLikedCount: number|null,
  *   usersCertified: boolean|null,
  *   criticsRatingCount: number|null,
  *   criticsRatingLikedCount: number|null,
  *   criticsRatingNotLikedCount: number|null,
  *   criticsCertified: boolean|null
- * }|null>} An object containing the rating information, or null if not available
+ * }|null>} Rating details, or null when no identifier is provided.
  */
 const getRottenTomatoesRating = async (
   rottenTomatoesHomepage,
@@ -64,9 +60,6 @@ const getRottenTomatoesRating = async (
 ) => {
   let rottenTomatoesObj = null;
   let usersRating = null;
-  let usersRatingCount = null;
-  let usersRatingLikedCount = null;
-  let usersRatingNotLikedCount = null;
   let criticsRating = null;
   let criticsRatingCount = null;
   let criticsRatingLikedCount = null;
@@ -93,34 +86,17 @@ const getRottenTomatoesRating = async (
       try {
         const mediaScorecard = JSON.parse(rawJson);
 
-        usersRating = parseInt(mediaScorecard?.audienceScore?.score);
+        usersRating = parseInt(mediaScorecard?.audienceScore?.scorePercent);
         if (isNaN(usersRating)) usersRating = null;
 
         if (usersRating) {
-          usersRatingLikedCount = parseInt(
-            mediaScorecard?.audienceScore?.likedCount,
-          );
-          if (isNaN(usersRatingLikedCount)) usersRatingLikedCount = null;
-
-          usersRatingNotLikedCount = parseInt(
-            mediaScorecard?.audienceScore?.notLikedCount,
-          );
-          if (isNaN(usersRatingNotLikedCount)) usersRatingNotLikedCount = null;
-
-          if (
-            usersRatingLikedCount !== null &&
-            usersRatingNotLikedCount !== null
-          ) {
-            usersRatingCount = usersRatingLikedCount + usersRatingNotLikedCount;
-          }
-
           usersCertified =
             typeof mediaScorecard?.audienceScore?.certified === "boolean"
               ? mediaScorecard.audienceScore.certified
               : null;
         }
 
-        criticsRating = parseInt(mediaScorecard?.criticsScore?.score);
+        criticsRating = parseInt(mediaScorecard?.criticsScore?.scorePercent);
         if (isNaN(criticsRating)) criticsRating = null;
 
         if (criticsRating) {
@@ -159,9 +135,6 @@ const getRottenTomatoesRating = async (
           url: rottenTomatoesHomepage,
           usersRating,
           usersCertified,
-          usersRatingCount,
-          usersRatingLikedCount,
-          usersRatingNotLikedCount,
           criticsRating,
           criticsRatingCount,
           criticsRatingLikedCount,

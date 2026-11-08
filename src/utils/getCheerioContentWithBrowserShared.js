@@ -1,4 +1,7 @@
-const { ACCESS_DENIED_STATUS_CODES } = require("./browserConfig");
+const {
+  ACCESS_DENIED_STATUS_CODES,
+  BROWSER_STATE_PATH,
+} = require("./browserConfig");
 const { config } = require("../config");
 const { homepageStatusErrorCode } = require("./getHomepageResponse");
 const { logErrors } = require("./logErrors");
@@ -76,12 +79,19 @@ const getPlaywrightChromium = (url) => {
  * Logs the failure and stops the run.
  *
  * @param {{ url: string, origin: string }} request
- * @param {number} status
+ * @param {number|null} status
+ * @param {boolean} [requiresManualSession] - Whether to include session setup instructions.
  * @returns {never}
  */
-const abortOnAccessDenied = (request, status) => {
+const abortOnAccessDenied = (
+  request,
+  status,
+  requiresManualSession = false,
+) => {
   const error = new Error(
-    `${request.origin || "No Origin specified"} - ${request.url}: access denied (HTTP ${status}). Aborting the run.`,
+    requiresManualSession
+      ? `Browser session setup is required. Run node src/utils/saveBrowserSession.js "${request.url}" to save a browser session, then restart the script.`
+      : `${request.origin || "No Origin specified"} - ${request.url}: access denied (HTTP ${status}). Aborting the run.`,
   );
   logErrors(
     error,
@@ -91,7 +101,7 @@ const abortOnAccessDenied = (request, status) => {
 };
 
 /**
- * Navigates to a page with a small timeout retry loop used by browser fallbacks.
+ * Navigates with retries and refreshes browser state when required.
  *
  * @param {import("playwright").Page} page
  * @param {{
@@ -99,16 +109,19 @@ const abortOnAccessDenied = (request, status) => {
  *   origin: string,
  *   waitUntil: "domcontentloaded"|"networkidle",
  * }} request
- * @returns {Promise<void>}
+ * @returns {Promise<number|null>} The final document response status.
  */
 const navigateWithRetries = async (page, request) => {
   let lastDocumentStatus = null;
+  let lastResponseAction = null;
+  let sessionRefreshed = false;
   const trackDocumentStatus = (response) => {
     if (
       response.request().resourceType() === "document" &&
       response.frame() === page.mainFrame()
     ) {
       lastDocumentStatus = response.status();
+      lastResponseAction = response.headers()["x-amzn-waf-action"];
     }
   };
 
@@ -118,6 +131,7 @@ const navigateWithRetries = async (page, request) => {
     for (let attempt = 0; attempt < NAVIGATION_RETRY_COUNT; attempt++) {
       let navigationError = null;
       lastDocumentStatus = null;
+      lastResponseAction = null;
 
       await throttleNavigation();
 
@@ -130,8 +144,42 @@ const navigateWithRetries = async (page, request) => {
         navigationError = error;
       }
 
+      if (
+        new URL(request.url).hostname ===
+          new URL(config.baseURLIMDB).hostname &&
+        (lastResponseAction === "captcha" ||
+          (!navigationError && (await page.title()) === "Human Verification"))
+      ) {
+        if (process.platform !== "darwin" || sessionRefreshed) {
+          abortOnAccessDenied(request, lastDocumentStatus, true);
+        }
+
+        console.log(
+          "Refreshing browser session. Complete verification in Chrome if prompted; the current request will resume automatically.",
+        );
+        const { saveBrowserSession } = require("./saveBrowserSession");
+        try {
+          await saveBrowserSession(request.url, true);
+          await page.context().setStorageState(BROWSER_STATE_PATH);
+        } catch (error) {
+          logErrors(error, request.url, request.origin);
+        }
+        sessionRefreshed = true;
+        attempt--;
+        continue;
+      }
+
       const accessDenied = ACCESS_DENIED_STATUS_CODES.has(lastDocumentStatus);
-      if (!navigationError && !accessDenied) return;
+      if (!navigationError && !accessDenied) {
+        if (lastDocumentStatus >= 400) {
+          const error = new Error(
+            `${request.origin || "No Origin specified"} - ${request.url}: homepage returned HTTP ${lastDocumentStatus}.`,
+          );
+          error.code = homepageStatusErrorCode;
+          throw error;
+        }
+        return lastDocumentStatus;
+      }
 
       if (attempt === NAVIGATION_RETRY_COUNT - 1) {
         if (accessDenied) abortOnAccessDenied(request, lastDocumentStatus);

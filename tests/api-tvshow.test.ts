@@ -194,7 +194,7 @@ function checkItemProperties(items) {
 
     item.trailer
       ? expect(item.trailer).toMatch(
-          /^(https:\/\/(fr\.vid\.web\.acsta\.net.*\.mp4|www\.youtube\.com\/embed.*|www\.dailymotion\.com\/embed.*))$/,
+          /^(https:\/\/(fr\.vid\.web\.acsta\.net.*\.mp4|www\.youtube\.com\/embed.*|(?:www\.)?youtube\.com\/watch\?v=[A-Za-z0-9_-]+(?:&.*)?|www\.dailymotion\.com\/embed.*))$/,
         )
       : null;
     expect(items.filter((item) => item.trailer).length).toBeGreaterThanOrEqual(
@@ -584,32 +584,6 @@ function checkItemProperties(items) {
         "users_rating",
         "critics_rating",
       ]);
-      if (
-        typeof item.rotten_tomatoes.users_rating_liked_count === "number" ||
-        typeof item.rotten_tomatoes.users_rating_not_liked_count === "number"
-      ) {
-        expect(typeof item.rotten_tomatoes.users_rating_liked_count).toBe(
-          "number",
-        );
-        expect(typeof item.rotten_tomatoes.users_rating_not_liked_count).toBe(
-          "number",
-        );
-      }
-      if (item.rotten_tomatoes.users_rating_count) {
-        expect(item.rotten_tomatoes.users_rating_count).toBeGreaterThan(0);
-        expect(item.rotten_tomatoes.users_rating_count).toBe(
-          item.rotten_tomatoes.users_rating_liked_count +
-            item.rotten_tomatoes.users_rating_not_liked_count,
-        );
-        const expectedUsersRating = Math.round(
-          (item.rotten_tomatoes.users_rating_liked_count /
-            item.rotten_tomatoes.users_rating_count) *
-            100,
-        );
-        expect(
-          Math.abs(item.rotten_tomatoes.users_rating - expectedUsersRating),
-        ).toBeLessThanOrEqual(4);
-      }
       expect(
         items.filter(
           (item) => typeof item.rotten_tomatoes?.users_rating === "number",
@@ -638,49 +612,6 @@ function checkItemProperties(items) {
       }
     }
     if (item.is_active === true) {
-      if (item.item_type === "movie") {
-        expect(
-          items.filter(
-            (item) =>
-              typeof item.rotten_tomatoes?.users_rating_count === "number",
-          ).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-        expect(
-          items.filter(
-            (item) =>
-              typeof item.rotten_tomatoes?.users_rating_liked_count ===
-              "number",
-          ).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-        expect(
-          items.filter(
-            (item) =>
-              typeof item.rotten_tomatoes?.users_rating_not_liked_count ===
-              "number",
-          ).length,
-        ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
-      } else if (item.item_type === "tvshow") {
-        expect(
-          items.filter(
-            (item) =>
-              typeof item.rotten_tomatoes?.users_rating_count === "number",
-          ).length,
-        ).toBeGreaterThanOrEqual(0);
-        expect(
-          items.filter(
-            (item) =>
-              typeof item.rotten_tomatoes?.users_rating_liked_count ===
-              "number",
-          ).length,
-        ).toBeGreaterThanOrEqual(0);
-        expect(
-          items.filter(
-            (item) =>
-              typeof item.rotten_tomatoes?.users_rating_not_liked_count ===
-              "number",
-          ).length,
-        ).toBeGreaterThanOrEqual(0);
-      }
       expect(
         items.filter(
           (item) =>
@@ -1278,7 +1209,7 @@ const params = {
 
   episodes_details_lookup_accepts_all_optional_fields: {
     query:
-      "?tmdbid=249042&item_type=tvshow&append_to_response=episodes_details&episodes_append_to_response=title,description,url,release_date&filtered_seasons=1",
+      "?tmdbid=1399&item_type=tvshow&append_to_response=episodes_details&episodes_append_to_response=title,description,url,release_date&filtered_seasons=1",
     expectedResult: (items) => {
       expect(items).toHaveLength(1);
       expect(items[0].episodes_details.length).toBeGreaterThan(0);

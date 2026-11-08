@@ -1,56 +1,33 @@
-const { config } = require("../config");
-const {
-  getHomepageResponseWithRateLimitRetry,
-} = require("../utils/getHomepageResponseWithRateLimitRetry");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 
 /**
- * It takes a traktHomepage and allocineHomepage as arguments, and returns the usersRating and usersRatingCount of the item.
- * It only attempts to fetch and parse the content if a valid traktId is provided.
- * The data is retrieved from the Trakt API using the appropriate media type (movie or show).
+ * Extracts rating details from previously fetched response data.
  *
- * @param {string} allocineHomepage - The URL of the item's page on allocine.fr
- * @param {string} traktHomepage - The URL of the item's page on trakt.tv
- * @param {number|string} traktId - The Trakt ID or slug for the movie or TV show
- * @returns {Promise<{ id: number|string, url: string, usersRating: number|null, usersRatingCount: number|null, tagline: string|null }|null>} An object containing the Trakt rating information, or null if not available
+ * @param {string} traktHomepage - Provider URL for the item.
+ * @param {number|string|null} traktId - Provider identifier or slug.
+ * @param {object|null} [data] - Previously fetched provider response data.
+ * @returns {Promise<{
+ *   id: number|string,
+ *   url: string,
+ *   usersRating: number|null,
+ *   usersRatingCount: number
+ * }|null>} Rating details, or null when the identifier or votes are unavailable.
  */
-const getTraktRating = async (allocineHomepage, traktHomepage, traktId) => {
+const getTraktRating = async (traktHomepage, traktId, data) => {
   let traktObj = null;
 
   try {
     if (isNotNull(traktId)) {
-      const type = allocineHomepage.includes(config.baseURLTypeSeries)
-        ? "shows"
-        : "movies";
-
-      const apiUrl = `${config.baseURLTraktAPI}/${type}/${traktId}?extended=full`;
-      const response = await getHomepageResponseWithRateLimitRetry(apiUrl, {
-        serviceName: "Trakt",
-        id: traktId,
-        allowedStatuses: [200, 429],
-        requestConfig: {
-          headers: {
-            "trakt-api-key": config.traktApiKey,
-            "trakt-api-version": 2,
-          },
-        },
-      });
-
-      const data = response?.data;
-
       const usersRating = data?.rating ? Math.round(data.rating * 10) : null;
       const usersRatingCount = data?.votes ? parseInt(data.votes) : null;
-      const tagline =
-        data?.tagline && data?.tagline.trim() !== "" ? data.tagline : null;
-      if (!usersRatingCount || usersRatingCount === 0) return null;
+      if (!usersRatingCount) return null;
 
       traktObj = {
         id: traktId,
         url: traktHomepage,
         usersRating,
         usersRatingCount,
-        tagline,
       };
     }
   } catch (error) {

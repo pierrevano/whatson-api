@@ -1,17 +1,8 @@
-const { generateUserAgent } = require("./generateUserAgent");
-const { getCheerioContent } = require("./getCheerioContent");
 const {
-  getHomepageResponse,
-  homepageStatusErrorCode,
-} = require("./getHomepageResponse");
+  getCheerioContentWithBrowser,
+} = require("./getCheerioContentWithBrowser");
+const { homepageStatusErrorCode } = require("./getHomepageResponse");
 const { logErrors } = require("./logErrors");
-
-const imdbLocaleRequestOptions = {
-  headers: {
-    "Accept-Language": "en-US,en;q=0.9",
-    "User-Agent": generateUserAgent(),
-  },
-};
 
 /**
  * Fetches IMDb page content and parses the NEXT_DATA payload.
@@ -21,17 +12,7 @@ const imdbLocaleRequestOptions = {
  */
 const getImdbData = async (imdbHomepage) => {
   try {
-    await getHomepageResponse(imdbHomepage, {
-      serviceName: "IMDb",
-      allowedStatuses: [200, 202],
-      requestConfig: imdbLocaleRequestOptions,
-    });
-
-    const $ = await getCheerioContent(
-      imdbHomepage,
-      imdbLocaleRequestOptions,
-      "getImdbData",
-    );
+    const $ = await getCheerioContentWithBrowser(imdbHomepage, "getImdbData");
 
     if (typeof $ !== "function") {
       throw new Error("IMDb page content is unavailable.");

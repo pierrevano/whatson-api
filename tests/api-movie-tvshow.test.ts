@@ -25,6 +25,19 @@ const localHeaders = isRemoteSource
  * @type {Record<string, { query: string, skipRemote?: boolean, expectedResult: (items: any, response: any) => void | Promise<void> }>}
  */
 const params = {
+  rated_episodes_top_five_ratings_and_game_of_thrones_lead: {
+    query: "/episodes/rated?limit=5",
+    expectedResult: ({ results }) => {
+      expect(results).toHaveLength(5);
+      expect(results.map((episode) => episode.users_rating)).toEqual([
+        9.9, 9.9, 9.9, 9.9, 9.9,
+      ]);
+      expect(results.slice(0, 2).map((episode) => episode.tvshow.id)).toEqual([
+        1399, 1399,
+      ]);
+    },
+  },
+
   internal_id_is_hidden_on_listing: {
     query: "?limit=1",
     expectedResult: async (items) => {

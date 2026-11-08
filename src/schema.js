@@ -237,9 +237,6 @@ const itemSchema = {
     id: "string", // Rotten Tomatoes specific identifier
     url: "string", // URL to the Rotten Tomatoes page
     users_rating: "number", // Average rating given by Rotten Tomatoes users
-    users_rating_count: "number", // Total number of ratings submitted by Rotten Tomatoes users (calculated as liked + not liked votes)
-    users_rating_liked_count: "number", // Total number of liked ratings submitted by Rotten Tomatoes users
-    users_rating_not_liked_count: "number", // Total number of not liked ratings submitted by Rotten Tomatoes users
     users_certified: "boolean", // Has the item received the Rotten Tomatoes "Verified Audience" certification
     critics_rating: "number", // Average rating given by Rotten Tomatoes critics
     critics_rating_count: "number", // Total number of ratings submitted by Rotten Tomatoes critics

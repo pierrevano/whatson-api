@@ -57,7 +57,10 @@ async function checkStatus(service) {
 
   const isUpdateIds = getNodeVarsValues.get_ids === "update_ids";
 
-  if (isUpdateIds) updateIds();
+  if (isUpdateIds) {
+    updateIds();
+    if (process.env.GET_IDS_ERRORS_FOUND === "1") process.exit(1);
+  }
 
   if (getNodeVarsValues.get_db !== "update_db") process.exit(0);
 
@@ -96,14 +99,12 @@ async function checkStatus(service) {
   );
 
   if (allTheMovieDbIds.length === 0) {
-    if (process.env.GET_IDS_ERRORS_FOUND === "1") process.exit(1);
     console.log("Not updating tvshows as the top list is not correct.");
     process.exit(0);
   } else if (
     allTheMovieDbIds.length < config.minimumActiveItems &&
     !getNodeVarsValues.check_id
   ) {
-    if (process.env.GET_IDS_ERRORS_FOUND === "1") process.exit(1);
     console.log("Something went wrong when updating the IDs. Aborting.");
     process.exit(1);
   }

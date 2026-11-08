@@ -1,20 +1,23 @@
 const cheerio = require("cheerio");
+const { existsSync, writeFileSync } = require("fs");
 
+const {
+  BROWSER_STATE_PATH,
+  buildBrowserUserAgent,
+  HEADLESS_LAUNCH_OPTIONS,
+  US_CONTEXT_OPTIONS,
+} = require("./browserConfig");
+const { config } = require("../config");
 const {
   createBrowserRequest,
   getPlaywrightChromium,
   navigateWithRetries,
 } = require("./getCheerioContentWithBrowserShared");
 const { handleConsentBanner } = require("./handleConsentBanner");
-const {
-  buildBrowserUserAgent,
-  HEADLESS_LAUNCH_OPTIONS,
-  US_CONTEXT_OPTIONS,
-} = require("./browserConfig");
 const { logExecutionTime } = require("./logExecutionTime");
 
 /**
- * Creates a browser context with a desktop user agent matching the browser.
+ * Creates a browser context using the shared settings.
  *
  * @param {import("playwright").Browser} browser
  * @returns {Promise<import("playwright").BrowserContext>}
@@ -23,6 +26,9 @@ const createBrowserContext = async (browser) => {
   const context = await browser.newContext({
     ...US_CONTEXT_OPTIONS,
     userAgent: buildBrowserUserAgent(browser),
+    storageState: existsSync(BROWSER_STATE_PATH)
+      ? BROWSER_STATE_PATH
+      : undefined,
   });
 
   // Abort heavy media and third-party ads/analytics so pages reach network idle quickly.
@@ -44,7 +50,7 @@ let sharedNavigationTask = Promise.resolve();
 let sharedSessionPromise = null;
 
 /**
- * Reads the final page content into Cheerio, with optional consent handling.
+ * Reads page content into Cheerio and saves browser state when applicable.
  *
  * @param {import("playwright").Page} page
  * @param {{
@@ -57,7 +63,20 @@ const readCheerioFromPage = async (page, options = {}) => {
     await handleConsentBanner(page);
   }
 
-  return cheerio.load(await page.content());
+  const $ = cheerio.load(await page.content());
+  const jsonText = $("#__NEXT_DATA__").html();
+  if (
+    new URL(page.url()).hostname === new URL(config.baseURLIMDB).hostname &&
+    jsonText
+  ) {
+    JSON.parse(jsonText);
+    writeFileSync(
+      BROWSER_STATE_PATH,
+      JSON.stringify(await page.context().storageState()),
+      { mode: 0o600 },
+    );
+  }
+  return $;
 };
 
 /**
@@ -169,12 +188,12 @@ const loadCheerioWithDedicatedBrowser = async (chromium, request) => {
     const context = await createBrowserContext(browser);
     const page = await context.newPage();
 
-    await navigateWithRetries(page, request);
+    const status = await navigateWithRetries(page, request);
 
     const $ = await readCheerioFromPage(page, {
       handleConsent: request.handleConsent,
     });
-    logExecutionTime(request.origin, request.url, 200, startTime);
+    logExecutionTime(request.origin, request.url, status, startTime);
     return $;
   } finally {
     if (browser) {
@@ -202,14 +221,14 @@ const loadCheerioWithSharedPage = async (chromium, request) =>
     const startTime = Date.now();
     const { page } = await getSharedSession(chromium);
 
-    await navigateWithRetries(page, request);
+    const status = await navigateWithRetries(page, request);
 
     // Handle consent only once per shared session.
     const handleConsent = request.handleConsent && !sharedConsentHandled;
     if (handleConsent) sharedConsentHandled = true;
 
     const $ = await readCheerioFromPage(page, { handleConsent });
-    logExecutionTime(request.origin, request.url, 200, startTime);
+    logExecutionTime(request.origin, request.url, status, startTime);
     return $;
   });
 

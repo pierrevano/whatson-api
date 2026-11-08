@@ -1,5 +1,7 @@
 // HTTP statuses returned when access to the resource is denied.
-const ACCESS_DENIED_STATUS_CODES = new Set([401, 403, 451]);
+const ACCESS_DENIED_STATUS_CODES = new Set([202, 401, 403, 405, 451]);
+
+const BROWSER_STATE_PATH = "temp_browser_state.json";
 
 /**
  * Launch options used for every browser-based fetch.
@@ -8,7 +10,7 @@ const ACCESS_DENIED_STATUS_CODES = new Set([401, 403, 451]);
  */
 const HEADLESS_LAUNCH_OPTIONS = {
   headless: true,
-  channel: "chromium",
+  channel: process.platform === "darwin" ? "chrome" : "chromium",
   args: ["--disable-blink-features=AutomationControlled"],
 };
 
@@ -36,6 +38,7 @@ const buildBrowserUserAgent = (browser) => {
 
 module.exports = {
   ACCESS_DENIED_STATUS_CODES,
+  BROWSER_STATE_PATH,
   buildBrowserUserAgent,
   HEADLESS_LAUNCH_OPTIONS,
   US_CONTEXT_OPTIONS,

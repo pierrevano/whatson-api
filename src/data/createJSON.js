@@ -20,15 +20,17 @@ const { getPlatformsLinks } = require("../content/getPlatformsLinks");
 const { getProductionCompanies } = require("../content/getProductionCompanies");
 const { getRatingsData } = require("./getRatingsData");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
+const { getTagline } = require("../content/getTagline");
 const { getTheTvdbSlug } = require("../content/getTheTvdbSlug");
 const { getTitle, getTitleVariants } = require("../content/getTitle");
 const { getTmdbPopularity } = require("../content/getTmdbPopularity");
 const { getTMDBResponse } = require("../utils/getTMDBResponse");
 const { getTrailer } = require("../content/getTrailer");
 const { getTraktPopularity } = require("../content/getTraktPopularity");
+const { getTraktResponse } = require("../utils/getTraktResponse");
 
 /**
- * Asynchronously creates a JSON object with movie or TV show details from different sources.
+ * Builds an item payload from provider metadata.
  * @param {string} allocineCriticsDetails - URL for the AlloCiné critics details page
  * @param {string} allocineURL - The AlloCiné URL
  * @param {string} allocineHomepage - The AlloCiné homepage URL
@@ -55,7 +57,7 @@ const { getTraktPopularity } = require("../content/getTraktPopularity");
  * @param {object|null} imdbData - IMDb data.
  * @param {string} theTvdbHomepage - TheTVDB homepage URL
  * @param {number} theTvdbId - TheTVDB ID
- * @returns {Promise<object>} A JSON object containing movie or TV show details.
+ * @returns {Promise<object>} The assembled item payload.
  */
 const createJSON = async (
   allocineCriticsDetails,
@@ -86,6 +88,12 @@ const createJSON = async (
   theTvdbId,
 ) => {
   const { data: tmdbData } = await getTMDBResponse(allocineHomepage, tmdbId);
+  const traktResponse = await getTraktResponse(
+    allocineHomepage,
+    traktHomepage,
+    traktId,
+  );
+  const traktData = traktResponse?.data;
 
   const {
     allocineCriticInfo,
@@ -116,6 +124,7 @@ const createJSON = async (
     tmdbData,
     tmdbHomepage,
     tmdbId,
+    traktData,
     traktHomepage,
     traktId,
   });
@@ -173,10 +182,12 @@ const createJSON = async (
     allocineHomepage,
     tmdbData,
   );
+  const tagline = await getTagline(allocineHomepage, traktData);
   const trailer = await getTrailer(
     allocineHomepage,
     betaseriesHomepage,
     betaseriesId,
+    traktData,
   );
   const imdbPopularity = await getImdbPopularity(
     imdbHomepage,
@@ -308,10 +319,6 @@ const createJSON = async (
           id: rottenTomatoesRating.id,
           url: rottenTomatoesRating.url,
           users_rating: rottenTomatoesRating.usersRating,
-          users_rating_count: rottenTomatoesRating.usersRatingCount,
-          users_rating_liked_count: rottenTomatoesRating.usersRatingLikedCount,
-          users_rating_not_liked_count:
-            rottenTomatoesRating.usersRatingNotLikedCount,
           users_certified: rottenTomatoesRating.usersCertified,
           critics_rating: rottenTomatoesRating.criticsRating,
           critics_rating_count: rottenTomatoesRating.criticsRatingCount,
@@ -395,7 +402,7 @@ const createJSON = async (
     production_companies: productionCompanies,
     release_date: allocineFirstInfo?.releaseDate,
     runtime,
-    tagline: traktRating?.tagline,
+    tagline,
     trailer,
 
     episodes_details: episodesDetails,

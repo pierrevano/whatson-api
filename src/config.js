@@ -201,6 +201,7 @@ const config = {
     "next_episode",
     "platforms_links",
     "popularity",
+    "trailer",
   ],
   maxAgeInDays: 3,
   maxDaysInFuture: 45,

@@ -7,16 +7,19 @@ const { logErrors } = require("../utils/logErrors");
 const { removeExtraChar } = require("../utils/removeExtraChar");
 
 /**
- * Retrieves the trailer link for a movie or tvshow using BetaSeries and AlloCiné fallbacks.
- * @param {string} allocineHomepage - The URL of the movie or tvshow on AlloCiné.
- * @param {string|null} betaseriesHomepage - The corresponding BetaSeries URL when available.
- * @param {string|null} betaseriesId - The corresponding BetaSeries ID when available.
- * @returns {Promise<string|null>} The trailer URL, or null if it cannot be determined.
+ * Retrieves a trailer URL from provided metadata or fallback sources.
+ *
+ * @param {string} allocineHomepage - Source page URL for the item.
+ * @param {string|null} betaseriesHomepage - Fallback provider URL.
+ * @param {string|null} betaseriesId - Fallback provider identifier.
+ * @param {{ trailer?: string|null }|null} [data] - Previously fetched metadata.
+ * @returns {Promise<string|null>} The trailer URL, or null when unavailable.
  */
 const getTrailer = async (
   allocineHomepage,
   betaseriesHomepage,
   betaseriesId,
+  data,
 ) => {
   let trailer = null;
   let $;
@@ -27,6 +30,9 @@ const getTrailer = async (
   };
 
   try {
+    const traktTrailer = data?.trailer || null;
+    if (traktTrailer) return traktTrailer;
+
     if (isNotNull(betaseriesId)) {
       $ = await fetchContent(betaseriesHomepage);
 

@@ -5,17 +5,31 @@ const isObject = (value) =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 /**
- * Logs and reports values that would be cleared by an update.
+ * Logs invalid metadata and values that would be cleared by an update.
  * Configured reset exclusions are skipped.
- * The script is aborted after logging when ABORT_ON_VALUE_RESET is enabled.
+ * Value resets abort the script after logging when ABORT_ON_VALUE_RESET is enabled.
  *
  * @param {Object} data - The refreshed payload.
- * @param {Object} storedData - The payload currently stored.
+ * @param {Object|null} storedData - The payload currently stored.
  * @param {string} allocineURL - The AlloCiné URL
  * @param {string} [path] - The path of the key being walked.
- * @returns {boolean} Whether a value would be reset.
+ * @returns {boolean} Whether the update fails validation.
  */
 const logResetValues = (data, storedData, allocineURL, path = "") => {
+  if (
+    data?.episodes_details?.some((episode) =>
+      config.episodesAppendToResponseValues.some(
+        (field) => !Object.hasOwn(episode, field),
+      ),
+    )
+  ) {
+    logAndAppendTempErrorLog(
+      `${allocineURL} - Episode metadata fields are missing.`,
+    );
+    return true;
+  }
+
+  if (process.env.ALLOW_VALUE_RESET === "true") return false;
   if (!isObject(data) || !isObject(storedData)) return false;
 
   let hasReset = false;

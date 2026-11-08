@@ -18,12 +18,10 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let lastCallAt = 0;
 
 /**
- * Fetches ratings data from the supported third-party providers.
- * AlloCiné data is fetched first, while the remaining providers may be handled
- * either one after another or in parallel depending on the current flow.
+ * Collects rating details using source pages and previously fetched metadata.
  *
- * @param {object} params - Provider URLs, ids, and preloaded IMDb/TMDB data for the current item.
- * @returns {Promise<object>} Ratings data collected for the current item, grouped by provider.
+ * @param {object} params - Provider URLs, identifiers, and response data.
+ * @returns {Promise<object>} Collected metadata grouped by provider.
  */
 const getRatingsData = async ({
   allocineCriticsDetails,
@@ -43,6 +41,7 @@ const getRatingsData = async ({
   tmdbData,
   tmdbHomepage,
   tmdbId,
+  traktData,
   traktHomepage,
   traktId,
 }) => {
@@ -80,11 +79,7 @@ const getRatingsData = async ({
       sensCritiqueHomepage,
       sensCritiqueId,
     );
-    const traktRating = await getTraktRating(
-      allocineHomepage,
-      traktHomepage,
-      traktId,
-    );
+    const traktRating = await getTraktRating(traktHomepage, traktId, traktData);
     const [imdbRatingData, tmdbRating] = await Promise.all([
       getImdbRating(imdbHomepage, imdbData),
       getTmdbRating(tmdbHomepage, tmdbId, tmdbData),
@@ -121,7 +116,7 @@ const getRatingsData = async ({
     getRottenTomatoesRating(rottenTomatoesHomepage, rottenTomatoesId),
     getSensCritiqueRating(sensCritiqueHomepage, sensCritiqueId),
     getTmdbRating(tmdbHomepage, tmdbId, tmdbData),
-    getTraktRating(allocineHomepage, traktHomepage, traktId),
+    getTraktRating(traktHomepage, traktId, traktData),
   ]);
 
   return {

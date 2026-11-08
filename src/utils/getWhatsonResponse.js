@@ -18,7 +18,12 @@ const getWhatsonResponse = async (itemTypeApi, tmdbId, appendToResponse) => {
     const appendParam = appendToResponse
       ? `&append_to_response=${appendToResponse}`
       : "";
-    const apiUrl = `${config.baseURLRemote}/${itemTypeApi}/${tmdbId}?api_key=${config.internalApiKey}${appendParam}`;
+    const episodesAppendParam = appendToResponse
+      ?.split(",")
+      .includes("episodes_details")
+      ? `&episodes_append_to_response=${config.episodesAppendToResponseValues.join(",")}`
+      : "";
+    const apiUrl = `${config.baseURLRemote}/${itemTypeApi}/${tmdbId}?api_key=${config.internalApiKey}${appendParam}${episodesAppendParam}`;
     const response = await axios.get(apiUrl, {
       headers: { "User-Agent": process.env.WHATSON_SYNC_USER_AGENT },
       validateStatus: () => true,
