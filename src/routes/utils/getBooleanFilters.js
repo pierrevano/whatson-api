@@ -18,13 +18,10 @@ const getBooleanFilters = (query, defaultValues = {}) => {
   for (const field of config.booleanQueryFields) {
     const name = field.split(".").pop();
     const value = query?.[name] ?? defaults[name];
-    const includesBothValues = value === "true,false" || value === "false,true";
 
     filters[name] = {};
     if (value === "true" || value === "false") {
       filters[name] = { [field]: value === "true" };
-    } else if (includesBothValues) {
-      filters[name] = { $or: [{ [field]: true }, { [field]: false }] };
     }
   }
 

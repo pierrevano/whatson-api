@@ -1,3 +1,5 @@
+const { MongoServerError } = require("mongodb");
+
 const {
   areQuerySearchKeysMissing,
 } = require("../routes/utils/itemTypeValidation");
@@ -48,7 +50,7 @@ const sendResponse = (res, statusCode, data, error) => {
  * @param {import("express").Response} res - Express response used to send the outcome.
  * @param {object|null|undefined} json - Aggregated payload returned by the Mongo pipeline.
  * @param {typeof import("../config").config} config - Shared configuration values.
- * @param {{ is_active: boolean }|{ $or: Array<{ is_active: boolean }> }} [is_active_item] - Activity metadata returned by the aggregation pipeline.
+ * @param {{ is_active?: boolean }|{ $or: Array<{ is_active: boolean }> }} [is_active_item] - Activity metadata returned by the aggregation pipeline.
  * @returns {import("express").Response} The Express response after being sent.
  */
 const sendRequest = (req, res, json, config, is_active_item) => {
@@ -157,7 +159,7 @@ const sendPreferencesRequest = async (
 };
 
 /**
- * Handles unexpected exceptions by logging them to New Relic and returning a generic 500 payload.
+ * Reports request errors and sends the corresponding error response.
  *
  * @param {import("express").Response} res - Express response instance.
  * @param {Error} error - Captured error to forward to observability tooling.
@@ -165,6 +167,15 @@ const sendPreferencesRequest = async (
  */
 const sendInternalError = async (res, error) => {
   console.error("Internal server error:", error);
+
+  if (error instanceof MongoServerError && error.code === 50) {
+    return sendResponse(
+      res,
+      503,
+      { message: config.queryTimeoutMessage },
+      error,
+    );
+  }
 
   const message = isMongoMemoryLimitError(error)
     ? config.queryMemoryLimitMessage

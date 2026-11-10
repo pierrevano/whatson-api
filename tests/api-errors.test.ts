@@ -785,7 +785,7 @@ const params = {
       expect(data).toHaveProperty("message");
       expect(data).toHaveProperty("code");
       expect(data.message).toBe(
-        `${config.invalidEndpointMessage} Allowed endpoints are: GET /, GET /episodes/rated, GET /movie/:id, GET /tvshow/:id, GET /tvshow/:id/seasons, GET /tvshow/:id/seasons/:season_number/episodes, GET /tvshow/:id/seasons/:season_number/episodes/:episode_number, GET /updates. Received '/invalid-path'.`,
+        `${config.invalidEndpointMessage} Allowed endpoints are: GET /, GET /episodes/rated, GET /health, GET /movie/:id, GET /tvshow/:id, GET /tvshow/:id/seasons, GET /tvshow/:id/seasons/:season_number/episodes, GET /tvshow/:id/seasons/:season_number/episodes/:episode_number, GET /updates. Received '/invalid-path'.`,
       );
       expect(data.code).toBe(404);
     },
@@ -1939,15 +1939,41 @@ describe("What's on? API tests", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  test("A query exceeding its time limit is aborted", async () => {
-    expect(config.queryMaxTimeMS).toBeGreaterThan(0);
+  test(
+    "A query exceeding its time limit is aborted and returns 503",
+    async () => {
+      expect(config.queryMaxTimeMS).toBeGreaterThan(0);
 
-    await expect(
-      collectionData
+      const query = collectionData
         .aggregate([{ $sortByCount: "$title" }], { maxTimeMS: 1 })
-        .toArray(),
-    ).rejects.toThrow(/time limit|MaxTimeMSExpired/i);
-  });
+        .toArray();
+
+      await expect(query).rejects.toThrow(/time limit|MaxTimeMSExpired/i);
+
+      const error = await query.catch((error) => error);
+      const res = {
+        locals: {},
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+      const log = jest.spyOn(console, "error").mockImplementation(() => {});
+
+      try {
+        await handleRequestError(error, {}, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(503);
+        expect(res.json).toHaveBeenCalledWith({
+          code: 503,
+          message: config.queryTimeoutMessage,
+        });
+        expect(next).not.toHaveBeenCalled();
+      } finally {
+        log.mockRestore();
+      }
+    },
+    config.timeout,
+  );
 
   test("Unexpected errors return a generic response", async () => {
     const error = new Error("private error details");

@@ -62,7 +62,7 @@ const booleanQueryProperties = Object.fromEntries(
       {
         type: "string",
         description:
-          'Filter by "true", "false", or "true,false".' +
+          'Filter by "true" or "false". Use "true,false" or "false,true" to apply no restriction, including null or missing values.' +
           (name === "is_adult" ? ' Defaults to "false".' : ""),
       },
     ]),

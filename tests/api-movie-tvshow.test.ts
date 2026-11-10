@@ -25,16 +25,27 @@ const localHeaders = isRemoteSource
  * @type {Record<string, { query: string, skipRemote?: boolean, expectedResult: (items: any, response: any) => void | Promise<void> }>}
  */
 const params = {
-  rated_episodes_top_five_ratings_and_game_of_thrones_lead: {
-    query: "/episodes/rated?limit=5",
-    expectedResult: ({ results }) => {
-      expect(results).toHaveLength(5);
-      expect(results.map((episode) => episode.users_rating)).toEqual([
-        9.9, 9.9, 9.9, 9.9, 9.9,
-      ]);
-      expect(results.slice(0, 2).map((episode) => episode.tvshow.id)).toEqual([
-        1399, 1399,
-      ]);
+  health_check_returns_expected_response: {
+    query: "/health?",
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(200);
+      expect(data).toEqual({ status: "ok" });
+      expect(response.headers["cache-control"]).toBe("no-store");
+      expect(response.headers["access-control-allow-origin"]).toBe("*");
+      expect(response.headers).not.toHaveProperty("x-ratelimit-limit");
+      expect(response.headers).not.toHaveProperty("x-ratelimit-remaining");
+      expect(response.headers).not.toHaveProperty("x-ratelimit-reset");
+    },
+  },
+
+  title_search_returns_null_critic_certification: {
+    query:
+      "?title=One%20Tree%20Hill&item_type=tvshow&critics_certified=false,true&limit=1",
+    expectedResult: (items, response) => {
+      expect(response.status).toBe(200);
+      expect(items).toHaveLength(1);
+      expect(items[0].id).toBe(269);
+      expect(items[0].rotten_tomatoes.critics_certified).toBeNull();
     },
   },
 

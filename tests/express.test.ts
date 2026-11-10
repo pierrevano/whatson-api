@@ -116,6 +116,7 @@ describe("Express method-not-allowed handling", () => {
   test.each(
     [
       "/episodes/rated",
+      "/health",
       "/movie/123",
       "/tvshow/123",
       "/tvshow/123/seasons",

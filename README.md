@@ -58,6 +58,15 @@ This API provides information on movies and tvshows.
 
 ## Endpoints
 
+### **GET /health**
+
+Checks API and database availability.
+
+#### Responses:
+
+- `200` API and database available: `{"status":"ok"}`.
+- `503` Database unavailable or the check timed out: `{"status":"degraded"}`.
+
 ### **GET /**
 
 Retrieves detailed information about either a movie or a tvshow based on the provided query parameters.
@@ -117,6 +126,8 @@ Active items are fetched from 2 different links:
 | page                        | _integer_                                                                                                                                                                                                                                                                                                   | Page number                                                                                                                                                                                                              |
 | limit                       | _integer_                                                                                                                                                                                                                                                                                                   | Page size is 20 by default. Values above 20 require a sponsor API key to help cover bandwidth and processing costs.                                                                                                      |
 
+For boolean filters, `true,false` or `false,true` applies no restriction, including null or missing values.
+
 _Composer, director, genre, platform, network, and production-company filters use case-insensitive partial matching by default. Use `^name$` for an exact match; other regex operators are treated literally._
 
 `certification_variants`, `image_variants`, and `title_variants` are append-only fields and currently expose only a French (`fr`) localized variant. If you need another locale, contact me at https://pierrevano.github.io.
@@ -161,7 +172,7 @@ Alongside these parameters, `item_type`, `page`, `limit`, `episodes_append_to_re
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
-- `503` Service unavailable
+- `503` Service unavailable (connection issue or query processing time limit exceeded)
 
 ---
 
@@ -209,7 +220,7 @@ You can also see it live at https://whatson-top-episodes.vercel.app.
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
-- `503` Service unavailable
+- `503` Service unavailable (connection issue or query processing time limit exceeded)
 
 Example of a rated episodes response returned:
 
@@ -269,7 +280,7 @@ Returns the TMDB IDs of items added or updated since a given date, grouped by it
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
-- `503` Service unavailable
+- `503` Service unavailable (connection issue or query processing time limit exceeded)
 
 Example of an updates response returned:
 
@@ -309,7 +320,7 @@ Provides detailed information about a specific item (movie or tvshow) by its typ
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
-- `503` Service unavailable
+- `503` Service unavailable (connection issue or query processing time limit exceeded)
 
 ---
 
@@ -630,7 +641,7 @@ Returns season-level metadata for a tvshow.
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
-- `503` Service unavailable
+- `503` Service unavailable (connection issue or query processing time limit exceeded)
 
 ---
 
@@ -655,7 +666,7 @@ Returns the list of episodes for a specific season, with optional episode-level 
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
-- `503` Service unavailable
+- `503` Service unavailable (connection issue or query processing time limit exceeded)
 
 ---
 
@@ -675,7 +686,7 @@ Returns details for a specific episode inside a specific season. Season numbers 
 - `405` Method not allowed
 - `429` Too many requests (rate limit exceeded)
 - `500` Internal server error
-- `503` Service unavailable
+- `503` Service unavailable (connection issue or query processing time limit exceeded)
 
 ---
 

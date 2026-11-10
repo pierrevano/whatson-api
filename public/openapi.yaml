@@ -25,7 +25,7 @@ info:
     Rotten Tomatoes ÷ 20, AlloCiné native, etc.). `minimum_ratings` uses
     the 0–5 scale when filtering movies and TV shows, and the 0–10 scale when filtering episodes.
     Movie and TV show searches by title or ID ignore this filter; episode searches support it.
-  version: 3.47.0
+  version: 3.48.0
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -156,14 +156,20 @@ components:
     leClub:
       name: le_club
       in: query
-      description: Has the item received the AlloCiné Le Club label (`true`, `false`, or `true,false`).
+      description: >-
+        Has the item received the AlloCiné Le Club label (`true` or `false`).
+        Use `true,false` or `false,true` to apply no restriction,
+        including null or missing values.
       schema:
         type: string
 
     lesIndes:
       name: les_indes
       in: query
-      description: Has the item received the AlloCiné Les Indés label (`true`, `false`, or `true,false`).
+      description: >-
+        Has the item received the AlloCiné Les Indés label (`true` or `false`).
+        Use `true,false` or `false,true` to apply no restriction,
+        including null or missing values.
       schema:
         type: string
 
@@ -843,16 +849,53 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
     ServiceUnavailable:
-      description: Service unavailable.
+      description: Service unavailable (connection issue or query processing time limit exceeded).
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
+          examples:
+            QueryTimeout:
+              summary: Query processing time limit exceeded.
+              value:
+                code: 503
+                message: The request exceeded the processing time limit. Please narrow your filters or try again later.
 
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 paths:
+  /health:
+    get:
+      operationId: checkHealth
+      summary: Check API and database availability
+      description: Checks API and database availability.
+      tags: [Health]
+      security: []
+      responses:
+        "200":
+          description: API and database available.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+        "503":
+          description: Database unavailable or the check timed out.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    enum: [degraded]
+
   /:
     get:
       operationId: searchTitles
@@ -917,8 +960,9 @@ paths:
         - name: is_active
           in: query
           description: |
-            `true` returns only active titles, `false` returns only inactive titles,
-            `true,false` (or omitting this parameter) returns both.
+            `true` returns only active titles, `false` returns only inactive titles.
+            Use `true,false` or `false,true` to apply no restriction,
+            including null or missing values.
           schema:
             type: string
             example: "true"
@@ -926,7 +970,8 @@ paths:
           in: query
           description: |
             `false` (default) returns only non-adult titles, `true` returns only
-            adult-flagged titles, `true,false` returns both.
+            adult-flagged titles. Use `true,false` or `false,true` to apply no restriction,
+            including null or missing values.
           schema:
             type: string
             default: "false"
@@ -937,7 +982,8 @@ paths:
           in: query
           description: |
             `true` returns only Metacritic "Must-See" titles, `false` returns only
-            titles without that badge, `true,false` returns both.
+            titles without that badge. Use `true,false` or `false,true` to apply no restriction,
+            including null or missing values.
           schema:
             type: string
             example: "true"
@@ -945,7 +991,8 @@ paths:
           in: query
           description: |
             `true` returns only Rotten Tomatoes "Verified Audience" certified titles,
-            `false` returns only uncertified titles, `true,false` returns both.
+            `false` returns only uncertified titles. Use `true,false` or `false,true` to apply
+            no restriction, including null or missing values.
           schema:
             type: string
             example: "true"
@@ -953,7 +1000,8 @@ paths:
           in: query
           description: |
             `true` returns only Rotten Tomatoes "Certified Fresh" titles, `false`
-            returns only non-certified titles, `true,false` returns both.
+            returns only non-certified titles. Use `true,false` or `false,true` to apply
+            no restriction, including null or missing values.
           schema:
             type: string
             example: "true"
@@ -1426,8 +1474,9 @@ paths:
         - name: is_active
           in: query
           description: |
-            `true` returns only active TV shows, `false` returns only inactive TV shows,
-            `true,false` (or omitting this parameter) returns both.
+            `true` returns only active TV shows, `false` returns only inactive TV shows.
+            Use `true,false` or `false,true` to apply no restriction,
+            including null or missing values.
           schema:
             type: string
             example: "true"
@@ -1435,7 +1484,8 @@ paths:
           in: query
           description: |
             `false` (default) returns only non-adult TV shows, `true` returns only
-            adult-flagged TV shows, `true,false` returns both.
+            adult-flagged TV shows. Use `true,false` or `false,true` to apply no restriction,
+            including null or missing values.
           schema:
             type: string
             default: "false"
@@ -1446,7 +1496,8 @@ paths:
           in: query
           description: |
             `true` returns only TV shows with the Metacritic "Must-See" badge, `false`
-            returns only those without it, `true,false` returns both.
+            returns only those without it. Use `true,false` or `false,true` to apply
+            no restriction, including null or missing values.
           schema:
             type: string
             example: "true"
@@ -1454,7 +1505,8 @@ paths:
           in: query
           description: |
             `true` returns only TV shows with Rotten Tomatoes "Verified Audience"
-            certification, `false` returns only uncertified shows, `true,false` returns both.
+            certification, `false` returns only uncertified shows. Use `true,false` or `false,true`
+            to apply no restriction, including null or missing values.
           schema:
             type: string
             example: "true"
@@ -1462,7 +1514,8 @@ paths:
           in: query
           description: |
             `true` returns only TV shows with Rotten Tomatoes "Certified Fresh" status,
-            `false` returns only non-certified shows, `true,false` returns both.
+            `false` returns only non-certified shows. Use `true,false` or `false,true` to apply
+            no restriction, including null or missing values.
           schema:
             type: string
             example: "true"

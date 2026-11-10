@@ -42,7 +42,7 @@ const { resolveLimit } = require("./utils/resolveLimit");
  * @param {string|undefined} status_query - Comma-separated list of show statuses to include.
  * @param {string|undefined} order_query - Sort direction (`asc` or `desc`).
  * @param {string|undefined} sort_by_query - Field to sort by.
- * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: ({ is_active: boolean } | { $or: Array<object> }) }>} Aggregated items along with paging info and the resolved activity flag.
+ * @returns {Promise<{ items: Array, limit: number, page: number, is_active_item: { is_active?: boolean } }>} Aggregated items along with paging info and the resolved activity flag.
  */
 const aggregateData = async (
   append_to_response,

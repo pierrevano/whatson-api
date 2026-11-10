@@ -4,6 +4,7 @@ const { sendResponse } = require("../utils/sendRequest");
 const allowedEndpoints = [
   "GET /",
   "GET /episodes/rated",
+  "GET /health",
   "GET /movie/:id",
   "GET /tvshow/:id",
   "GET /tvshow/:id/seasons",
@@ -15,6 +16,7 @@ const allowedEndpoints = [
 const routeSpecs = [
   { pattern: /^\/$/, methods: ["GET"] },
   { pattern: /^\/episodes\/rated\/?$/i, methods: ["GET"] },
+  { pattern: /^\/health\/?$/i, methods: ["GET"] },
   { pattern: /^\/movie\/[^/]+\/?$/i, methods: ["GET"] },
   { pattern: /^\/tvshow\/[^/]+\/?$/i, methods: ["GET"] },
   {

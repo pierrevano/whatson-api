@@ -1,11 +1,13 @@
 require("dotenv").config({ quiet: true });
 
+const cors = require("cors");
 const express = require("express");
 const path = require("path");
 
 const app = express();
 
 const { applyBaseMiddleware } = require("./src/routes/appMiddleware");
+const { client } = require("./src/utils/mongoClient");
 const { config } = require("./src/config");
 const {
   getTvShowSeasonEpisodeDetails,
@@ -18,6 +20,7 @@ const {
 } = require("./src/routes/getOrSaveUserPreferences");
 const { handleInvalidEndpoint } = require("./src/routes/handleInvalidEndpoint");
 const { handleRequestError } = require("./src/utils/sendRequest");
+const { ignoreNewRelicTransaction } = require("./src/utils/sendToNewRelic");
 const { limiter } = require("./src/routes/utils/rateLimiter");
 const {
   validateQueryParams,
@@ -55,6 +58,21 @@ const routeAllowlist = {
   ],
   tvshowSeasonEpisode: apiKeyAndAppendToResponseQueryParams,
 };
+
+/* A route that checks service availability. */
+app.get("/health", cors(), async (_req, res) => {
+  ignoreNewRelicTransaction();
+  res.set("Cache-Control", "no-store");
+
+  try {
+    await client
+      .db(config.dbName)
+      .command({ ping: 1 }, { signal: AbortSignal.timeout(3000) });
+    return res.status(200).json({ status: "ok" });
+  } catch {
+    return res.status(503).json({ status: "degraded" });
+  }
+});
 
 /* Configure the shared application-level middleware. */
 applyBaseMiddleware(app, { staticDir: path.join(__dirname, "public") });

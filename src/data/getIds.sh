@@ -86,20 +86,21 @@ if [[ -z $BETASERIES_API_KEY ]]; then
 fi
 
 # Check if What's on? API is up
+HEALTH_URL="${WHATSON_API_URL%/}/health"
 while true; do
-  response_headers=$(curl --compressed -o /dev/null -s -D - -w "%{http_code}" -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$WHATSON_API_URL")
+  response_headers=$(curl --compressed -o /dev/null -s -D - -w "%{http_code}" -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$HEALTH_URL")
   status_code=$(printf '%s\n' "$response_headers" | tail -n 1)
 
   if [[ "$status_code" -eq 200 ]]; then
-    echo "Correct status code $status_code from $WHATSON_API_URL."
+    echo "Correct status code $status_code from $HEALTH_URL."
     echo $SEPARATOR
     break
   elif [[ "$status_code" -gt 500 ]]; then
-    echo "Critical Error: Received status code $status_code from $WHATSON_API_URL. Aborting."
+    echo "Critical Error: Received status code $status_code from $HEALTH_URL. Aborting."
     echo $SEPARATOR
     exit 1
   else
-    echo "Error: Received status code $status_code from $WHATSON_API_URL. Retrying..."
+    echo "Error: Received status code $status_code from $HEALTH_URL. Retrying..."
     echo $SEPARATOR
   fi
 

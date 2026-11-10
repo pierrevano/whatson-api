@@ -112,29 +112,19 @@ const getRatedEpisodes = async (req, res) => {
       });
     }
 
-    pipeline.push({
-      $addFields: {
-        episodeReleaseDateAsDate: {
-          $dateFromString: {
-            dateString: "$episodes_details.release_date",
-          },
-        },
-      },
-    });
-
     if (releaseDateRange.gte || releaseDateRange.lte) {
       const releaseDateMatch = {};
 
       if (releaseDateRange.gte) {
-        releaseDateMatch.$gte = releaseDateRange.gte;
+        releaseDateMatch.$gte = releaseDateRange.gte.toISOString();
       }
 
       if (releaseDateRange.lte) {
-        releaseDateMatch.$lte = releaseDateRange.lte;
+        releaseDateMatch.$lte = releaseDateRange.lte.toISOString();
       }
 
       episodeMatchConditions.push({
-        episodeReleaseDateAsDate: releaseDateMatch,
+        "episodes_details.release_date": releaseDateMatch,
       });
     }
 

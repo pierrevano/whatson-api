@@ -144,6 +144,8 @@ const config = {
   ],
   queryMemoryLimitMessage:
     "Something went wrong. Please reduce the number of pages requested or lower the limit and try again.",
+  queryTimeoutMessage:
+    "The request exceeded the processing time limit. Please narrow your filters or try again later.",
   requiredEpisodesDetailsMessage:
     "The episodes_details value is required in append_to_response when episodes_append_to_response is provided. Please add episodes_details to append_to_response.",
   requiredItemTypeMessage:

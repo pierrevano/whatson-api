@@ -193,11 +193,11 @@ describe("What's on? API rate limiting tests", () => {
     120000,
   );
 
-  rateLimitTest.each([["get", "/movie/121", "192.0.2.42"]])(
-    "Rate Limiting should reject requests once the daily limit is exceeded: %s %s",
-    async (method, path, forwardedFor) => {
-      const apiCall = `${baseURL}${path}`;
-      const counterKey = `rlflx:${forwardedFor}`;
+  rateLimitTest(
+    "Rate Limiting should reject requests once the daily limit is exceeded",
+    async () => {
+      const ip = generateRandomIp();
+      const counterKey = `rlflx:${ip}`;
       const rateLimitCollection = client
         .db(config.dbName)
         .collection(config.collectionNameRateLimit);
@@ -216,15 +216,7 @@ describe("What's on? API rate limiting tests", () => {
       );
 
       try {
-        const response = await axios.request({
-          method,
-          url: apiCall,
-          headers: {
-            "CF-Connecting-IP": forwardedFor,
-            "X-Forwarded-For": forwardedFor,
-          },
-          validateStatus: (status) => status <= 500,
-        });
+        const response = await requestLimit(ip);
 
         expect(response.status).toBe(429);
         expect(response.data).toEqual({

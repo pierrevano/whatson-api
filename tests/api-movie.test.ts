@@ -973,13 +973,13 @@ const params = {
     },
   },
 
-  both_adult_and_non_adult_movies: {
+  both_is_adult_values_movies: {
     query: "?item_type=movie&is_adult=true,false",
     expectedResult: (items) => {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("movie");
-        expect([true, false]).toContain(item.is_adult);
+        expect([true, false, null, undefined]).toContain(item.is_adult);
       });
     },
   },
@@ -1012,7 +1012,9 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("movie");
-        expect([true, false]).toContain(item.metacritic.must_see);
+        expect([true, false, null, undefined]).toContain(
+          item.metacritic?.must_see,
+        );
       });
     },
   },
@@ -1045,7 +1047,9 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("movie");
-        expect([true, false]).toContain(item.rotten_tomatoes.users_certified);
+        expect([true, false, null, undefined]).toContain(
+          item.rotten_tomatoes?.users_certified,
+        );
       });
     },
   },
@@ -1078,7 +1082,9 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("movie");
-        expect([true, false]).toContain(item.rotten_tomatoes.critics_certified);
+        expect([true, false, null, undefined]).toContain(
+          item.rotten_tomatoes?.critics_certified,
+        );
       });
     },
   },
@@ -1111,7 +1117,9 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("movie");
-        expect([true, false]).toContain(item.allocine.le_club);
+        expect([true, false, null, undefined]).toContain(
+          item.allocine?.le_club,
+        );
       });
     },
   },
@@ -1144,7 +1152,9 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("movie");
-        expect([true, false]).toContain(item.allocine.les_indes);
+        expect([true, false, null, undefined]).toContain(
+          item.allocine?.les_indes,
+        );
       });
     },
   },
