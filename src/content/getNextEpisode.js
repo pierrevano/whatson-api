@@ -1,7 +1,7 @@
 const { buildEpisodeSummary } = require("../utils/buildEpisodeSummary");
 const { config } = require("../config");
 const { formatDate } = require("../utils/formatDate");
-const { getAllocineInfo } = require("./getAllocineInfo");
+const { getStatus } = require("./getStatus");
 const { logErrors } = require("../utils/logErrors");
 const { updateToReadableString } = require("../utils/updateToReadableString");
 
@@ -23,9 +23,9 @@ const getSequentialEpisode = (lastEpisode, normalizedEpisodes) => {
 /**
  * Retrieves details of the next episode to air for a given tvshow, excluding ended shows and past episodes.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
- * @param {Array<Object>} episodesDetails - Array of episode objects for the tvshow.
+ * @param {Array<Object>|null} episodesDetails - Array of episode objects for the tvshow.
  * @param {Object|null} lastEpisode - The last aired episode with season and episode numbers.
- * @param {Object} data - The TMDB API response data for the tvshow.
+ * @param {Object|null} [data] - The TMDB API response data for the tvshow.
  * @returns {Promise<Object|null>} A promise resolving to the next episode's details, or null if not applicable.
  */
 const getNextEpisode = async (
@@ -81,7 +81,7 @@ const getNextEpisode = async (
       }
     }
 
-    if ((await getAllocineInfo(allocineHomepage, false)).status !== "Ended") {
+    if ((await getStatus(allocineHomepage, data?.status)) !== "Ended") {
       nextEpisodeDetails = {
         ...buildEpisodeSummary(nextEpisode),
         episode_type: updateToReadableString(episode_type),

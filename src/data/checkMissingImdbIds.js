@@ -7,6 +7,8 @@ const { writeFileSync } = require("fs");
  *
  * @param {Array} mojoBoxOfficeArray - Box office entries fetched from Mojo.
  * @param {Array} jsonArraySortedHighestToLowest - Dataset parsed from the CSV file.
+ * @returns {void}
+ * @throws {Error} If the missing ID report cannot be written.
  */
 const checkMissingImdbIds = (
   mojoBoxOfficeArray,

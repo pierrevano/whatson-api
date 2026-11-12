@@ -20,6 +20,7 @@ const normalizeString = (str) =>
  * @param {string} [append_to_response] - Additional fields to include in the projection.
  * @param {string} [filtered_seasons] - Seasons numbers to filter episodes by (if applicable).
  * @returns {Promise<{ limit: number, page: number, results: Object[], total_results: number } | { error: string }>} Results and pagination details, or a validation error.
+ * @throws {Error} If the lookup input is invalid or the database query fails.
  */
 const findId = async (json, append_to_response, filtered_seasons) => {
   if (!json || typeof json !== "object" || Object.keys(json).length === 0) {

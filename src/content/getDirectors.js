@@ -3,9 +3,9 @@ const { logErrors } = require("../utils/logErrors");
 /**
  * Retrieves director names from the item metadata.
  * @param {string} allocineHomepage - The homepage of the movie or tvshow on AlloCiné.
- * @param {object} data - The item metadata.
+ * @param {object|null} data - The item metadata.
  * @param {object} [tmdbData] - TMDB data.
- * @param {object} [imdbCredits] - IMDb credits.
+ * @param {object|null} [imdbCredits] - IMDb credits.
  * @returns {Promise<string[]|null>} Director names, or null when none are available. Errors are passed to logErrors.
  */
 const getDirectors = async (allocineHomepage, data, tmdbData, imdbCredits) => {

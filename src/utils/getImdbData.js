@@ -9,6 +9,7 @@ const { logErrors } = require("./logErrors");
  *
  * @param {string} imdbHomepage - The IMDb homepage URL of the item.
  * @returns {Promise<{ $: import("cheerio").CheerioAPI, nextData: object }>}
+ * @throws {Error} If page data cannot be retrieved or parsed.
  */
 const getImdbData = async (imdbHomepage) => {
   try {

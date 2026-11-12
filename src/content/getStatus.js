@@ -2,24 +2,25 @@ const { config } = require("../config");
 const { logAndAppendTempErrorLog, logErrors } = require("../utils/logErrors");
 
 /**
- * Returns the English equivalent of the given French status string for a specific AlloCiné page.
+ * Normalizes a TV show status.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
- * @param {string} status - The French status string to convert.
- * @returns {Promise<string|null>} The English status, or null for movies or unrecognized statuses. Errors are passed to logErrors.
+ * @param {string|undefined} status - The source status to normalize.
+ * @returns {Promise<string|null>} The normalized status, or null for movies or unrecognized statuses.
  */
 const getStatus = async (allocineHomepage, status) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
   try {
     switch (status) {
-      case "Annulée":
+      case "Canceled":
         return "Canceled";
-      case "En cours":
+      case "In Production":
+      case "Planned":
+      case "Returning Series":
         return "Ongoing";
-      case "Pilote":
+      case "Pilot":
         return "Pilot";
-      case "Terminée":
-      case "mini-série":
+      case "Ended":
         return "Ended";
       case "":
         return "Unknown";

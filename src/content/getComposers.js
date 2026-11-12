@@ -1,8 +1,8 @@
 /**
  * Retrieves composer names from the item metadata.
- * @param {object} data - The item metadata.
+ * @param {object|null} data - The item metadata.
  * @param {object} [tmdbData] - TMDB data.
- * @param {object} [imdbCredits] - IMDb credits.
+ * @param {object|null} [imdbCredits] - IMDb credits.
  * @returns {string[]|null} Composer names when available.
  */
 const getComposers = (data, tmdbData, imdbCredits) => {

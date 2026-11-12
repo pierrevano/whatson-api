@@ -37,6 +37,7 @@ function expectNumericIdOrNumericString(value) {
 }
 
 function expectIdRatingConsistency(source, ratingKeys, options = {}) {
+  expect(source).toBeDefined();
   if (!source) return;
 
   const { idKey = "id" } = options;

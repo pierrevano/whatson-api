@@ -10,6 +10,8 @@
  * @param {import("mongodb").Collection} params.collectionData - Mongo collection containing remote items.
  * @param {Object} params.getNodeVarsValues - Parsed CLI flags.
  * @param {boolean} params.isUpdateIds - Whether `update_ids` mode is active.
+ * @returns {Promise<void>}
+ * @throws {Error} If a database update fails.
  */
 const resetInactiveItems = async ({
   allTheMovieDbIds,

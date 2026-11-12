@@ -50,7 +50,7 @@ const sendResponse = (res, statusCode, data, error) => {
  * @param {import("express").Response} res - Express response used to send the outcome.
  * @param {object|null|undefined} json - Aggregated payload returned by the Mongo pipeline.
  * @param {typeof import("../config").config} config - Shared configuration values.
- * @param {{ is_active?: boolean }|{ $or: Array<{ is_active: boolean }> }} [is_active_item] - Activity metadata returned by the aggregation pipeline.
+ * @param {{ is_active?: boolean }} [is_active_item] - Activity metadata returned by the aggregation pipeline.
  * @returns {import("express").Response} The Express response after being sent.
  */
 const sendRequest = (req, res, json, config, is_active_item) => {
@@ -60,27 +60,8 @@ const sendRequest = (req, res, json, config, is_active_item) => {
     req.query,
     keysToCheckForSearch,
   );
-  const resolveIsActiveValue = () => {
-    if (is_active_item) {
-      if (typeof is_active_item.is_active !== "undefined") {
-        return is_active_item.is_active;
-      }
-
-      if (Array.isArray(is_active_item.$or)) {
-        const activeFlags = is_active_item.$or
-          .map((condition) => condition.is_active)
-          .filter((value) => typeof value !== "undefined");
-
-        if (activeFlags.length > 0) {
-          return activeFlags.join(",");
-        }
-      }
-    }
-
-    return typeof req.query.is_active !== "undefined"
-      ? req.query.is_active
-      : "true,false";
-  };
+  const resolveIsActiveValue = () =>
+    is_active_item?.is_active ?? req.query.is_active ?? "true,false";
 
   if (!json || areNoResults) {
     const isActiveUndefinedOrMissing = !req.query.is_active;

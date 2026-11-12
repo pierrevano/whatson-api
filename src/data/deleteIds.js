@@ -8,6 +8,8 @@ const { b64Encode } = require("../utils/b64EncodeAndDecode");
  * @param {import("mongodb").Collection} params.collectionData - Mongo collection containing remote items.
  * @param {Object} params.getNodeVarsValues - Parsed CLI flags.
  * @param {Array<string>} params.processArgs - Typically `process.argv`.
+ * @returns {Promise<void>}
+ * @throws {Error} If the database deletion fails.
  */
 const deleteIds = async ({
   collectionData,

@@ -14,6 +14,7 @@ const {
  * @param {string} url - The page URL to open.
  * @param {boolean} [fresh=false] - Whether to start without saved state.
  * @returns {Promise<void>}
+ * @throws {Error} If the URL is missing or the session cannot be saved.
  */
 const saveBrowserSession = async (url, fresh = false) => {
   if (!url) throw new Error("Please provide the IMDb title URL to open.");

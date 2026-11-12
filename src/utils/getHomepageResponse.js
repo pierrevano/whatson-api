@@ -1,4 +1,4 @@
-const axios = require("axios");
+const { httpClient } = require("./httpClient");
 
 const homepageStatusErrorCode = "homepageStatusError";
 
@@ -14,6 +14,7 @@ const homepageStatusErrorCode = "homepageStatusError";
  *   requestConfig?: import("axios").AxiosRequestConfig
  * }} [options={}] - Optional metadata for error messages and allowed HTTP statuses.
  * @returns {Promise<import("axios").AxiosResponse>} The axios response when the status is allowed.
+ * @throws {Error} If the request fails or the response status is not allowed.
  */
 const getHomepageResponse = async (homepageUrl, options = {}) => {
   const {
@@ -27,7 +28,7 @@ const getHomepageResponse = async (homepageUrl, options = {}) => {
       ? allowedStatuses
       : [200];
 
-  const response = await axios.get(homepageUrl, {
+  const response = await httpClient.get(homepageUrl, {
     ...requestConfig,
     validateStatus: () => true,
   });

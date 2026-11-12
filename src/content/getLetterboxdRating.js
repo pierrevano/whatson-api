@@ -11,8 +11,8 @@ const { logErrors } = require("../utils/logErrors");
  * It takes a letterboxdHomepage as an argument, and returns the usersRating and usersRatingCount of the item.
  * It only attempts to fetch and parse the content if a valid letterboxdId is provided.
  *
- * @param {string} letterboxdHomepage - The URL of the item's page on letterboxd.com
- * @param {string} letterboxdId - Optional item identifier
+ * @param {string|null} letterboxdHomepage - The URL of the item's page on letterboxd.com
+ * @param {string|null} letterboxdId - Optional item identifier
  * @returns {Promise<{ id: string, url: string, usersRating: number|null, usersRatingCount: number|null }|null>} An object containing the rating information, or null if not available
  */
 const getLetterboxdRating = async (letterboxdHomepage, letterboxdId) => {

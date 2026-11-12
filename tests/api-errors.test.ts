@@ -16,7 +16,7 @@ const maxLimitLargeDocuments = config.maxLimitLargeDocuments;
 
 /**
  * Request cases and their expected results.
- * @type {Record<string, { query: string, method?: string, data?: Buffer, headers?: object, skipRemote?: boolean, expectedResult: (data: any, response: any) => void }>}
+ * @type {Record<string, { query: string, api_key?: string, method?: string, data?: Buffer, headers?: object, skipRemote?: boolean, expectedResult: (data: any, response: any) => void }>}
  */
 const params = {
   uppercase_page_is_not_an_integer: {
@@ -452,6 +452,36 @@ const params = {
         `${config.invalidItemTypeMessage} Received 'moviE'.`,
       );
       expect(data.code).toBe(400);
+    },
+  },
+
+  listing_limit_requires_sponsor_api_key: {
+    query: `?limit=${config.limit + 1}`,
+    api_key: config.testApiKey,
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(403);
+      expect(data).toEqual({
+        code: 403,
+        message: config.requiredSponsorApiKeyForLimitMessage.replace(
+          "{limit}",
+          config.limit,
+        ),
+      });
+    },
+  },
+
+  rated_episodes_limit_requires_sponsor_api_key: {
+    query: `/episodes/rated?limit=${config.limit + 1}`,
+    api_key: config.testApiKey,
+    expectedResult: (data, response) => {
+      expect(response.status).toBe(403);
+      expect(data).toEqual({
+        code: 403,
+        message: config.requiredSponsorApiKeyForLimitMessage.replace(
+          "{limit}",
+          config.limit,
+        ),
+      });
     },
   },
 
@@ -1866,6 +1896,7 @@ describe("What's on? API tests", () => {
       name,
       {
         query,
+        api_key = config.internalApiKey,
         method = "get",
         data: body,
         headers,
@@ -1874,7 +1905,7 @@ describe("What's on? API tests", () => {
       },
     ]) => {
       async function fetchItemsData() {
-        const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${config.internalApiKey}`;
+        const apiCall = `${baseURL}${query}${query ? "&" : "?"}api_key=${api_key}`;
 
         console.log("Test name:", name);
         console.log(`Calling ${apiCall}`);

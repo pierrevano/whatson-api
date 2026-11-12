@@ -13,6 +13,7 @@ const { logErrors } = require("../utils/logErrors");
  *   years?: Array<{ year: number }>
  * }} episodesInfo - Episode metadata extracted from the IMDb payload.
  * @returns {number|null} Count of seasons validated against the latest season number, or null when inconsistent.
+ * @throws {Error} If a season number cannot be parsed.
  */
 const determineSeasonsInfo = (episodesInfo) => {
   if (!episodesInfo || !Array.isArray(episodesInfo.seasons)) {

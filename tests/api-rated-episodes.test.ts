@@ -170,9 +170,10 @@ const params = {
       );
       expect(firstPage.results.length).toBeGreaterThan(0);
       expect(secondPage.results.length).toBeGreaterThan(0);
-      expect(getEpisodeKey(firstPage.results[0])).not.toBe(
-        getEpisodeKey(secondPage.results[0]),
-      );
+      const firstPageKeys = firstPage.results.map(getEpisodeKey);
+      secondPage.results.forEach((episode) => {
+        expect(firstPageKeys).not.toContain(getEpisodeKey(episode));
+      });
     },
   },
 

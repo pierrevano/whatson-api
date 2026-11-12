@@ -22,7 +22,7 @@ const monthMap = {
  *
  * @param {string} frenchDateStr - The date string in French format (e.g., "12 mars 2023", "juin 1960", "1960", "Depuis 2024", "2020 - 2024").
  * @param {boolean} [isTVShow=false] - If true, it will handle special cases for TV shows and ensure the year is less or equal than the current year.
- * @returns {string|null} - The ISO 8601 formatted date string (e.g., "2023-03-12T00:00:00.000Z") or null if the date string is unknown or invalid.
+ * @returns {string|null} - The ISO 8601 formatted date string (e.g., "2023-03-12T00:00:00.000Z") or null when no date is available for the selected mode.
  * @throws Will throw an error if the input date string format is invalid or if the month is not recognized.
  */
 function convertFrenchDateToISOString(frenchDateStr, isTVShow = false) {
@@ -79,7 +79,7 @@ function convertFrenchDateToISOString(frenchDateStr, isTVShow = false) {
  * Converts a structured release date object (with year, optional month and day)
  * to an ISO 8601 date string.
  *
- * @param {{ year: number, month?: number, day?: number }} releaseDate - The release date object.
+ * @param {{ year?: number|null, month?: number|null, day?: number|null }|null|undefined} releaseDate - The release date object.
  * @returns {string|null} - The ISO 8601 date string or null when the year is missing.
  */
 function convertImdbDateToISOString(releaseDate) {

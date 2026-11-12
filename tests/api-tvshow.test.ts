@@ -26,16 +26,16 @@ const removeLogs = process.env.REMOVE_LOGS === "true";
  * @param {Array<Object>} items - An array of objects representing the items to be validated. Each object
  *     should contain properties like `is_active`, `item_type`, `title`, `release_date`, and various
  *     ratings from different platforms (e.g., IMDb, AlloCiné, etc.).
+ * @returns {void}
+ * @throws {Error} If an item fails validation.
  */
 function checkItemProperties(items) {
   return items.forEach((item) => {
     /* Common */
-    if (item.is_active === true) {
-      config.keysToCheck.forEach((key) => {
-        expect(item).toHaveProperty(key);
-        expect(typeof item[key]).not.toBe("undefined");
-      });
-    }
+    config.keysToCheck.forEach((key) => {
+      expect(item).toHaveProperty(key);
+      expect(typeof item[key]).not.toBe("undefined");
+    });
     expect(item.id).toBeGreaterThan(0);
     expect(
       items.filter((item) => item.original_title).length,
@@ -56,7 +56,7 @@ function checkItemProperties(items) {
       /^https:\/\/.*\.(jpg|jpeg|png|gif|jfif)(\?[a-zA-Z0-9=&]*)?$/i,
     );
     expect(
-      items.filter((item) => item.release_date !== null).length,
+      items.filter((item) => typeof item.release_date === "string").length,
     ).toBeGreaterThanOrEqual(config.minimumNumberOfItems.default);
     expect(items.filter((item) => item.tagline).length).toBeGreaterThanOrEqual(
       config.minimumNumberOfItems.default,
@@ -105,7 +105,7 @@ function checkItemProperties(items) {
 
     expect(["movie", "tvshow"]).toContain(item.item_type);
 
-    expect(item.title).not.toBeNull();
+    expect(typeof item.title).toBe("string");
 
     if (item.is_active === true) {
       expect(
@@ -185,11 +185,11 @@ function checkItemProperties(items) {
     } else if (item.is_active === true) {
       expect(item.seasons_number).not.toBeNull();
       expect(item.seasons_number).toBeGreaterThan(0);
-      expect(item.status).not.toBeNull();
+      expect(config.allowedTvshowStatuses).toContain(item.status);
     }
 
     if (item.metacritic) {
-      expect(item.metacritic.must_see).not.toBeNull();
+      expect(typeof item.metacritic.must_see).toBe("boolean");
     }
 
     item.trailer
@@ -246,6 +246,7 @@ function checkItemProperties(items) {
           "release_date",
           "users_rating",
         ].forEach((key) => {
+          expect(item.last_episode[key]).toBeDefined();
           expect(item.last_episode[key]).not.toBe("");
 
           if (["season", "episode", "title", "id", "url"].includes(key)) {
@@ -270,6 +271,7 @@ function checkItemProperties(items) {
           "release_date",
           "users_rating",
         ].forEach((key) => {
+          expect(item.next_episode[key]).toBeDefined();
           expect(item.next_episode[key]).not.toBe("");
 
           if (
@@ -329,7 +331,7 @@ function checkItemProperties(items) {
       expect(item.allocine).not.toBeNull();
       expect(item.allocine.id).not.toBeNull();
       expectPositiveInteger(item.allocine.id);
-      expect(item.allocine.url).not.toBeNull();
+      expect(typeof item.allocine.url).toBe("string");
       expect(Object.keys(item.allocine).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.allocine,
       );
@@ -389,16 +391,10 @@ function checkItemProperties(items) {
           typeof item.imdb?.users_rating !== "number",
       ).length,
     ).toBe(0);
-    if (
-      item.allocine?.users_rating &&
-      typeof item.allocine?.users_rating_count !== "undefined"
-    ) {
+    if (item.allocine?.users_rating) {
       expect(item.allocine.users_rating_count).toBeGreaterThan(0);
     }
-    if (
-      item.allocine?.critics_rating &&
-      typeof item.allocine?.critics_rating_count !== "undefined"
-    ) {
+    if (item.allocine?.critics_rating) {
       expect(item.allocine.critics_rating_count).toBeGreaterThan(0);
     }
 
@@ -410,7 +406,7 @@ function checkItemProperties(items) {
       expect(item.imdb).not.toBeNull();
       expect(item.imdb.id).not.toBeNull();
       expectImdbId(item.imdb.id);
-      expect(item.imdb.url).not.toBeNull();
+      expect(typeof item.imdb.url).toBe("string");
       expect(Object.keys(item.imdb).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.imdb,
       );
@@ -427,10 +423,7 @@ function checkItemProperties(items) {
     expect(
       items.filter((item) => item.imdb && !item.imdb?.users_rating).length,
     ).toBe(0);
-    if (
-      item.imdb?.users_rating &&
-      typeof item.imdb?.users_rating_count !== "undefined"
-    ) {
+    if (item.imdb?.users_rating) {
       expect(item.imdb.users_rating_count).toBeGreaterThan(0);
     }
 
@@ -475,7 +468,7 @@ function checkItemProperties(items) {
     if (item.betaseries) {
       expect(item.betaseries.id).not.toBeNull();
       expectSlugLikeId(item.betaseries.id);
-      expect(item.betaseries.url).not.toBeNull();
+      expect(typeof item.betaseries.url).toBe("string");
       expect(Object.keys(item.betaseries).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.betaseries,
       );
@@ -491,10 +484,7 @@ function checkItemProperties(items) {
             (item) => item.betaseries && !item.betaseries?.users_rating,
           ).length,
         ).toBe(0);
-        if (
-          item.betaseries.users_rating &&
-          typeof item.betaseries.users_rating_count !== "undefined"
-        ) {
+        if (item.betaseries.users_rating) {
           expect(item.betaseries.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -511,7 +501,7 @@ function checkItemProperties(items) {
     if (item.metacritic) {
       expect(item.metacritic.id).not.toBeNull();
       expectSlugLikeId(item.metacritic.id);
-      expect(item.metacritic.url).not.toBeNull();
+      expect(typeof item.metacritic.url).toBe("string");
       expect(Object.keys(item.metacritic).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.metacritic,
       );
@@ -533,16 +523,10 @@ function checkItemProperties(items) {
               !item.metacritic?.critics_rating,
           ).length,
         ).toBe(0);
-        if (
-          item.metacritic.users_rating &&
-          typeof item.metacritic.users_rating_count !== "undefined"
-        ) {
+        if (item.metacritic.users_rating) {
           expect(item.metacritic.users_rating_count).toBeGreaterThan(0);
         }
-        if (
-          item.metacritic.critics_rating &&
-          typeof item.metacritic.critics_rating_count !== "undefined"
-        ) {
+        if (item.metacritic.critics_rating) {
           expect(item.metacritic.critics_rating_count).toBeGreaterThan(0);
         }
       }
@@ -576,7 +560,7 @@ function checkItemProperties(items) {
     if (item.rotten_tomatoes) {
       expect(item.rotten_tomatoes.id).not.toBeNull();
       expectSlugLikeId(item.rotten_tomatoes.id);
-      expect(item.rotten_tomatoes.url).not.toBeNull();
+      expect(typeof item.rotten_tomatoes.url).toBe("string");
       expect(Object.keys(item.rotten_tomatoes).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.rottenTomatoes,
       );
@@ -603,10 +587,7 @@ function checkItemProperties(items) {
               !item.rotten_tomatoes?.critics_rating,
           ).length,
         ).toBe(0);
-        if (
-          item.rotten_tomatoes.critics_rating &&
-          typeof item.rotten_tomatoes.critics_rating_count !== "undefined"
-        ) {
+        if (item.rotten_tomatoes.critics_rating) {
           expect(item.rotten_tomatoes.critics_rating_count).toBeGreaterThan(0);
         }
       }
@@ -655,7 +636,7 @@ function checkItemProperties(items) {
     if (item.letterboxd) {
       expect(item.letterboxd.id).not.toBeNull();
       expectSlugLikeId(item.letterboxd.id);
-      expect(item.letterboxd.url).not.toBeNull();
+      expect(typeof item.letterboxd.url).toBe("string");
       expect(Object.keys(item.letterboxd).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.letterboxd,
       );
@@ -666,10 +647,7 @@ function checkItemProperties(items) {
             (item) => item.letterboxd && !item.letterboxd?.users_rating,
           ).length,
         ).toBe(0);
-        if (
-          item.letterboxd.users_rating &&
-          typeof item.letterboxd.users_rating_count !== "undefined"
-        ) {
+        if (item.letterboxd.users_rating) {
           expect(item.letterboxd.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -692,7 +670,7 @@ function checkItemProperties(items) {
     if (item.senscritique) {
       expect(item.senscritique.id).not.toBeNull();
       expectNumericIdOrNumericString(item.senscritique.id);
-      expect(item.senscritique.url).not.toBeNull();
+      expect(typeof item.senscritique.url).toBe("string");
       expect(Object.keys(item.senscritique).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.senscritique,
       );
@@ -703,10 +681,7 @@ function checkItemProperties(items) {
             (item) => item.senscritique && !item.senscritique?.users_rating,
           ).length,
         ).toBe(0);
-        if (
-          item.senscritique.users_rating &&
-          typeof item.senscritique.users_rating_count !== "undefined"
-        ) {
+        if (item.senscritique.users_rating) {
           expect(item.senscritique.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -728,7 +703,7 @@ function checkItemProperties(items) {
     if (item.tmdb) {
       expect(item.tmdb.id).not.toBeNull();
       expectPositiveInteger(item.tmdb.id);
-      expect(item.tmdb.url).not.toBeNull();
+      expect(typeof item.tmdb.url).toBe("string");
       expect(Object.keys(item.tmdb).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.tmdb,
       );
@@ -737,10 +712,7 @@ function checkItemProperties(items) {
         expect(
           items.filter((item) => item.tmdb && !item.tmdb?.users_rating).length,
         ).toBe(0);
-        if (
-          item.tmdb.users_rating &&
-          typeof item.tmdb.users_rating_count !== "undefined"
-        ) {
+        if (item.tmdb.users_rating) {
           expect(item.tmdb.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -761,7 +733,7 @@ function checkItemProperties(items) {
     if (item.trakt) {
       expect(item.trakt.id).not.toBeNull();
       expectSlugLikeId(item.trakt.id);
-      expect(item.trakt.url).not.toBeNull();
+      expect(typeof item.trakt.url).toBe("string");
       expect(Object.keys(item.trakt).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.trakt,
       );
@@ -771,10 +743,7 @@ function checkItemProperties(items) {
           items.filter((item) => item.trakt && !item.trakt?.users_rating)
             .length,
         ).toBe(0);
-        if (
-          item.trakt.users_rating &&
-          typeof item.trakt.users_rating_count !== "undefined"
-        ) {
+        if (item.trakt.users_rating) {
           expect(item.trakt.users_rating_count).toBeGreaterThan(0);
         }
       }
@@ -792,13 +761,13 @@ function checkItemProperties(items) {
     }
 
     /* TV Time */
-    expect(item.tv_time).toBeUndefined();
+    expect(item).not.toHaveProperty("tv_time");
 
     /* TheTVDB */
     if (item.thetvdb) {
       expect(item.thetvdb.id).not.toBeNull();
       expectPositiveInteger(item.thetvdb.id);
-      expect(item.thetvdb.url).not.toBeNull();
+      expect(typeof item.thetvdb.url).toBe("string");
       expect(Object.keys(item.thetvdb).length).toBeGreaterThanOrEqual(
         config.minimumNumberOfItems.thetvdb,
       );
@@ -858,6 +827,8 @@ function checkItemProperties(items) {
  * @param {Array<Object>} items - An array of items, typically containing only one item, expected to be returned from the API.
  *                                The item is expected to have a `tmdb` object containing an `id` property.
  * @param {number} expectedId - The expected ID value that the single item's ID should match.
+ * @returns {void}
+ * @throws {Error} If the item count or ID does not match.
  */
 function checkSingleItemId(items, expectedId) {
   expect(items.length).toBe(1);
@@ -866,7 +837,7 @@ function checkSingleItemId(items, expectedId) {
 
 /**
  * An object containing various query parameters and their expected results.
- * @type {Record<string, { query: string, expectedResult: (items: any, response: any) => void }>}
+ * @type {Record<string, { query: string, expectedResult: (items: any, response: any) => void | Promise<void> }>}
  */
 const params = {
   page_2_with_20_items: {
@@ -923,7 +894,7 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("tvshow");
-        expect([true, false, null, undefined]).toContain(item.is_adult);
+        expect([true, false, null]).toContain(item.is_adult);
       });
     },
   },
@@ -956,9 +927,8 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("tvshow");
-        expect([true, false, null, undefined]).toContain(
-          item.metacritic?.must_see,
-        );
+        if (item.metacritic === null) return;
+        expect([true, false, null]).toContain(item.metacritic?.must_see);
       });
     },
   },
@@ -980,7 +950,8 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("tvshow");
-        expect([true, false, null, undefined]).toContain(
+        if (item.rotten_tomatoes === null) return;
+        expect([true, false, null]).toContain(
           item.rotten_tomatoes?.users_certified,
         );
       });
@@ -1004,10 +975,23 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("tvshow");
-        expect([true, false, null, undefined]).toContain(
+        if (item.rotten_tomatoes === null) return;
+        expect([true, false, null]).toContain(
           item.rotten_tomatoes?.critics_certified,
         );
       });
+    },
+  },
+
+  listing_includes_unknown_critic_certification_when_both_values_requested: {
+    query:
+      "?item_type=tvshow&networks=The%20WB,The%20CW&seasons_number=9&release_date=from:2003-01-01,to:2003-12-31&critics_certified=true,false&limit=20",
+    expectedResult: (items, response) => {
+      expect(response.status).toBe(200);
+      expect(items.find((item) => item.id === 269)).toHaveProperty(
+        "rotten_tomatoes.critics_certified",
+        null,
+      );
     },
   },
 
@@ -1039,9 +1023,8 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("tvshow");
-        expect([true, false, null, undefined]).toContain(
-          item.allocine?.le_club,
-        );
+        if (item.allocine === null) return;
+        expect([true, false, null]).toContain(item.allocine?.le_club);
       });
     },
   },
@@ -1063,9 +1046,8 @@ const params = {
       expect(items.length).toBeGreaterThan(0);
       items.forEach((item) => {
         expect(item.item_type).toBe("tvshow");
-        expect([true, false, null, undefined]).toContain(
-          item.allocine?.les_indes,
-        );
+        if (item.allocine === null) return;
+        expect([true, false, null]).toContain(item.allocine?.les_indes);
       });
     },
   },
@@ -1214,6 +1196,25 @@ const params = {
           expect([1, 3]).toContain(episode.season);
         });
       }
+    },
+  },
+
+  episodes_details_lookup_omits_optional_fields_by_default: {
+    query:
+      "?tmdbid=1399&item_type=tvshow&append_to_response=episodes_details&filtered_seasons=1",
+    expectedResult: (items) => {
+      expect(items).toHaveLength(1);
+      expect(items[0].id).toBe(1399);
+      expect(items[0].episodes_details.length).toBeGreaterThan(0);
+      items[0].episodes_details.forEach((episode) => {
+        expect(Object.keys(episode).sort()).toEqual([
+          "episode",
+          "id",
+          "season",
+          "users_rating",
+          "users_rating_count",
+        ]);
+      });
     },
   },
 
@@ -2166,6 +2167,7 @@ const params = {
             item.next_episode.season !== 1 ||
             item.next_episode.episode !== 1
           ) {
+            expect(item.last_episode).toBeDefined();
             expect(item.last_episode).not.toBeNull();
           }
 
@@ -2485,7 +2487,7 @@ describe("What's on? API tests", () => {
       const data = response.data;
       const items = query.startsWith("/") ? data : data.results;
 
-      expectedResult(items, response);
+      await expectedResult(items, response);
     }
 
     test(

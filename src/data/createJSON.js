@@ -20,6 +20,7 @@ const { getPlatformsLinks } = require("../content/getPlatformsLinks");
 const { getProductionCompanies } = require("../content/getProductionCompanies");
 const { getRatingsData } = require("./getRatingsData");
 const { getSeasonsNumber } = require("../content/getSeasonsNumber");
+const { getStatus } = require("../content/getStatus");
 const { getTagline } = require("../content/getTagline");
 const { getTheTvdbSlug } = require("../content/getTheTvdbSlug");
 const { getTitle, getTitleVariants } = require("../content/getTitle");
@@ -45,8 +46,8 @@ const { getTraktResponse } = require("../utils/getTraktResponse");
  * @param {string} metacriticId - The Metacritic ID
  * @param {string} rottenTomatoesHomepage - The Rotten Tomatoes homepage URL
  * @param {string} rottenTomatoesId - The Rotten Tomatoes ID
- * @param {string} letterboxdHomepage - The Letterboxd homepage URL
- * @param {string} letterboxdId - The Letterboxd ID
+ * @param {string|null} letterboxdHomepage - The Letterboxd homepage URL
+ * @param {string|null} letterboxdId - The Letterboxd ID
  * @param {string} sensCritiqueHomepage - The SensCritique homepage URL
  * @param {number} sensCritiqueId - The SensCritique ID
  * @param {string} traktHomepage - The Trakt homepage URL
@@ -228,6 +229,7 @@ const createJSON = async (
   const seasonsNumber =
     (config.specialItems.includes(imdbId) && (imdbSeasonsNumber ?? null)) ||
     (await getSeasonsNumber(allocineHomepage, tmdbData));
+  const status = await getStatus(allocineHomepage, tmdbData?.status);
   const {
     usersRating: usersRatingBetaseries,
     usersRatingCount: usersRatingCountBetaseries,
@@ -412,7 +414,7 @@ const createJSON = async (
     lowest_episode: lowestEpisode,
     platforms_links: platformsLinks,
     seasons_number: seasonsNumber,
-    status: allocineFirstInfo?.status,
+    status,
 
     allocine: allocineObj,
     betaseries: betaseriesObj,

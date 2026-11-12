@@ -12,6 +12,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {string} url - The provider page URL.
  * @param {import("axios").AxiosRequestConfig} [options] - Request options.
  * @returns {Promise<string>} The raw JSON payload embedded in the page.
+ * @throws {Error} If rating data cannot be retrieved.
  */
 const fetchMediaScorecardJson = async (url, options) => {
   for (let attempt = 1; attempt <= config.retries; attempt += 1) {

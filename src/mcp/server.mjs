@@ -38,7 +38,11 @@ const apiClient = axios.create({
   timeout: 60000,
 });
 
-/** Strip undefined/null/"" values and inject the API key when present. */
+/**
+ * Strip undefined/null/"" values and inject the API key when present.
+ * @param {object} [args={}] - Query parameter values.
+ * @returns {object} Parameters with empty values removed and the API key included when present.
+ */
 const buildParams = (args = {}) => {
   const params = {};
   if (API_KEY) params.api_key = API_KEY;

@@ -4,7 +4,8 @@ const { config } = require("../config");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 
 /**
- * It updates the IDs of the movies and tvshows in the database
+ * Updates the ID dataset for the selected item type.
+ * @returns {void}
  */
 const updateIds = () => {
   // Set permission for script file

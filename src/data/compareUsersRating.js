@@ -31,8 +31,8 @@ const { logErrors } = require("../utils/logErrors");
  * @param {string} traktHomepage - The homepage URL.
  * @param {number|string} traktId - The ID of the item.
  * @param {object|null} [imdbData] - IMDb data.
- * @returns {Promise<Object>} - An object indicating whether the item can be reused,
- *     and the refreshed payload when it can.
+ * @returns {Promise<{ isEqual: boolean, data?: Object }>} The reuse decision and refreshed payload when reusable.
+ * @throws {Error} For rejected provider responses.
  */
 const compareUsersRating = async (
   allocineHomepage,
@@ -282,7 +282,7 @@ const compareUsersRating = async (
     }
 
     /**
-     * Reuses the payload after the full rebuild, refreshing updated_at because episode data was re-fetched.
+     * Updates the refresh timestamp before reusing the payload.
      */
     dataWithoutId.updated_at = new Date().toISOString();
     return {

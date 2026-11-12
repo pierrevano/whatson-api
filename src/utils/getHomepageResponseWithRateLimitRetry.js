@@ -18,6 +18,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  *   rateLimitStillActiveMessage?: string
  * }} [options={}] - Homepage request metadata plus optional rate-limit messages.
  * @returns {Promise<import("axios").AxiosResponse>} The final axios response.
+ * @throws {Error} If the request fails or the final response status is not allowed.
  */
 const getHomepageResponseWithRateLimitRetry = async (
   homepageUrl,

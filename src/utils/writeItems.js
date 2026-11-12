@@ -8,6 +8,8 @@ const { config } = require("../config");
  * @param {string} allocineHomepage - The URL of the movie or tv show’s page on AlloCiné.
  * @param {Object} itemsCount - An object where keys are item names and values are counts.
  * @param {string} source - The source identifier to be included in the filename.
+ * @returns {void}
+ * @throws {Error} If the output file cannot be written.
  */
 const writeItemsNumber = (allocineHomepage, itemsCount, source) => {
   const type = allocineHomepage.includes(config.baseURLTypeSeries)
@@ -30,6 +32,8 @@ const writeItemsNumber = (allocineHomepage, itemsCount, source) => {
  * @param {string} allocineHomepage - The URL of the movie or TV show’s page on AlloCiné.
  * @param {string} itemsArray - The serialized payload to be written to the file.
  * @param {string} source - The source identifier to be included in the filename.
+ * @returns {void}
+ * @throws {Error} If the output file cannot be written.
  */
 const writeItems = (allocineHomepage, itemsArray, source) => {
   const type = allocineHomepage.includes(config.baseURLTypeSeries)

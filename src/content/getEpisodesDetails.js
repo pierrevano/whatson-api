@@ -80,12 +80,11 @@ const parseImdbEpisodes = async (imdbHomepage, season) => {
 };
 
 /**
- * Fetches episode details including ratings for all seasons of a tvshow using IMDb and TMDB data.
- * Uses TMDB season totals; configured special items prefer the validated IMDb count when available.
+ * Fetches episode details including ratings for all seasons of a tvshow.
  * @param {string} allocineHomepage - The AlloCiné homepage URL for the tvshow.
  * @param {string} imdbHomepage - The IMDb homepage URL for the tvshow.
  * @param {string} imdbId - The IMDb title ID for the tvshow.
- * @param {object} data - The TMDB API response used for the season count unless a configured special item has a valid IMDb count.
+ * @param {object} data - The TMDB API response data for the tvshow.
  * @returns {Promise<Array<Object>|null>} A promise that resolves to an array of episode details across all seasons, or null if no data is available.
  */
 const getEpisodesDetails = async (

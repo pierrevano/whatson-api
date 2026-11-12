@@ -66,6 +66,10 @@ axiosRetry(httpClient, {
     getRateLimitWaitMs(error?.response?.headers) || config.retryDelay,
   retryCondition: (error) =>
     !error.response ||
+    (error.config?.method === "get" &&
+      (error.code === "ECONNRESET" ||
+        (error.code === "ERR_BAD_RESPONSE" &&
+          error.message === "stream has been aborted"))) ||
     error.response.status === 429 ||
     (error.response.status !== 404 && error.response.status >= 500),
   onRetry: (retryCount, error, requestConfig) => {
@@ -75,8 +79,6 @@ axiosRetry(httpClient, {
       userAgent: requestConfig?.headers?.["User-Agent"] || "N/A",
       errorCode: error.response?.status || "Network Error",
       ipAddress: error.response?.headers?.["x-forwarded-for"] || "N/A",
-      requestHeaders: requestConfig?.headers,
-      responseHeaders: error.response?.headers,
       retryCount,
     };
 
@@ -88,9 +90,7 @@ axiosRetry(httpClient, {
           `URL: ${retryInfo.url}\n` +
           `Error Code: ${retryInfo.errorCode}\n` +
           `User-Agent: ${retryInfo.userAgent}\n` +
-          `IP Address: ${retryInfo.ipAddress}\n` +
-          `Request Headers: ${JSON.stringify(retryInfo.requestHeaders, null, 2)}\n` +
-          `Response Headers: ${JSON.stringify(retryInfo.responseHeaders, null, 2)}`,
+          `IP Address: ${retryInfo.ipAddress}\n`,
       );
     }
   },

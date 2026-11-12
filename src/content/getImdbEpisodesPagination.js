@@ -129,11 +129,11 @@ const fetchEpisodesPage = async (imdbId, cursor) => {
 };
 
 /**
- * Fetches episodes from IMDb's GraphQL endpoint starting after the provided cursor (endCursor from the first 50).
+ * Fetches episodes from IMDb's GraphQL endpoint starting after the provided cursor.
  * Returns normalized episodes matching the format used for the initial page scrape.
  *
  * @param {string} imdbId - IMDb title ID (e.g., "tt2044128").
- * @param {string|null} [afterCursor=null] - Cursor value to resume pagination; pass the endCursor when the first page held 50 episodes.
+ * @param {string|null} [afterCursor=null] - Cursor value to resume pagination.
  * @returns {Promise<Array<Object>>} Normalised episode objects.
  */
 const getImdbEpisodesPagination = async (imdbId, afterCursor = null) => {

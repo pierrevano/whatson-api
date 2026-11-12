@@ -87,32 +87,16 @@ fi
 
 # Check if What's on? API is up
 HEALTH_URL="${WHATSON_API_URL%/}/health"
-while true; do
-  response_headers=$(curl --compressed -o /dev/null -s -D - -w "%{http_code}" -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$HEALTH_URL")
-  status_code=$(printf '%s\n' "$response_headers" | tail -n 1)
-
-  if [[ "$status_code" -eq 200 ]]; then
-    echo "Correct status code $status_code from $HEALTH_URL."
-    echo $SEPARATOR
-    break
-  elif [[ "$status_code" -gt 500 ]]; then
-    echo "Critical Error: Received status code $status_code from $HEALTH_URL. Aborting."
-    echo $SEPARATOR
-    exit 1
-  else
-    echo "Error: Received status code $status_code from $HEALTH_URL. Retrying..."
-    echo $SEPARATOR
-  fi
-
-  retry_after=5
-  if [[ "$status_code" -eq 429 ]]; then
-    retry_after=$(printf '%s\n' "$response_headers" | awk '
-      tolower($1) == "retry-after:" { delay = $2; sub(/\r$/, "", delay) }
-      END { print (delay ~ /^[0-9]+$/ && delay > 0) ? delay : 5 }
-    ')
-  fi
-  sleep "$retry_after"
-done
+if status_code=$(curl --compressed -fsS --retry 3 --retry-delay 5 --retry-connrefused --max-time 60 \
+  -o /dev/null -w "%{http_code}" -A "${WHATSON_SYNC_USER_AGENT:-curl}" "$HEALTH_URL") &&
+  [[ "$status_code" -eq 200 ]]; then
+  echo "Correct status code $status_code from $HEALTH_URL."
+else
+  echo "Error: Failed to reach $HEALTH_URL (status $status_code)."
+  echo $SEPARATOR
+  exit 1
+fi
+echo $SEPARATOR
 
 if [[ $SOURCE == "circleci" ]]; then
   # Make sure the target directory exists before writing into it

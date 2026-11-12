@@ -13,7 +13,7 @@ const {
  *
  * Unlike the other test files, this suite is fully self-contained: it builds its own
  * in-process Express app and drives it over an ephemeral port, so it needs neither a
- * running server, MongoDB, nor network access. It exercises the app's framework-level
+ * running server, MongoDB, nor external network access. It exercises the app's framework-level
  * behaviors — routing, middleware ordering, error handling, query parsing, body parsing,
  * static assets, CORS and response compression — by reusing the real production middleware
  * (`applyBaseMiddleware`) and the real invalid-endpoint handler.
@@ -212,11 +212,11 @@ describe("Express body parsing (express.json)", () => {
       headers: { "Content-Type": "text/plain" },
       body: "not json",
     });
-    const { body } = await res.json();
+    const data = await res.json();
 
     // express.json() only parses matching content-types; req.body is left unset
     // (and therefore dropped from the JSON response) rather than the raw string.
-    expect(body).toBeUndefined();
+    expect(data).not.toHaveProperty("body");
   });
 });
 

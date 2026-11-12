@@ -9,12 +9,10 @@ const { getDirectors } = require("./getDirectors");
 const {
   getHomepageResponseWithRateLimitRetry,
 } = require("../utils/getHomepageResponseWithRateLimitRetry");
-const { getStatus } = require("./getStatus");
 const { logErrors } = require("../utils/logErrors");
 
 /**
  * It takes an allocineHomepage as an argument, and returns various metadata about the movie or tvshow.
- * Compare mode skips status parsing and uses the TV show release-year parser.
  *
  * @param {string} allocineHomepage - The URL of the AlloCiné page for the movie or tvshow
  * @param {boolean} compare - Whether to use compare mode.
@@ -27,9 +25,9 @@ const { logErrors } = require("../utils/logErrors");
  *   directors: string[]|null,
  *   leClub: boolean,
  *   lesIndes: boolean,
- *   status: string|null,
  *   releaseDate: string|null
- * }|null>} AlloCiné metadata when available. Scrape failures are passed to logErrors.
+ * }|null>} AlloCiné metadata when available.
+ * @throws {Error} For rejected provider responses.
  */
 const getAllocineInfo = async (allocineHomepage, compare) => {
   let allocineFirstInfo = null;
@@ -72,10 +70,6 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
       ? null
       : usersRatingCount;
 
-    const status = !compare
-      ? await getStatus(allocineHomepage, $(".thumbnail .label-status").text())
-      : null;
-
     const frenchDateStr = $(".meta-body-item.meta-body-info .date").text()
       ? $(".meta-body-item.meta-body-info .date").text()
       : $(".meta-body-item.meta-body-info").text();
@@ -94,7 +88,6 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
       directors,
       leClub,
       lesIndes,
-      status,
       releaseDate,
     };
   } catch (error) {

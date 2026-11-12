@@ -3,6 +3,7 @@
  *
  * @param {string} context - Context to include in assertion failures.
  * @param {() => void} assertion - Assertion block to execute.
+ * @returns {void}
  * @throws {Error} Rethrows the original error after prefixing its message.
  */
 function withErrorContext(context, assertion) {

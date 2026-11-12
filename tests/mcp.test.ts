@@ -10,6 +10,11 @@ const MCP_ENDPOINT = `${baseURL}/mcp`;
 
 /**
  * Send a single JSON-RPC 2.0 request to the MCP HTTP endpoint.
+ * @param {string} method - JSON-RPC method to call.
+ * @param {object} [params={}] - Parameters for the method.
+ * @param {number} [id=1] - JSON-RPC request identifier.
+ * @returns {Promise<import("axios").AxiosResponse>} The HTTP response with its parsed JSON-RPC payload.
+ * @throws {Error} If the request fails or the response cannot be parsed.
  */
 async function mcpRequest(method, params = {}, id = 1) {
   const body = {

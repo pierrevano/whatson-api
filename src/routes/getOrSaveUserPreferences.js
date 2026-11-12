@@ -73,6 +73,7 @@ const saveOrUpdateUserPreferences = async (req, res) => {
 /**
  * Watches the 'preferences' collection for new document insertions and triggers a webhook.
  * Logs any errors and indicates when the stream closes.
+ * @returns {void}
  */
 const watchForNewUserCreated = () => {
   try {
