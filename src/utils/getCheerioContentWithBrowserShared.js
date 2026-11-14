@@ -44,16 +44,14 @@ const throttleNavigation = async () => {
  */
 const createBrowserRequest = (url, origin, browserOptions = {}) => {
   const { handleConsent = false, reuseSharedPage = true } = browserOptions;
-  const isLetterboxd = `${origin || ""} ${url || ""}`
-    .toLowerCase()
-    .includes("letterboxd");
+  const useDomContentLoaded = /imdb|letterboxd/i.test(`${origin} ${url}`);
 
   return {
     url,
     origin,
     handleConsent,
     reuseSharedPage,
-    waitUntil: isLetterboxd ? "domcontentloaded" : "networkidle",
+    waitUntil: useDomContentLoaded ? "domcontentloaded" : "networkidle",
   };
 };
 
