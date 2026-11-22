@@ -3,6 +3,7 @@ const { checkRatingsStatus } = require("../utils/checkRatingsStatus");
 const { getImdbData } = require("../utils/getImdbData");
 const { getNodeVarsValues } = require("../utils/getNodeVarsValues");
 const { homepageStatusErrorCode } = require("../utils/getHomepageResponse");
+const { isImdbEpisode } = require("../content/getImdbRating");
 const {
   logAndAppendTempErrorLog,
   logErrors,
@@ -26,6 +27,7 @@ const generateURLs = require("./generateURLs");
  * 4. All ratings on the built payload are null or undefined.
  * 5. A homepage status error is thrown and SKIP_ITEM_ON_HOMEPAGE_STATUS_ERROR is enabled.
  * 6. The refreshed payload fails the validation checks.
+ * 7. The IMDb ID points to a TV episode.
  *
  * @param {Object} collectionData - The collection data object.
  * @param {Object} config - The configuration object.
@@ -115,6 +117,12 @@ const loopItems = async (
       }
 
       const imdbData = await getImdbData(imdbHomepage);
+      if (isImdbEpisode(imdbData)) {
+        logAndAppendTempErrorLog(
+          `${allocineURL} - ${imdbHomepage} - IMDb ID points to a TV episode. Skipping item.`,
+        );
+        continue;
+      }
 
       const getIsEqualValue = !force
         ? await compareUsersRating(

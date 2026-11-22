@@ -3,6 +3,7 @@ const {
   getHomepageResponse,
   homepageStatusErrorCode,
 } = require("../utils/getHomepageResponse");
+const { getStoredUserRatings } = require("./utils/getStoredUserRatings");
 const { isNotNull } = require("../utils/isNotNull");
 const { logErrors } = require("../utils/logErrors");
 const { logExecutionTime } = require("../utils/logExecutionTime");
@@ -13,19 +14,35 @@ const { logExecutionTime } = require("../utils/logExecutionTime");
  *
  * @param {string} allocineHomepage - The URL of the item's page on allocine.fr
  * @param {string} betaseriesHomepage - The URL of the item's page on betaseries.com
- * @param {string} betaseriesId - Optional item identifier
+ * @param {string|null} betaseriesId - Optional item identifier
+ * @param {number} tmdbId - The TMDB ID of the item.
  * @returns {Promise<{ usersRating: number|null, usersRatingCount: number|null }>} An object containing the rating information, or null values if not available
  */
 const getBetaseriesRating = async (
   allocineHomepage,
   betaseriesHomepage,
   betaseriesId,
+  tmdbId,
 ) => {
   let usersRating = null;
   let usersRatingCount = null;
 
   try {
     if (isNotNull(betaseriesId)) {
+      const storedRatings = await getStoredUserRatings(
+        allocineHomepage,
+        tmdbId,
+        "betaseries",
+        betaseriesId,
+      );
+      if (storedRatings) {
+        const { usersRatingCount } = storedRatings;
+        if (!Number.isInteger(usersRatingCount) || usersRatingCount < 1) {
+          throw new Error("Stored BetaSeries vote count is invalid.");
+        }
+        return storedRatings;
+      }
+
       await getHomepageResponse(betaseriesHomepage, {
         serviceName: "BetaSeries",
         id: betaseriesId,

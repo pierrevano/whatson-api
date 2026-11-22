@@ -41,14 +41,25 @@ const getCertificationRating = (certificateEdges, countryId) => {
   return certificate?.node?.rating?.trim?.() || null;
 };
 
+const getTmdbCertification = (tmdbData) => {
+  const isUs = ({ iso_3166_1 }) => iso_3166_1 === "US";
+  const tvRating = tmdbData?.content_ratings?.results?.find(isUs)?.rating;
+  const releases = tmdbData?.release_dates?.results?.find(isUs)?.release_dates;
+  const movieRating = releases?.find(({ certification }) =>
+    certification?.trim(),
+  )?.certification;
+  return tvRating?.trim() || movieRating?.trim() || null;
+};
+
 /**
  * @param {string} imdbHomepage - The IMDb homepage URL.
+ * @param {object|null} [tmdbData] - TMDB metadata for the item.
  * @returns {Promise<{
  *   certification: string|null,
  *   certificationVariants: Record<string, string|null>
- * }>} Certification values derived from the parental guide payload.
+ * }>} Certification details, with null for unavailable values.
  */
-const getCertification = async (imdbHomepage) => {
+const getCertification = async (imdbHomepage, tmdbData) => {
   const nextData = await getNextData(imdbHomepage, "getCertification");
   const certificates =
     nextData?.props?.pageProps?.contentData?.data?.title?.certificates;
@@ -71,16 +82,21 @@ const getCertification = async (imdbHomepage) => {
       }
     }`;
     const url = `${config.baseURLImdbGraphql}?query=${encodeURIComponent(query)}`;
-    const response = await httpClient.get(url, {
-      headers: { Referer: `${imdbHomepage}${config.imdbParentalGuidePath}` },
-    });
-    const fullEdges = response.data?.data?.title?.certificates?.edges || [];
-    certification ||= getCertificationRating(fullEdges, "US");
-    fr ||= getCertificationRating(fullEdges, "FR");
+    try {
+      const response = await httpClient.get(url, {
+        headers: { Referer: `${imdbHomepage}${config.imdbParentalGuidePath}` },
+      });
+      const fullEdges = response.data?.data?.title?.certificates?.edges || [];
+      certification ||= getCertificationRating(fullEdges, "US");
+      fr ||= getCertificationRating(fullEdges, "FR");
+    } catch (error) {
+      if (error?.response?.status !== 403) throw error;
+      console.warn(`getCertification - ${imdbId}: IMDb GraphQL returned 403.`);
+    }
   }
 
   return {
-    certification,
+    certification: certification ?? getTmdbCertification(tmdbData),
     certificationVariants: { fr },
   };
 };

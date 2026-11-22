@@ -25,7 +25,7 @@ info:
     Rotten Tomatoes ÷ 20, AlloCiné native, etc.). `minimum_ratings` uses
     the 0–5 scale when filtering movies and TV shows, and the 0–10 scale when filtering episodes.
     Movie and TV show searches by title or ID ignore this filter; episode searches support it.
-  version: 3.48.2
+  version: 3.48.3
   contact:
     name: Pierre Vanoverschelde
     url: https://github.com/pierrevano/whatson-api
@@ -223,29 +223,29 @@ components:
           type: boolean
           description: Whether the title is currently tracked as active.
         title:
-          type: string
+          type: ["string", "null"]
           example: "Breaking Bad"
         original_title:
-          type: string
+          type: ["string", "null"]
           description: Original title. Included when `original_title` is in `append_to_response`.
           example: "Breaking Bad"
         image:
-          type: string
+          type: ["string", "null"]
           format: uri
           description: Poster image URL.
         is_adult:
-          type: boolean
+          type: ["boolean", "null"]
           description: IMDb adult-content flag.
         certification:
-          type: string
-          description: US age classification from IMDb (e.g. G, PG-13, R, TV-MA).
+          type: ["string", "null"]
+          description: US age classification (e.g., G, PG-13, R)
           example: "TV-MA"
         release_date:
-          type: string
+          type: ["string", "null"]
           format: date-time
           example: "2008-01-20T00:00:00.000Z"
         runtime:
-          type: integer
+          type: ["integer", "null"]
           description: Runtime in seconds.
           example: 2940
         countries_of_origin:
@@ -255,25 +255,25 @@ components:
             type: string
           example: ["United States"]
         tagline:
-          type: string
+          type: ["string", "null"]
           description: Tagline. Included when `tagline` is in `append_to_response`.
         trailer:
-          type: string
+          type: ["string", "null"]
           format: uri
           description: URL to the trailer. Included when `trailer` is in `append_to_response`.
         seasons_number:
-          type: integer
+          type: ["integer", "null"]
           description: Number of seasons (TV shows only).
           example: 5
         status:
-          type: string
+          type: ["string", "null"]
           description: Production status (TV shows only).
-          enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
+          enum: [Canceled, Ended, Ongoing, Pilot, Unknown, null]
         updated_at:
           type: string
           format: date-time
         popularity_average:
-          type: number
+          type: ["number", "null"]
           description: Average popularity rank across all included sources (lower is more popular).
         ratings_average:
           type: number
@@ -347,7 +347,7 @@ components:
             type: string
           description: Network names. Included when `networks` is in `append_to_response`.
         platforms_links:
-          type: array
+          type: ["array", "null"]
           description: Streaming platform availability. Included when `platforms_links` is in `append_to_response`.
           items:
             type: object
@@ -368,20 +368,20 @@ components:
           description: Localised titles. Included when `title_variants` is in `append_to_response`.
           properties:
             fr:
-              type: string
+              type: ["string", "null"]
         image_variants:
           type: object
           description: Localised poster images. Included when `image_variants` is in `append_to_response`.
           properties:
             fr:
-              type: string
+              type: ["string", "null"]
               format: uri
         certification_variants:
           type: object
           description: Localised age ratings. Included when `certification_variants` is in `append_to_response`.
           properties:
             fr:
-              type: string
+              type: ["string", "null"]
         parents_guide:
           type: object
           description: IMDb parental guide. Included when `parents_guide` is in `append_to_response`.
@@ -390,14 +390,14 @@ components:
               type: string
               format: uri
             categories:
-              type: array
+              type: ["array", "null"]
               items:
                 type: object
                 properties:
                   title:
                     type: string
                   severity:
-                    type: string
+                    type: ["string", "null"]
         last_episode:
           description: Most recently aired episode. Included when `last_episode` is in `append_to_response`. TV shows only.
           $ref: "#/components/schemas/AiringEpisode"
@@ -421,7 +421,7 @@ components:
             $ref: "#/components/schemas/RatedEpisode"
 
     AllocineRatings:
-      type: object
+      type: ["object", "null"]
       properties:
         id:
           type: integer
@@ -429,17 +429,17 @@ components:
           type: string
           format: uri
         users_rating:
-          type: number
+          type: ["number", "null"]
           description: 0–5
         users_rating_count:
-          type: integer
+          type: ["integer", "null"]
         critics_rating:
-          type: number
+          type: ["number", "null"]
           description: 0–5
         critics_rating_count:
-          type: integer
+          type: ["integer", "null"]
         critics_rating_details:
-          type: array
+          type: ["array", "null"]
           description: Per-critic AlloCiné ratings. Included when `critics_rating_details` is in `append_to_response`.
           items:
             type: object
@@ -455,10 +455,10 @@ components:
           type: boolean
           description: AlloCiné Les Indés label.
         popularity:
-          type: number
+          type: ["number", "null"]
 
     SimpleRatings:
-      type: object
+      type: ["object", "null"]
       properties:
         id:
           oneOf:
@@ -471,10 +471,10 @@ components:
         users_rating:
           type: number
         users_rating_count:
-          type: integer
+          type: ["integer", "null"]
 
     ImdbRatings:
-      type: object
+      type: ["object", "null"]
       properties:
         id:
           type: string
@@ -486,15 +486,15 @@ components:
           type: number
           description: 0–10
         users_rating_count:
-          type: integer
+          type: ["integer", "null"]
         popularity:
-          type: number
+          type: ["number", "null"]
         top_ranking:
           type: ["integer", "null"]
           description: Position in the IMDb top charts. Null when the title is not ranked.
 
     MetacriticRatings:
-      type: object
+      type: ["object", "null"]
       properties:
         id:
           type: string
@@ -502,21 +502,21 @@ components:
           type: string
           format: uri
         users_rating:
-          type: number
+          type: ["number", "null"]
           description: 0–10
         users_rating_count:
-          type: integer
+          type: ["integer", "null"]
         critics_rating:
-          type: number
+          type: ["number", "null"]
           description: 0–100 (Metascore)
         critics_rating_count:
-          type: integer
+          type: ["integer", "null"]
         must_see:
           type: boolean
           description: Metacritic "Must See" badge.
 
     RottenTomatoesRatings:
-      type: object
+      type: ["object", "null"]
       properties:
         id:
           type: string
@@ -524,26 +524,26 @@ components:
           type: string
           format: uri
         users_rating:
-          type: number
+          type: ["number", "null"]
           description: Audience score 0–100
         users_certified:
-          type: boolean
+          type: ["boolean", "null"]
           description: Rotten Tomatoes "Verified Audience" badge.
         critics_rating:
-          type: number
+          type: ["number", "null"]
           description: Tomatometer 0–100
         critics_rating_count:
-          type: integer
+          type: ["integer", "null"]
         critics_rating_liked_count:
-          type: integer
+          type: ["integer", "null"]
         critics_rating_not_liked_count:
-          type: integer
+          type: ["integer", "null"]
         critics_certified:
-          type: boolean
+          type: ["boolean", "null"]
           description: Rotten Tomatoes "Certified Fresh" badge.
 
     TmdbRatings:
-      type: object
+      type: ["object", "null"]
       properties:
         id:
           type: integer
@@ -556,18 +556,18 @@ components:
         users_rating_count:
           type: integer
         popularity:
-          type: number
+          type: ["number", "null"]
 
     TraktRatings:
       allOf:
         - $ref: "#/components/schemas/SimpleRatings"
-        - type: object
+        - type: ["object", "null"]
           properties:
             popularity:
-              type: number
+              type: ["number", "null"]
 
     TheTvdbInfo:
-      type: object
+      type: ["object", "null"]
       properties:
         id:
           type: integer
@@ -578,7 +578,7 @@ components:
           format: uri
 
     MojoInfo:
-      type: object
+      type: ["object", "null"]
       properties:
         rank:
           type: integer
@@ -627,14 +627,14 @@ components:
       type: object
       properties:
         season_number:
-          type: integer
+          type: ["integer", "null"]
         episodes_count:
           type: integer
         average_users_rating:
-          type: number
+          type: ["number", "null"]
           description: Average IMDb user rating for the season.
         users_rating_count:
-          type: integer
+          type: ["integer", "null"]
         highest_episode:
           description: Highest IMDb-rated episode within this season.
           $ref: "#/components/schemas/RatedEpisode"
@@ -657,19 +657,19 @@ components:
           type: string
           enum: [tvshow]
         title:
-          type: string
+          type: ["string", "null"]
         image:
-          type: string
+          type: ["string", "null"]
           format: uri
         networks:
           type: ["array", "null"]
           items:
             type: string
         seasons_number:
-          type: integer
+          type: ["integer", "null"]
         status:
-          type: string
-          enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
+          type: ["string", "null"]
+          enum: [Canceled, Ended, Ongoing, Pilot, Unknown, null]
         seasons:
           type: array
           items:
@@ -697,9 +697,9 @@ components:
           type: string
           enum: [tvshow]
         title:
-          type: string
+          type: ["string", "null"]
         image:
-          type: string
+          type: ["string", "null"]
           format: uri
         networks:
           type: ["array", "null"]
@@ -708,10 +708,10 @@ components:
         season_number:
           type: integer
         seasons_number:
-          type: integer
+          type: ["integer", "null"]
         status:
-          type: string
-          enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
+          type: ["string", "null"]
+          enum: [Canceled, Ended, Ongoing, Pilot, Unknown, null]
         total_episodes:
           type: integer
         episodes:
@@ -728,9 +728,9 @@ components:
           type: string
           enum: [tvshow]
         title:
-          type: string
+          type: ["string", "null"]
         image:
-          type: string
+          type: ["string", "null"]
           format: uri
         networks:
           type: ["array", "null"]
@@ -741,10 +741,10 @@ components:
         episode_number:
           type: integer
         seasons_number:
-          type: integer
+          type: ["integer", "null"]
         status:
-          type: string
-          enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
+          type: ["string", "null"]
+          enum: [Canceled, Ended, Ongoing, Pilot, Unknown, null]
         episode:
           $ref: "#/components/schemas/RatedEpisode"
 
@@ -775,19 +775,19 @@ components:
                 item_type:
                   type: string
                 title:
-                  type: string
+                  type: ["string", "null"]
                 image:
-                  type: string
+                  type: ["string", "null"]
                   format: uri
                 networks:
                   type: ["array", "null"]
                   items:
                     type: string
                 seasons_number:
-                  type: integer
+                  type: ["integer", "null"]
                 status:
-                  type: string
-                  enum: [Canceled, Ended, Ongoing, Pilot, Unknown]
+                  type: ["string", "null"]
+                  enum: [Canceled, Ended, Ongoing, Pilot, Unknown, null]
 
     Error:
       type: object

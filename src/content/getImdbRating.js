@@ -4,6 +4,9 @@ const { getImdbData } = require("../utils/getImdbData");
 const { homepageStatusErrorCode } = require("../utils/getHomepageResponse");
 const { logErrors } = require("../utils/logErrors");
 
+const isImdbEpisode = ({ nextData }) =>
+  nextData.props?.pageProps?.aboveTheFoldData?.titleType?.id === "tvEpisode";
+
 /**
  * Derives season metadata from the episodes payload, ensuring the latest season number
  * matches the count of seasons aired up to the current year.
@@ -153,4 +156,4 @@ const getImdbRating = async (imdbHomepage, imdbData) => {
   };
 };
 
-module.exports = { getImdbRating };
+module.exports = { getImdbRating, isImdbEpisode };

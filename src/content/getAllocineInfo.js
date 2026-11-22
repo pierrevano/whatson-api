@@ -25,7 +25,8 @@ const { logErrors } = require("../utils/logErrors");
  *   directors: string[]|null,
  *   leClub: boolean,
  *   lesIndes: boolean,
- *   releaseDate: string|null
+ *   releaseDate: string|null,
+ *   status: string|null
  * }|null>} AlloCiné metadata when available.
  * @throws {Error} For rejected provider responses.
  */
@@ -78,6 +79,9 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
       !compare && allocineHomepage.includes(config.baseURLTypeFilms)
         ? convertFrenchDateToISOString(frenchDateStr)
         : convertFrenchDateToISOString(frenchDateStr, true);
+    const status = compare
+      ? null
+      : $(".thumbnail .label-status").text() || null;
 
     allocineFirstInfo = {
       allocineTitle: title,
@@ -89,6 +93,7 @@ const getAllocineInfo = async (allocineHomepage, compare) => {
       leClub,
       lesIndes,
       releaseDate,
+      status,
     };
   } catch (error) {
     logErrors(error, allocineHomepage, "getAllocineInfo");

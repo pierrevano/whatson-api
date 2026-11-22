@@ -134,13 +134,15 @@ const getEpisodesDetails = async (
         (_, index) => season + index,
       );
 
-      const batchResults = await Promise.all(
+      const batchResults = await Promise.allSettled(
         seasonsBatch.map((seasonNumber) =>
           parseImdbEpisodes(imdbHomepage, seasonNumber),
         ),
       );
 
-      batchResults.forEach((seasonEpisodesDetails, _) => {
+      batchResults.forEach((result) => {
+        if (result.status === "rejected") throw result.reason;
+        const seasonEpisodesDetails = result.value;
         if (
           paginationCursor === null &&
           seasonEpisodesDetails?.paginationCursor

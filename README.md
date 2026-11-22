@@ -378,7 +378,7 @@ Example of an item returned:
     "fr": "string", // French image variant
   },
   "is_adult": "boolean", // Indicates if the title is flagged as adult content on IMDb
-  "certification": "string", // US age classification assigned by IMDb (e.g., G, PG-13, R)
+  "certification": "string", // US age classification (e.g., G, PG-13, R)
   /*
    * To include this key in the response, add `certification_variants` to the `append_to_response` query parameter.
    */

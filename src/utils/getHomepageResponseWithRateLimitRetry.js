@@ -5,7 +5,7 @@ const { getRateLimitWaitMs } = require("./getRateLimitWaitMs");
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Fetches a homepage response and retries once when a rate-limit status is returned.
+ * Fetches a homepage response and retries once when an allowed rate-limit status is returned.
  *
  * @param {string} homepageUrl - The absolute homepage URL to call.
  * @param {{

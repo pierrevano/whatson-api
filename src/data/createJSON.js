@@ -153,8 +153,10 @@ const createJSON = async (
   );
   const image =
     (await getImage(allocineHomepage, tmdbData)) || imageVariants?.fr || null;
-  const { certification, certificationVariants } =
-    await getCertification(imdbHomepage);
+  const { certification, certificationVariants } = await getCertification(
+    imdbHomepage,
+    tmdbData,
+  );
   const parentsGuide = await getParentsGuide(imdbHomepage);
   const allocinePopularity = await getAllocinePopularity(
     allocineURL,
@@ -212,6 +214,7 @@ const createJSON = async (
     episodesDetails,
     lastEpisode,
     tmdbData,
+    allocineFirstInfo,
   );
   const highestEpisode = await getHighestRatedEpisode(
     allocineHomepage,
@@ -229,7 +232,11 @@ const createJSON = async (
   const seasonsNumber =
     (config.specialItems.includes(imdbId) && (imdbSeasonsNumber ?? null)) ||
     (await getSeasonsNumber(allocineHomepage, tmdbData));
-  const status = await getStatus(allocineHomepage, tmdbData?.status);
+  const status = await getStatus(
+    allocineHomepage,
+    tmdbData?.status,
+    allocineFirstInfo,
+  );
   const {
     usersRating: usersRatingBetaseries,
     usersRatingCount: usersRatingCountBetaseries,

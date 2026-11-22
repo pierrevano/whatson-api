@@ -18,6 +18,7 @@ reports/*
 
 # Scripts (not versioned)
 scripts
+src/data/checkIds.sh
 src/data/getAllIds.sh
 src/data/getAllIdsFromImdbDataset.sh
 src/data/updateAllIds.sh

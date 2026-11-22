@@ -62,6 +62,7 @@ const getRatingsData = async ({
       allocineHomepage,
       betaseriesHomepage,
       betaseriesId,
+      tmdbId,
     );
     const letterboxdRating = await getLetterboxdRating(
       letterboxdHomepage,
@@ -109,7 +110,12 @@ const getRatingsData = async ({
     tmdbRating,
     traktRating,
   ] = await Promise.all([
-    getBetaseriesRating(allocineHomepage, betaseriesHomepage, betaseriesId),
+    getBetaseriesRating(
+      allocineHomepage,
+      betaseriesHomepage,
+      betaseriesId,
+      tmdbId,
+    ),
     getImdbRating(imdbHomepage, imdbData),
     getLetterboxdRating(letterboxdHomepage, letterboxdId),
     getMetacriticRating(metacriticHomepage, metacriticId),

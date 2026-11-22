@@ -26,6 +26,7 @@ const getSequentialEpisode = (lastEpisode, normalizedEpisodes) => {
  * @param {Array<Object>|null} episodesDetails - Array of episode objects for the tvshow.
  * @param {Object|null} lastEpisode - The last aired episode with season and episode numbers.
  * @param {Object|null} [data] - The TMDB API response data for the tvshow.
+ * @param {{ status: string|null }|null} [allocineInfo] - The item's AlloCiné metadata.
  * @returns {Promise<Object|null>} A promise resolving to the next episode's details, or null if not applicable.
  */
 const getNextEpisode = async (
@@ -33,6 +34,7 @@ const getNextEpisode = async (
   episodesDetails,
   lastEpisode,
   data,
+  allocineInfo,
 ) => {
   if (allocineHomepage.includes(config.baseURLTypeFilms)) return null;
 
@@ -81,7 +83,10 @@ const getNextEpisode = async (
       }
     }
 
-    if ((await getStatus(allocineHomepage, data?.status)) !== "Ended") {
+    if (
+      (await getStatus(allocineHomepage, data?.status, allocineInfo)) !==
+      "Ended"
+    ) {
       nextEpisodeDetails = {
         ...buildEpisodeSummary(nextEpisode),
         episode_type: updateToReadableString(episode_type),
